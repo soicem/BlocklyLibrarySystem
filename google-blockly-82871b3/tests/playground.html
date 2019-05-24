@@ -6,7 +6,6 @@
 <script src="../blockly_uncompressed.js"></script>
 <script src="../generators/javascript.js"></script>
 <script src="../generators/javascript/logic.js"></script>
-<script src="../generators/javascript/import.js"></script>
 <script src="../generators/javascript/loops.js"></script>
 <script src="../generators/javascript/math.js"></script>
 <script src="../generators/javascript/text.js"></script>
@@ -15,6 +14,7 @@
 <script src="../generators/javascript/variables.js"></script>
 <script src="../generators/javascript/variables_dynamic.js"></script>
 <script src="../generators/javascript/procedures.js"></script>
+<script src="../generators/javascript/import.js"></script>
 <script src="../generators/python.js"></script>
 <script src="../generators/python/logic.js"></script>
 <script src="../generators/python/loops.js"></script>
@@ -25,6 +25,7 @@
 <script src="../generators/python/variables.js"></script>
 <script src="../generators/python/variables_dynamic.js"></script>
 <script src="../generators/python/procedures.js"></script>
+<script src="../generators/python/import.js"></script>
 <script src="../generators/php.js"></script>
 <script src="../generators/php/logic.js"></script>
 <script src="../generators/php/loops.js"></script>
@@ -178,34 +179,46 @@ function getToolboxElement() {
 }
 
 function insertTestXml() {
-  var output = document.getElementById("importExport");
-  var xmlText = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
-          "  <block type=\"import_return\" y=\"138\">\n" +
-          "    <mutation func=\"Return Function\" args=\"2\">\n" +
-          "        <arg name=\"argA\"/>\n" +
-          "        <arg name=\"argB\"/>\n" +
-          "    </mutation>\n" +
-          "  </block>\n" +
-          "  <block type=\"import_statement\" y=\"213\">\n" +
-          "    <mutation func=\"Statement Function\" args=\"2\">\n" +
-          "        <arg name=\"argA\"/>\n" +
-          "        <arg name=\"argB\"/>\n" +
-          "    </mutation>\n" +
-          "  </block>\n" +
-          "</xml>";
+  let output = document.getElementById("importExport");
+  let xmlText = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
+      "  <block type=\"import_return\" y=\"138\">\n" +
+      "    <mutation func=\"Return Function\" args=\"2\">\n" +
+      "        <arg name=\"argA\"></arg>\n" +
+      "        <arg name=\"argB\"></arg>\n" +
+      "    </mutation>\n" +
+      "  </block>\n" +
+      "  <block type=\"import_statement\" y=\"213\">\n" +
+      "    <mutation func=\"Statement Function\" args=\"2\">\n" +
+      "        <arg name=\"argA\"></arg>\n" +
+      "        <arg name=\"argB\"></arg>\n" +
+      "    </mutation>\n" +
+      "  </block>\n" +
+      "</xml>";
   output.value = xmlText;
 
   taChange();
 }
 
 function myImport() {
-  var input = document.getElementById("importExport");
-  var xml = Blockly.Xml.textToDom(input.value);
-  var boxXml = xml.getElementsByTagName("block")[0];
-  // alert(boxXml);
-  //Blockly.Xml.domToBlock(boxXml, workspace);
-  //$("#toolbox-categories [name='Import']").append(boxXml.toString());
-  document.getElementById("toolbox-categories").querySelector("[name='Import']").append(boxXml.textContent);
+  let input = document.getElementById("importExport");
+  let xml = Blockly.Xml.textToDom(input.value);
+
+  let childrenCount = xml.children.length || 0;
+  for (let i = 0; i < childrenCount; i++) {
+    let child = xml.children[i];
+
+    let childIsBlock = (child.nodeName == "block");
+    let childTypeIsImportReturn = (child.getAttribute("type") == "import_return");
+    let childTypeIsImportStatement = (child.getAttribute("type") == "import_statement");
+
+    if (childIsBlock && (childTypeIsImportReturn || childTypeIsImportStatement)) {
+      document.getElementById("toolbox-categories").querySelector("[name='Import']").append(
+          child);
+      i--;
+      childrenCount--;
+    }
+  }
+
   workspace.updateToolbox(document.getElementById("toolbox-categories"));
 }
 
@@ -599,6 +612,12 @@ h1 {
     <category name="Import">
       <block type="import_return"></block>
       <block type="import_statement"></block>
+      <!--<block type="import_statement" id="123">
+        <mutation func="Statement Function" args="2">
+          <arg name="argA"/>
+          <arg name="argB"/>
+        </mutation>
+      </block>-->
     </category>
 
     <category name="Text" style="text_category">
