@@ -14,6 +14,7 @@
 <script src="../generators/javascript/variables.js"></script>
 <script src="../generators/javascript/variables_dynamic.js"></script>
 <script src="../generators/javascript/procedures.js"></script>
+<script src="../generators/javascript/import.js"></script>
 <script src="../generators/python.js"></script>
 <script src="../generators/python/logic.js"></script>
 <script src="../generators/python/loops.js"></script>
@@ -24,6 +25,7 @@
 <script src="../generators/python/variables.js"></script>
 <script src="../generators/python/variables_dynamic.js"></script>
 <script src="../generators/python/procedures.js"></script>
+<script src="../generators/python/import.js"></script>
 <script src="../generators/php.js"></script>
 <script src="../generators/php/logic.js"></script>
 <script src="../generators/php/loops.js"></script>
@@ -64,6 +66,7 @@
 <script src="../blocks/variables.js"></script>
 <script src="../blocks/variables_dynamic.js"></script>
 <script src="../blocks/procedures.js"></script>
+<script src="../blocks/import.js"></script>
 <script src="blocks/test_blocks.js"></script>
 
 <script>
@@ -173,6 +176,50 @@ function getToolboxElement() {
   // The three possible values are: "simple", "categories",
   // "categories-typed-variables".
   return document.getElementById('toolbox-' + toolboxSuffix);
+}
+
+function insertTestXml() {
+  let output = document.getElementById("importExport");
+  let xmlText = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
+      "  <block type=\"import_return\" y=\"138\">\n" +
+      "    <mutation func=\"Return Function\" args=\"2\">\n" +
+      "        <arg name=\"argA\"></arg>\n" +
+      "        <arg name=\"argB\"></arg>\n" +
+      "    </mutation>\n" +
+      "  </block>\n" +
+      "  <block type=\"import_statement\" y=\"213\">\n" +
+      "    <mutation func=\"Statement Function\" args=\"2\">\n" +
+      "        <arg name=\"argA\"></arg>\n" +
+      "        <arg name=\"argB\"></arg>\n" +
+      "    </mutation>\n" +
+      "  </block>\n" +
+      "</xml>";
+  output.value = xmlText;
+
+  taChange();
+}
+
+function myImport() {
+  let input = document.getElementById("importExport");
+  let xml = Blockly.Xml.textToDom(input.value);
+
+  let childrenCount = xml.children.length || 0;
+  for (let i = 0; i < childrenCount; i++) {
+    let child = xml.children[i];
+
+    let childIsBlock = (child.nodeName == "block");
+    let childTypeIsImportReturn = (child.getAttribute("type") == "import_return");
+    let childTypeIsImportStatement = (child.getAttribute("type") == "import_statement");
+
+    if (childIsBlock && (childTypeIsImportReturn || childTypeIsImportStatement)) {
+      document.getElementById("toolbox-categories").querySelector("[name='Import']").append(
+          child);
+      i--;
+      childrenCount--;
+    }
+  }
+
+  workspace.updateToolbox(document.getElementById("toolbox-categories"));
 }
 
 function toXml() {
@@ -354,6 +401,10 @@ h1 {
     <option value="high_contrast">High Contrast</option>
   </select>
   <p>
+    <input type="button" value="Insert test XML" onclick="insertTestXml()">
+
+    <input type="button" value="My import" onclick="myImport()">
+    <br>
     <input type="button" value="Export to XML" onclick="toXml()">
     &nbsp;
     <input type="button" value="Import from XML" onclick="fromXml()" id="import">
@@ -557,6 +608,18 @@ h1 {
         </value>
       </block>
     </category>
+
+    <category name="Import">
+      <block type="import_return"></block>
+      <block type="import_statement"></block>
+      <!--<block type="import_statement" id="123">
+        <mutation func="Statement Function" args="2">
+          <arg name="argA"/>
+          <arg name="argB"/>
+        </mutation>
+      </block>-->
+    </category>
+
     <category name="Text" style="text_category">
       <block type="text"></block>
       <block type="text_join"></block>
