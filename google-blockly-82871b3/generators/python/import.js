@@ -22,6 +22,6 @@ Blockly.Python['import_statement'] = function (block) {
         Blockly.JavaScript.ORDER_ATOMIC) || noConnectionValue;
   }
 
-  let code = funcName + "(" + args.join(", ") + ");\n";
+  let code = funcName + "(" + args.join(", ") + ")\n";
   return code;
 }
