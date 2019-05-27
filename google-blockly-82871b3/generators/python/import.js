@@ -3,7 +3,7 @@ Blockly.Python['import_return'] = function (block) {
   let args = [];
 
   for (let i = 0; i < block.argsCount_; i++) {
-    let noConnectionValue = "none";
+    let noConnectionValue = "None";
     args[i] = Blockly.JavaScript.valueToCode(block, "ARG" + i,
         Blockly.JavaScript.ORDER_ATOMIC) || noConnectionValue;
   }
@@ -17,7 +17,7 @@ Blockly.Python['import_statement'] = function (block) {
   let args = [];
 
   for (let i = 0; i < block.argsCount_; i++) {
-    let noConnectionValue = "none";
+    let noConnectionValue = "None";
     args[i] = Blockly.JavaScript.valueToCode(block, "ARG" + i,
         Blockly.JavaScript.ORDER_ATOMIC) || noConnectionValue;
   }

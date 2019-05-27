@@ -331,9 +331,51 @@ function fromXml() {
   taChange();
 }
 
+function sendAjax(url, main, libraries){
+  // langType - 0:py 1:lua 2:dart 3:php
+  // libraryFunction number
+  var data = {'langType' : 0, 'main' : main, 'libraries' : libraries};
+  data = JSON.stringify(data)
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', url);
+  xhr.setRequestHeader('Content-Type', "application/json");
+  xhr.send(data);
+  xhr.addEventListener('load', function(){
+    var result = JSON.parse(xhr.responseText);
+    if(result.result!=="ok") return;
+    alert(result.output);
+    //document.querySelector(".result").innerHTML = result.output;
+  })
+}
+
+function samplePy(){
+  var a = "argA = None" + "\n" +
+  "argB = None" + "\n" +
+  "\"\"\"Describe this function..." + "\n" +
+  "\"\"\"" + "\n" +
+  "def doSomething(argA, argB):" + "\n" +
+  "\tprint(argA + argB)" + "\n" +
+
+  "\"\"\"Describe this function..." + "\n" +
+  "\"\"\"" + "\n" +
+  "def doSomething2(argA, argB):" + "\n" +
+  "\tprint(argA + argB)"
+  return a;
+}
+
 function toCode(lang) {
   var output = document.getElementById('importExport');
   output.value = Blockly[lang].workspaceToCode(workspace);
+  var libFunction = samplePy();
+  var pyCode = output.value;
+  pyCode = "from testFunction import *\n" + pyCode;
+  var libraries = {'numberOfLibs' : 1, 'libraryInfo' : {
+      0 : {"name" : "testFunction", "body" : libFunction}
+    }};
+  console.log(pyCode);
+  console.log(libFunction);
+
+  sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
   taChange();
 }
 
