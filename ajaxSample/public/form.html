@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+   <head>
+      	<meta charset="utf-8">
+   </head>
+   <body> 
+      <textarea rows="20" cols="50" id="myTextarea"></textarea>
+      <textarea rows="20" cols="50" id="libraryFunction"></textarea>
+      <button class="ajaxsend">python execute</button>
+      <button class="functionParse">functionParse</button>
+      <div class="result"></div>
+      <script>
+         document.querySelector('.ajaxsend').addEventListener('click', function(){
+            var pyCode = document.getElementById("myTextarea").value
+            var libraryFunction = document.getElementById("libraryFunction").value
+            var libraries = {'numberOfLibs' : 1, 'libraryInfo' : {
+               0 : {"name" : "testFunction", "body" : libraryFunction}
+            }};
+            
+            sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
+         })
+
+         document.querySelector('.functionParse').addEventListener('click', function(){
+            var main = document.getElementById("myTextarea").value
+            var parser, xmlDoc,txt="";
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(main,"text/xml");
+            x = xmlDoc.getElementsByTagName("arg");
+            for (i = 0; i< x.length; i++) {
+               txt += x[i].getAttribute('name') + " ";
+            }
+            alert(txt)
+
+            //xmlDoc.getElementsByTagName("title")[0].childNodes[0].nodeValue;
+         })
+
+         function sendAjax(url, data, libraries){
+            // langType - 0:py 1:lua 2:dart 3:php 
+            // libraryFunction number 
+            var data = {'langType' : 0, 'main' : data, 'libraries' : libraries};
+            data = JSON.stringify(data)
+            console.log(data)
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', url);
+            xhr.setRequestHeader('Content-Type', "application/json");
+            xhr.send(data);
+            xhr.addEventListener('load', function(){
+               var result = JSON.parse(xhr.responseText);
+               if(result.result!=="ok") return;
+               document.querySelector(".result").innerHTML = result.output;
+            })
+         }
+      </script>
+   </body>
+</html>
+
