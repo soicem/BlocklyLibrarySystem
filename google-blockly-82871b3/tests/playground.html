@@ -245,10 +245,15 @@ function libFuncToMutationCode(libFunction){
   var result = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">"+ "\n";
   parser = new DOMParser();
   xmlDoc = parser.parseFromString(libFunction,"text/xml");
-  for(var blockIdx = 0; blockIdx < 2; blockIdx++){
+  var blockObjects = xmlDoc.getElementsByTagName("block");
+  for(var blockIdx = 0; blockIdx < blockObjects.length; blockIdx++){
     var dict = {}
-    var x = xmlDoc.getElementsByTagName("block")[blockIdx];
+    var x = blockObjects[blockIdx];
+    if(x.getAttributeNode("type").nodeValue == "text_print"){
+      continue;
+    }
     console.log(x.getAttributeNode("type").nodeValue)
+
     dict["type"] = x.getAttributeNode("type").nodeValue
     var xlen = x.childNodes.length;
     var y = x.firstChild;
