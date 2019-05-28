@@ -236,7 +236,6 @@ function generateLibFuncXML(arr){
   "</block>"+ "\n";
   console.log(a);
   return a;
-
 }
 
 // function xml parser
@@ -246,10 +245,22 @@ function libFuncToMutationCode(libFunction){
   parser = new DOMParser();
   xmlDoc = parser.parseFromString(libFunction,"text/xml");
   var blockObjects = xmlDoc.getElementsByTagName("block");
+  console.log(blockObjects)
   for(var blockIdx = 0; blockIdx < blockObjects.length; blockIdx++){
     var dict = {}
     var x = blockObjects[blockIdx];
-    if(x.getAttributeNode("type").nodeValue == "text_print"){
+    if(x.getAttributeNode("type").nodeValue == "text_print") {
+      continue;
+    }
+    var flag = 0;
+    if(x.getAttributeNode("type").nodeValue == "procedures_defnoreturn"){
+      flag = 1;
+    }
+
+    if(x.getAttributeNode("type").nodeValue == "procedures_defreturn"){
+      flag = 1;
+    }
+    if(!flag){
       continue;
     }
     console.log(x.getAttributeNode("type").nodeValue)
@@ -282,7 +293,6 @@ function libFuncToMutationCode(libFunction){
     console.log(dict)
     result += generateLibFuncXML(dict)
   }
-
   result += "</xml>" + "\n";
   return result;
 }
@@ -309,10 +319,7 @@ function myImport() {
       childrenCount--;
     }
   }
-
   workspace.updateToolbox(document.getElementById("toolbox-categories"));
-
-
 }
 
 function toXml() {
@@ -348,6 +355,7 @@ function sendAjax(url, main, libraries){
   })
 }
 
+// .blk file에 위치한 코드, 샘플용
 function samplePy(){
   var a = "argA = None" + "\n" +
   "argB = None" + "\n" +
