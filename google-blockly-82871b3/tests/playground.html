@@ -217,19 +217,25 @@ function myFunction(xml) {
 }
 
 // 라이브러리 xml의 원형을 본따서 arg, type, name 을 바꾼 후 리턴
-function generateLibFuncXML(arr){
-  if(arr['type'] == "procedures_defnoreturn"){
-    arr['type'] = "import_statement"
-  } else if(arr['type'] =="procedures_defreturn"){
-    arr['type'] = "import_return"
+function generateLibFuncXML(dict){
+  if(dict['type'] == "procedures_defnoreturn"){
+    dict['type'] = "import_statement"
+  } else if(dict['type'] =="procedures_defreturn"){
+    dict['type'] = "import_return"
   }
-  var a = "<block type=\"" + arr['type'] + "\" y=\"138\">" + "\n" +
-          "<mutation func=\"" + arr['funcName'] + "\" args=\"" + Object.keys(arr['arg']).length + "\">"+ "\n";
+  var lenOfArgs;
+  if(dict['arg'] == null){
+    lenOfArgs = 0;
+  } else {
+    lenOfArgs = Object.keys(dict['arg']).length
+  }
+  var a = "<block type=\"" + dict['type'] + "\" y=\"138\">" + "\n" +
+          "<mutation func=\"" + dict['funcName'] + "\" args=\"" + lenOfArgs + "\">"+ "\n";
 
-  for (var key in arr['arg']) {
+  for (var key in dict['arg']) {
     // check if the property/key is defined in the object itself, not in parent
-    if (arr['arg'].hasOwnProperty(key)) {
-      a += "<arg name=\""+ arr['arg'][key] + "\"></arg>" + "\n"
+    if (dict['arg'].hasOwnProperty(key)) {
+      a += "<arg name=\""+ dict['arg'][key] + "\"></arg>" + "\n"
     }
   }
   a += "</mutation>" + "\n" +
