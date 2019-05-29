@@ -9,7 +9,7 @@ Blockly.Python['import_return'] = function (block) {
   }
 
   let code = funcName + "(" + args.join(", ") + ")";
-  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+  return [code, Blockly.Python.ORDER_FUNCTION_CALL];
 }
 
 Blockly.Python['import_statement'] = function (block) {
