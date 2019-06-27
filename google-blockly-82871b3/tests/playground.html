@@ -67,6 +67,7 @@
 <script src="../blocks/variables_dynamic.js"></script>
 <script src="../blocks/procedures.js"></script>
 <script src="../blocks/import.js"></script>
+<script src="../blocks/sprite.js"></script>
 <script src="blocks/test_blocks.js"></script>
 <script>
 'use strict';
@@ -964,6 +965,54 @@ h1 {
           <arg name="argB"/>
         </mutation>
       </block>-->
+    </category>
+
+    <category name="sprite">
+      <label text="EVENT"></label>
+      <block type="sprite_flag_clicked"></block>
+
+      <label text="SENSE"></label>
+      <block type="sprite_sense_touch">
+        <value name="SPRITE">
+          <block type="variables_get">
+            <field name="VAR">sprite</field>
+          </block>
+        </value>
+      </block>
+      <block type="sprite_touch_color"></block>
+
+      <label text="MOTION"></label>
+      <block type="sprite_go_to"></block>
+      <block type="sprite_direction"></block>
+      <block type="sprite_move"></block>
+
+      <label text="LOOK"></label>
+      <block type="sprite_say"></block>
+
+      <label text="CONTROL"></label>
+      <block type="sprite_forever"></block>
+      <block type="controls_if"></block>
+      <!--<block type="controls_if">
+        <value name="ELSE"></value>
+      </block>-->
+
+      <label text="LOGIC"></label>
+      <block type="logic_negate"></block>
+      <block type="logic_compare"></block>
+
+      <label text="TEXT"></label>
+      <block type="text_join"></block>
+
+      <label text="VARIABLE"></label>
+      <block type="sprite_empty_list">
+        <value name="VARIABLE">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_indexOf"></block>
+      <block type="lists_setIndex"></block>
     </category>
 
     <category name="Text" style="text_category">
