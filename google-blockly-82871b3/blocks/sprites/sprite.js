@@ -29,6 +29,7 @@ goog.provide('Blockly.Blocks.sprite');
 goog.require('Blockly.Blocks');
 goog.require('Blockly');
 
+/*
 
 Blockly.Blocks['sprite_flag_clicked'] = {
   init: function() {
@@ -160,3 +161,4 @@ Blockly.Blocks['sprite_touch_color'] = {
     this.setHelpUrl("");
   }
 };
+*/
