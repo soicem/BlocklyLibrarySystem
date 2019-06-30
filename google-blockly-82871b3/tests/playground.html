@@ -353,12 +353,16 @@ function collapseToolbox() {
 }
 
 function toXml() {
-  var output = document.getElementById('importExport');
-  var xml = Blockly.Xml.workspaceToDom(workspace);
-  output.value = Blockly.Xml.domToPrettyText(xml);
-  output.focus();
-  output.select();
-  taChange();
+    var output = document.getElementById('importExport');
+    var xml = Blockly.Xml.workspaceToDom(workspace);
+    var textXML = Blockly.Xml.domToPrettyText(xml);
+    output.value = textXML;
+    output.focus();
+    output.select();
+    taChange();
+
+    FileToBLK("text.xml", textXML, false);
+    CreateBLK("text");
 }
 
 function fromXml() {
@@ -753,7 +757,7 @@ h1 {
     <br>
     <input type="button" value="Export to XML" onclick="toXml()">
     &nbsp;
-    <input type="button" value="Import from XML" onclick="fromXml()" id="import">
+    <input type="file" value="Import from XML" name="files[]" onclick="fromXml()" id="import" accept="application/zip">
     <br>
     <input type="button" value="To JavaScript" onclick="toCode('JavaScript')">
     &nbsp;
@@ -1679,4 +1683,8 @@ h1 {
     </category>
   </xml>
 </body>
+<script src="../../jszip/dist/jszip.js"></script>
+<script src="../../FileSaver/dist/FileSaver.js"></script>
+<script src="../../exportTest.js"></script>
+<script src="../../blkImport.js"></script>
 </html>
