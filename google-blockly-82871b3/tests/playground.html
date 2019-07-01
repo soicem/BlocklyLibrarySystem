@@ -80,6 +80,7 @@
 'use strict';
 var workspace = null;
 var libraryspace = null;
+var toolbox = null;
 function start() {
   setBackgroundColour();
 
@@ -87,7 +88,7 @@ function start() {
   var match = location.search.match(/dir=([^&]+)/);
   var rtl = match && match[1] == 'rtl';
   document.forms.options.elements.dir.selectedIndex = Number(rtl);
-  var toolbox = getToolboxElement();
+  toolbox = getToolboxElement();
   var toolboxNames = [
       'toolbox-categories',
       'toolbox-categories-typed-variables',
@@ -132,26 +133,6 @@ function start() {
             scaleSpeed: 1.1
           }
       });
-  libraryspace = Blockly.inject('librarySpace',
-      {
-        grid:
-        {
-          spacing: 25,
-          length: 3,
-          colour: '#ccc',
-          snap: true
-        },
-        scrollbars: true,
-        toolbox: toolbox,
-        zoom:
-        {
-          wheel: true,
-          startScale: 1.0,
-          maxScale: 4,
-          minScale: 0.25,
-          scaleSpeed: 1.1
-        }
-      });
   addToolboxButtonCallbacks();
   // Restore previously displayed text.
   if (sessionStorage) {
@@ -166,8 +147,33 @@ function start() {
     // MSIE 11 does not support sessionStorage on file:// URLs.
     logEvents(false);
   }
-  taChange();
-  tabInit();
+}
+
+function setWorkspaceFromSprite(sprite){
+  if(sprite == "library"){
+    document.getElementById('blocklyDiv').innerHTML = "";
+    libraryspace = Blockly.inject('blocklyDiv',
+            {
+              grid:
+                      {
+                        spacing: 25,
+                        length: 2,
+                        colour: '#ccc',
+                        snap: true
+                      },
+              scrollbars: true,
+              toolbox: toolbox,
+              zoom:
+                      {
+                        wheel: true,
+                        startScale: 1.0,
+                        maxScale: 4,
+                        minScale: 0.25,
+                        scaleSpeed: 1.1
+                      }
+            });
+  }
+  addToolboxButtonCallbacks();
 }
 
 function addToolboxButtonCallbacks() {
@@ -589,19 +595,15 @@ TabController.prototype.styleTabs_ = function() {
 };
 */
 
-function tabInit(){
-  hide('library');
-  show('blockDiv');
-}
 
 function changeTab(){
   var tab = document.getElementById('tabChanger');
   if(tab.value == "main_tab"){
-    show('blocklyDiv');
-    hide('library');
+
   }else if(tab.value == "library_tab"){
-    show('library');
-    hide('blocklyDiv');
+    setWorkspaceFromSprite("library");
+    //show('library');
+    //hide('blocklyDiv');
   }
 }
 
@@ -610,6 +612,26 @@ function hide(tabName){
 }
 function show(tabName){
   document.getElementById(tabName).style.display = 'block'
+}
+
+// 리소스 움직임용 함수
+function myMove() {
+  var resImage = document.getElementById("myAnimation");
+  var resContainer = document.getElementById("myContainer");
+  var top = resImage.offsetTop;
+  var left = resImage.offsetLeft;
+  //var elem = document.getElementById("myAnimation");
+  var pos = 0;
+  var id = setInterval(frame, 10);
+  function frame() {
+    if (pos == 400) {
+      clearInterval(id);
+    } else {
+      pos++;
+      resImage.style.top = top  + pos + 'px';
+      resImage.style.left = left + pos +'px';
+    }
+  }
 }
 //-------------------------------------------------------
 </script>
@@ -628,17 +650,42 @@ h1 {
   font-size: 140%;
 }
 #blocklyDiv {
-  float: right;
+  float: left;
   height: 80%;
-  width: 70%;
+  width: 40%; /*70 to 40*/
 }
+
+#librarySpace{
+  float:left;
+  height:100px;
+  width:40%
+}
+
 #library {
-  float: right;
+  float: left;
   height: 80%;
   width: 70%;
 }
 #importExport {
   font-family: monospace;
+}
+
+/* 리소스 핸들링용 CSS */
+#myContainer {
+  width: 450px;
+  height: 450px;
+  float:left;
+  border-style: solid;
+  border-bottom-color: #92a8d1;
+  border-top-color: #92a8d1;
+  border-left-color: #92a8d1;
+  border-right-color: #92a8d1;
+  background: white;
+}
+#myAnimation {
+  width: 50px;
+  height: 50px;
+  position: absolute;
 }
 
 .ioLabel>.blocklyFlyoutLabelText {
@@ -672,6 +719,11 @@ h1 {
   width: 260px;
 }
 
+#menu {
+  float:left;
+
+}
+
 #importedFunctions{
   clear: both;
   display: none;
@@ -680,11 +732,8 @@ h1 {
   overflow-y: scroll;
 }
 
-#librarySpace{
-  float:left;
-  height:100px;
-  width:40%
-}
+
+
 
 </style>
 </head>
@@ -703,90 +752,79 @@ h1 {
   -->
   <br>
   <!--Workspace Tab -->
-  <div id="blocklyDiv"></div>
-  <!--Library Tab -->
-  <div id="library">
+  <div>
 
-    <h1>Library</h1>
-    <div id="librarySpace"></div>
-    <p>
-    <input type="button" value="To JavaScript" onclick="toCode('JavaScript')">
-    &nbsp;
-    <input type="button" value="To Python" onclick="toCode('Python')">
-    &nbsp;
-    <input type="button" value="To PHP" onclick="toCode('PHP')">
-    &nbsp;
-    <input type="button" value="To Lua" onclick="toCode('Lua')">
-    &nbsp;
-    <input type="button" value="To Dart" onclick="toCode('Dart')">
-    <br>
-    <textarea id="importExport_" style="width: 80%; height: 70%;"
-              onchange="taChange();" onkeyup="taChange()">
-    </textarea>
-
-    </p>
   </div>
-  <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
-   - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
-
-  <form id="options">
-    <select name="dir" onchange="document.forms.options.submit()">
-      <option value="ltr">LTR</option>
-      <option value="rtl">RTL</option>
-    </select>
-    <select name="toolbox" onchange="document.forms.options.submit()">
-      <option value="categories">Categories (untyped variables)</option>
-      <option value="categories-typed-variables">Categories (typed variables)</option>
-      <option value="simple">Simple</option>
-      <option value="test-blocks">Test Blocks</option>
-    </select>
-    <select name="side" onchange="document.forms.options.submit()">
-      <option value="start">Start</option>
-      <option value="end">End</option>
-      <option value="top">Top</option>
-      <option value="bottom">Bottom</option>
-    </select>
-  </form>
-  <select id="themeChanger" name="theme" onchange="changeTheme()">
-    <option value="classic">Classic</option>
-    <option value="modern">Modern</option>
-    <option value="high_contrast">High Contrast</option>
-  </select>
+  <div id="blocklyDiv"></div>
   <p>
-    <input type="button" value="Insert test XML" onclick="insertTestXml()">
-
-    <input type="button" value="My import" onclick="myImport()">
-
-    <input type="button" value="Toolbox Collapse" onclick="collapseToolbox()">
-    <br>
-    <input type="button" value="Export to XML" onclick="toXml()">
-    &nbsp;
-    <input type="button" value="Import from XML" onclick="fromXml()" id="import">
-    <br>
-    <input type="button" value="To JavaScript" onclick="toCode('JavaScript')">
-    &nbsp;
-    <input type="button" value="To Python" onclick="toCode('Python')">
-    &nbsp;
-    <input type="button" value="To PHP" onclick="toCode('PHP')">
-    &nbsp;
-    <input type="button" value="To Lua" onclick="toCode('Lua')">
-    &nbsp;
-    <input type="button" value="To Dart" onclick="toCode('Dart')">
-    <br>
-    <textarea id="importExport" style="width: 26%; height: 12em"
-      onchange="taChange();" onkeyup="taChange()"></textarea>
+    <button onclick="myMove()">Click Me</button>
   </p>
 
-  <p>
-    Stress test: &nbsp;
-    <input type="button" value="Airstrike!" onclick="airstrike(100)">
-    <input type="button" value="Spaghetti!" onclick="spaghetti(8)">
-  </p>
-  <p>
-    Log events: &nbsp;
-    <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
-  </p>
+  <div id ="myContainer">
+    <img src="aww-cat.png" id="myAnimation">
+  </div>
 
+
+    <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
+     - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
+
+    <form id="options">
+      <select name="dir" onchange="document.forms.options.submit()">
+        <option value="ltr">LTR</option>
+        <option value="rtl">RTL</option>
+      </select>
+      <select name="toolbox" onchange="document.forms.options.submit()">
+        <option value="categories">Categories (untyped variables)</option>
+        <option value="categories-typed-variables">Categories (typed variables)</option>
+        <option value="simple">Simple</option>
+        <option value="test-blocks">Test Blocks</option>
+      </select>
+      <select name="side" onchange="document.forms.options.submit()">
+        <option value="start">Start</option>
+        <option value="end">End</option>
+        <option value="top">Top</option>
+        <option value="bottom">Bottom</option>
+      </select>
+    </form>
+    <select id="themeChanger" name="theme" onchange="changeTheme()">
+      <option value="classic">Classic</option>
+      <option value="modern">Modern</option>
+      <option value="high_contrast">High Contrast</option>
+    </select>
+    <p>
+      <input type="button" value="Insert test XML" onclick="insertTestXml()">
+
+      <input type="button" value="My import" onclick="myImport()">
+
+      <input type="button" value="Toolbox Collapse" onclick="collapseToolbox()">
+      <br>
+      <input type="button" value="Export to XML" onclick="toXml()">
+      &nbsp;
+      <input type="button" value="Import from XML" onclick="fromXml()" id="import">
+      <br>
+      <input type="button" value="To JavaScript" onclick="toCode('JavaScript')">
+      &nbsp;
+      <input type="button" value="To Python" onclick="toCode('Python')">
+      &nbsp;
+      <input type="button" value="To PHP" onclick="toCode('PHP')">
+      &nbsp;
+      <input type="button" value="To Lua" onclick="toCode('Lua')">
+      &nbsp;
+      <input type="button" value="To Dart" onclick="toCode('Dart')">
+
+      <textarea id="importExport" style="width: 100px; height: 12em"
+        onchange="taChange();" onkeyup="taChange()"></textarea>
+    </p>
+
+    <p>
+      Stress test: &nbsp;
+      <input type="button" value="Airstrike!" onclick="airstrike(100)">
+      <input type="button" value="Spaghetti!" onclick="spaghetti(8)">
+    </p>
+    <p>
+      Log events: &nbsp;
+      <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
+    </p>
   <!-- The next three blocks of XML are sample toolboxes for testing basic
   configurations.  For more information on building toolboxes, see https://developers.google.com/blockly/guides/configure/web/toolbox -->
 
