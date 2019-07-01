@@ -1226,8 +1226,34 @@ h1 {
       <block type="sprite_deleteClone"></block>
 
       <label text="Sensing"></label>
-      <block type="sprite_senseTouch"></block>
-      <block type="sprite_senseColor"></block>
+      <block type="sprite_touching"></block>
+      <block type="sprite_touchingColor"></block>
+      <block type="sprite_colorTouchingColor"></block>
+      <block type="sprite_askWait">
+        <value name="MESSAGE">
+          <shadow type="text">
+            <field name="TEXT">What's your name?</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_answer"></block>
+      <block type="sprite_keyPress">
+        <field name="KEY">space</field>
+      </block>
+      <block type="sprite_mouseDown"></block>
+      <block type="sprite_getMouseXY"></block>
+      <block type="sprite_setDragMode"></block>
+      <block type="sprite_getLoudness"></block>
+      <block type="sprite_getTimer"></block>
+      <block type="sprite_resetTimer"></block>
+      <block type="sprite_getStage"></block>
+      <block type="sprite_getDate">
+        <field name="OPTION">year</field>
+      </block>
+      <block type="sprite_getSince">
+        <field name="OPTION">days</field>
+      </block>
+      <block type="sprite_getUsername"></block>
 
       <label text="Operators"></label>
       <!---->
