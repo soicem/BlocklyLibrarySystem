@@ -40,7 +40,7 @@ Blockly.Blocks['sprite_moveSteps'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(225);
     this.setTooltip("");
     this.setHelpUrl("");
   }
@@ -65,7 +65,7 @@ Blockly.Blocks['sprite_turnAngle'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(225);
     this.setTooltip("");
     this.setHelpUrl("");
   }
@@ -79,7 +79,7 @@ Blockly.Blocks['sprite_goTo'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(225);
     this.setTooltip("");
     this.setHelpUrl("");
   }
@@ -98,7 +98,7 @@ Blockly.Blocks['sprite_goToPoint'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(225);
     this.setTooltip("");
     this.setHelpUrl("");
   }
@@ -115,7 +115,7 @@ Blockly.Blocks['sprite_glideTo'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(225);
     this.setTooltip("");
     this.setHelpUrl("");
   }
@@ -136,7 +136,7 @@ Blockly.Blocks['sprite_glideToPoint'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(225);
     this.setTooltip("");
     this.setHelpUrl("");
   }
@@ -150,7 +150,7 @@ Blockly.Blocks['sprite_pointTo'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(225);
     this.setTooltip("");
     this.setHelpUrl("");
   }
@@ -158,14 +158,13 @@ Blockly.Blocks['sprite_pointTo'] = {
 
 Blockly.Blocks['sprite_pointToward'] = {
   init: function() {
-    this.appendValueInput("DIR")
-    .setCheck(null)
+    this.appendDummyInput()
     .appendField("point towards")
-    .appendField(new Blockly.FieldDropdown([["mouse position","MOUSE"]]), "DESTINATION");
+    .appendField(new Blockly.FieldDropdown([["mouse position","MOUSE"]]), "DEST");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(225);
     this.setTooltip("");
     this.setHelpUrl("");
   }
@@ -181,7 +180,7 @@ Blockly.Blocks['sprite_changeXY'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(225);
     this.setTooltip("");
     this.setHelpUrl("");
   }
@@ -197,7 +196,7 @@ Blockly.Blocks['sprite_setXY'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(225);
     this.setTooltip("");
     this.setHelpUrl("");
   }
@@ -210,7 +209,7 @@ Blockly.Blocks['sprite_getXY'] = {
     .appendField("position");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(230);
+    this.setColour(225);
     this.setTooltip("");
     this.setHelpUrl("");
   }
@@ -222,7 +221,7 @@ Blockly.Blocks['sprite_getDir'] = {
     .appendField("direction");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(230);
+    this.setColour(225);
     this.setTooltip("");
     this.setHelpUrl("");
   }
@@ -235,7 +234,7 @@ Blockly.Blocks['sprite_edgeBounce'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(225);
     this.setTooltip("");
     this.setHelpUrl("");
   }
@@ -249,7 +248,7 @@ Blockly.Blocks['sprite_rotationStyle'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(225);
     this.setTooltip("");
     this.setHelpUrl("");
   }

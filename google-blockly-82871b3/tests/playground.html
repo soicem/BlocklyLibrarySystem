@@ -976,26 +976,204 @@ h1 {
 
     <category name="Sprite">
       <label text="Motion"></label>
-      <block type="sprite_moveSteps"></block>
-      <block type="sprite_turnAngle"></block>
+      <block type="sprite_moveSteps">
+        <value name="STEPS">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_turnAngle">
+        <value name="DEGREE">
+          <shadow type="math_number">
+            <field name="NUM">15</field>
+          </shadow>
+        </value>
+      </block>
       <block type="sprite_goTo"></block>
-      <block type="sprite_goToPoint"></block>
-      <block type="sprite_glideTo"></block>
-      <block type="sprite_glideToPoint"></block>
-      <block type="sprite_pointTo"></block>
+      <block type="sprite_goToPoint">
+        <value name="X">
+          <shadow type="math_number">
+            <field name="NUM">0</field>
+          </shadow>
+        </value>
+        <value name="Y">
+          <shadow type="math_number">
+            <field name="NUM">0</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_glideTo">
+        <value name="SEC">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_glideToPoint">
+        <value name="SEC">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <value name="X">
+          <shadow type="math_number">
+            <field name="NUM">0</field>
+          </shadow>
+        </value>
+        <value name="Y">
+          <shadow type="math_number">
+            <field name="NUM">0</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_pointTo">
+        <value name="DIR">
+          <shadow type="math_number">
+            <field name="NUM">90</field>
+          </shadow>
+        </value>
+      </block>
       <block type="sprite_pointToward"></block>
-      <block type="sprite_changeXY"></block>
-      <block type="sprite_setXY"></block>
+      <block type="sprite_changeXY">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_setXY">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">0</field>
+          </shadow>
+        </value>
+      </block>
       <block type="sprite_edgeBounce"></block>
       <block type="sprite_rotationStyle"></block>
       <block type="sprite_getXY"></block>
       <block type="sprite_getDir"></block>
 
       <label text="Looks"></label>
-      <block type="sprite_say"></block>
+      <block type="sprite_say">
+        <value name="CONTENT">
+          <shadow type="text">
+            <field name="TEXT">Hello World!</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_sayTill">
+        <value name="CONTENT">
+          <shadow type="text">
+            <field name="TEXT">Hello World!</field>
+          </shadow>
+        </value>
+        <value name="SEC">
+          <shadow type="math_number">
+            <field name="NUM">2</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_think">
+        <value name="CONTENT">
+          <shadow type="text">
+            <field name="TEXT">Hmm...</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_thinkTill">
+        <value name="CONTENT">
+          <shadow type="text">
+            <field name="TEXT">Hmm...</field>
+          </shadow>
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </value>
+      </block>
+      <block type="sprite_nextCostume"></block>
+      <block type="sprite_switchCostume"></block>
+      <block type="sprite_nextBackdrop"></block>
+      <block type="sprite_switchBackdrop"></block>
+      <block type="sprite_changeSize">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_setSize">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">100</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_changeEffect">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">25</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_setEffect">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">0</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_clearEffect"></block>
+      <block type="sprite_show"></block>
+      <block type="sprite_hide"></block>
+      <block type="sprite_setLayer"></block>
+      <block type="sprite_changeLayer">
+        <value name="COUNT">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_getCostume"></block>
+      <block type="sprite_getBackdrop"></block>
+      <block type="sprite_getSize"></block>
 
       <label text="Sounds"></label>
-
+      <block type="sprite_playSound"></block>
+      <block type="sprite_startSound"></block>
+      <block type="sprite_stopSound"></block>
+      <block type="sprite_changeSoundEffect">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_setSoundEffect">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">100</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_clearSoundEffect"></block>
+      <block type="sprite_changeVolume">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">-10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_setVolume">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">100</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_getVolume"></block>
 
       <label text="Events"></label>
       <block type="sprite_flagClicked"></block>
