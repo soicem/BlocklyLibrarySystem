@@ -1201,7 +1201,29 @@ h1 {
       <block type="sprite_messageBroadcastWait"></block>
 
       <label text="Controls"></label>
+      <block type="sprite_wait">
+        <value name="SEC">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_repeat">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">3</field>
+          </shadow>
+        </value>
+      </block>
       <block type="sprite_forever"></block>
+      <block type="sprite_if"></block>
+      <block type="sprite_ifElse"></block>
+      <block type="sprite_waitTill"></block>
+      <block type="sprite_repeatTill"></block>
+      <block type="sprite_stop"></block>
+      <block type="sprite_cloneStarted"></block>
+      <block type="sprite_createClone"></block>
+      <block type="sprite_deleteClone"></block>
 
       <label text="Sensing"></label>
       <block type="sprite_senseTouch"></block>
