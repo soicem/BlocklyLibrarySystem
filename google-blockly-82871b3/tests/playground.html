@@ -1086,11 +1086,11 @@ h1 {
           <shadow type="text">
             <field name="TEXT">Hmm...</field>
           </shadow>
-          <value name="VALUE">
-            <shadow type="math_number">
-              <field name="NUM">2</field>
-            </shadow>
-          </value>
+        </value>
+        <value name="SEC">
+          <shadow type="math_number">
+            <field name="NUM">2</field>
+          </shadow>
         </value>
       </block>
       <block type="sprite_nextCostume"></block>
@@ -1241,7 +1241,12 @@ h1 {
         <field name="KEY">space</field>
       </block>
       <block type="sprite_mouseDown"></block>
-      <block type="sprite_getMouseXY"></block>
+      <block type="sprite_getMouseXY">
+        <field name="XY">x</field>
+      </block>
+      <block type="sprite_getMouseXY">
+        <field name="XY">y</field>
+      </block>
       <block type="sprite_setDragMode"></block>
       <block type="sprite_getLoudness"></block>
       <block type="sprite_getTimer"></block>
