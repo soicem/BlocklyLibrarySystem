@@ -1086,11 +1086,11 @@ h1 {
           <shadow type="text">
             <field name="TEXT">Hmm...</field>
           </shadow>
-          <value name="VALUE">
-            <shadow type="math_number">
-              <field name="NUM">2</field>
-            </shadow>
-          </value>
+        </value>
+        <value name="SEC">
+          <shadow type="math_number">
+            <field name="NUM">2</field>
+          </shadow>
         </value>
       </block>
       <block type="sprite_nextCostume"></block>
@@ -1177,16 +1177,258 @@ h1 {
 
       <label text="Events"></label>
       <block type="sprite_flagClicked"></block>
+      <block type="sprite_keyPressed">
+        <field name="KEY">space</field>
+      </block>
+      <block type="sprite_spriteClicked"></block>
+      <block type="sprite_backdropSwitched"></block>
+      <block type="sprite_loudnessCondition">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_timerCondition">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_messageReceived"></block>
+      <block type="sprite_messageBroadcast"></block>
+      <block type="sprite_messageBroadcastWait"></block>
 
       <label text="Controls"></label>
+      <block type="sprite_wait">
+        <value name="SEC">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_repeat">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">3</field>
+          </shadow>
+        </value>
+      </block>
       <block type="sprite_forever"></block>
+      <block type="sprite_if"></block>
+      <block type="sprite_ifElse"></block>
+      <block type="sprite_waitTill"></block>
+      <block type="sprite_repeatTill"></block>
+      <block type="sprite_stop"></block>
+      <block type="sprite_cloneStarted"></block>
+      <block type="sprite_createClone"></block>
+      <block type="sprite_deleteClone"></block>
 
       <label text="Sensing"></label>
-      <block type="sprite_senseTouch"></block>
-      <block type="sprite_senseColor"></block>
+      <block type="sprite_touching"></block>
+      <block type="sprite_touchingColor"></block>
+      <block type="sprite_colorTouchingColor"></block>
+      <block type="sprite_askWait">
+        <value name="MESSAGE">
+          <shadow type="text">
+            <field name="TEXT">What's your name?</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_answer"></block>
+      <block type="sprite_keyPress">
+        <field name="KEY">space</field>
+      </block>
+      <block type="sprite_mouseDown"></block>
+      <block type="sprite_getMouseXY">
+        <field name="XY">x</field>
+      </block>
+      <block type="sprite_getMouseXY">
+        <field name="XY">y</field>
+      </block>
+      <block type="sprite_setDragMode"></block>
+      <block type="sprite_getLoudness"></block>
+      <block type="sprite_getTimer"></block>
+      <block type="sprite_resetTimer"></block>
+      <block type="sprite_getStage"></block>
+      <block type="sprite_getDate">
+        <field name="OPTION">year</field>
+      </block>
+      <block type="sprite_getSince">
+        <field name="OPTION">days</field>
+      </block>
+      <block type="sprite_getUsername"></block>
 
       <label text="Operators"></label>
-      <!---->
+      <block type="sprite_operator">
+        <field name="OPTION">+</field>
+        <value name="VALUE1">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <value name="VALUE2">
+          <shadow type="math_number">
+            <field name="NUM">2</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_operator">
+        <field name="OPTION">-</field>
+        <value name="VALUE1">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <value name="VALUE2">
+          <shadow type="math_number">
+            <field name="NUM">2</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_operator">
+        <field name="OPTION">*</field>
+        <value name="VALUE1">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <value name="VALUE2">
+          <shadow type="math_number">
+            <field name="NUM">2</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_operator">
+        <field name="OPTION">/</field>
+        <value name="VALUE1">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <value name="VALUE2">
+          <shadow type="math_number">
+            <field name="NUM">2</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_operator">
+        <field name="OPTION">mod</field>
+        <value name="VALUE1">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <value name="VALUE2">
+          <shadow type="math_number">
+            <field name="NUM">2</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_getRandom">
+        <value name="MIN">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <value name="MAX">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_conditionalOperator">
+        <field name="OPTION">></field>
+        <value name="VALUE2">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_conditionalOperator">
+        <field name="OPTION">=</field>
+        <value name="VALUE2">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_conditionalOperator">
+        <field name="OPTION"><</field>
+        <value name="VALUE2">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_conditionalOperator">
+        <field name="OPTION">and</field>
+      </block>
+      <block type="sprite_conditionalOperator">
+        <field name="OPTION">or</field>
+      </block>
+      <block type="sprite_notOperator"></block>
+      <block type="sprite_join">
+        <value name="VALUE1">
+          <shadow type="text">
+            <field name="TEXT">pen</field>
+          </shadow>
+        </value>
+        <value name="VALUE2">
+          <shadow type="text">
+            <field name="TEXT">pineapple</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_letterAt">
+        <value name="INDEX">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <value name="VALUE">
+          <shadow type="text">
+            <field name="TEXT">pen-pineapple</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_length">
+        <value name="VALUE">
+          <shadow type="text">
+            <field name="TEXT">pen-pineapple</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_contains">
+        <value name="VALUE">
+          <shadow type="text">
+            <field name="TEXT">pen-pineapple</field>
+          </shadow>
+        </value>
+        <value name="LOOKUP">
+          <shadow type="text">
+            <field name="TEXT">apple</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_unaryOperator">
+        <field name="OPTION">round</field>
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">33.33</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="sprite_unaryOperator">
+        <field name="OPTION">abs</field>
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">-10</field>
+          </shadow>
+        </value>
+      </block>
+
 
       <label text="Variables"></label>
       <block type="sprite_emptyList"></block>
