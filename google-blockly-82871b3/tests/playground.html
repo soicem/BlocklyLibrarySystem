@@ -75,7 +75,9 @@
 <script src="../blocks/sprites/sensing.js"></script>
 <script src="../blocks/sprites/operators.js"></script>
 <script src="../blocks/sprites/variables.js"></script>
+<script src="../generators/javascript/sprites/motions.js"></script>
 <script src="blocks/test_blocks.js"></script>
+<script src="sprite/sprite.js"></script>
 <script>
 'use strict';
 var workspace = null;
@@ -415,6 +417,15 @@ function samplePy(){
   return a;
 }
 
+function toJSCode() {
+  let output = document.getElementById('importExport');
+  output.value = Blockly["JavaScript"].workspaceToCode(libraryspace);
+
+  canvas.clear();
+  eval(output.value);
+  cat.draw();
+}
+
 function toCode(lang) {
   var output = document.getElementById('importExport_');
   output.value = Blockly[lang].workspaceToCode(libraryspace);
@@ -670,6 +681,10 @@ h1 {
   font-family: monospace;
 }
 
+canvas {
+  border: 1px solid black;
+}
+
 /* 리소스 핸들링용 CSS */
 #myContainer {
   width: 450px;
@@ -757,12 +772,22 @@ h1 {
   </div>
   <div id="blocklyDiv"></div>
   <p>
-    <button onclick="myMove()">Click Me</button>
+    <button onclick="canvas.clear(); cat.moveSteps(100);">Click Me</button>
   </p>
 
-  <div id ="myContainer">
+  <!--<div id ="myContainer">
     <img src="aww-cat.png" id="myAnimation">
-  </div>
+  </div>-->
+
+  <canvas id="myCanvas"></canvas>
+  <script src="sprite/canvas.js"></script>
+  <script src="sprite/sprite.js"></script>
+  <script src="sprite/image_sprite.js"></script>
+  <script>
+    let canvas = new Canvas("myCanvas", 500, 300);
+    let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
+    cat.draw();
+  </script>
 
 
     <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
@@ -802,7 +827,7 @@ h1 {
       &nbsp;
       <input type="button" value="Import from XML" onclick="fromXml()" id="import">
       <br>
-      <input type="button" value="To JavaScript" onclick="toCode('JavaScript')">
+      <input type="button" value="To JavaScript" onclick="toJSCode()">
       &nbsp;
       <input type="button" value="To Python" onclick="toCode('Python')">
       &nbsp;
