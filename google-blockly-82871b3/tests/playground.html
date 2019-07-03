@@ -144,6 +144,7 @@ function start() {
           scaleSpeed: 1.1
         }
       });
+
   addToolboxButtonCallbacks();
   // Restore previously displayed text.
   if (sessionStorage) {
@@ -198,6 +199,7 @@ function getToolboxElement() {
   return document.getElementById('toolbox-' + toolboxSuffix);
 }
 
+/*
 function insertTestXml() {
   let output = document.getElementById("importExport");
   let xmlText = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
@@ -218,8 +220,10 @@ function insertTestXml() {
 
   taChange();
 }
+*/
 
 // xml 사용 샘플 코드
+//cy ?
 function myFunction(xml) {
   var x, y, i, xlen, xmlDoc, txt;
   xmlDoc = xml.responseXML;
@@ -236,17 +240,24 @@ function myFunction(xml) {
   document.getElementById("demo").innerHTML = txt;
 }
 
+
 // 라이브러리 xml의 원형을 본따서 arg, type, name 을 바꾼 후 리턴
 function generateLibFuncXML(arr){
-  if(arr['type'] == "procedures_defnoreturn"){
+  if(arr['type'] === "procedures_defnoreturn"){
     arr['type'] = "import_statement"
-  } else if(arr['type'] =="procedures_defreturn"){
+  } else if(arr['type'] === "procedures_defreturn"){
     arr['type'] = "import_return"
   }
+
+  //console.log(Object.keys(arr['arg']));
+
   var a = "<block type=\"" + arr['type'] + "\" y=\"138\">" + "\n" +
           "<mutation func=\"" + arr['funcName'] + "\" args=\"" + Object.keys(arr['arg']).length + "\">"+ "\n";
 
-  for (var key in arr['arg']) {
+  //  var a = "<block type=\"" + arr['type'] + "\" y=\"138\">" + "\n" +
+//    "<mutation func=\"" + arr['funcName'] + "\">"+ "\n";
+
+    for (var key in arr['arg']) {
     // check if the property/key is defined in the object itself, not in parent
     if (arr['arg'].hasOwnProperty(key)) {
       a += "<arg name=\""+ arr['arg'][key] + "\"></arg>" + "\n"
@@ -258,21 +269,25 @@ function generateLibFuncXML(arr){
   return a;
 }
 
+
 // function xml parser
 function libFuncToMutationCode(libFunction){
   var parser, xmlDoc,txt="";
   var result = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">"+ "\n";
+
   parser = new DOMParser();
   xmlDoc = parser.parseFromString(libFunction,"text/xml");
+
   var blockObjects = xmlDoc.getElementsByTagName("block");
-  console.log(blockObjects)
+  //console.log(blockObjects);
+
   for(var blockIdx = 0; blockIdx < blockObjects.length; blockIdx++){
     var dict = {}
+    var flag = 0;
     var x = blockObjects[blockIdx];
     if(x.getAttributeNode("type").nodeValue == "text_print") {
       continue;
     }
-    var flag = 0;
     if(x.getAttributeNode("type").nodeValue == "procedures_defnoreturn"){
       flag = 1;
     }
@@ -283,6 +298,7 @@ function libFuncToMutationCode(libFunction){
     if(!flag){
       continue;
     }
+
     console.log(x.getAttributeNode("type").nodeValue)
 
     dict["type"] = x.getAttributeNode("type").nodeValue
@@ -321,16 +337,16 @@ function myImport() {
   let input = document.getElementById("importExport");
   // convert function xml to library xml
   let convertedXml = libFuncToMutationCode(input.value);
-  console.log(convertedXml);
+  console.log('log:'+convertedXml);
   let xml = Blockly.Xml.textToDom(convertedXml);
 
   let childrenCount = xml.children.length || 0;
   for (let i = 0; i < childrenCount; i++) {
     let child = xml.children[i];
 
-    let childIsBlock = (child.nodeName == "block");
-    let childTypeIsImportReturn = (child.getAttribute("type") == "import_return");
-    let childTypeIsImportStatement = (child.getAttribute("type") == "import_statement");
+    let childIsBlock = (child.nodeName === "block");
+    let childTypeIsImportReturn = (child.getAttribute("type") === "import_return");
+    let childTypeIsImportStatement = (child.getAttribute("type") === "import_statement");
 
     if (childIsBlock && (childTypeIsImportReturn || childTypeIsImportStatement)) {
       document.getElementById("toolbox-categories").querySelector("[name='Import']").append(
@@ -339,7 +355,6 @@ function myImport() {
       childrenCount--;
     }
   }
-
   collapseToolbox();
   workspace.updateToolbox(document.getElementById("toolbox-categories"));
 }
@@ -361,8 +376,11 @@ function toXml() {
     output.select();
     taChange();
 
-    FileToBLK("text.xml", textXML, false);
-    CreateBLK("text");
+   FileToBLK('test.xml', textXML, false);
+   CodeFile('JavaScript')
+   CodeFile('Python');
+
+   CreateBLK("test");
 }
 
 function fromXml() {
@@ -372,6 +390,48 @@ function fromXml() {
   taChange();
 }
 
+
+function toCode(lang) {
+    var output = document.getElementById('importExport');
+    output.value = Blockly[lang].workspaceToCode(workspace);
+    taChange();
+}
+
+function CodeFile(lang) {
+    var output = document.getElementById('importExport');
+    var result = Blockly[lang].workspaceToCode(workspace);
+    var filename = 'test';
+
+    if(lang === 'JavaScript')
+        filename += '.js';
+    else if(lang === 'Python')
+        filename += '.py';
+
+    FileToBLK(filename, result, true);
+    console.log(filename);
+}
+
+
+/*
+function toCode(lang) {
+  var output = document.getElementById('importExport_');
+  output.value = Blockly[lang].workspaceToCode(libraryspace);
+
+
+  var libFunction = samplePy();
+  var pyCode = output.value;
+  pyCode = "from testFunction import *\n" + pyCode;
+  var libraries = {'numberOfLibs' : 1, 'libraryInfo' : {
+      0 : {"name" : "testFunction", "body" : libFunction}
+    }};
+  console.log(pyCode);
+  console.log(libFunction);
+
+  // sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
+  taChange();
+}
+*/
+/*
 function sendAjax(url, main, libraries){
   // langType - 0:py 1:lua 2:dart 3:php
   // libraryFunction number
@@ -388,38 +448,7 @@ function sendAjax(url, main, libraries){
     //document.querySelector(".result").innerHTML = result.output;
   })
 }
-
-// .blk file에 위치한 코드, 샘플용
-function samplePy(){
-  var a = "argA = None" + "\n" +
-  "argB = None" + "\n" +
-  "\"\"\"Describe this function..." + "\n" +
-  "\"\"\"" + "\n" +
-  "def doSomething(argA, argB):" + "\n" +
-  "\tprint(argA + argB)" + "\n" +
-
-  "\"\"\"Describe this function..." + "\n" +
-  "\"\"\"" + "\n" +
-  "def doSomething2(argA, argB):" + "\n" +
-  "\tprint(argA + argB)"
-  return a;
-}
-
-function toCode(lang) {
-  var output = document.getElementById('importExport_');
-  output.value = Blockly[lang].workspaceToCode(libraryspace);
-  var libFunction = samplePy();
-  var pyCode = output.value;
-  pyCode = "from testFunction import *\n" + pyCode;
-  var libraries = {'numberOfLibs' : 1, 'libraryInfo' : {
-      0 : {"name" : "testFunction", "body" : libFunction}
-    }};
-  console.log(pyCode);
-  console.log(libFunction);
-
-  sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
-  taChange();
-}
+*/
 
 // Disable the "Import from XML" button if the XML is invalid.
 // Preserve text between page reloads.
@@ -756,8 +785,11 @@ h1 {
     <input type="button" value="Toolbox Collapse" onclick="collapseToolbox()">
     <br>
     <input type="button" value="Export to XML" onclick="toXml()">
+
+    <input type="file" value="add File" name="files[]" id="getFile" accept="application/zip">
     &nbsp;
-    <input type="file" value="Import from XML" name="files[]" onclick="fromXml()" id="import" accept="application/zip">
+    <input type="button" value="Import from XML" onclick="fromXml()" id="import">
+
     <br>
     <input type="button" value="To JavaScript" onclick="toCode('JavaScript')">
     &nbsp;

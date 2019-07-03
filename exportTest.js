@@ -1,4 +1,7 @@
+
 var fileObject = [];
+var XML = null;
+var output = document.getElementById('importExport');
 
 function ExtractFiles(evt){
     var zip = new JSZip();
@@ -6,7 +9,7 @@ function ExtractFiles(evt){
     var count = -1;
 
     var files = evt.target.files[0]; // FileList object
-    console.log("name "+files.name);
+    //console.log("name "+files.name);
     var reader = new FileReader();
 
     reader.onload= ( function(files){
@@ -24,8 +27,15 @@ function ExtractFiles(evt){
                                 jsonInfo.data = data;
                                 jsonData = data;
                                 fileObject.push(jsonInfo);
+
+                                if(!XML){
+                                    XML = data;
+                                    output.value = XML
+                                    taChange();
+                                    console.log(output.value);
+                                }
                             });
-                    })
+                    });
                 }).then(()=>{
                     setTimeout(()=>{
                         var jsonData = JSON.parse(fileObject[count].data);
@@ -46,6 +56,7 @@ function ExtractFiles(evt){
 function handleFileSelect(evt) {
     ExtractFiles(evt);
     console.log(fileObject);
+
 }
 
-document.getElementById('import').addEventListener('change', handleFileSelect, false);
+document.getElementById('getFile').addEventListener('change', handleFileSelect, false);

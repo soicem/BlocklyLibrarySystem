@@ -10,6 +10,7 @@
     "strict": true,
     "sub": true,
     "esversion": 3,
+    "esnext" : true,
 
     "globals": {
         "TextEncoder": false,
