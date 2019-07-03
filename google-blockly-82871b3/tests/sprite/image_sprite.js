@@ -14,11 +14,9 @@ class ImageSprite extends Sprite {
 
   draw() {
     let image = new Image();
-
     image.addEventListener("load", () => {
       this.canvas.getContext().drawImage(image, this.x, this.y, this.width, this.height);
     }, false);
-
     image.src = this.image;
   }
 }

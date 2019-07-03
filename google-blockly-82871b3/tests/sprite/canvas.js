@@ -9,7 +9,7 @@
 
 
 class Canvas {
-  constructor(elementId, width = 300, height = 150) {
+  constructor(elementId, width = 500, height = 300) {
     this.elementId = elementId;
     this.width = width;
     this.height = height;

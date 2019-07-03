@@ -26,36 +26,6 @@
 <script src="../generators/python/variables_dynamic.js"></script>
 <script src="../generators/python/procedures.js"></script>
 <script src="../generators/python/import.js"></script>
-<script src="../generators/php.js"></script>
-<script src="../generators/php/logic.js"></script>
-<script src="../generators/php/loops.js"></script>
-<script src="../generators/php/math.js"></script>
-<script src="../generators/php/text.js"></script>
-<script src="../generators/php/lists.js"></script>
-<script src="../generators/php/colour.js"></script>
-<script src="../generators/php/variables.js"></script>
-<script src="../generators/php/variables_dynamic.js"></script>
-<script src="../generators/php/procedures.js"></script>
-<script src="../generators/lua.js"></script>
-<script src="../generators/lua/logic.js"></script>
-<script src="../generators/lua/loops.js"></script>
-<script src="../generators/lua/math.js"></script>
-<script src="../generators/lua/text.js"></script>
-<script src="../generators/lua/lists.js"></script>
-<script src="../generators/lua/colour.js"></script>
-<script src="../generators/lua/variables.js"></script>
-<script src="../generators/lua/variables_dynamic.js"></script>
-<script src="../generators/lua/procedures.js"></script>
-<script src="../generators/dart.js"></script>
-<script src="../generators/dart/logic.js"></script>
-<script src="../generators/dart/loops.js"></script>
-<script src="../generators/dart/math.js"></script>
-<script src="../generators/dart/text.js"></script>
-<script src="../generators/dart/lists.js"></script>
-<script src="../generators/dart/colour.js"></script>
-<script src="../generators/dart/variables.js"></script>
-<script src="../generators/dart/variables_dynamic.js"></script>
-<script src="../generators/dart/procedures.js"></script>
 <script src="../msg/messages.js"></script>
 <script src="../blocks/logic.js"></script>
 <script src="../blocks/loops.js"></script>
@@ -81,11 +51,15 @@
 <script>
 'use strict';
 var workspace = null;
-var libraryspace = null;
 var toolbox = null;
-function start() {
-  setBackgroundColour();
 
+// sprite가 들어올 때마다 sprite에 해당하는 key에 XML을 저장한다.
+var XMLOfEachSprites = {
+};
+var currentSprite = "aww-cat.png"
+function start() {
+
+  setBackgroundColour();
   // Parse the URL arguments.
   var match = location.search.match(/dir=([^&]+)/);
   var rtl = match && match[1] == 'rtl';
@@ -149,33 +123,6 @@ function start() {
     // MSIE 11 does not support sessionStorage on file:// URLs.
     logEvents(false);
   }
-}
-
-function setWorkspaceFromSprite(sprite){
-  if(sprite == "library"){
-    document.getElementById('blocklyDiv').innerHTML = "";
-    libraryspace = Blockly.inject('blocklyDiv',
-            {
-              grid:
-                      {
-                        spacing: 25,
-                        length: 2,
-                        colour: '#ccc',
-                        snap: true
-                      },
-              scrollbars: true,
-              toolbox: toolbox,
-              zoom:
-                      {
-                        wheel: true,
-                        startScale: 1.0,
-                        maxScale: 4,
-                        minScale: 0.25,
-                        scaleSpeed: 1.1
-                      }
-            });
-  }
-  addToolboxButtonCallbacks();
 }
 
 function addToolboxButtonCallbacks() {
@@ -419,7 +366,7 @@ function samplePy(){
 
 function toJSCode() {
   let output = document.getElementById('importExport');
-  output.value = Blockly["JavaScript"].workspaceToCode(libraryspace);
+  output.value = Blockly["JavaScript"].workspaceToCode(workspace);
 
   canvas.clear();
   eval(output.value);
@@ -428,7 +375,7 @@ function toJSCode() {
 
 function toCode(lang) {
   var output = document.getElementById('importExport_');
-  output.value = Blockly[lang].workspaceToCode(libraryspace);
+  output.value = Blockly[lang].workspaceToCode(workspace);
   var libFunction = samplePy();
   var pyCode = output.value;
   pyCode = "from testFunction import *\n" + pyCode;
@@ -536,93 +483,14 @@ var spaghettiXml = [
   '    <next></next>',
   '  </block>'].join('\n');
 
-//TabCondtroller--------------------------------------------
-/*
-var TabController;
-
-TabController = function(){
-  this.tabMap = Object.create(null);
-  this.tabMap[TabController.MAIN] =
-          document.getElementById('main_tab');
-  this.tabMap[TabController.LIBRARY] =
-          document.getElementById('library_tab');
-
-  this.lastSelectedTab = null;
-  this.selectedTab = "MAIN";
-}
-
-TabController.MAIN = 'MAIN';
-TabController.LIBRARY = 'LIBRARY';
-
-TabController.prototype.addTabHandlers = function(tabMap){
-  for(var tabName in tabMap){
-    var tab = tabMap[tabName];
-    tab.addEventListener('click', self.makeTabClickHandler(tabName))
-  }
-}
-
-TabController.prototype.setSelected = function(tabName) {
-  this.lastSelectedTab = this.selectedTab;
-  this.selectedTab = tabName;
-};
-
-TabController.prototype.makeTabClickHandler = function(tabName) {
-  var self = this;
-  return function() {
-    self.setSelected(tabName);
-    self.onTab();
-  };
-};
-
-TabController.prototype.onTab = function() {
-  // Get tab div elements.
-  var mainTab = this.tabMap[TabController.MAIN];
-  var libraryTab = this.tabMap[TabController.LIBRARY];
-  this.styleTabs_();
-  if (this.selectedTab == TabController.LIBRARY) {
-    // Hide other tabs.
-    document.getElementById('blocklyDiv').style.display = 'none';
-    // Show exporter tab.
-    document.getElementById('library').style.display = 'block';
-  } else if (this.selectedTab ==  TabController.MAIN) {
-    //BlocklyDevTools.Analytics.onNavigateTo('BlockFactory');
-
-    // Hide other tabs.
-    document.getElementById('library').style.display = 'none';
-    // Show Block Factory.
-    document.getElementById('blocklyDiv').style.display = 'block';
-    //window.dispatchEvent(new Event('resize'));
-  }
-};
-
-TabController.prototype.styleTabs_ = function() {
-  for (var tabName in this.tabMap) {
-    if (this.selectedTab == tabName) {
-      this.tabMap[tabName].classList.replace('taboff', 'tabon');
-    } else {
-      this.tabMap[tabName].classList.replace('tabon', 'taboff');
-    }
-  }
-};
-*/
-
 
 function changeTab(){
   var tab = document.getElementById('tabChanger');
   if(tab.value == "main_tab"){
 
   }else if(tab.value == "library_tab"){
-    setWorkspaceFromSprite("library");
-    //show('library');
-    //hide('blocklyDiv');
+    //setWorkspaceFromSprite("library");
   }
-}
-
-function hide(tabName){
-  document.getElementById(tabName).style.display = 'none'
-}
-function show(tabName){
-  document.getElementById(tabName).style.display = 'block'
 }
 
 // 리소스 움직임용 함수
@@ -666,17 +534,6 @@ h1 {
   width: 40%; /*70 to 40*/
 }
 
-#librarySpace{
-  float:left;
-  height:100px;
-  width:40%
-}
-
-#library {
-  float: left;
-  height: 80%;
-  width: 70%;
-}
 #importExport {
   font-family: monospace;
 }
@@ -703,42 +560,6 @@ canvas {
   position: absolute;
 }
 
-.ioLabel>.blocklyFlyoutLabelText {
-  font-style: italic;
-}
-
-/* Tabs */
-
-.tab {
-  float: left;
-  padding: 5px 19px;
-}
-
-.tab:hover:not(.tabon){
-  background-color: #e8e8e8;
-}
-
-.tab.tabon {
-  background-color: #ccc;
-}
-
-.tab.taboff {
-  cursor: pointer;
-}
-
-#tabContainer {
-  background-color: #f8f8f8;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-  display: block;
-  width: 260px;
-}
-
-#menu {
-  float:left;
-
-}
-
 #importedFunctions{
   clear: both;
   display: none;
@@ -746,9 +567,6 @@ canvas {
   overflow-x: hidden;
   overflow-y: scroll;
 }
-
-
-
 
 </style>
 </head>
@@ -759,25 +577,12 @@ canvas {
     <option value="main_tab">Main</option>
     <option value="library_tab">Library</option>
   </select>
-  <!--
-  <div id="tabContainer">
-    <div id="main_tab" class="tab tabon">Main</div>
-    <div id="library_tab" class="tab taboff">Library</div>
-  </div>
-  -->
   <br>
   <!--Workspace Tab -->
   <div>
 
   </div>
   <div id="blocklyDiv"></div>
-  <p>
-    <button onclick="canvas.clear(); cat.moveSteps(100);">Click Me</button>
-  </p>
-
-  <!--<div id ="myContainer">
-    <img src="aww-cat.png" id="myAnimation">
-  </div>-->
 
   <canvas id="myCanvas"></canvas>
   <script src="sprite/canvas.js"></script>
@@ -788,8 +593,109 @@ canvas {
     let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
     cat.draw();
   </script>
+  <style>
+    div.gallery {
+      margin: 5px;
+      border: 1px solid #ccc;
+      float: left;
+      width: 100px;
 
+    }
 
+    div.gallery:hover {
+      border: 1px solid #777;
+    }
+
+    div.gallery img {
+      width: 100%;
+      height: auto;
+    }
+
+    div.desc {
+      padding: 15px;
+      text-align: center;
+    }
+  </style>
+
+  <script>
+    function spriteChooser(){
+      var name;
+      var x = document.getElementById("spriteChooser");
+      var txt = "";
+      if ('files' in x) {
+        if (x.files.length == 0) {
+          txt = "Select one or more files.";
+        } else {
+          for (var i = 0; i < x.files.length; i++) {
+            txt += "<br><strong>" + (i+1) + ". file</strong><br>";
+            var file = x.files[i];
+            if ('name' in file) {
+              txt += "name: " + file.name + "<br>";
+              name = file.name;
+            }
+            if ('size' in file) {
+              txt += "size: " + file.size + " bytes <br>";
+            }
+            if ('value' in file) {
+              txt += "value: " + file.value + " bytes <br>";
+            }
+          }
+        }
+      }
+      else {
+        if (x.value == "") {
+          txt += "Select one or more files.";
+        } else {
+          txt += "The files property is not supported by your browser!";
+          txt  += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
+        }
+      }
+      var a = '<div class="gallery\">' +
+              '<img onclick="pictureEvent(\'' + name + '\')" src="' + name + '" alt="냥" width="100" height="100">'+
+              '<div class="desc">냥</div>' +
+              '</div>' ;
+        //alert(a);
+        document.getElementById("gallary_owner").innerHTML += a;
+        XMLOfEachSprites[name] = "";
+      }
+
+    // 현재 진행되던 sprite 변수명 : currentSprite
+    // sprite xml들을 저장하는 property list : XMLOfEachSprites
+    // nameOfSprite : sprite의 이름, key로 사용
+    // sprite의 이름을 받아서 workspace에 해당 sprite의 블록을 넣어준다.
+    function pictureEvent(nameOfSprite){
+      // to xml
+      if(currentSprite != nameOfSprite){
+        var xml = Blockly.Xml.workspaceToDom(workspace);
+        var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
+        //alert(prettyXMLText)
+        XMLOfEachSprites[currentSprite] = prettyXMLText;
+        //taChange();
+        if(XMLOfEachSprites[nameOfSprite] == ""){
+          workspace.clear();
+        } else {
+          var input = document.getElementById('importExport');
+          var nextXml = Blockly.Xml.textToDom(XMLOfEachSprites[nameOfSprite]);
+          workspace.clear();
+          Blockly.Xml.domToWorkspace(nextXml, workspace);
+          taChange();
+
+        }
+        currentSprite = nameOfSprite;
+        taChange();
+      }
+
+    }
+
+  </script>
+  <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
+  <div id="gallary_owner">
+    <div class="gallery">
+      <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100" height="100">
+      <div class="desc">냐옹</div>
+    </div>
+
+  </div>
     <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
      - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
 
