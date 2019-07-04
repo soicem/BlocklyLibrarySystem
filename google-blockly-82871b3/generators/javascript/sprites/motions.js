@@ -28,32 +28,54 @@ goog.provide('Blockly.JavaScript.motions');
 
 goog.require('Blockly.JavaScript');
 
-
-Blockly.JavaScript["sprite_moveSteps"] = function(block) {
-  let steps = Blockly.JavaScript.valueToCode(block, "STEPS", Blockly.JavaScript.ORDER_ATOMIC);
-
+Blockly.JavaScript["sprite_moveSteps"] = function (block) {
+  let steps = Blockly.JavaScript.valueToCode(block, "STEPS",
+      Blockly.JavaScript.ORDER_ATOMIC);
   return "-moveSteps(" + steps + ");\n";
 };
-
-Blockly.JavaScript['sprite_turnAngle'] = function(block) {
+Blockly.JavaScript['sprite_turnAngle'] = function (block) {
   let DIRECTIONS = {
     RIGHT: "turnRight",
     LEFT: "turnLeft"
   };
   let dropdown_dir = block.getFieldValue('DIR');
   let funcName = DIRECTIONS[dropdown_dir];
-  let value_degree = Blockly.JavaScript.valueToCode(block, 'DEGREE', Blockly.JavaScript.ORDER_ATOMIC);
-
-  return "cat." + funcName + "(" + value_degree + ");\n";
+  let value_degree = Blockly.JavaScript.valueToCode(block, 'DEGREE',
+      Blockly.JavaScript.ORDER_ATOMIC);
+  return "-" + funcName + "(" + value_degree + ");\n";
 };
-
-Blockly.JavaScript['sprite_goTo'] = function(block) {
+Blockly.JavaScript['sprite_goTo'] = function (block) {
   let WHERES = {
     RANDOM: "positionRandomly",
     MOUSE: "positionToMouse"
-  }
+  };
   let dropdown_where = block.getFieldValue('WHERE');
   let funcName = WHERES[dropdown_where];
+  return "-" + funcName + "();\n";
+};
 
-  return "cat." + funcName + "();\n";
+Blockly.JavaScript['sprite_goToPoint'] = function (block) {
+  let value_x = Blockly.JavaScript.valueToCode(block, 'X',
+      Blockly.JavaScript.ORDER_ATOMIC);
+  let value_y = Blockly.JavaScript.valueToCode(block, 'Y',
+      Blockly.JavaScript.ORDER_ATOMIC);
+  return "-setXY(" + value_x + ", " + value_y + ");\n";
+};
+
+Blockly.JavaScript['sprite_pointTo'] = function (block) {
+  let value_dir = Blockly.JavaScript.valueToCode(block, 'DIR',
+      Blockly.JavaScript.ORDER_ATOMIC);
+  return "-setDirection(" + value_dir + ");\n";
+};
+
+Blockly.JavaScript['sprite_getXY'] = function (block) {
+  let OPTIONS = {
+    X: "x",
+    Y: "y"
+  };
+  let dropdown_xy = block.getFieldValue('XY');
+  let funcName = OPTIONS[dropdown_xy];
+  let code = "-" + funcName + "";
+
+  return [code, Blockly.JavaScript.ORDER_NONE];
 };

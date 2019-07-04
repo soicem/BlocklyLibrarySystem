@@ -8,6 +8,7 @@ class ImageSprite {
     this.height = height;
     this.width = width;
     this.direction = direction;
+    this.init();
   }
 
   printProperties(){
@@ -15,6 +16,14 @@ class ImageSprite {
     console.log("y : ", this.y)
     console.log("height : ", this.height)
     console.log("width : ", this.width);
+  }
+
+  get imageObj() {
+    return this._imageObj;
+  }
+
+  set imageObj(value) {
+    this._imageObj = value;
   }
 
   get canvas() {
@@ -145,13 +154,18 @@ class ImageSprite {
     //this.draw();
   }
 
-  // implement abstruct function from Sprite
-  draw() {
-    let image = new Image();
-    image.addEventListener("load", () => {
-      this.canvas.getContext().drawImage(image, this.x, this.y, this.width, this.height);
+  init() {
+    this.imageObj = new Image();
+    this.imageObj.addEventListener("load", () => {
+      this.draw();
     }, false);
-    image.src = this.image;
-    console.log(image.src);
+    this.imageObj.src = this.image;
+    console.log(this.imageObj.src);
+  }
+
+  draw() {
+    this.canvas.getContext().drawImage(this.imageObj, this.x, this.y,
+        this.width,
+        this.height);
   }
 }
