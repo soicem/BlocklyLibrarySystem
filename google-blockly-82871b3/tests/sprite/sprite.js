@@ -56,7 +56,6 @@ class Sprite {
     this._direction = value % 360;
   }
 
-  //abstract method
   draw() {}
 
   moveSteps(step) {

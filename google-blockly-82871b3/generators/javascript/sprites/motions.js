@@ -32,7 +32,7 @@ goog.require('Blockly.JavaScript');
 Blockly.JavaScript["sprite_moveSteps"] = function(block) {
   let steps = Blockly.JavaScript.valueToCode(block, "STEPS", Blockly.JavaScript.ORDER_ATOMIC);
 
-  return "cat.moveSteps(" + steps + ");\n";
+  return "-moveSteps(" + steps + ");\n";
 };
 
 Blockly.JavaScript['sprite_turnAngle'] = function(block) {

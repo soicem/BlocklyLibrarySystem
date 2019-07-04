@@ -57,6 +57,13 @@ var toolbox = null;
 var XMLOfEachSprites = {
 };
 var currentSprite = "aww-cat.png"
+
+// sprite들의 객체를 이름별로 저장한다.
+// canvas에 sprite의 동작을 표현하기 위함이다.
+// 저장되는 객체의 타입은 ImageSprite (extend sprite)이다.
+var objectsOfSprites = {
+
+}
 function start() {
 
   setBackgroundColour();
@@ -364,13 +371,24 @@ function samplePy(){
   return a;
 }
 
+// block을 Javascript 코드로 변환하고, 이를 실행시킨다.
 function toJSCode() {
   let output = document.getElementById('importExport');
   output.value = Blockly["JavaScript"].workspaceToCode(workspace);
-
   canvas.clear();
-  eval(output.value);
-  cat.draw();
+  //alert(output.value);
+  //objectsOfSprites[currentSprite].jsCode = output.value;
+  objectsOfSprites[currentSprite].printProperties()
+
+  objectsOfSprites[currentSprite].executeJS(output.value);
+  //console.log(objectsOfSprites[currentSprite].jsCode);
+  //objectsOfSprites[currentSprite].printProperties()
+  objectsOfSprites[currentSprite].draw();
+  console.log(currentSprite);
+
+  // 기존 코드
+  /*eval(output.value);
+  cat.draw();*/
 }
 
 function toCode(lang) {
@@ -494,7 +512,7 @@ function changeTab(){
 }
 
 // 리소스 움직임용 함수
-function myMove() {
+/*function myMove() {
   var resImage = document.getElementById("myAnimation");
   var resContainer = document.getElementById("myContainer");
   var top = resImage.offsetTop;
@@ -511,7 +529,7 @@ function myMove() {
       resImage.style.left = left + pos +'px';
     }
   }
-}
+}*/
 //-------------------------------------------------------
 </script>
 
@@ -590,8 +608,12 @@ canvas {
   <script src="sprite/image_sprite.js"></script>
   <script>
     let canvas = new Canvas("myCanvas", 500, 300);
-    let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
-    cat.draw();
+
+    // 기본 sprite를 배치한다.
+    objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
+    objectsOfSprites["aww-cat.png"].draw();
+    //objectsOfSprites["aww-cat.png"];
+    currentSprite = "aww-cat.png";
   </script>
   <style>
     div.gallery {
@@ -656,8 +678,16 @@ canvas {
               '</div>' ;
         //alert(a);
         document.getElementById("gallary_owner").innerHTML += a;
-        XMLOfEachSprites[name] = "";
-      }
+
+        // sprite 별로 사용자가 만들었던 XML을 저장한다.
+        XMLOfEachSprites[name] = ""
+        // sprite에 대한 canvas 용 objects를 저장한다.
+        // 객체 생성 코드 예시 : let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
+        objectsOfSprites[name] = new ImageSprite(canvas, name, 50, 50, 50, 50);
+        objectsOfSprites[name].draw();
+        objectsOfSprites[name].printProperties();
+
+    }
 
     // 현재 진행되던 sprite 변수명 : currentSprite
     // sprite xml들을 저장하는 property list : XMLOfEachSprites
