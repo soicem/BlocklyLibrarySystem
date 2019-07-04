@@ -26,36 +26,6 @@
 <script src="../generators/python/variables_dynamic.js"></script>
 <script src="../generators/python/procedures.js"></script>
 <script src="../generators/python/import.js"></script>
-<script src="../generators/php.js"></script>
-<script src="../generators/php/logic.js"></script>
-<script src="../generators/php/loops.js"></script>
-<script src="../generators/php/math.js"></script>
-<script src="../generators/php/text.js"></script>
-<script src="../generators/php/lists.js"></script>
-<script src="../generators/php/colour.js"></script>
-<script src="../generators/php/variables.js"></script>
-<script src="../generators/php/variables_dynamic.js"></script>
-<script src="../generators/php/procedures.js"></script>
-<script src="../generators/lua.js"></script>
-<script src="../generators/lua/logic.js"></script>
-<script src="../generators/lua/loops.js"></script>
-<script src="../generators/lua/math.js"></script>
-<script src="../generators/lua/text.js"></script>
-<script src="../generators/lua/lists.js"></script>
-<script src="../generators/lua/colour.js"></script>
-<script src="../generators/lua/variables.js"></script>
-<script src="../generators/lua/variables_dynamic.js"></script>
-<script src="../generators/lua/procedures.js"></script>
-<script src="../generators/dart.js"></script>
-<script src="../generators/dart/logic.js"></script>
-<script src="../generators/dart/loops.js"></script>
-<script src="../generators/dart/math.js"></script>
-<script src="../generators/dart/text.js"></script>
-<script src="../generators/dart/lists.js"></script>
-<script src="../generators/dart/colour.js"></script>
-<script src="../generators/dart/variables.js"></script>
-<script src="../generators/dart/variables_dynamic.js"></script>
-<script src="../generators/dart/procedures.js"></script>
 <script src="../msg/messages.js"></script>
 <script src="../blocks/logic.js"></script>
 <script src="../blocks/loops.js"></script>
@@ -75,19 +45,33 @@
 <script src="../blocks/sprites/sensing.js"></script>
 <script src="../blocks/sprites/operators.js"></script>
 <script src="../blocks/sprites/variables.js"></script>
+<script src="../generators/javascript/sprites/motions.js"></script>
 <script src="blocks/test_blocks.js"></script>
+<script src="sprite/sprite.js"></script>
 <script>
 'use strict';
 var workspace = null;
-var libraryspace = null;
-function start() {
-  setBackgroundColour();
+var toolbox = null;
 
+// sprite가 들어올 때마다 sprite에 해당하는 key에 XML을 저장한다.
+var XMLOfEachSprites = {
+};
+var currentSprite = "aww-cat.png"
+
+// sprite들의 객체를 이름별로 저장한다.
+// canvas에 sprite의 동작을 표현하기 위함이다.
+// 저장되는 객체의 타입은 ImageSprite (extend sprite)이다.
+var objectsOfSprites = {
+
+}
+function start() {
+
+  setBackgroundColour();
   // Parse the URL arguments.
   var match = location.search.match(/dir=([^&]+)/);
   var rtl = match && match[1] == 'rtl';
   document.forms.options.elements.dir.selectedIndex = Number(rtl);
-  var toolbox = getToolboxElement();
+  toolbox = getToolboxElement();
   var toolboxNames = [
       'toolbox-categories',
       'toolbox-categories-typed-variables',
@@ -132,26 +116,6 @@ function start() {
             scaleSpeed: 1.1
           }
       });
-  libraryspace = Blockly.inject('librarySpace',
-      {
-        grid:
-        {
-          spacing: 25,
-          length: 3,
-          colour: '#ccc',
-          snap: true
-        },
-        scrollbars: true,
-        toolbox: toolbox,
-        zoom:
-        {
-          wheel: true,
-          startScale: 1.0,
-          maxScale: 4,
-          minScale: 0.25,
-          scaleSpeed: 1.1
-        }
-      });
   addToolboxButtonCallbacks();
   // Restore previously displayed text.
   if (sessionStorage) {
@@ -166,8 +130,6 @@ function start() {
     // MSIE 11 does not support sessionStorage on file:// URLs.
     logEvents(false);
   }
-  taChange();
-  tabInit();
 }
 
 function addToolboxButtonCallbacks() {
@@ -409,9 +371,29 @@ function samplePy(){
   return a;
 }
 
+// block을 Javascript 코드로 변환하고, 이를 실행시킨다.
+function toJSCode() {
+  let output = document.getElementById('importExport');
+  output.value = Blockly["JavaScript"].workspaceToCode(workspace);
+  canvas.clear();
+  //alert(output.value);
+  //objectsOfSprites[currentSprite].jsCode = output.value;
+  objectsOfSprites[currentSprite].printProperties()
+
+  objectsOfSprites[currentSprite].executeJS(output.value);
+  //console.log(objectsOfSprites[currentSprite].jsCode);
+  //objectsOfSprites[currentSprite].printProperties()
+  objectsOfSprites[currentSprite].draw();
+  console.log(currentSprite);
+
+  // 기존 코드
+  /*eval(output.value);
+  cat.draw();*/
+}
+
 function toCode(lang) {
   var output = document.getElementById('importExport_');
-  output.value = Blockly[lang].workspaceToCode(libraryspace);
+  output.value = Blockly[lang].workspaceToCode(workspace);
   var libFunction = samplePy();
   var pyCode = output.value;
   pyCode = "from testFunction import *\n" + pyCode;
@@ -519,98 +501,35 @@ var spaghettiXml = [
   '    <next></next>',
   '  </block>'].join('\n');
 
-//TabCondtroller--------------------------------------------
-/*
-var TabController;
-
-TabController = function(){
-  this.tabMap = Object.create(null);
-  this.tabMap[TabController.MAIN] =
-          document.getElementById('main_tab');
-  this.tabMap[TabController.LIBRARY] =
-          document.getElementById('library_tab');
-
-  this.lastSelectedTab = null;
-  this.selectedTab = "MAIN";
-}
-
-TabController.MAIN = 'MAIN';
-TabController.LIBRARY = 'LIBRARY';
-
-TabController.prototype.addTabHandlers = function(tabMap){
-  for(var tabName in tabMap){
-    var tab = tabMap[tabName];
-    tab.addEventListener('click', self.makeTabClickHandler(tabName))
-  }
-}
-
-TabController.prototype.setSelected = function(tabName) {
-  this.lastSelectedTab = this.selectedTab;
-  this.selectedTab = tabName;
-};
-
-TabController.prototype.makeTabClickHandler = function(tabName) {
-  var self = this;
-  return function() {
-    self.setSelected(tabName);
-    self.onTab();
-  };
-};
-
-TabController.prototype.onTab = function() {
-  // Get tab div elements.
-  var mainTab = this.tabMap[TabController.MAIN];
-  var libraryTab = this.tabMap[TabController.LIBRARY];
-  this.styleTabs_();
-  if (this.selectedTab == TabController.LIBRARY) {
-    // Hide other tabs.
-    document.getElementById('blocklyDiv').style.display = 'none';
-    // Show exporter tab.
-    document.getElementById('library').style.display = 'block';
-  } else if (this.selectedTab ==  TabController.MAIN) {
-    //BlocklyDevTools.Analytics.onNavigateTo('BlockFactory');
-
-    // Hide other tabs.
-    document.getElementById('library').style.display = 'none';
-    // Show Block Factory.
-    document.getElementById('blocklyDiv').style.display = 'block';
-    //window.dispatchEvent(new Event('resize'));
-  }
-};
-
-TabController.prototype.styleTabs_ = function() {
-  for (var tabName in this.tabMap) {
-    if (this.selectedTab == tabName) {
-      this.tabMap[tabName].classList.replace('taboff', 'tabon');
-    } else {
-      this.tabMap[tabName].classList.replace('tabon', 'taboff');
-    }
-  }
-};
-*/
-
-function tabInit(){
-  hide('library');
-  show('blockDiv');
-}
 
 function changeTab(){
   var tab = document.getElementById('tabChanger');
   if(tab.value == "main_tab"){
-    show('blocklyDiv');
-    hide('library');
+
   }else if(tab.value == "library_tab"){
-    show('library');
-    hide('blocklyDiv');
+    //setWorkspaceFromSprite("library");
   }
 }
 
-function hide(tabName){
-  document.getElementById(tabName).style.display = 'none'
-}
-function show(tabName){
-  document.getElementById(tabName).style.display = 'block'
-}
+// 리소스 움직임용 함수
+/*function myMove() {
+  var resImage = document.getElementById("myAnimation");
+  var resContainer = document.getElementById("myContainer");
+  var top = resImage.offsetTop;
+  var left = resImage.offsetLeft;
+  //var elem = document.getElementById("myAnimation");
+  var pos = 0;
+  var id = setInterval(frame, 10);
+  function frame() {
+    if (pos == 400) {
+      clearInterval(id);
+    } else {
+      pos++;
+      resImage.style.top = top  + pos + 'px';
+      resImage.style.left = left + pos +'px';
+    }
+  }
+}*/
 //-------------------------------------------------------
 </script>
 
@@ -628,48 +547,35 @@ h1 {
   font-size: 140%;
 }
 #blocklyDiv {
-  float: right;
+  float: left;
   height: 80%;
-  width: 70%;
+  width: 40%; /*70 to 40*/
 }
-#library {
-  float: right;
-  height: 80%;
-  width: 70%;
-}
+
 #importExport {
   font-family: monospace;
 }
 
-.ioLabel>.blocklyFlyoutLabelText {
-  font-style: italic;
+canvas {
+  border: 1px solid black;
 }
 
-/* Tabs */
-
-.tab {
-  float: left;
-  padding: 5px 19px;
+/* 리소스 핸들링용 CSS */
+#myContainer {
+  width: 450px;
+  height: 450px;
+  float:left;
+  border-style: solid;
+  border-bottom-color: #92a8d1;
+  border-top-color: #92a8d1;
+  border-left-color: #92a8d1;
+  border-right-color: #92a8d1;
+  background: white;
 }
-
-.tab:hover:not(.tabon){
-  background-color: #e8e8e8;
-}
-
-.tab.tabon {
-  background-color: #ccc;
-}
-
-.tab.taboff {
-  cursor: pointer;
-}
-
-#tabContainer {
-  background-color: #f8f8f8;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-  display: block;
-  width: 260px;
+#myAnimation {
+  width: 50px;
+  height: 50px;
+  position: absolute;
 }
 
 #importedFunctions{
@@ -678,12 +584,6 @@ h1 {
   height: 90%;
   overflow-x: hidden;
   overflow-y: scroll;
-}
-
-#librarySpace{
-  float:left;
-  height:100px;
-  width:40%
 }
 
 </style>
@@ -695,98 +595,197 @@ h1 {
     <option value="main_tab">Main</option>
     <option value="library_tab">Library</option>
   </select>
-  <!--
-  <div id="tabContainer">
-    <div id="main_tab" class="tab tabon">Main</div>
-    <div id="library_tab" class="tab taboff">Library</div>
-  </div>
-  -->
   <br>
   <!--Workspace Tab -->
-  <div id="blocklyDiv"></div>
-  <!--Library Tab -->
-  <div id="library">
+  <div>
 
-    <h1>Library</h1>
-    <div id="librarySpace"></div>
-    <p>
-    <input type="button" value="To JavaScript" onclick="toCode('JavaScript')">
-    &nbsp;
-    <input type="button" value="To Python" onclick="toCode('Python')">
-    &nbsp;
-    <input type="button" value="To PHP" onclick="toCode('PHP')">
-    &nbsp;
-    <input type="button" value="To Lua" onclick="toCode('Lua')">
-    &nbsp;
-    <input type="button" value="To Dart" onclick="toCode('Dart')">
-    <br>
-    <textarea id="importExport_" style="width: 80%; height: 70%;"
-              onchange="taChange();" onkeyup="taChange()">
-    </textarea>
-
-    </p>
   </div>
-  <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
-   - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
+  <div id="blocklyDiv"></div>
 
-  <form id="options">
-    <select name="dir" onchange="document.forms.options.submit()">
-      <option value="ltr">LTR</option>
-      <option value="rtl">RTL</option>
+  <canvas id="myCanvas"></canvas>
+  <script src="sprite/canvas.js"></script>
+  <script src="sprite/sprite.js"></script>
+  <script src="sprite/image_sprite.js"></script>
+  <script>
+    let canvas = new Canvas("myCanvas", 500, 300);
+
+    // 기본 sprite를 배치한다.
+    objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
+    objectsOfSprites["aww-cat.png"].draw();
+    //objectsOfSprites["aww-cat.png"];
+    currentSprite = "aww-cat.png";
+  </script>
+  <style>
+    div.gallery {
+      margin: 5px;
+      border: 1px solid #ccc;
+      float: left;
+      width: 100px;
+
+    }
+
+    div.gallery:hover {
+      border: 1px solid #777;
+    }
+
+    div.gallery img {
+      width: 100%;
+      height: auto;
+    }
+
+    div.desc {
+      padding: 15px;
+      text-align: center;
+    }
+  </style>
+
+  <script>
+    function spriteChooser(){
+      var name;
+      var x = document.getElementById("spriteChooser");
+      var txt = "";
+      if ('files' in x) {
+        if (x.files.length == 0) {
+          txt = "Select one or more files.";
+        } else {
+          for (var i = 0; i < x.files.length; i++) {
+            txt += "<br><strong>" + (i+1) + ". file</strong><br>";
+            var file = x.files[i];
+            if ('name' in file) {
+              txt += "name: " + file.name + "<br>";
+              name = file.name;
+            }
+            if ('size' in file) {
+              txt += "size: " + file.size + " bytes <br>";
+            }
+            if ('value' in file) {
+              txt += "value: " + file.value + " bytes <br>";
+            }
+          }
+        }
+      }
+      else {
+        if (x.value == "") {
+          txt += "Select one or more files.";
+        } else {
+          txt += "The files property is not supported by your browser!";
+          txt  += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
+        }
+      }
+      var a = '<div class="gallery\">' +
+              '<img onclick="pictureEvent(\'' + name + '\')" src="' + name + '" alt="냥" width="100" height="100">'+
+              '<div class="desc">냥</div>' +
+              '</div>' ;
+        //alert(a);
+        document.getElementById("gallary_owner").innerHTML += a;
+
+        // sprite 별로 사용자가 만들었던 XML을 저장한다.
+        XMLOfEachSprites[name] = ""
+        // sprite에 대한 canvas 용 objects를 저장한다.
+        // 객체 생성 코드 예시 : let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
+        objectsOfSprites[name] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0);
+        objectsOfSprites[name].draw();
+        objectsOfSprites[name].printProperties();
+
+    }
+
+    // 현재 진행되던 sprite 변수명 : currentSprite
+    // sprite xml들을 저장하는 property list : XMLOfEachSprites
+    // nameOfSprite : sprite의 이름, key로 사용
+    // sprite의 이름을 받아서 workspace에 해당 sprite의 블록을 넣어준다.
+    function pictureEvent(nameOfSprite){
+      // to xml
+      if(currentSprite != nameOfSprite){
+        var xml = Blockly.Xml.workspaceToDom(workspace);
+        var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
+        //alert(prettyXMLText)
+        XMLOfEachSprites[currentSprite] = prettyXMLText;
+        //taChange();
+        if(XMLOfEachSprites[nameOfSprite] == ""){
+          workspace.clear();
+        } else {
+          var input = document.getElementById('importExport');
+          var nextXml = Blockly.Xml.textToDom(XMLOfEachSprites[nameOfSprite]);
+          workspace.clear();
+          Blockly.Xml.domToWorkspace(nextXml, workspace);
+          taChange();
+
+        }
+        currentSprite = nameOfSprite;
+        taChange();
+      }
+
+    }
+
+  </script>
+  <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
+  <div id="gallary_owner">
+    <div class="gallery">
+      <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100" height="100">
+      <div class="desc">냐옹</div>
+    </div>
+
+  </div>
+    <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
+     - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
+
+    <form id="options">
+      <select name="dir" onchange="document.forms.options.submit()">
+        <option value="ltr">LTR</option>
+        <option value="rtl">RTL</option>
+      </select>
+      <select name="toolbox" onchange="document.forms.options.submit()">
+        <option value="categories">Categories (untyped variables)</option>
+        <option value="categories-typed-variables">Categories (typed variables)</option>
+        <option value="simple">Simple</option>
+        <option value="test-blocks">Test Blocks</option>
+      </select>
+      <select name="side" onchange="document.forms.options.submit()">
+        <option value="start">Start</option>
+        <option value="end">End</option>
+        <option value="top">Top</option>
+        <option value="bottom">Bottom</option>
+      </select>
+    </form>
+    <select id="themeChanger" name="theme" onchange="changeTheme()">
+      <option value="classic">Classic</option>
+      <option value="modern">Modern</option>
+      <option value="high_contrast">High Contrast</option>
     </select>
-    <select name="toolbox" onchange="document.forms.options.submit()">
-      <option value="categories">Categories (untyped variables)</option>
-      <option value="categories-typed-variables">Categories (typed variables)</option>
-      <option value="simple">Simple</option>
-      <option value="test-blocks">Test Blocks</option>
-    </select>
-    <select name="side" onchange="document.forms.options.submit()">
-      <option value="start">Start</option>
-      <option value="end">End</option>
-      <option value="top">Top</option>
-      <option value="bottom">Bottom</option>
-    </select>
-  </form>
-  <select id="themeChanger" name="theme" onchange="changeTheme()">
-    <option value="classic">Classic</option>
-    <option value="modern">Modern</option>
-    <option value="high_contrast">High Contrast</option>
-  </select>
-  <p>
-    <input type="button" value="Insert test XML" onclick="insertTestXml()">
+    <p>
+      <input type="button" value="Insert test XML" onclick="insertTestXml()">
 
-    <input type="button" value="My import" onclick="myImport()">
+      <input type="button" value="My import" onclick="myImport()">
 
-    <input type="button" value="Toolbox Collapse" onclick="collapseToolbox()">
-    <br>
-    <input type="button" value="Export to XML" onclick="toXml()">
-    &nbsp;
-    <input type="button" value="Import from XML" onclick="fromXml()" id="import">
-    <br>
-    <input type="button" value="To JavaScript" onclick="toCode('JavaScript')">
-    &nbsp;
-    <input type="button" value="To Python" onclick="toCode('Python')">
-    &nbsp;
-    <input type="button" value="To PHP" onclick="toCode('PHP')">
-    &nbsp;
-    <input type="button" value="To Lua" onclick="toCode('Lua')">
-    &nbsp;
-    <input type="button" value="To Dart" onclick="toCode('Dart')">
-    <br>
-    <textarea id="importExport" style="width: 26%; height: 12em"
-      onchange="taChange();" onkeyup="taChange()"></textarea>
-  </p>
+      <input type="button" value="Toolbox Collapse" onclick="collapseToolbox()">
+      <br>
+      <input type="button" value="Export to XML" onclick="toXml()">
+      &nbsp;
+      <input type="button" value="Import from XML" onclick="fromXml()" id="import">
+      <br>
+      <input type="button" value="To JavaScript" onclick="toJSCode()">
+      &nbsp;
+      <input type="button" value="To Python" onclick="toCode('Python')">
+      &nbsp;
+      <input type="button" value="To PHP" onclick="toCode('PHP')">
+      &nbsp;
+      <input type="button" value="To Lua" onclick="toCode('Lua')">
+      &nbsp;
+      <input type="button" value="To Dart" onclick="toCode('Dart')">
 
-  <p>
-    Stress test: &nbsp;
-    <input type="button" value="Airstrike!" onclick="airstrike(100)">
-    <input type="button" value="Spaghetti!" onclick="spaghetti(8)">
-  </p>
-  <p>
-    Log events: &nbsp;
-    <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
-  </p>
+      <textarea id="importExport" style="width: 100px; height: 12em"
+        onchange="taChange();" onkeyup="taChange()"></textarea>
+    </p>
 
+    <p>
+      Stress test: &nbsp;
+      <input type="button" value="Airstrike!" onclick="airstrike(100)">
+      <input type="button" value="Spaghetti!" onclick="spaghetti(8)">
+    </p>
+    <p>
+      Log events: &nbsp;
+      <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
+    </p>
   <!-- The next three blocks of XML are sample toolboxes for testing basic
   configurations.  For more information on building toolboxes, see https://developers.google.com/blockly/guides/configure/web/toolbox -->
 
