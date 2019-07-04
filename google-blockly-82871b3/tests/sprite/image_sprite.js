@@ -69,13 +69,17 @@ class ImageSprite {
     function toRadians(angle) {
       return angle * (Math.PI / 180);
     }
-
+    console.log("direction : ", this.direction);
+    console.log(step)
     let x = step * Math.cos(toRadians(this.direction));
     let y = step * Math.sin(toRadians(this.direction));
-    console.log(x)
-    console.log(y);
+    console.log("a : " ,x)
+    console.log("b : ", y);
     this.x += x;
     this.y += y;
+    console.log("a : " ,this.x)
+    console.log("b : ", this.y);
+
   }
 
   turn(degree) {
@@ -132,10 +136,9 @@ class ImageSprite {
     console.log("in executeJS")
     this.printProperties()
 
-    //eval(code);
-    this.x = parseInt(this.x);
-    this.y = parseInt(this.y);
-    this.moveSteps(10);
+    eval(code);
+
+    //this.moveSteps(10);
 
     this.printProperties();
     //console.log(this.image);
