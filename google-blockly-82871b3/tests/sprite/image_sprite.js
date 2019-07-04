@@ -1,5 +1,5 @@
 class ImageSprite {
-  constructor(canvas, imageSrc, x, y, width, height, direction) {
+  constructor(canvas, imageSrc, x, y, width = 50, height = 50, direction = 0) {
     this.imageSrc = imageSrc;
     this.code = "";
     this.canvas = canvas;
@@ -23,8 +23,8 @@ class ImageSprite {
     console.log(this.imageObj.src);
   }
 
-  printProperties(){
-    console.log("x : " ,this.x);
+  printProperties() {
+    console.log("x : ", this.x);
     console.log("y : ", this.y);
     console.log("height : ", this.height);
     console.log("width : ", this.width);
@@ -102,10 +102,11 @@ class ImageSprite {
     this._direction = value % 360;
   }
 
-  get jsCode(){
+  get jsCode() {
     return this._code;
   }
-  set jsCode(value){
+
+  set jsCode(value) {
     this._code = value;
   }
 
@@ -151,17 +152,18 @@ class ImageSprite {
     //ToDo: add mousemove event handler to track its position
   }
 
-  executeJS(code){
+  executeJS(code) {
     // built-in 함수에 'this.'를 붙여줘서 유효성 체크를 하는 함수
-    function validationCheck(jsCode){
+    function validationCheck(jsCode) {
       var a = jsCode.split("\n")
       var v;
-      var ret = ""
-      for(v in a){
-        ret += a[v].replace("-", "this.") ;
+      var ret = "";
+      for (v in a) {
+        ret += a[v].replace("-", "this.");
       }
       return ret;
     }
+
     code = validationCheck(code)
     console.log(code);
     console.log("in executeJS")

@@ -377,9 +377,13 @@ function toJSCode() {
   //canvas.clear();
   //alert(output.value);
   //objectsOfSprites[currentSprite].jsCode = output.value;
-  objectsOfSprites[currentSprite].printProperties()
 
-  objectsOfSprites[currentSprite].executeJS(output.value);
+  manager.getCurrentSprite().printProperties();
+  // objectsOfSprites[currentSprite].printProperties();
+
+  manager.getCurrentSprite().executeJS(output.value);
+  // objectsOfSprites[currentSprite].executeJS(output.value);
+
   //console.log(objectsOfSprites[currentSprite].jsCode);
   //objectsOfSprites[currentSprite].printProperties()
   //objectsOfSprites[currentSprite].draw();
@@ -639,17 +643,24 @@ h1 {
       <script src="sprite/canvas.js"></script>
       <script src="sprite/sprite.js"></script>
       <script src="sprite/image_sprite.js"></script>
-      <script>
-        let canvas = new Canvas("canvases", "aww-cat.png", 1, 500, 300);
-        let canvas2 = new Canvas("canvases", "img_forest.jpg", 0, 500, 300);
+      <script src="sprite/sprite_manager.js"></script>
+      <script src="sprite/sprite_exceptions.js"></script>
 
-        // 기본 sprite를 배치한다.
-        objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 10, 10, 50, 50, 0);
-        objectsOfSprites["aww-cat.png"].draw();
-        objectsOfSprites["img_forest.jpg"] = new ImageSprite(canvas2, "img_forest.jpg", 0, 0, 50, 50, 0);
-        objectsOfSprites["img_forest.jpg"].draw();
-        //objectsOfSprites["aww-cat.png"];
-        currentSprite = "aww-cat.png";
+      <script>
+        let manager = new SpriteManager();
+        manager.addSpriteAndSelect("aww-cat.png");
+        manager.getCurrentSprite().draw();
+
+        // let canvas = new Canvas("canvases", "aww-cat.png", 1, 500, 300);
+        // let canvas2 = new Canvas("canvases", "img_forest.jpg", 0, 500, 300);
+        //
+        // // 기본 sprite를 배치한다.
+        // objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 10, 10, 50, 50, 0);
+        // objectsOfSprites["aww-cat.png"].draw();
+        // objectsOfSprites["img_forest.jpg"] = new ImageSprite(canvas2, "img_forest.jpg", 0, 0, 50, 50, 0);
+        // objectsOfSprites["img_forest.jpg"].draw();
+        // //objectsOfSprites["aww-cat.png"];
+        // currentSprite = "aww-cat.png";
       </script>
       <style>
         div.gallery {
@@ -716,12 +727,16 @@ h1 {
           document.getElementById("gallary_owner").innerHTML += a;
 
           // sprite 별로 사용자가 만들었던 XML을 저장한다.
-          XMLOfEachSprites[name] = ""
+          // XMLOfEachSprites[name] = "";
           // sprite에 대한 canvas 용 objects를 저장한다.
           // 객체 생성 코드 예시 : let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
-          objectsOfSprites[name] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0);
-          objectsOfSprites[name].draw();
-          objectsOfSprites[name].printProperties();
+          manager.addSprite(name);
+          manager.getSprite(name).draw();
+          manager.getSprite(name).printProperties();
+
+          // objectsOfSprites[name] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0);
+          // objectsOfSprites[name].draw();
+          // objectsOfSprites[name].printProperties();
 
         }
 
@@ -731,23 +746,36 @@ h1 {
         // sprite의 이름을 받아서 workspace에 해당 sprite의 블록을 넣어준다.
         function pictureEvent(nameOfSprite) {
           // to xml
-          if (currentSprite != nameOfSprite) {
+
+          if (manager.currentSpriteName != nameOfSprite) {
+          // if (currentSprite != nameOfSprite) {
             var xml = Blockly.Xml.workspaceToDom(workspace);
             var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
             //alert(prettyXMLText)
-            XMLOfEachSprites[currentSprite] = prettyXMLText;
+
+            manager.spritesXml[manager.currentSpriteName] = prettyXMLText;
+            // XMLOfEachSprites[currentSprite] = prettyXMLText;
+
             //taChange();
-            if (XMLOfEachSprites[nameOfSprite] == "") {
+
+            if (manager.spritesXml[nameOfSprite] == "") {
+            // if (XMLOfEachSprites[nameOfSprite] == "") {
               workspace.clear();
             } else {
               var input = document.getElementById('importExport');
-              var nextXml = Blockly.Xml.textToDom(XMLOfEachSprites[nameOfSprite]);
+
+              var nextXml = Blockly.Xml.textToDom(manager.spritesXml[nameOfSprite]);
+              // var nextXml = Blockly.Xml.textToDom(XMLOfEachSprites[nameOfSprite]);
+
               workspace.clear();
               Blockly.Xml.domToWorkspace(nextXml, workspace);
               taChange();
 
             }
+
+            manager.currentSpriteName = nameOfSprite;
             currentSprite = nameOfSprite;
+
             taChange();
           }
 

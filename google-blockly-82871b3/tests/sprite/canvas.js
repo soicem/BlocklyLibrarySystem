@@ -1,16 +1,7 @@
-// let canvas = document.getElementById("myCanvas");
-// canvas.width = 500;
-// canvas.height = 300;
-// let context = canvas.getContext("2d");
-
-// function clearCanvas() {
-//   context.clearRect(0, 0, canvas.width, canvas.height);
-// }
-
 
 class Canvas {
   constructor(target, elementId, order = 0, width = 500, height = 300) {
-    this.injectHtml(elementId, target);
+    Canvas.injectHtml(elementId, target);
 
     this.elementId = elementId;
     this.order = order;
@@ -18,7 +9,7 @@ class Canvas {
     this.height = height;
   }
 
-  injectHtml(elementId, target) {
+  static injectHtml(elementId, target) {
     let newCanvas = document.createElement("canvas");
     newCanvas.id = elementId;
 
