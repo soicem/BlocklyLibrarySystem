@@ -76,6 +76,7 @@
 <script src="../blocks/sprites/operators.js"></script>
 <script src="../blocks/sprites/variables.js"></script>
 <script src="blocks/test_blocks.js"></script>
+<link rel="stylesheet" href="playground_css.css">
 <script>
 'use strict';
 var workspace = null;
@@ -409,9 +410,26 @@ function samplePy(){
   return a;
 }
 
-function toCode(lang) {
+function toCodeMain(lang) {
+  var output = document.getElementById('importExport');
+  output.value = Blockly[lang].workspaceToCode(workspace);
+  var libFunction = samplePy();
+  var pyCode = output.value;
+  pyCode = "from testFunction import *\n" + pyCode;
+  var libraries = {'numberOfLibs' : 1, 'libraryInfo' : {
+      0 : {"name" : "testFunction", "body" : libFunction}
+    }};
+  console.log(pyCode);
+  console.log(libFunction);
+
+  sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
+  taChange();
+}
+
+function toCodeLib() {
+  var lang = document.getElementById('libLang');
   var output = document.getElementById('importExport_');
-  output.value = Blockly[lang].workspaceToCode(libraryspace);
+  output.value = Blockly[lang.value].workspaceToCode(libraryspace);
   var libFunction = samplePy();
   var pyCode = output.value;
   pyCode = "from testFunction import *\n" + pyCode;
@@ -591,110 +609,52 @@ TabController.prototype.styleTabs_ = function() {
 
 function tabInit(){
   hide('library');
+  hide('sprite');
   show('blockDiv');
 }
 
-function changeTab(){
-  var tab = document.getElementById('tabChanger');
-  if(tab.value == "main_tab"){
+function changeTab(tab){
+  if(tab == "main_tab"){
     show('blocklyDiv');
     hide('library');
-  }else if(tab.value == "library_tab"){
+    hide('sprite');
+  }else if(tab == "library_tab"){
     show('library');
     hide('blocklyDiv');
+    hide('sprite')
+  }else if(tab =="sprite_tab"){
+    show('sprite');
+    hide('library');
+    hide('blockDiv');
   }
+  taChange();
 }
 
 function hide(tabName){
   document.getElementById(tabName).style.display = 'none'
 }
+
 function show(tabName){
   document.getElementById(tabName).style.display = 'block'
 }
 //-------------------------------------------------------
 </script>
 
-<style>
-html, body {
-  height: 100%;
-}
-body {
-  background-color: #fff;
-  font-family: sans-serif;
-  overflow: hidden;
-}
-h1 {
-  font-weight: bold;
-  font-size: 140%;
-}
-#blocklyDiv {
-  float: right;
-  height: 80%;
-  width: 70%;
-}
-#library {
-  float: right;
-  height: 80%;
-  width: 70%;
-}
-#importExport {
-  font-family: monospace;
-}
-
-.ioLabel>.blocklyFlyoutLabelText {
-  font-style: italic;
-}
-
-/* Tabs */
-
-.tab {
-  float: left;
-  padding: 5px 19px;
-}
-
-.tab:hover:not(.tabon){
-  background-color: #e8e8e8;
-}
-
-.tab.tabon {
-  background-color: #ccc;
-}
-
-.tab.taboff {
-  cursor: pointer;
-}
-
-#tabContainer {
-  background-color: #f8f8f8;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-  display: block;
-  width: 260px;
-}
-
-#importedFunctions{
-  clear: both;
-  display: none;
-  height: 90%;
-  overflow-x: hidden;
-  overflow-y: scroll;
-}
-
-#librarySpace{
-  float:left;
-  height:100px;
-  width:40%
-}
-
-</style>
 </head>
 <body onload="start()">
-
-  <h1>Blockly Playground</h1>
-  <select id="tabChanger" name="theme" onchange="changeTab()">
+  <ul>
+    <h1>Blockly Playground</h1>
+    <li><a id="main_tab" onclick="changeTab('main_tab')">Main</a></li>
+    <li><a id="library_tab" onclick="changeTab('library_tab')">Library</a></li>
+    <li><a id="sprite_tab" onclick="changeTab('sprite_tab')">Sprite</a></li>
+  </ul>
+  <!--
+  <select id="tabChanger" name="tab" onchange="changeTab()">
     <option value="main_tab">Main</option>
     <option value="library_tab">Library</option>
+    <option value="sprite_tab">Sprite</option>
   </select>
+  -->
   <!--
   <div id="tabContainer">
     <div id="main_tab" class="tab tabon">Main</div>
@@ -710,15 +670,14 @@ h1 {
     <h1>Library</h1>
     <div id="librarySpace"></div>
     <p>
-    <input type="button" value="To JavaScript" onclick="toCode('JavaScript')">
-    &nbsp;
-    <input type="button" value="To Python" onclick="toCode('Python')">
-    &nbsp;
-    <input type="button" value="To PHP" onclick="toCode('PHP')">
-    &nbsp;
-    <input type="button" value="To Lua" onclick="toCode('Lua')">
-    &nbsp;
-    <input type="button" value="To Dart" onclick="toCode('Dart')">
+    <select id="libLang" name="lang" onchange="toCodeLib()">
+      <option value="default">Select</option>
+      <option value="JavaScript">JavaScript</option>&nbsp;
+      <option value="Python">Python</option>
+      <option value="PHP">PHP</option>
+      <option value="Lua">Lua</option>&nbsp;
+      <option value="Dart">Dart</option>
+    </select>
     <br>
     <textarea id="importExport_" style="width: 80%; height: 70%;"
               onchange="taChange();" onkeyup="taChange()">
@@ -726,6 +685,7 @@ h1 {
 
     </p>
   </div>
+  <div id="sprite"></div>
   <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
    - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
 
@@ -763,15 +723,15 @@ h1 {
     &nbsp;
     <input type="button" value="Import from XML" onclick="fromXml()" id="import">
     <br>
-    <input type="button" value="To JavaScript" onclick="toCode('JavaScript')">
+    <input type="button" value="To JavaScript" onclick="toCodeMain('JavaScript')">
     &nbsp;
-    <input type="button" value="To Python" onclick="toCode('Python')">
+    <input type="button" value="To Python" onclick="toCodeMain('Python')">
     &nbsp;
-    <input type="button" value="To PHP" onclick="toCode('PHP')">
+    <input type="button" value="To PHP" onclick="toCodeMain('PHP')">
     &nbsp;
-    <input type="button" value="To Lua" onclick="toCode('Lua')">
+    <input type="button" value="To Lua" onclick="toCodeMain('Lua')">
     &nbsp;
-    <input type="button" value="To Dart" onclick="toCode('Dart')">
+    <input type="button" value="To Dart" onclick="toCodeMain('Dart')">
     <br>
     <textarea id="importExport" style="width: 26%; height: 12em"
       onchange="taChange();" onkeyup="taChange()"></textarea>

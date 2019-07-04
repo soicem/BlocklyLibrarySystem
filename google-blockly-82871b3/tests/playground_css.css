@@ -1,0 +1,130 @@
+html, body {
+    height: 100%;
+}
+body {
+    background-color: #fff;
+    font-family: sans-serif;
+    overflow: hidden;
+}
+
+h1 {
+    float: left;
+    font-weight: bold;
+    font-size: 140%;
+    background-color: white;
+    padding: 3px;
+    margin: 8px;
+}
+
+#blocklyDiv {
+    float: right;
+    height: 80%;
+    width: 70%;
+}
+#library {
+    float: right;
+    height: 80%;
+    width: 70%;
+}
+#importExport {
+    font-family: monospace;
+}
+
+.ioLabel>.blocklyFlyoutLabelText {
+    font-style: italic;
+}
+
+/* Tabs */
+
+.tab {
+    float: left;
+    padding: 5px 19px;
+}
+
+.tab:hover:not(.tabon){
+    background-color: #e8e8e8;
+}
+
+.tab.tabon {
+    background-color: #ccc;
+}
+
+.tab.taboff {
+    cursor: pointer;
+}
+
+#tabContainer {
+    background-color: #f8f8f8;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    display: block;
+    width: 260px;
+}
+
+#importedFunctions{
+    clear: both;
+    display: none;
+    height: 90%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+#librarySpace{
+    float:left;
+    height:100px;
+    width:40%
+}
+
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li {
+    float: left;
+}
+
+li a, .dropbtn {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover, .dropdown:hover .dropbtn {
+    background-color: green;
+}
+
+
+li.dropdown {
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1;}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
