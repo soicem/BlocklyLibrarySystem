@@ -12,9 +12,9 @@ class ImageSprite {
   }
 
   printProperties(){
-    console.log("x : " ,this.x)
-    console.log("y : ", this.y)
-    console.log("height : ", this.height)
+    console.log("x : " ,this.x);
+    console.log("y : ", this.y);
+    console.log("height : ", this.height);
     console.log("width : ", this.width);
   }
 
@@ -75,20 +75,24 @@ class ImageSprite {
   }
 
   moveSteps(step) {
+    this.clear();
+
     function toRadians(angle) {
       return angle * (Math.PI / 180);
     }
+
     console.log("direction : ", this.direction);
-    console.log(step)
+    console.log(step);
     let x = step * Math.cos(toRadians(this.direction));
     let y = step * Math.sin(toRadians(this.direction));
-    console.log("a : " ,x)
+    console.log("a : ", x);
     console.log("b : ", y);
     this.x += x;
     this.y += y;
-    console.log("a : " ,this.x)
+    console.log("a : ", this.x);
     console.log("b : ", this.y);
 
+    this.draw();
   }
 
   turn(degree) {
@@ -161,6 +165,10 @@ class ImageSprite {
     }, false);
     this.imageObj.src = this.image;
     console.log(this.imageObj.src);
+  }
+
+  clear() {
+    this.canvas.clear();
   }
 
   draw() {

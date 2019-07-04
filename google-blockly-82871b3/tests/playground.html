@@ -374,7 +374,7 @@ function samplePy(){
 function toJSCode() {
   let output = document.getElementById('importExport');
   output.value = Blockly["JavaScript"].workspaceToCode(workspace);
-  canvas.clear();
+  //canvas.clear();
   //alert(output.value);
   //objectsOfSprites[currentSprite].jsCode = output.value;
   objectsOfSprites[currentSprite].printProperties()
@@ -382,7 +382,7 @@ function toJSCode() {
   objectsOfSprites[currentSprite].executeJS(output.value);
   //console.log(objectsOfSprites[currentSprite].jsCode);
   //objectsOfSprites[currentSprite].printProperties()
-  objectsOfSprites[currentSprite].draw();
+  //objectsOfSprites[currentSprite].draw();
   console.log(currentSprite);
 
   // 기존 코드
@@ -554,9 +554,6 @@ h1 {
   font-family: monospace;
 }
 
-canvas {
-  border: 1px solid black;
-}
 
 /* 리소스 핸들링용 CSS */
 #myContainer {
@@ -607,6 +604,16 @@ canvas {
     right: 0;
   }
 
+  #canvases {
+    position: relative;
+    height: 300px;
+    margin-bottom: 5px;
+  }
+
+  canvas {
+    position: absolute;
+    border: 1px solid black;
+  }
 </style>
 </head>
 <body onload="start()">
@@ -625,19 +632,25 @@ canvas {
     <div id="rightBar">
 
 
-      <div style="flex: auto;">
+      <div id="canvases">
         <canvas id="myCanvas"></canvas>
+        <canvas id="myCanvas2"></canvas>
       </div>
+
+
 
       <script src="sprite/canvas.js"></script>
       <script src="sprite/sprite.js"></script>
       <script src="sprite/image_sprite.js"></script>
       <script>
         let canvas = new Canvas("myCanvas", 500, 300);
+        let canvas2 = new Canvas("myCanvas2", 500, 300);
 
         // 기본 sprite를 배치한다.
         objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
         objectsOfSprites["aww-cat.png"].draw();
+        objectsOfSprites["aww-cat2.png"] = new ImageSprite(canvas2, "aww-cat.png", 0, 0, 50, 50, 0);
+        objectsOfSprites["aww-cat2.png"].draw();
         //objectsOfSprites["aww-cat.png"];
         currentSprite = "aww-cat.png";
       </script>
