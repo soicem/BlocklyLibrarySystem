@@ -632,10 +632,7 @@ h1 {
     <div id="rightBar">
 
 
-      <div id="canvases">
-        <canvas id="myCanvas"></canvas>
-        <canvas id="myCanvas2"></canvas>
-      </div>
+      <div id="canvases"></div>
 
 
 
@@ -643,14 +640,14 @@ h1 {
       <script src="sprite/sprite.js"></script>
       <script src="sprite/image_sprite.js"></script>
       <script>
-        let canvas = new Canvas("myCanvas", 500, 300);
-        let canvas2 = new Canvas("myCanvas2", 500, 300);
+        let canvas = new Canvas("canvases", "aww-cat.png", 1, 500, 300);
+        let canvas2 = new Canvas("canvases", "img_forest.jpg", 0, 500, 300);
 
         // 기본 sprite를 배치한다.
-        objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
+        objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 10, 10, 50, 50, 0);
         objectsOfSprites["aww-cat.png"].draw();
-        objectsOfSprites["aww-cat2.png"] = new ImageSprite(canvas2, "aww-cat.png", 0, 0, 50, 50, 0);
-        objectsOfSprites["aww-cat2.png"].draw();
+        objectsOfSprites["img_forest.jpg"] = new ImageSprite(canvas2, "img_forest.jpg", 0, 0, 50, 50, 0);
+        objectsOfSprites["img_forest.jpg"].draw();
         //objectsOfSprites["aww-cat.png"];
         currentSprite = "aww-cat.png";
       </script>

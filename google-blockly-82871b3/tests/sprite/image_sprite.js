@@ -1,14 +1,26 @@
 class ImageSprite {
-  constructor(canvas, image, x, y, width, height, direction) {
-    this.image = image;
-    this._code = "";
+  constructor(canvas, imageSrc, x, y, width, height, direction) {
+    this.imageSrc = imageSrc;
+    this.code = "";
     this.canvas = canvas;
     this.x = x;
     this.y = y;
-    this.height = height;
     this.width = width;
+    this.height = height;
     this.direction = direction;
+
     this.init();
+  }
+
+  init() {
+    this.imageObj = new Image();
+
+    this.imageObj.addEventListener("load", () => {
+      this.draw();
+    }, false);
+
+    this.imageObj.src = this.imageSrc;
+    console.log(this.imageObj.src);
   }
 
   printProperties(){
@@ -18,12 +30,28 @@ class ImageSprite {
     console.log("width : ", this.width);
   }
 
+  get imageSrc() {
+    return this._image;
+  }
+
+  set imageSrc(value) {
+    this._image = value;
+  }
+
   get imageObj() {
     return this._imageObj;
   }
 
   set imageObj(value) {
     this._imageObj = value;
+  }
+
+  get code() {
+    return this._code;
+  }
+
+  set code(value) {
+    this._code = value;
   }
 
   get canvas() {
@@ -74,6 +102,13 @@ class ImageSprite {
     this._direction = value % 360;
   }
 
+  get jsCode(){
+    return this._code;
+  }
+  set jsCode(value){
+    this._code = value;
+  }
+
   moveSteps(step) {
     this.clear();
 
@@ -116,23 +151,6 @@ class ImageSprite {
     //ToDo: add mousemove event handler to track its position
   }
 
-  get image() {
-    return this._image;
-  }
-
-  set image(value) {
-    this._image = value;
-  }
-
-  get jsCode(){
-    return this._code;
-  }
-  set jsCode(value){
-    this._code = value;
-  }
-
-  // implement abstruct function from Sprite
-
   executeJS(code){
     // built-in 함수에 'this.'를 붙여줘서 유효성 체크를 하는 함수
     function validationCheck(jsCode){
@@ -156,15 +174,6 @@ class ImageSprite {
     this.printProperties();
     //console.log(this.image);
     //this.draw();
-  }
-
-  init() {
-    this.imageObj = new Image();
-    this.imageObj.addEventListener("load", () => {
-      this.draw();
-    }, false);
-    this.imageObj.src = this.image;
-    console.log(this.imageObj.src);
   }
 
   clear() {
