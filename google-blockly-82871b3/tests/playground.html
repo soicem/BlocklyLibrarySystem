@@ -386,7 +386,6 @@ function toJSCode() {
 
   manager.getCurrentSprite().printProperties();
   // objectsOfSprites[currentSprite].printProperties();
-
   manager.getCurrentSprite().executeJS(output.value);
   // objectsOfSprites[currentSprite].executeJS(output.value);
 
@@ -747,6 +746,48 @@ h1 {
 
         }
 
+        function stageChooser(){
+          var name;
+          var x = document.getElementById("stageChooser");
+          var txt = "";
+          if ('files' in x) {
+            if (x.files.length == 0) {
+              txt = "Select one or more files.";
+            } else {
+              for (var i = 0; i < x.files.length; i++) {
+                txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
+                var file = x.files[i];
+                if ('name' in file) {
+                  txt += "name: " + file.name + "<br>";
+                  name = file.name;
+                }
+                if ('size' in file) {
+                  txt += "size: " + file.size + " bytes <br>";
+                }
+                if ('value' in file) {
+                  txt += "value: " + file.value + " bytes <br>";
+                }
+              }
+            }
+          } else {
+            if (x.value == "") {
+              txt += "Select one or more files.";
+            } else {
+              txt += "The files property is not supported by your browser!";
+              txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
+            }
+          }
+          var a = '<div class="stage\">' +
+                  '<img onclick="pictureEvent(\'' + name + '\')" src="' + name
+                  + '" alt="냥" width="100" height="100">' +
+                  '<div class="desc">냥</div>' +
+                  '</div>';
+          document.getElementById("stage_owner").innerHTML += a;
+          manager.addStage(name);
+          manager.getSprite(name).draw();
+          manager.getSprite(name).printProperties();
+        }
+
         // 현재 진행되던 sprite 변수명 : currentSprite
         // sprite xml들을 저장하는 property list : XMLOfEachSprites
         // nameOfSprite : sprite의 이름, key로 사용
@@ -790,12 +831,17 @@ h1 {
 
       </script>
       <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
+      <input type="file" id="stageChooser" multiple size="50" onchange="stageChooser()">
       <div id="gallary_owner">
         <div class="gallery">
           <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100"
                height="100">
           <div class="desc">냐옹</div>
         </div>
+
+      </div>
+
+      <div id="stage_owner">
 
       </div>
 
