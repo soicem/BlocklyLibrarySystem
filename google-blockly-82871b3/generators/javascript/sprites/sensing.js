@@ -30,18 +30,8 @@ goog.require('Blockly.JavaScript');
 
 
 Blockly.JavaScript['sprite_touchingColor'] = function(block) {
-  function hexToRgb(hex) {
-    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : null;
-  }
   let colour_color = block.getFieldValue('COLOR');
-  let rgb = hexToRgb(colour_color);
-  let code = "-isTouchingColor(" + rgb["r"] + ", " + rgb["g"] + ", " + rgb["b"] + ")";
+  let code = "-isTouchingColorHex('" + colour_color + "')";
 
   return [code, Blockly.JavaScript.ORDER_NONE];
 };

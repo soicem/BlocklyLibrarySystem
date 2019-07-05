@@ -68,6 +68,13 @@ Blockly.JavaScript['sprite_pointTo'] = function (block) {
   return "-setDirection(" + value_dir + ");\n";
 };
 
+Blockly.JavaScript['sprite_gotoPoint'] = function(block) {
+  let value_x = Blockly.JavaScript.valueToCode(block, 'X', Blockly.JavaScript.ORDER_ATOMIC);
+  let value_y = Blockly.JavaScript.valueToCode(block, 'Y', Blockly.JavaScript.ORDER_ATOMIC);
+
+  return "-setXY(" + value_x + ", " + value_y + ");\n";
+};
+
 Blockly.JavaScript['sprite_getXY'] = function (block) {
   let OPTIONS = {
     X: "x",

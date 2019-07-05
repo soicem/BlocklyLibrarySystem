@@ -111,8 +111,6 @@ class ImageSprite {
   }
 
   moveSteps(step) {
-    this.clear();
-
     function toRadians(angle) {
       return angle * (Math.PI / 180);
     }
@@ -128,7 +126,7 @@ class ImageSprite {
     console.log("a : ", this.x);
     console.log("b : ", this.y);
 
-    this.draw();
+    this.update();
   }
 
   turn(degree) {
@@ -146,16 +144,65 @@ class ImageSprite {
   positionRandomly() {
     this.x = Math.random() * (this.canvas.width - this.width);
     this.y = Math.random() * (this.canvas.height - this.height);
+
+    this.update();
   }
 
   positionToMouse() {
     //ToDo: add mousemove event handler to track its position
+
+    this.update();
+  }
+
+  setXY(x, y) {
+    this.x = x;
+    this.y = y;
+
+    this.update();
+  }
+
+  say(text) {
+    let bubble = new SpeechBubble(this);
+    bubble.draw(100, 30, 5, text);
+  }
+
+  isTouchingColor(r, g, b) {
+    let isTouching = false;
+    let data = this.canvas.getContext().getImageData(this.x, this.y, this.width,
+        this.height).data;
+
+    for (let i = 0; i < data.length; i += 4) {
+      if (data[i] === r && data[i + 1] === g && data[i + 2] === b) {
+        isTouching = true;
+      }
+    }
+
+    return isTouching;
+  }
+
+  isTouchingColorHex(hex) {
+    function hexToRgb(hex) {
+      let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    }
+
+    let rgb = hexToRgb(hex);
+    if (rgb) {
+      return this.isTouchingColor(rgb["r"], rgb["g"], rgb["b"]);
+    } else {
+      return false;
+    }
   }
 
   executeJS(code) {
     // built-in 함수에 'this.'를 붙여줘서 유효성 체크를 하는 함수
     function validationCheck(jsCode) {
-      var a = jsCode.split("\n")
+      var a = jsCode.split("\n");
       var v;
       var ret = "";
       for (v in a) {
@@ -164,10 +211,10 @@ class ImageSprite {
       return ret;
     }
 
-    code = validationCheck(code)
+    code = validationCheck(code);
     console.log(code);
-    console.log("in executeJS")
-    this.printProperties()
+    console.log("in executeJS");
+    this.printProperties();
 
     eval(code);
 
@@ -186,5 +233,10 @@ class ImageSprite {
     this.canvas.getContext().drawImage(this.imageObj, this.x, this.y,
         this.width,
         this.height);
+  }
+
+  update() {
+    this.clear();
+    this.draw();
   }
 }
