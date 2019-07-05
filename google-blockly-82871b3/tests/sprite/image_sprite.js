@@ -269,15 +269,6 @@ class ImageSprite {
     console.log("in executeJS");
     this.printProperties();
 
-
-    code = "for (let i=0; i<10; i++) {\n"
-        + "setTimeout(function()\n"
-        + "{\n"
-        + "  this_.moveSteps(10);\n"
-        + "  this_.update();\n"
-        + "},1000 );\n"
-        + "}";
-
     let this_ = this;
     eval(code);
 
