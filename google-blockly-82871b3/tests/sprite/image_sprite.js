@@ -127,15 +127,15 @@ class ImageSprite {
     }
 
     console.log("direction : ", this.direction);
-    console.log(step);
-    let x = step * Math.cos(toRadians(this.direction));
-    let y = step * Math.sin(toRadians(this.direction));
+    console.log("step : ", step);
+    let x = parseInt(step * Math.cos(toRadians(this.direction)) + "");
+    let y = parseInt(step * Math.sin(toRadians(this.direction)) + "");
     console.log("a : ", x);
     console.log("b : ", y);
     this.x += x;
     this.y += y;
-    console.log("a : ", this.x);
-    console.log("b : ", this.y);
+    console.log("to a : ", this.x);
+    console.log("to b : ", this.y);
 
     this.update();
   }
@@ -150,6 +150,10 @@ class ImageSprite {
 
   turnLeft(degree) {
     this.turn(-degree);
+  }
+
+  setDirection(degree) {
+    this.direction = degree;
   }
 
   positionRandomly() {
@@ -213,8 +217,6 @@ class ImageSprite {
     let isTouching = false;
     let data = this.manager.getOverlayingDataOf(this);
 
-    console.log("data: " + data);
-
     for (let i = 0; i < data.length; i += 4) {
       const dataR = data[i];
       const dataG = data[i + 1];
@@ -256,7 +258,8 @@ class ImageSprite {
       var v;
       var ret = "";
       for (v in a) {
-        ret += a[v].replace("-", "this.");
+        ret += a[v].replace(/\@\@/g, "this_.") + "\n";
+        ret += "sleep(100);\n";
       }
       return ret;
     }
@@ -266,6 +269,16 @@ class ImageSprite {
     console.log("in executeJS");
     this.printProperties();
 
+
+    code = "for (let i=0; i<10; i++) {\n"
+        + "setTimeout(function()\n"
+        + "{\n"
+        + "  this_.moveSteps(10);\n"
+        + "  this_.update();\n"
+        + "},1000 );\n"
+        + "}";
+
+    let this_ = this;
     eval(code);
 
     //this.moveSteps(10);
@@ -276,13 +289,14 @@ class ImageSprite {
   }
 
   clear() {
+    console.log("clear");
     this.canvas.clear();
   }
 
   draw() {
+    console.log("draw");
     this.canvas.getContext().drawImage(this.imageObj, this.x, this.y,
-        this.width,
-        this.height);
+        this.width, this.height);
   }
 
   update() {

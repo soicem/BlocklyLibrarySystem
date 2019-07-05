@@ -31,7 +31,7 @@ goog.require('Blockly.JavaScript');
 
 Blockly.JavaScript['sprite_touchingColor'] = function(block) {
   let colour_color = block.getFieldValue('COLOR');
-  let code = "-isTouchingColorHex('" + colour_color + "')";
+  let code = "@@isTouchingColorHex('" + colour_color + "')";
 
   return [code, Blockly.JavaScript.ORDER_NONE];
 };

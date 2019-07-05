@@ -115,9 +115,6 @@ class SpriteManager {
       return array;
     }
 
-    console.log("in isOverlayingDataOf()");
-    console.log("spritesOrder.length: " + this.spritesOrder.length);
-
     const x = baseSprite.x;
     const y = baseSprite.y;
     const width = baseSprite.width;
@@ -128,15 +125,9 @@ class SpriteManager {
     for (let i = this.spritesOrder.length - 1; i >= 0; i--) {
       let iSprite = this.spritesOrder[i];
 
-      console.log("iSprite:" + iSprite);
-
       if (iSprite === baseSprite) continue; //skip if it's sprite itself
 
-      console.log(iSprite);
-
       let iData = iSprite.canvas.getContext().getImageData(x, y, width, height).data;
-
-      console.log(iData);
 
       for (let j = 0, filled = 0; j < iData.length && filled < totalPixels; j++) {
         const iDataR = iData[j];
