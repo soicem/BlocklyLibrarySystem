@@ -1,6 +1,6 @@
 class ImageSprite {
   constructor(manager, canvas, imageSrc, x = 0, y = 0, width = 50, height = 50,
-      direction = 0) {
+              direction = 0) {
 
     this.manager = manager;
     this.imageSrc = imageSrc;

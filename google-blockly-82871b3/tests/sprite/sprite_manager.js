@@ -1,9 +1,8 @@
 class SpriteManager {
-
   constructor() {
     this.sprites = {};
     this.spritesXml = {};
-    this.spritesOrder = [];
+    this.spritesOrder = [""];
     this.currentSpriteName = null;
   }
 
@@ -43,18 +42,26 @@ class SpriteManager {
     return spriteName in this.sprites;
   }
 
-  _createSprite(spriteName) {
+  _createSprite(spriteName, isStage) {
     const canvasContainer = "canvases";
-    const canvasOrder = this.spritesOrder.length;
+    var canvasOrder = this.spritesOrder.length + 1;
+    if(isStage){
+      canvasOrder = 0;
+    }
     const canvasWidth = 500;
     const canvasHeight = 300;
     let baseCanvas = new Canvas(canvasContainer, spriteName,
         canvasOrder, canvasWidth, canvasHeight);
-
-    const spriteWidth = 50;
-    const spriteHeight = 50;
-    const spriteX = canvasWidth / 2 - spriteWidth / 2;
-    const spriteY = canvasHeight / 2 - spriteHeight / 2;
+    var spriteWidth = 50;
+    var spriteHeight = 50;
+    var spriteX = canvasWidth / 2 - spriteWidth / 2;
+    var spriteY = canvasHeight / 2 - spriteHeight / 2;
+    if(isStage){
+      spriteWidth = canvasWidth;
+      spriteHeight = canvasHeight
+      spriteX = 0;
+      spriteY = 0;
+    }
     return new ImageSprite(this, baseCanvas, spriteName, spriteX, spriteY,
         spriteWidth, spriteHeight);
   }
@@ -73,6 +80,23 @@ class SpriteManager {
     return newSprite;
   }
 
+  addStage(stageName) {
+    if (this.exists(stageName)) {
+      throw new ExistingSpriteException(
+          "the name '" + stageName + "' is already in use.")
+    }
+
+    let newStage = this._createSprite(stageName, true);
+    this.sprites[stageName] = newStage;
+    this.spritesXml[stageName] = "";
+    // 제일 첫 번째로 바꿔야함
+    this.spritesOrder[0] = newStage;
+    //this.spritesOrder.splice(0, 0, newStage)
+    //this.spritesOrder.push(newStage);
+
+    return newStage;
+  }
+
   addSpriteAndSelect(spriteName) {
     this.addSprite(spriteName);
     this.currentSpriteName = spriteName;
@@ -86,6 +110,8 @@ class SpriteManager {
 
     return this.sprites[spriteName];
   }
+
+
 
   getCurrentSprite() {
     return this.getSprite(this.currentSpriteName);
