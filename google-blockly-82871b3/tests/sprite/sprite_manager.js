@@ -55,9 +55,8 @@ class SpriteManager {
     const spriteHeight = 50;
     const spriteX = canvasWidth / 2 - spriteWidth / 2;
     const spriteY = canvasHeight / 2 - spriteHeight / 2;
-    return new ImageSprite(baseCanvas, spriteName, spriteX, spriteY,
-        spriteWidth,
-        spriteHeight);
+    return new ImageSprite(this, baseCanvas, spriteName, spriteX, spriteY,
+        spriteWidth, spriteHeight);
   }
 
   addSprite(spriteName) {
@@ -107,4 +106,57 @@ class SpriteManager {
     this.spritesOrder.splice(foundAt, 1);
   }
 
+  getOverlayingDataOf(baseSprite) {
+    function initializedArray(size, defaultValue) {
+      let array = new Array(size);
+      for (let i = 0; i < array.length; i++) {
+        array[i] = defaultValue;
+      }
+      return array;
+    }
+
+    console.log("in isOverlayingDataOf()");
+    console.log("spritesOrder.length: " + this.spritesOrder.length);
+
+    const x = baseSprite.x;
+    const y = baseSprite.y;
+    const width = baseSprite.width;
+    const height = baseSprite.height;
+    const totalPixels = width * height;
+    let data = initializedArray(totalPixels * 3, 0);
+
+    for (let i = this.spritesOrder.length - 1; i >= 0; i--) {
+      let iSprite = this.spritesOrder[i];
+
+      console.log("iSprite:" + iSprite);
+
+      if (iSprite === baseSprite) continue; //skip if it's sprite itself
+
+      console.log(iSprite);
+
+      let iData = iSprite.canvas.getContext().getImageData(x, y, width, height).data;
+
+      console.log(iData);
+
+      for (let j = 0, filled = 0; j < iData.length && filled < totalPixels; j++) {
+        const iDataR = iData[j];
+        const iDataG = iData[j + 1];
+        const iDataB = iData[j + 2];
+        const iDataA = iData[j + 3];
+
+        const isMissingPixel = (data[j + 3] !== 0);
+        const hasPixelData = (iDataA === 0);
+        if (isMissingPixel && hasPixelData) {
+          data[j] = iDataR;
+          data[j + 1] = iDataG;
+          data[j + 2] = iDataB;
+          data[j + 3] = iDataA;
+
+          filled++;
+        }
+      }
+    }
+
+    return data;
+  }
 }

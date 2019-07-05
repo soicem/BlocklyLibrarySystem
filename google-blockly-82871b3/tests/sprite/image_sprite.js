@@ -1,5 +1,8 @@
 class ImageSprite {
-  constructor(canvas, imageSrc, x, y, width = 50, height = 50, direction = 0) {
+  constructor(manager, canvas, imageSrc, x = 0, y = 0, width = 50, height = 50,
+      direction = 0) {
+
+    this.manager = manager;
     this.imageSrc = imageSrc;
     this.code = "";
     this.canvas = canvas;
@@ -7,8 +10,8 @@ class ImageSprite {
     this.y = y;
     this.width = width;
     this.height = height;
-    this.direction = direction;
 
+    this.direction = direction;
     this.init();
   }
 
@@ -28,6 +31,14 @@ class ImageSprite {
     console.log("y : ", this.y);
     console.log("height : ", this.height);
     console.log("width : ", this.width);
+  }
+
+  get manager() {
+    return this._manager;
+  }
+
+  set manager(value) {
+    this._manager = value;
   }
 
   get imageSrc() {
@@ -166,14 +177,53 @@ class ImageSprite {
     bubble.draw(100, 30, 5, text);
   }
 
+  // test(x, y, w, h) {
+  //   let data = this.canvas.getContext().getImageData(x, y, w, h).data;
+  //
+  //   for (let i = 0; i < data.length; i += 4) {
+  //     console.log(data[i]);
+  //     console.log(data[i + 1]);
+  //     console.log(data[i + 2]);
+  //     console.log(data[i + 3]);
+  //   }
+  // }
+  //
+  // isTouchingColor(r, g, b) {
+  //   let isTouching = false;
+  //   let data = this.canvas.getContext().getImageData(this.x, this.y, this.width,
+  //       this.height).data;
+  //
+  //   console.log(r + " " + g + " " + b);
+  //
+  //   for (let i = 0; i < data.length; i += 4) {
+  //     const dataR = data[i];
+  //     const dataG = data[i + 1];
+  //     const dataB = data[i + 2];
+  //     const dataA = data[i + 3];
+  //     if (dataR === r && dataG === g && dataB === b && dataA !== 0) {
+  //       isTouching = true;
+  //       break;
+  //     }
+  //   }
+  //
+  //   return isTouching;
+  // }
+
   isTouchingColor(r, g, b) {
     let isTouching = false;
-    let data = this.canvas.getContext().getImageData(this.x, this.y, this.width,
-        this.height).data;
+    let data = this.manager.getOverlayingDataOf(this);
+
+    console.log("data: " + data);
 
     for (let i = 0; i < data.length; i += 4) {
-      if (data[i] === r && data[i + 1] === g && data[i + 2] === b) {
+      const dataR = data[i];
+      const dataG = data[i + 1];
+      const dataB = data[i + 2];
+      const dataA = data[i + 3];
+
+      if (dataR === r && dataG === g && dataB === b && dataA !== 0) {
         isTouching = true;
+        break;
       }
     }
 
