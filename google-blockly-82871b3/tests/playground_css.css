@@ -1,6 +1,7 @@
 html, body {
     height: 100%;
 }
+
 body {
     background-color: #fff;
     font-family: sans-serif;
@@ -15,66 +16,6 @@ h1 {
     padding: 3px;
     margin: 8px;
 }
-
-#blocklyDiv {
-    float: right;
-    height: 80%;
-    width: 70%;
-}
-#library {
-    float: right;
-    height: 80%;
-    width: 70%;
-}
-#importExport {
-    font-family: monospace;
-}
-
-.ioLabel>.blocklyFlyoutLabelText {
-    font-style: italic;
-}
-
-/* Tabs */
-
-.tab {
-    float: left;
-    padding: 5px 19px;
-}
-
-.tab:hover:not(.tabon){
-    background-color: #e8e8e8;
-}
-
-.tab.tabon {
-    background-color: #ccc;
-}
-
-.tab.taboff {
-    cursor: pointer;
-}
-
-#tabContainer {
-    background-color: #f8f8f8;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    display: block;
-    width: 260px;
-}
-
-#importedFunctions{
-    clear: both;
-    display: none;
-    height: 90%;
-    overflow-x: hidden;
-    overflow-y: scroll;
-}
-
-#librarySpace{
-    float:left;
-    height:100px;
-    width:40%
-}
-
 
 ul {
     list-style-type: none;
@@ -127,4 +68,75 @@ li.dropdown {
 .dropdown:hover .dropdown-content {
     display: block;
 }
+
+.active {
+    background-color: green;
+}
+
+#blocklyDiv {
+    float: right;
+    height: 80%;
+    width: 70%;
+}
+
+#library {
+    float: right;
+    height: 80%;
+    width: 70%;
+}
+
+#importExport {
+    font-family: monospace;
+}
+
+#content {
+    float: left;
+}
+.ioLabel>.blocklyFlyoutLabelText {
+    font-style: italic;
+}
+
+/* Tabs */
+
+.tab {
+    float: left;
+    padding: 5px 19px;
+}
+
+.tab:hover:not(.tabon){
+    background-color: #e8e8e8;
+}
+
+.tab.tabon {
+    background-color: #ccc;
+}
+
+.tab.taboff {
+    cursor: pointer;
+}
+
+#tabContainer {
+    background-color: #f8f8f8;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    display: block;
+    width: 260px;
+}
+
+#importedFunctions{
+    clear: both;
+    display: none;
+    height: 90%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+#librarySpace{
+    float:left;
+    height:100px;
+    width:40%
+}
+
+
+
 

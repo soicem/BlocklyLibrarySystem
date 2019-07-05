@@ -81,6 +81,7 @@
 'use strict';
 var workspace = null;
 var libraryspace = null;
+
 function start() {
   setBackgroundColour();
 
@@ -410,9 +411,10 @@ function samplePy(){
   return a;
 }
 
-function toCodeMain(lang) {
+function toCodeMain() {
+  var lang = document.getElementById('mainLang');
   var output = document.getElementById('importExport');
-  output.value = Blockly[lang].workspaceToCode(workspace);
+  output.value = Blockly[lang.value].workspaceToCode(workspace);
   var libFunction = samplePy();
   var pyCode = output.value;
   pyCode = "from testFunction import *\n" + pyCode;
@@ -537,7 +539,7 @@ var spaghettiXml = [
   '    <next></next>',
   '  </block>'].join('\n');
 
-//TabCondtroller--------------------------------------------
+//TabCondtroller-----------------------------------------
 /*
 var TabController;
 
@@ -608,34 +610,36 @@ TabController.prototype.styleTabs_ = function() {
 */
 
 function tabInit(){
-  hide('library');
-  hide('sprite');
-  show('blockDiv');
+  show('blocklyDiv', 'main_tab');
+  hide('library', 'library_tab');
+  hide('sprite', 'sprite_tab');
 }
 
 function changeTab(tab){
   if(tab == "main_tab"){
-    show('blocklyDiv');
-    hide('library');
-    hide('sprite');
+    show('blocklyDiv', 'main_tab');
+    hide('library', 'library_tab');
+    hide('sprite', 'sprite_tab');
   }else if(tab == "library_tab"){
-    show('library');
-    hide('blocklyDiv');
-    hide('sprite')
+    show('library', 'library_tab');
+    hide('blocklyDiv', 'main_tab');
+    hide('sprite', 'sprite_tab')
   }else if(tab =="sprite_tab"){
-    show('sprite');
-    hide('library');
-    hide('blockDiv');
+    show('sprite', 'sprite_tab');
+    hide('library', 'library_tab');
+    hide('blocklyDiv', 'main_tab');
   }
   taChange();
 }
 
-function hide(tabName){
-  document.getElementById(tabName).style.display = 'none'
+function hide(page, tab){
+  document.getElementById(page).style.display = 'none'
+  document.getElementById(tab).style.backgroundColor='#333'
 }
 
-function show(tabName){
-  document.getElementById(tabName).style.display = 'block'
+function show(page, tab){
+  document.getElementById(page).style.display = 'block'
+  document.getElementById(tab).style.backgroundColor='green'
 }
 //-------------------------------------------------------
 </script>
@@ -666,8 +670,6 @@ function show(tabName){
   <div id="blocklyDiv"></div>
   <!--Library Tab -->
   <div id="library">
-
-    <h1>Library</h1>
     <div id="librarySpace"></div>
     <p>
     <select id="libLang" name="lang" onchange="toCodeLib()">
@@ -679,13 +681,13 @@ function show(tabName){
       <option value="Dart">Dart</option>
     </select>
     <br>
-    <textarea id="importExport_" style="width: 80%; height: 70%;"
+    <textarea id="importExport_" style="width: 100%; height: 70%;"
               onchange="taChange();" onkeyup="taChange()">
     </textarea>
-
     </p>
   </div>
   <div id="sprite"></div>
+  <div id="content">
   <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
    - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
 
@@ -713,6 +715,7 @@ function show(tabName){
     <option value="high_contrast">High Contrast</option>
   </select>
   <p>
+
     <input type="button" value="Insert test XML" onclick="insertTestXml()">
 
     <input type="button" value="My import" onclick="myImport()">
@@ -722,16 +725,14 @@ function show(tabName){
     <input type="button" value="Export to XML" onclick="toXml()">
     &nbsp;
     <input type="button" value="Import from XML" onclick="fromXml()" id="import">
-    <br>
-    <input type="button" value="To JavaScript" onclick="toCodeMain('JavaScript')">
-    &nbsp;
-    <input type="button" value="To Python" onclick="toCodeMain('Python')">
-    &nbsp;
-    <input type="button" value="To PHP" onclick="toCodeMain('PHP')">
-    &nbsp;
-    <input type="button" value="To Lua" onclick="toCodeMain('Lua')">
-    &nbsp;
-    <input type="button" value="To Dart" onclick="toCodeMain('Dart')">
+    <select id="mainLang" onchange="toCodeMain()">
+      <option value="default">Select</option>
+      <option value="JavaScript">JavaScript</option>
+      <option value="Python">Python</option>
+      <option value="PHP">PHP</option>
+      <option value="Lua">Lua</option>
+      <option value="Dart">Dart</option>
+    </select>
     <br>
     <textarea id="importExport" style="width: 26%; height: 12em"
       onchange="taChange();" onkeyup="taChange()"></textarea>
@@ -746,7 +747,7 @@ function show(tabName){
     Log events: &nbsp;
     <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
   </p>
-
+  </div>
   <!-- The next three blocks of XML are sample toolboxes for testing basic
   configurations.  For more information on building toolboxes, see https://developers.google.com/blockly/guides/configure/web/toolbox -->
 
