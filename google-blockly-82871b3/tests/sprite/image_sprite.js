@@ -141,15 +141,15 @@ class ImageSprite {
     }
 
     console.log("direction : ", this.direction);
+    let x = step *  Math.round(Math.cos(toRadians(this.direction)));
+    let y = step *  Math.round(Math.sin(toRadians(this.direction)));
     console.log("step : ", step);
-    let x = step *  Math.floor(Math.cos(toRadians(this.direction)));
-    let y = step *  Math.floor(Math.sin(toRadians(this.direction)));
     console.log("a : ", x);
     console.log("b : ", y);
     this.x += x;
     this.y += y;
-    console.log("to a : ", this.x);
-    console.log("to b : ", this.y);
+    console.log("x : ", this.x);
+    console.log("y : ", this.y);
 
     let this_ = this;
     let x_ = this.x;
@@ -190,10 +190,22 @@ class ImageSprite {
   }
 
   setXY(x, y) {
+    function _update() {
+      this_.canvas.clear();
+      this_.canvas.getContext().drawImage(this_.imageObj, x_, y_,
+          width_, height_);
+    }
+
     this.x = x;
     this.y = y;
 
-    this.update();
+    let this_ = this;
+    let x_ = this.x;
+    let y_ = this.y;
+    let width_ = this.width;
+    let height_ = this.height;
+    this.timerCnt++;
+    setTimeout(_update, this.timerCnt * 100);
   }
 
   say(text) {
