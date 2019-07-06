@@ -37,6 +37,8 @@
 <script src="../blocks/variables_dynamic.js"></script>
 <script src="../blocks/procedures.js"></script>
 <script src="../blocks/import.js"></script>
+
+
 <script src="../blocks/sprites/motions.js"></script>
 <script src="../blocks/sprites/looks.js"></script>
 <script src="../blocks/sprites/sounds.js"></script>
@@ -47,23 +49,24 @@
 <script src="../blocks/sprites/variables.js"></script>
 <script src="../generators/javascript/sprites/motions.js"></script>
 <script src="blocks/test_blocks.js"></script>
-<script src="sprite/sprite.js"></script>
-<script>
+
+
+  <script>
 'use strict';
 var workspace = null;
 var toolbox = null;
 
 // sprite가 들어올 때마다 sprite에 해당하는 key에 XML을 저장한다.
-var XMLOfEachSprites = {
-};
+var XMLOfEachSprites = {};
 var currentSprite = "aww-cat.png"
 
 // sprite들의 객체를 이름별로 저장한다.
 // canvas에 sprite의 동작을 표현하기 위함이다.
 // 저장되는 객체의 타입은 ImageSprite (extend sprite)이다.
-var objectsOfSprites = {
+var objectsOfSprites = {};
 
-}
+
+
 function start() {
 
   setBackgroundColour();
@@ -168,53 +171,24 @@ function getToolboxElement() {
   return document.getElementById('toolbox-' + toolboxSuffix);
 }
 
-function insertTestXml() {
-  let output = document.getElementById("importExport");
-  let xmlText = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
-      "  <block type=\"import_return\" y=\"138\">\n" +
-      "    <mutation func=\"Return Function\" args=\"2\">\n" +
-      "        <arg name=\"argA\"></arg>\n" +
-      "        <arg name=\"argB\"></arg>\n" +
-      "    </mutation>\n" +
-      "  </block>\n" +
-      "  <block type=\"import_statement\" y=\"213\">\n" +
-      "    <mutation func=\"Statement Function\" args=\"2\">\n" +
-      "        <arg name=\"argA\"></arg>\n" +
-      "        <arg name=\"argB\"></arg>\n" +
-      "    </mutation>\n" +
-      "  </block>\n" +
-      "</xml>";
-  output.value = xmlText;
-
-  taChange();
-}
-
-// xml 사용 샘플 코드
-function myFunction(xml) {
-  var x, y, i, xlen, xmlDoc, txt;
-  xmlDoc = xml.responseXML;
-  x = xmlDoc.getElementsByTagName("book")[0];
-  xlen = x.childNodes.length;
-  y = x.firstChild;
-  txt = "";
-  for (i = 0; i < xlen; i++) {
-    if (y.nodeType == 1) {
-      txt += i + " " + y.nodeName + "<br>";
-    }
-    y = y.nextSibling;
-  }
-  document.getElementById("demo").innerHTML = txt;
-}
 
 // 라이브러리 xml의 원형을 본따서 arg, type, name 을 바꾼 후 리턴
 function generateLibFuncXML(arr){
-  if(arr['type'] == "procedures_defnoreturn"){
+  var argument = 0;
+
+    if(arr['type'] === "procedures_defnoreturn"){
     arr['type'] = "import_statement"
-  } else if(arr['type'] =="procedures_defreturn"){
+  } else if(arr['type'] ==="procedures_defreturn"){
     arr['type'] = "import_return"
   }
+
+
+  if(arr['arg'] !== null && arr['arg'] !== undefined )
+      argument = Object.keys(arr['arg']).length;
+
+
   var a = "<block type=\"" + arr['type'] + "\" y=\"138\">" + "\n" +
-          "<mutation func=\"" + arr['funcName'] + "\" args=\"" + Object.keys(arr['arg']).length + "\">"+ "\n";
+          "<mutation func=\"" + arr['funcName'] + "\" args=\"" + argument + "\">"+ "\n";
 
   for (var key in arr['arg']) {
     // check if the property/key is defined in the object itself, not in parent
@@ -232,22 +206,25 @@ function generateLibFuncXML(arr){
 function libFuncToMutationCode(libFunction){
   var parser, xmlDoc,txt="";
   var result = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">"+ "\n";
+
   parser = new DOMParser();
   xmlDoc = parser.parseFromString(libFunction,"text/xml");
+
   var blockObjects = xmlDoc.getElementsByTagName("block");
-  console.log(blockObjects)
-  for(var blockIdx = 0; blockIdx < blockObjects.length; blockIdx++){
-    var dict = {}
+  //console.log(blockObjects)
+
+    for(var blockIdx = 0; blockIdx < blockObjects.length; blockIdx++){
+    var dict = {};
     var x = blockObjects[blockIdx];
-    if(x.getAttributeNode("type").nodeValue == "text_print") {
+    if(x.getAttributeNode("type").nodeValue === "text_print") {
       continue;
     }
     var flag = 0;
-    if(x.getAttributeNode("type").nodeValue == "procedures_defnoreturn"){
+    if(x.getAttributeNode("type").nodeValue === "procedures_defnoreturn"){
       flag = 1;
     }
 
-    if(x.getAttributeNode("type").nodeValue == "procedures_defreturn"){
+    if(x.getAttributeNode("type").nodeValue === "procedures_defreturn"){
       flag = 1;
     }
     if(!flag){
@@ -259,24 +236,24 @@ function libFuncToMutationCode(libFunction){
     var xlen = x.childNodes.length;
     var y = x.firstChild;
     for(var i = 0; i < xlen; i++){
-      if(y.nodeName == "mutation"){
+      if(y.nodeName === "mutation"){
         var firstNode = y.firstChild;
         var mLen = y.childNodes.length;
-        var argDict = {}
+        var argDict = {};
         for(var j = 0; j < mLen; j++){
-          if(firstNode.nodeName != "#text"){
+          if(firstNode.nodeName !== "#text"){
             txt += firstNode.nodeName + "<br>"
-            console.log(firstNode.getAttributeNode("name").nodeValue)
+            console.log(firstNode.getAttributeNode("name").nodeValue);
             argDict[j] = firstNode.getAttributeNode("name").nodeValue
           }
           firstNode = firstNode.nextSibling
         }
         dict["arg"] = argDict
-      } else if(y.nodeName == "field") {
+      } else if(y.nodeName === "field") {
         dict["funcName"] = y.childNodes[0].nodeValue
         console.log(y.childNodes[0].nodeValue)
       }
-      if(y.nodeType == 1)
+      if(y.nodeType === 1)
         txt +=  y.nodeName + "<br>";
       y = y.nextSibling;
     }
@@ -298,9 +275,9 @@ function myImport() {
   for (let i = 0; i < childrenCount; i++) {
     let child = xml.children[i];
 
-    let childIsBlock = (child.nodeName == "block");
-    let childTypeIsImportReturn = (child.getAttribute("type") == "import_return");
-    let childTypeIsImportStatement = (child.getAttribute("type") == "import_statement");
+    let childIsBlock = (child.nodeName === "block");
+    let childTypeIsImportReturn = (child.getAttribute("type") === "import_return");
+    let childTypeIsImportStatement = (child.getAttribute("type") === "import_statement");
 
     if (childIsBlock && (childTypeIsImportReturn || childTypeIsImportStatement)) {
       document.getElementById("toolbox-categories").querySelector("[name='Import']").append(
@@ -329,7 +306,106 @@ function toXml() {
   output.focus();
   output.select();
   taChange();
+
+  ImgToFile();
+  SpriteXMLtoBLK();
+
+  //CodeFile('JavaScript');
+  //CodeFile('Python'); Sprite는 인식하지 못한다.
+
+    CreateBLK('Test');
 }
+
+
+
+//import
+function ExtractFiles(){
+    var BLK = document.getElementById("getFile");
+
+    var files = BLK.files[0]; // FileList object
+    var reader = new FileReader();
+
+    reader.onload= (function(){
+        return function(evt){
+            JSZip.loadAsync(evt.target.result)
+                .then(function(blk){
+                    blk.forEach(function(relativePath, file){
+                        if( (file.name).indexOf(".xml") !== -1 ){ //xml
+                            var xmlName = file.name.substring(0, (file.name).indexOf(".xml"));
+
+                            file.async('text')
+                                .then(function (data) {
+                                    XMLOfEachSprites[xmlName] = data;
+                                })
+                        }
+
+                        if( (file.name).indexOf("images/") !== -1){ // for images;
+                            var strArray = (file.name).split('/');
+                            var picture = strArray[1];
+                           // console.log(picture);
+
+                            file.async('base64')
+                                .then(function (data){
+                                        objectsOfSprites[picture] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0, data);
+                                        objectsOfSprites[picture].draw();
+                                        objectsOfSprites[picture].printProperties();
+                                        addSprite(picture ,data);
+                                });
+                        }
+                    })
+                }).then(function(){
+                    console.log('hi');
+            });
+        };
+    })(files);
+    reader.readAsArrayBuffer(files);
+}
+
+
+function addSprite(name, Source){
+    if(Source === null || Source === undefined || Source === "")
+        return;
+
+    var base = "data:image/png;base64," +Source;
+
+    var a = '<div class="gallery\">' +
+            '<img onclick="pictureEvent(\'' + name + '\')" src="' + base + '" alt="냥" width="100" height="100">'+
+            '<div class="desc">냥</div>' +
+            '</div>' ;
+
+    document.getElementById("gallary_owner").innerHTML += a;
+    setSpriteXML();
+}
+
+
+function setSpriteXML(){
+    var first_value = Object.keys(XMLOfEachSprites)[1];
+
+    var output = document.getElementById('importExport');
+    output.value = XMLOfEachSprites[first_value]
+    taChange();
+}
+
+
+
+//export
+function SpriteXMLtoBLK() {
+    var arraySprite = Object.getOwnPropertyNames(XMLOfEachSprites);
+
+  arraySprite.forEach((name)=>{
+      FileToBLK(name+".xml", XMLOfEachSprites[name], false);
+  });
+}
+
+function ImgToFile(){
+    var arraySprite = Object.getOwnPropertyNames(objectsOfSprites);
+
+    arraySprite.forEach((name)=> {
+        if(name !== "aww-cat.png")
+            ImgToBLK(name, objectsOfSprites[name].data);
+    });
+}
+
 
 function fromXml() {
   var input = document.getElementById('importExport');
@@ -338,6 +414,7 @@ function fromXml() {
   taChange();
 }
 
+/*
 function sendAjax(url, main, libraries){
   // langType - 0:py 1:lua 2:dart 3:php
   // libraryFunction number
@@ -354,21 +431,19 @@ function sendAjax(url, main, libraries){
     //document.querySelector(".result").innerHTML = result.output;
   })
 }
+*/
 
-// .blk file에 위치한 코드, 샘플용
-function samplePy(){
-  var a = "argA = None" + "\n" +
-  "argB = None" + "\n" +
-  "\"\"\"Describe this function..." + "\n" +
-  "\"\"\"" + "\n" +
-  "def doSomething(argA, argB):" + "\n" +
-  "\tprint(argA + argB)" + "\n" +
+function CodeFile(lang) {
+    var result = Blockly[lang].workspaceToCode(workspace);
+    var filename = 'test';
 
-  "\"\"\"Describe this function..." + "\n" +
-  "\"\"\"" + "\n" +
-  "def doSomething2(argA, argB):" + "\n" +
-  "\tprint(argA + argB)"
-  return a;
+    if(lang === 'JavaScript')
+        filename += '.js';
+    else if(lang === 'Python')
+        filename += '.py';
+
+    FileToBLK(filename, result, true);
+    console.log(filename);
 }
 
 // block을 Javascript 코드로 변환하고, 이를 실행시킨다.
@@ -392,19 +467,9 @@ function toJSCode() {
 }
 
 function toCode(lang) {
-  var output = document.getElementById('importExport_');
-  output.value = Blockly[lang].workspaceToCode(workspace);
-  var libFunction = samplePy();
-  var pyCode = output.value;
-  pyCode = "from testFunction import *\n" + pyCode;
-  var libraries = {'numberOfLibs' : 1, 'libraryInfo' : {
-      0 : {"name" : "testFunction", "body" : libFunction}
-    }};
-  console.log(pyCode);
-  console.log(libFunction);
-
-  sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
-  taChange();
+    var output = document.getElementById('importExport');
+    output.value = Blockly[lang].workspaceToCode(workspace);
+    taChange();
 }
 
 // Disable the "Import from XML" button if the XML is invalid.
@@ -607,13 +672,15 @@ canvas {
   <script src="sprite/sprite.js"></script>
   <script src="sprite/image_sprite.js"></script>
   <script>
-    let canvas = new Canvas("myCanvas", 500, 300);
 
-    // 기본 sprite를 배치한다.
-    objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
-    objectsOfSprites["aww-cat.png"].draw();
-    //objectsOfSprites["aww-cat.png"];
-    currentSprite = "aww-cat.png";
+      let canvas = new Canvas("myCanvas", 500, 300);
+
+      // 기본 sprite를 배치한다.
+      objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0, null);
+      objectsOfSprites["aww-cat.png"].draw();
+      //objectsOfSprites["aww-cat.png"];
+      currentSprite = "aww-cat.png";
+
   </script>
   <style>
     div.gallery {
@@ -644,8 +711,12 @@ canvas {
       var name;
       var x = document.getElementById("spriteChooser");
       var txt = "";
+
+      var ImgFile = x.files[0];
+      var reader = new FileReader();
+
       if ('files' in x) {
-        if (x.files.length == 0) {
+        if (x.files.length === 0) {
           txt = "Select one or more files.";
         } else {
           for (var i = 0; i < x.files.length; i++) {
@@ -665,7 +736,7 @@ canvas {
         }
       }
       else {
-        if (x.value == "") {
+        if (x.value === "") {
           txt += "Select one or more files.";
         } else {
           txt += "The files property is not supported by your browser!";
@@ -679,14 +750,21 @@ canvas {
         //alert(a);
         document.getElementById("gallary_owner").innerHTML += a;
 
+
         // sprite 별로 사용자가 만들었던 XML을 저장한다.
         XMLOfEachSprites[name] = ""
-        // sprite에 대한 canvas 용 objects를 저장한다.
-        // 객체 생성 코드 예시 : let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
-        objectsOfSprites[name] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0);
-        objectsOfSprites[name].draw();
-        objectsOfSprites[name].printProperties();
 
+        reader.addEventListener('load', function(){
+            // sprite에 대한 canvas 용 objects를 저장한다.
+            // 객체 생성 코드 예시 : let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
+            objectsOfSprites[name] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0, reader.result);
+            objectsOfSprites[name].draw();
+            objectsOfSprites[name].printProperties();
+        });
+
+        if(ImgFile){
+            reader.readAsArrayBuffer(ImgFile);
+        }
     }
 
     // 현재 진행되던 sprite 변수명 : currentSprite
@@ -695,21 +773,23 @@ canvas {
     // sprite의 이름을 받아서 workspace에 해당 sprite의 블록을 넣어준다.
     function pictureEvent(nameOfSprite){
       // to xml
-      if(currentSprite != nameOfSprite){
+        console.log('picture Event : ' + nameOfSprite);
+
+      if(currentSprite !== nameOfSprite){
         var xml = Blockly.Xml.workspaceToDom(workspace);
         var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
         //alert(prettyXMLText)
         XMLOfEachSprites[currentSprite] = prettyXMLText;
         //taChange();
-        if(XMLOfEachSprites[nameOfSprite] == ""){
+
+
+        if(XMLOfEachSprites[nameOfSprite] === ""){
           workspace.clear();
         } else {
-          var input = document.getElementById('importExport');
           var nextXml = Blockly.Xml.textToDom(XMLOfEachSprites[nameOfSprite]);
           workspace.clear();
           Blockly.Xml.domToWorkspace(nextXml, workspace);
           taChange();
-
         }
         currentSprite = nameOfSprite;
         taChange();
@@ -718,10 +798,12 @@ canvas {
     }
 
   </script>
+
   <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
   <div id="gallary_owner">
     <div class="gallery">
-      <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100" height="100">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAERVJREFUeNrsWntwVFWa/917+/Yr6aTzIJ2EJLS8hkdCIo7CwioNCGspqziMuLO7Ao6ujoNVqKBT84eL1srW+hgJ687ULO6WMFs1WyXlyiBOQQAT1MHXrEmAMBIBAwkhIa/Oo5+3u+9+37ndnRASSDBxd6tyisPt3D73O9/3O7/vcc5tYKJNtIk20SbaRJtoE+06reY1l5t62f8DPT3Vr7qcIx1vGsmgWjLcpKBakYG67a6qSBRPl25prfm/ZPjxX7g2kI5bZQluLYoGunXTmAFAhjutqgSLCug6PIGwXk1A7CIgXiQgGv6XDfeYZGy3qFJZXD/4Q7p7pM/LIxkUI6GErujMgoxUCQ6btMFqxjcnX3dtJ9o5v2vDiZUeWoRKu0WqTE+RytLsQDQGmGlJJUnyjqkLkOCaGAmPRnV4/TpynTIyUiRYCfFAGE8RIzaceN21gxhRfvOzrd5xNfwXLjevuNkkrbaZAaNLaOvR4QvGYDFJIhSMVJ400oFn3sjVHTYdvYEYMUJCYbZMbJAQDDMIOgPBVy+7Rcnm1vLh5LT/WxazZchgmv1oR9W1gjAZvpVWeAMbnDCcae/16WjviUFVdKSnKAzG3tlPtd4/Zgww3EBvIBdwW0w6KMigpSuGomwFqVaQEqSIWYc1JDkJiO1/KndtojEv5qdH2KDV1JdQZ78skxQLZLtrGHCSH6viq1jbE5Sr/GF5g2rCJpsqOa1xw/lKgLC/o7OXV14X9Gd3pX+1Y+oC8TjQQL4lAKCFN0DwRpGfqYiJVYWUMjEYOrFCdytS7C3ZNglyaqHRbTmQzOkjm6vvgkcP93iifY1Ip24L9EKWZdissnA7VTHGhTQdraSDRcyv0yJICJNe5K7eMQeAomsDo8vGm5MgMPoSMh1GLI3FotCVFNgLSqGkTSOD0wZZFh5ZZLbnAtQV50zxtznQhkh7NSLdpxGTjUjMunTEaa+KWzoUSRKBUB9FDBgNA86LKEuTR6PGxAxCgCDvpcAY0U1QXLfDnDGrH7RBBkuJoCMNDkF68qL3/9X/nCUd6mQPkPtnCF7+I0LddQQ+P2tQX06IIQAiMRG0vePiAlGilyRfUR8QNXVErZNhzr+D/iDHjPYbTfpwSuq/xu8lDR9kPyRd5HEd8avoxufEA6acW6GnTYXUdARmve+KKM5zsI5loyjSRuUCzACJ4Y7231dzboGSMduwgVZciivCw+SE8UJ148MVaUcfYh4pwQRdfNaNACy6HmcIzA6Yp9wNrfkoYv7WwQs1qjQ8KgYwvWSp3wRTzm3k61RxRjXDdwUjJDFGHmCsZJg/pMHD5WXDFYwHWFZMEJ6AiOrC/3mkmu+BdvEDxChGGA/LBFJsVCW6PNKBRCvBgFjcCCV9GpTUyUZg08MUgDSYpAgUaKLL3HXuEWI2ARTTIHHXr915HOLj5ESPyxQ9PoeYl7rJdZvILgw8F2qs47gwYEAmcHN0VyjYcZDj1eZYoNCK9IWtaAhNQ8jiRlhyIFXqRLZejyLrhWvSfigGhKMmnOqdAd1egN5YhpCVFavHZPN5citd9EjcWFP2PEQufYSoIfvoOAKgN0QjEbcpZ4YIdkx5hf5j471hB07qq1A0cxbS0tJgMpkQiUTg9X4fn16oxnzzAZhlbUTzdIYcqIncjSkzZ18l678bazBP+T0pHhFoRinpxxQrJHs+9N4WAkUePwakmqOUkpyQVIegKOddY+VtqJP+ErNL5sPpdEJV1QRgSE1Nhd1ux8n6MOab9l93jp6QBbX6PUJWRkbGVbJSUlLwFcmah30ia4jMQbTkYkvxNSM7RR+fGMA1PBVAHtmaTb5Mvkc+r8R99MueWzB1ZjEyMzNhsVigKIrovHJWqxVZWVlwTlmExtCUpO8O1z/3zh+RrGbNLeY24gLpQQWSZMnk+mTTuABA7SnxADFATEgU5N4bUmDNvUUoHAqF8Jvf/Af++kd/g2VLl+Oxv3sMx/5wDGazGdnZ2ei0LkwGuaF6d0CGxTVfGBkOh4eUxYzg77tSFhmBk3RQdCMwyhZRantosdzjAcB6SU0xIjJNKFPkl6g3BXLhcrnEam1+ZjN279ot/LJoyhScP38Bzz//96ioOCRWT838HjR2XS6WhuiNPhdyc3OFrGcSsqiyGSjrUEJWxkz4Ixahh4ywWAzFnJLQddOYAkCI8vbVLZvsAmnaciRTVsSUIXxz77t7cebMWaHsS9tewrZ/3AbPsmViE/PKy6+gra0NDocDPRTRh6O/YnEIWYcOHcZZklVQWIh/iMtavmIFZHKFlwfICiG1P2WSToocg6SImLF6rBmw2ihIosn8bOTtMLq0DOGjx44dEwOZnhyo2PBJk7KJ/hZxn+nLfixLvFvRhuzNgWwxpqKiIimLATFkTRKuJGQdS8iKCh0YhETNoBgAuOOLNmZZYAnnZ9mkGsbHpGSx7zD1iAhdW3tclMBNFy/i7bf3iMjf1dWJ5Xcux/v796Ovr0+MQ7CdtpENvFMaVACYkGNqoh1lDMfjsi42NwtZDCjLWkEseG/fPvT1xmXFInEG6EIcX2UpWWh4RnIyNFIAyrgCTlR1mikHgbQF0GxTEe5KF8Evkaq0sCZ81OfrI6q2I7GT4e+CwSCc2sWrjRcDItBDXUIWG+zz+RDRNFp1FX6/Hy0trckyPCHLl7OO4s1ZmPzn4PB+kASAh9HH0jFhQDyiOsVujpRsd61HIG8NrBSomJKTs/uoQPFiwYIF+OyzzxAM+HHTTW50d3fjD0T77q6uJJ1DnWdg1zuGnWuydAJNNL64uFjICgQCcLvdBEAAH3/0EbwJWZRRGIC8aYuhabehLxRGp//HyDz/Osy+CsEeAsk9Vi4gBMVMqWie+QZUKjvT7DbYbDYBQnZWJj788EMs/vPFQmlewfLt5TBRXAhRKuMozitaMq8Eyunya06UpbTgRNNxkrVIyAqTrDf++Q0hKzxA1jyWRffSqUrkCjFAYARUEzqnb0UqeYX5kii4ysY0DfYW/BhKZjEpYEcq+bedJlR02hdHI5g1axYKCwvg8SwR9AwxPeMUZoU3PvlTBGn1833vX3eeOf6dKCgowJJBsjTNKKM3PrlRgJyXl0eMjEElyqdYzEihBUkhvXpmPI9Axu08dERH9dIIXOApLWX69t5bf4s0RyocNiusbLgWNPxbMUGy2tHc3gVvTw/q6k6h+ssv4SO/zaHI/YM1PxByuFawtu6D2rAbZn/9kHP5Jq2C5H4Q7dIM9JAszv1M/YGymN6FBFCKWQECPgodmjAjRnr4KDj3BcPwdXyNrC/W8CmzNBYu4PTnPwgLBSMzpR5zhAJeoBc6Tc6nj1ApNWlh5GdTOiRWzJr1PfLhuSI+8Eqxq3Bxw1dkPYzTyiJ8XvlfCDVVQtWMw4yQbTpy5t6HBTNXiJUtonsdHR0iIzy07qGrZSlkcG8XdF8PbRuDAgDZYiMdbQiTawRTixBOu5nuH/72MeDUZQf8WU7YpPOwm00whfwoycuiybuNaK5aRDqUzFbk5uSQgnnDynrnnXdQW3OcUiSBkbLsyh3gmWbU1u3E4z95XBjJQZP7UHtyMTevfh9dQwGDx8SEU1+fg6ba4KN9su6bhZUrFHfFoYMNo3KBv1h5V5lqNq+nQsMjyXKZFE87iTM3uifSkY38bk5RHmYW5GH5HYvhyCuClJ5NLqEMO9nL//QyrWznNQGfS+xZv37dNQ8ldFr93uYLOFJ1FPWNzTh14RIClAnEsRmxZqC+4mQpFquhYFmlhcO7D1YcqBmWAbTp2EAPuGnw0WAg8DuKujV7/ra2rOOOTyt5X55uNeN0zR+h+3tx7lwD2r3dqKyuw5vvHcbSxQvx7M9/fu2XrAQOl7FcxQ25Fe7pxn333Xtd2r72L79G5cfHML0wH3OL8nHvwjJMnVIE3ZaK6SWl6NFiCDZ9hBkLfyQt9Sxz0rxlJlV1km2rycayDyqP7BpNECxrv+PT6vQ0B9JSU2CjGKD3eeMxICpigI9wPPR5NRYv8Qj6Dvt6jer7J37yhMgMyiCmcJrLy8vFzjd3XlOflpYWHKO0u2LhfKopIvEYQM1iJ7dKQ5+kosdPmaOrqWb2vIU3f+sYQJG0pr62Gb3SZNSfrsflS804eeIEBLmIapFIFIVFhXBPm3FN47lNnz4NW7ZsFhsa47i8v7LjLPHcz3523dXnOVLT0/Gf+w+i8cIFUSNAFD7kPnPnIisvH9OmTYMSaqkZkzS4atW97uKSksqmpia3LX4gUVJSTIsfhStnklCo9sRJYcSdVPdvfmYL3XPhpxs3CoOHYwIHxFZaTW6lZWVYQymONz5DtYMHDuKXv/wVVq5ciR8+sEbsFhm8UiqIWi61oPXyZbFTPH78BDo6O6gaDcKR5qhqvND48P79+xpuGICVK+96QVXV+2bPmV2zdu3aDVyWci3A+/WhGqeqH655QBQud6+6Bw/+1YPIdDoF5UfbuOrr6e3FZdpPPPHY4+LePffcjc3EoGHOK0W90EsbpYaGBmx7advTfIZBBdTvKioOvDDqSpCCh5tWuer999+7+aF1656mIOhlP+XylvPzkMIoQ8yZO0d8dqSkUhUXwjdUzHxV/zUaaZfYRXsGBmeoFiGD+bt2yv8NRO1TX51GS+tlOAawgsvp4ZpGJTHrxz3d6dxFepez7mwD2zLqGFBZ9QFTR9CntKTYe/LUn3aEwqGtalAVUZzdQZKuJBAfVy1YcBu++PwLNDY1IpVWPo2CJ9fqDAYbGIvp8dddV56Pi7dJfMKsyFBp252VmUG7ShsFvUvie2ZRaWnZsGwJknxmIC+Que3IjsR3h48cqhqTH0iQnzvJwGqqt92sDO8JLFShDQaB9/2PPPIo2i63CZ/mPfyChQuIGXMpYGoiaMYG5Or+FMk/uDAOP7kKrKurw2Hy9dpa41X/2rUP4JFHH0meEiffWJGsAPm8z+8TAPsDwfLiObOfHvNfiHCr/+S3Hj3r1ko+7DC67SoQWKGKgxV45ZVXh8wCYjdXWpr0Wyl+sHL27Fn4+nziyiAObPzMzjf/VZTJV6485ftQUJwX8JbZHwjUkM8vZcaOCwDcTtSd2kC1+Vt2m7EltlktyePrRON9/Kuvvoaqyqox+V3Qc889iztX3JksoBi4iKB9UKw+z0fda2o9tHTGkidH9V5AuhGFBAiq+haf/IhuMUBQaTPEfmxUdT0oL98xJAguWcUiNQ1psgFafSSAT7TeIefirfSqVauSmYf9PRGM2e8ZhFBfmzcM29J5xXNH/dtF6UZX5avP3l2tp895ixRzWgQAZpipKlRp16jSSrFbsE++++5e7Hl7j/g8W7HhYZsL3zdfne+7YhH8u68Fv9cM9nLKZeP5dEgluVGqOvlMgLsAIBQWQU/ztdVYm/fcf9NdrzXciB3St6HmNwe2uIN592+X7TmrORawohykmAlMV67SWGHeAB0/+jFKPzkN+8XLtJ2lYCfJyRwcpaoyTLHDZ1FRO3USYrfPx0IKnDaKM1I8RWpaRARRAwCNGeDVfU075sxf9sK3sUEaCx89frLOo8Z6tsrWbA8DIIwXXRGvrPjVNSvOx1dRygLa6XNkfP8PCDghBGxmpE0pgInBU0xQ6Hmme6Lzs4IBkYhX7jm119zx8Ys3uupjDsAAINxqpH2Tbs1dTWnNLQyh9GaAIAsgjJ+xxOLvyZM/BxGlbCLAcSYxOhlOY6NkvORrqKESYnfYnL9rNFH+OwVgMBhkrMcU6VyiWya55WifB/xWmahv/GxGuqqUHdAb+HeJdD1KvYbAqBpLo78TAK5RUDEw7qFqeX6RMV6GTrSJNtEm2kSbaBNtog1u/yPAAMsIZ4ss8i8RAAAAAElFTkSuQmCC"
+           alt="냐옹이" width="100" height="100"  onclick="pictureEvent('aww-cat.png');" >
       <div class="desc">냐옹</div>
     </div>
 
@@ -753,15 +835,17 @@ canvas {
       <option value="high_contrast">High Contrast</option>
     </select>
     <p>
-      <input type="button" value="Insert test XML" onclick="insertTestXml()">
 
       <input type="button" value="My import" onclick="myImport()">
 
       <input type="button" value="Toolbox Collapse" onclick="collapseToolbox()">
       <br>
       <input type="button" value="Export to XML" onclick="toXml()">
+
+      <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()" accept="application/zip">
       &nbsp;
       <input type="button" value="Import from XML" onclick="fromXml()" id="import">
+
       <br>
       <input type="button" value="To JavaScript" onclick="toJSCode()">
       &nbsp;
@@ -2190,4 +2274,8 @@ canvas {
     </category>
   </xml>
 </body>
+<script src="../../jszip/dist/jszip.js"></script>
+<script src="../../FileSaver/dist/FileSaver.js"></script>
+<script src="../../exportTest.js"></script>
+<script src="../../blkImport.js"></script>
 </html>

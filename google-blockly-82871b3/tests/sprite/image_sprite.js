@@ -1,5 +1,5 @@
 class ImageSprite {
-  constructor(canvas, image, x, y, width, height, direction) {
+  constructor(canvas, image, x, y, width, height, direction, data) {
     this.image = image;
     this._code = "";
     this.canvas = canvas;
@@ -9,12 +9,13 @@ class ImageSprite {
     this.width = width;
     this.direction = direction;
     this.init();
+    this.data = data;
   }
 
   printProperties(){
-    console.log("x : " ,this.x)
-    console.log("y : ", this.y)
-    console.log("height : ", this.height)
+    console.log("x : " ,this.x);
+    console.log("y : ", this.y);
+    console.log("height : ", this.height);
     console.log("width : ", this.width);
   }
 
