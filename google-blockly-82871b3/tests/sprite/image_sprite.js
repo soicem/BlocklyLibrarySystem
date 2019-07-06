@@ -157,7 +157,7 @@ class ImageSprite {
     let width_ = this.width;
     let height_ = this.height;
     this.timerCnt++;
-    setTimeout(_update, this.timerCnt * 100);
+    setTimeout(_update, this.timerCnt * 5);
   }
 
   turn(degree) {
@@ -205,12 +205,20 @@ class ImageSprite {
     let width_ = this.width;
     let height_ = this.height;
     this.timerCnt++;
-    setTimeout(_update, this.timerCnt * 100);
+    setTimeout(_update, this.timerCnt * 5);
   }
 
   say(text) {
+    function _update() {
+      bubble.draw(100, 30, 5, text);
+    }
+
     let bubble = new SpeechBubble(this);
-    bubble.draw(100, 30, 5, text);
+
+    console.log("bubble");
+
+    this.timerCnt++;
+    setTimeout(_update, this.timerCnt * 5);
   }
 
   isTouchingColor(r, g, b) {

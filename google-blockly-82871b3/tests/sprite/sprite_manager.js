@@ -49,7 +49,7 @@ class SpriteManager {
       canvasOrder = 0;
     }
     const canvasWidth = 500;
-    const canvasHeight = 300;
+    const canvasHeight = 500;
     let baseCanvas = new Canvas(canvasContainer, spriteName,
         canvasOrder, canvasWidth, canvasHeight);
     var spriteWidth = 50;
