@@ -41,7 +41,6 @@ li a:hover, .dropdown:hover .dropbtn {
     background-color: green;
 }
 
-
 li.dropdown {
     display: inline-block;
 }
@@ -69,18 +68,14 @@ li.dropdown {
     display: block;
 }
 
-.active {
-    background-color: green;
-}
-
 #blocklyDiv {
-    float: right;
+    float: left;
     height: 80%;
     width: 70%;
 }
 
 #library {
-    float: right;
+    float: left;
     height: 80%;
     width: 70%;
 }
@@ -89,30 +84,8 @@ li.dropdown {
     font-family: monospace;
 }
 
-#content {
-    float: left;
-}
 .ioLabel>.blocklyFlyoutLabelText {
     font-style: italic;
-}
-
-/* Tabs */
-
-.tab {
-    float: left;
-    padding: 5px 19px;
-}
-
-.tab:hover:not(.tabon){
-    background-color: #e8e8e8;
-}
-
-.tab.tabon {
-    background-color: #ccc;
-}
-
-.tab.taboff {
-    cursor: pointer;
 }
 
 #tabContainer {
@@ -123,7 +96,7 @@ li.dropdown {
     width: 260px;
 }
 
-#importedFunctions{
+#importedFunctions {
     clear: both;
     display: none;
     height: 90%;
@@ -131,12 +104,17 @@ li.dropdown {
     overflow-y: scroll;
 }
 
-#librarySpace{
+#librarySpace {
     float:left;
     height:100px;
     width:40%
 }
 
+#content {
+    float: right;
+    height: 80%;
+    width: 30%
+}
 
 
 

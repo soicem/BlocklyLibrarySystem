@@ -652,19 +652,6 @@ function show(page, tab){
     <li><a id="library_tab" onclick="changeTab('library_tab')">Library</a></li>
     <li><a id="sprite_tab" onclick="changeTab('sprite_tab')">Sprite</a></li>
   </ul>
-  <!--
-  <select id="tabChanger" name="tab" onchange="changeTab()">
-    <option value="main_tab">Main</option>
-    <option value="library_tab">Library</option>
-    <option value="sprite_tab">Sprite</option>
-  </select>
-  -->
-  <!--
-  <div id="tabContainer">
-    <div id="main_tab" class="tab tabon">Main</div>
-    <div id="library_tab" class="tab taboff">Library</div>
-  </div>
-  -->
   <br>
   <!--Workspace Tab -->
   <div id="blocklyDiv"></div>
@@ -674,14 +661,14 @@ function show(page, tab){
     <p>
     <select id="libLang" name="lang" onchange="toCodeLib()">
       <option value="default">Select</option>
-      <option value="JavaScript">JavaScript</option>&nbsp;
+      <option value="JavaScript">JavaScript</option>
       <option value="Python">Python</option>
       <option value="PHP">PHP</option>
-      <option value="Lua">Lua</option>&nbsp;
+      <option value="Lua">Lua</option>
       <option value="Dart">Dart</option>
     </select>
     <br>
-    <textarea id="importExport_" style="width: 100%; height: 70%;"
+    <textarea id="importExport_" style="width: 90%; height: 70%;"
               onchange="taChange();" onkeyup="taChange()">
     </textarea>
     </p>
@@ -734,7 +721,7 @@ function show(page, tab){
       <option value="Dart">Dart</option>
     </select>
     <br>
-    <textarea id="importExport" style="width: 26%; height: 12em"
+    <textarea id="importExport" style="width: 100%; height: 12em"
       onchange="taChange();" onkeyup="taChange()"></textarea>
   </p>
 
