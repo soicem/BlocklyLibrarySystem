@@ -1,7 +1,7 @@
 class ImageSprite {
   constructor(manager, canvas, imageSrc, x = 0, y = 0, width = 50, height = 50,
               direction = 0) {
-
+    this.timerCnt = 0;
     this.manager = manager;
     this.imageSrc = imageSrc;
     this.code = "";
@@ -31,6 +31,14 @@ class ImageSprite {
     console.log("y : ", this.y);
     console.log("height : ", this.height);
     console.log("width : ", this.width);
+  }
+
+  get timerCnt() {
+    return this._timerCnt;
+  }
+
+  set timerCnt(value) {
+    this._timerCnt = value;
   }
 
   get manager() {
@@ -122,6 +130,12 @@ class ImageSprite {
   }
 
   moveSteps(step) {
+    function _update() {
+      this_.canvas.clear();
+      this_.canvas.getContext().drawImage(this_.imageObj, x_, y_,
+          width_, height_);
+    }
+
     function toRadians(angle) {
       return angle * (Math.PI / 180);
     }
@@ -137,7 +151,13 @@ class ImageSprite {
     console.log("to a : ", this.x);
     console.log("to b : ", this.y);
 
-    this.update();
+    let this_ = this;
+    let x_ = this.x;
+    let y_ = this.y;
+    let width_ = this.width;
+    let height_ = this.height;
+    this.timerCnt++;
+    setTimeout(_update, this.timerCnt * 100);
   }
 
   turn(degree) {
@@ -236,6 +256,7 @@ class ImageSprite {
     console.log("in executeJS");
     this.printProperties();
 
+    this.timerCnt = 0;
     let this_ = this;
     eval(code);
 
