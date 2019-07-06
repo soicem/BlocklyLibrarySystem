@@ -128,8 +128,8 @@ class ImageSprite {
 
     console.log("direction : ", this.direction);
     console.log("step : ", step);
-    let x = parseInt(step * Math.cos(toRadians(this.direction)) + "");
-    let y = parseInt(step * Math.sin(toRadians(this.direction)) + "");
+    let x = step *  Math.floor(Math.cos(toRadians(this.direction)));
+    let y = step *  Math.floor(Math.sin(toRadians(this.direction)));
     console.log("a : ", x);
     console.log("b : ", y);
     this.x += x;
@@ -181,38 +181,6 @@ class ImageSprite {
     bubble.draw(100, 30, 5, text);
   }
 
-  // test(x, y, w, h) {
-  //   let data = this.canvas.getContext().getImageData(x, y, w, h).data;
-  //
-  //   for (let i = 0; i < data.length; i += 4) {
-  //     console.log(data[i]);
-  //     console.log(data[i + 1]);
-  //     console.log(data[i + 2]);
-  //     console.log(data[i + 3]);
-  //   }
-  // }
-  //
-  // isTouchingColor(r, g, b) {
-  //   let isTouching = false;
-  //   let data = this.canvas.getContext().getImageData(this.x, this.y, this.width,
-  //       this.height).data;
-  //
-  //   console.log(r + " " + g + " " + b);
-  //
-  //   for (let i = 0; i < data.length; i += 4) {
-  //     const dataR = data[i];
-  //     const dataG = data[i + 1];
-  //     const dataB = data[i + 2];
-  //     const dataA = data[i + 3];
-  //     if (dataR === r && dataG === g && dataB === b && dataA !== 0) {
-  //       isTouching = true;
-  //       break;
-  //     }
-  //   }
-  //
-  //   return isTouching;
-  // }
-
   isTouchingColor(r, g, b) {
     let isTouching = false;
     let data = this.manager.getOverlayingDataOf(this);
@@ -259,7 +227,6 @@ class ImageSprite {
       var ret = "";
       for (v in a) {
         ret += a[v].replace(/\@\@/g, "this_.") + "\n";
-        ret += "sleep(100);\n";
       }
       return ret;
     }

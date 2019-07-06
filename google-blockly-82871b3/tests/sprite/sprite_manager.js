@@ -146,7 +146,7 @@ class SpriteManager {
     const width = baseSprite.width;
     const height = baseSprite.height;
     const totalPixels = width * height;
-    let data = initializedArray(totalPixels * 3, 0);
+    let data = initializedArray(totalPixels * 4, 0);
 
     for (let i = this.spritesOrder.length - 1; i >= 0; i--) {
       let iSprite = this.spritesOrder[i];
@@ -155,14 +155,14 @@ class SpriteManager {
 
       let iData = iSprite.canvas.getContext().getImageData(x, y, width, height).data;
 
-      for (let j = 0, filled = 0; j < iData.length && filled < totalPixels; j++) {
+      for (let j = 0, filled = 0; j < iData.length && filled < totalPixels; j += 4) {
         const iDataR = iData[j];
         const iDataG = iData[j + 1];
         const iDataB = iData[j + 2];
         const iDataA = iData[j + 3];
 
-        const isMissingPixel = (data[j + 3] !== 0);
-        const hasPixelData = (iDataA === 0);
+        const isMissingPixel = (data[j + 3] === 0);
+        const hasPixelData = (iDataA !== 0);
         if (isMissingPixel && hasPixelData) {
           data[j] = iDataR;
           data[j + 1] = iDataG;
