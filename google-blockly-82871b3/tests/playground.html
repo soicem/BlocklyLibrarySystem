@@ -38,7 +38,6 @@
 <script src="../blocks/procedures.js"></script>
 <script src="../blocks/import.js"></script>
 
-
 <script src="../blocks/sprites/motions.js"></script>
 <script src="../blocks/sprites/looks.js"></script>
 <script src="../blocks/sprites/sounds.js"></script>
@@ -49,9 +48,11 @@
 <script src="../blocks/sprites/variables.js"></script>
 <script src="../generators/javascript/sprites/motions.js"></script>
 <script src="blocks/test_blocks.js"></script>
-
-
-  <script>
+<script src="sprite/canvas.js"></script>
+<script src="sprite/sprite.js"></script>
+<script src="sprite/image_sprite.js"></script>
+<link rel="stylesheet" href="playground_css.css">
+<script>
 'use strict';
 var workspace = null;
 var toolbox = null;
@@ -64,8 +65,6 @@ var currentSprite = "aww-cat.png"
 // canvas에 sprite의 동작을 표현하기 위함이다.
 // 저장되는 객체의 타입은 ImageSprite (extend sprite)이다.
 var objectsOfSprites = {};
-
-
 
 function start() {
 
@@ -133,6 +132,7 @@ function start() {
     // MSIE 11 does not support sessionStorage on file:// URLs.
     logEvents(false);
   }
+  tabInit();
 }
 
 function addToolboxButtonCallbacks() {
@@ -170,7 +170,6 @@ function getToolboxElement() {
   // "categories-typed-variables".
   return document.getElementById('toolbox-' + toolboxSuffix);
 }
-
 
 // 라이브러리 xml의 원형을 본따서 arg, type, name 을 바꾼 후 리턴
 function generateLibFuncXML(arr){
@@ -316,8 +315,6 @@ function toXml() {
     CreateBLK('Test');
 }
 
-
-
 //import
 function ExtractFiles(){
     var BLK = document.getElementById("getFile");
@@ -361,7 +358,6 @@ function ExtractFiles(){
     reader.readAsArrayBuffer(files);
 }
 
-
 function addSprite(name, Source){
     if(Source === null || Source === undefined || Source === "")
         return;
@@ -377,7 +373,6 @@ function addSprite(name, Source){
     setSpriteXML();
 }
 
-
 function setSpriteXML(){
     var first_value = Object.keys(XMLOfEachSprites)[1];
 
@@ -385,8 +380,6 @@ function setSpriteXML(){
     output.value = XMLOfEachSprites[first_value]
     taChange();
 }
-
-
 
 //export
 function SpriteXMLtoBLK() {
@@ -405,7 +398,6 @@ function ImgToFile(){
             ImgToBLK(name, objectsOfSprites[name].data);
     });
 }
-
 
 function fromXml() {
   var input = document.getElementById('importExport');
@@ -466,10 +458,38 @@ function toJSCode() {
   cat.draw();*/
 }
 
-function toCode(lang) {
-    var output = document.getElementById('importExport');
-    output.value = Blockly[lang].workspaceToCode(workspace);
-    taChange();
+function toCodeMain() {
+  var lang = document.getElementById('mainLang');
+  var output = document.getElementById('importExport');
+  output.value = Blockly[lang.value].workspaceToCode(workspace);
+  var libFunction = samplePy();
+  var pyCode = output.value;
+  pyCode = "from testFunction import *\n" + pyCode;
+  var libraries = {'numberOfLibs' : 1, 'libraryInfo' : {
+      0 : {"name" : "testFunction", "body" : libFunction}
+    }};
+  console.log(pyCode);
+  console.log(libFunction);
+
+  sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
+  taChange();
+}
+
+function toCodeLib() {
+  var lang = document.getElementById('libLang');
+  var output = document.getElementById('importExport_');
+  output.value = Blockly[lang.value].workspaceToCode(libraryspace);
+  var libFunction = samplePy();
+  var pyCode = output.value;
+  pyCode = "from testFunction import *\n" + pyCode;
+  var libraries = {'numberOfLibs' : 1, 'libraryInfo' : {
+      0 : {"name" : "testFunction", "body" : libFunction}
+    }};
+  console.log(pyCode);
+  console.log(libFunction);
+
+  sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
+  taChange();
 }
 
 // Disable the "Import from XML" button if the XML is invalid.
@@ -566,16 +586,38 @@ var spaghettiXml = [
   '    <next></next>',
   '  </block>'].join('\n');
 
-
-function changeTab(){
-  var tab = document.getElementById('tabChanger');
-  if(tab.value == "main_tab"){
-
-  }else if(tab.value == "library_tab"){
-    //setWorkspaceFromSprite("library");
-  }
+function tabInit(){
+  show('blocklyDiv', 'main_tab');
+  hide('library', 'library_tab');
+  hide('sprite', 'sprite_tab');
 }
 
+function changeTab(tab){
+  if(tab == "main_tab"){
+    show('blocklyDiv', 'main_tab');
+    hide('library', 'library_tab');
+    hide('sprite', 'sprite_tab');
+  }else if(tab == "library_tab"){
+    show('library', 'library_tab');
+    hide('blocklyDiv', 'main_tab');
+    hide('sprite', 'sprite_tab')
+  }else if(tab =="sprite_tab"){
+    show('sprite', 'sprite_tab');
+    hide('library', 'library_tab');
+    hide('blocklyDiv', 'main_tab');
+  }
+  taChange();
+}
+
+function hide(page, tab){
+  document.getElementById(page).style.display = 'none'
+  document.getElementById(tab).style.backgroundColor='#333'
+}
+
+function show(page, tab){
+  document.getElementById(page).style.display = 'block'
+  document.getElementById(tab).style.backgroundColor='green'
+}
 // 리소스 움직임용 함수
 /*function myMove() {
   var resImage = document.getElementById("myAnimation");
@@ -597,209 +639,144 @@ function changeTab(){
 }*/
 //-------------------------------------------------------
 </script>
-
-<style>
-html, body {
-  height: 100%;
-}
-body {
-  background-color: #fff;
-  font-family: sans-serif;
-  overflow: hidden;
-}
-h1 {
-  font-weight: bold;
-  font-size: 140%;
-}
-#blocklyDiv {
-  float: left;
-  height: 80%;
-  width: 40%; /*70 to 40*/
-}
-
-#importExport {
-  font-family: monospace;
-}
-
-canvas {
-  border: 1px solid black;
-}
-
-/* 리소스 핸들링용 CSS */
-#myContainer {
-  width: 450px;
-  height: 450px;
-  float:left;
-  border-style: solid;
-  border-bottom-color: #92a8d1;
-  border-top-color: #92a8d1;
-  border-left-color: #92a8d1;
-  border-right-color: #92a8d1;
-  background: white;
-}
-#myAnimation {
-  width: 50px;
-  height: 50px;
-  position: absolute;
-}
-
-#importedFunctions{
-  clear: both;
-  display: none;
-  height: 90%;
-  overflow-x: hidden;
-  overflow-y: scroll;
-}
-
-</style>
 </head>
-<body onload="start()">
-
-  <h1>Blockly Playground</h1>
-  <select id="tabChanger" name="theme" onchange="changeTab()">
-    <option value="main_tab">Main</option>
-    <option value="library_tab">Library</option>
-  </select>
+  <body onload="start()">
+  <ul>
+    <h1>Blockly Playground</h1>
+    <li><a id="main_tab" onclick="changeTab('main_tab')">Main</a></li>
+    <li><a id="library_tab" onclick="changeTab('library_tab')">Library</a></li>
+    <li><a id="sprite_tab" onclick="changeTab('sprite_tab')">Sprite</a></li>
+  </ul>
   <br>
-  <!--Workspace Tab -->
-  <div>
-
-  </div>
+  <!-- Workspace Tab -->
   <div id="blocklyDiv"></div>
+  <!--- Library Tab --->
+  <div id="library">
+    <div id="librarySpace"></div>
+    <p>
+      <select id="libLang" name="lang" onchange="toCodeLib()">
+        <option value="default">Select</option>
+        <option value="JavaScript">JavaScript</option>
+        <option value="Python">Python</option>
+        <option value="PHP">PHP</option>
+        <option value="Lua">Lua</option>
+        <option value="Dart">Dart</option>
+      </select>
+      <br>
+      <textarea id="importExport_" style="width: 90%; height: 70%;"
+                onchange="taChange();" onkeyup="taChange()">
+    </textarea>
+    </p>
+  </div>
+  <!--- Sprite Tab ---->
+  <div id="sprite"></div>
+  <!----- Content ----->
+  <div id="content">
+  <div id="canvasBlock">
+    <canvas id="myCanvas"></canvas>
+    <script>
 
-  <canvas id="myCanvas"></canvas>
-  <script src="sprite/canvas.js"></script>
-  <script src="sprite/sprite.js"></script>
-  <script src="sprite/image_sprite.js"></script>
-  <script>
+        let canvas = new Canvas("myCanvas", 500, 300);
 
-      let canvas = new Canvas("myCanvas", 500, 300);
+        // 기본 sprite를 배치한다.
+        objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0, null);
+        objectsOfSprites["aww-cat.png"].draw();
+        //objectsOfSprites["aww-cat.png"];
+        currentSprite = "aww-cat.png";
 
-      // 기본 sprite를 배치한다.
-      objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0, null);
-      objectsOfSprites["aww-cat.png"].draw();
-      //objectsOfSprites["aww-cat.png"];
-      currentSprite = "aww-cat.png";
+      function spriteChooser(){
+        var name;
+        var x = document.getElementById("spriteChooser");
+        var txt = "";
 
-  </script>
-  <style>
-    div.gallery {
-      margin: 5px;
-      border: 1px solid #ccc;
-      float: left;
-      width: 100px;
+        var ImgFile = x.files[0];
+        var reader = new FileReader();
 
-    }
-
-    div.gallery:hover {
-      border: 1px solid #777;
-    }
-
-    div.gallery img {
-      width: 100%;
-      height: auto;
-    }
-
-    div.desc {
-      padding: 15px;
-      text-align: center;
-    }
-  </style>
-
-  <script>
-    function spriteChooser(){
-      var name;
-      var x = document.getElementById("spriteChooser");
-      var txt = "";
-
-      var ImgFile = x.files[0];
-      var reader = new FileReader();
-
-      if ('files' in x) {
-        if (x.files.length === 0) {
-          txt = "Select one or more files.";
-        } else {
-          for (var i = 0; i < x.files.length; i++) {
-            txt += "<br><strong>" + (i+1) + ". file</strong><br>";
-            var file = x.files[i];
-            if ('name' in file) {
-              txt += "name: " + file.name + "<br>";
-              name = file.name;
-            }
-            if ('size' in file) {
-              txt += "size: " + file.size + " bytes <br>";
-            }
-            if ('value' in file) {
-              txt += "value: " + file.value + " bytes <br>";
+        if ('files' in x) {
+          if (x.files.length === 0) {
+            txt = "Select one or more files.";
+          } else {
+            for (var i = 0; i < x.files.length; i++) {
+              txt += "<br><strong>" + (i+1) + ". file</strong><br>";
+              var file = x.files[i];
+              if ('name' in file) {
+                txt += "name: " + file.name + "<br>";
+                name = file.name;
+              }
+              if ('size' in file) {
+                txt += "size: " + file.size + " bytes <br>";
+              }
+              if ('value' in file) {
+                txt += "value: " + file.value + " bytes <br>";
+              }
             }
           }
         }
-      }
-      else {
-        if (x.value === "") {
-          txt += "Select one or more files.";
-        } else {
-          txt += "The files property is not supported by your browser!";
-          txt  += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
+        else {
+          if (x.value === "") {
+            txt += "Select one or more files.";
+          } else {
+            txt += "The files property is not supported by your browser!";
+            txt  += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
+          }
         }
+        var a = '<div class="gallery\">' +
+                '<img onclick="pictureEvent(\'' + name + '\')" src="' + name + '" alt="냥" width="100" height="100">'+
+                '<div class="desc">냥</div>' +
+                '</div>' ;
+          //alert(a);
+          document.getElementById("gallary_owner").innerHTML += a;
+
+
+          // sprite 별로 사용자가 만들었던 XML을 저장한다.
+          XMLOfEachSprites[name] = ""
+
+          reader.addEventListener('load', function(){
+              // sprite에 대한 canvas 용 objects를 저장한다.
+              // 객체 생성 코드 예시 : let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
+              objectsOfSprites[name] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0, reader.result);
+              objectsOfSprites[name].draw();
+              objectsOfSprites[name].printProperties();
+          });
+
+          if(ImgFile){
+              reader.readAsArrayBuffer(ImgFile);
+          }
       }
-      var a = '<div class="gallery\">' +
-              '<img onclick="pictureEvent(\'' + name + '\')" src="' + name + '" alt="냥" width="100" height="100">'+
-              '<div class="desc">냥</div>' +
-              '</div>' ;
-        //alert(a);
-        document.getElementById("gallary_owner").innerHTML += a;
+
+      // 현재 진행되던 sprite 변수명 : currentSprite
+      // sprite xml들을 저장하는 property list : XMLOfEachSprites
+      // nameOfSprite : sprite의 이름, key로 사용
+      // sprite의 이름을 받아서 workspace에 해당 sprite의 블록을 넣어준다.
+      function pictureEvent(nameOfSprite){
+        // to xml
+          console.log('picture Event : ' + nameOfSprite);
+
+        if(currentSprite !== nameOfSprite){
+          var xml = Blockly.Xml.workspaceToDom(workspace);
+          var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
+          //alert(prettyXMLText)
+          XMLOfEachSprites[currentSprite] = prettyXMLText;
+          //taChange();
 
 
-        // sprite 별로 사용자가 만들었던 XML을 저장한다.
-        XMLOfEachSprites[name] = ""
-
-        reader.addEventListener('load', function(){
-            // sprite에 대한 canvas 용 objects를 저장한다.
-            // 객체 생성 코드 예시 : let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
-            objectsOfSprites[name] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0, reader.result);
-            objectsOfSprites[name].draw();
-            objectsOfSprites[name].printProperties();
-        });
-
-        if(ImgFile){
-            reader.readAsArrayBuffer(ImgFile);
-        }
-    }
-
-    // 현재 진행되던 sprite 변수명 : currentSprite
-    // sprite xml들을 저장하는 property list : XMLOfEachSprites
-    // nameOfSprite : sprite의 이름, key로 사용
-    // sprite의 이름을 받아서 workspace에 해당 sprite의 블록을 넣어준다.
-    function pictureEvent(nameOfSprite){
-      // to xml
-        console.log('picture Event : ' + nameOfSprite);
-
-      if(currentSprite !== nameOfSprite){
-        var xml = Blockly.Xml.workspaceToDom(workspace);
-        var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
-        //alert(prettyXMLText)
-        XMLOfEachSprites[currentSprite] = prettyXMLText;
-        //taChange();
-
-
-        if(XMLOfEachSprites[nameOfSprite] === ""){
-          workspace.clear();
-        } else {
-          var nextXml = Blockly.Xml.textToDom(XMLOfEachSprites[nameOfSprite]);
-          workspace.clear();
-          Blockly.Xml.domToWorkspace(nextXml, workspace);
+          if(XMLOfEachSprites[nameOfSprite] === ""){
+            workspace.clear();
+          } else {
+            var nextXml = Blockly.Xml.textToDom(XMLOfEachSprites[nameOfSprite]);
+            workspace.clear();
+            Blockly.Xml.domToWorkspace(nextXml, workspace);
+            taChange();
+          }
+          currentSprite = nameOfSprite;
           taChange();
         }
-        currentSprite = nameOfSprite;
-        taChange();
+
       }
 
-    }
-
-  </script>
-
-  <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
+    </script>
+    <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
+  </div>
   <div id="gallary_owner">
     <div class="gallery">
       <img src="data:image/png;base64,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"
@@ -845,19 +822,19 @@ canvas {
       <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()" accept="application/zip">
       &nbsp;
       <input type="button" value="Import from XML" onclick="fromXml()" id="import">
-
-      <br>
+      &nbsp
       <input type="button" value="To JavaScript" onclick="toJSCode()">
       &nbsp;
-      <input type="button" value="To Python" onclick="toCode('Python')">
-      &nbsp;
-      <input type="button" value="To PHP" onclick="toCode('PHP')">
-      &nbsp;
-      <input type="button" value="To Lua" onclick="toCode('Lua')">
-      &nbsp;
-      <input type="button" value="To Dart" onclick="toCode('Dart')">
+      <select id="mainLang" onchange="toCodeMain()">
+        <option value="default">Select</option>
+        <option value="JavaScript">JavaScript</option>
+        <option value="Python">Python</option>
+        <option value="PHP">PHP</option>
+        <option value="Lua">Lua</option>
+        <option value="Dart">Dart</option>
+      </select>
 
-      <textarea id="importExport" style="width: 100px; height: 12em"
+      <textarea id="importExport" style="width: 100%; height: 20%"
         onchange="taChange();" onkeyup="taChange()"></textarea>
     </p>
 
@@ -870,6 +847,7 @@ canvas {
       Log events: &nbsp;
       <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
     </p>
+  </div>
   <!-- The next three blocks of XML are sample toolboxes for testing basic
   configurations.  For more information on building toolboxes, see https://developers.google.com/blockly/guides/configure/web/toolbox -->
 
