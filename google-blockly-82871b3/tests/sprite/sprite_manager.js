@@ -165,7 +165,6 @@ class SpriteManager {
         }
       }
     }
-
     return data;
   }
 }
