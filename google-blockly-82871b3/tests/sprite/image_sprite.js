@@ -1,4 +1,32 @@
 class ImageSprite {
+  get initY() {
+    return this._initY;
+  }
+
+  set initY(value) {
+    this._initY = value;
+  }
+  get initX() {
+    return this._initX;
+  }
+
+  set initX(value) {
+    this._initX = value;
+  }
+  get nextCommand() {
+    return this._nextCommand;
+  }
+
+  set nextCommand(value) {
+    this._nextCommand = value;
+  }
+  get commands() {
+    return this._commands;
+  }
+
+  set commands(value) {
+    this._commands = value;
+  }
   constructor(manager, canvas, imageSrc, x = 0, y = 0, width = 50, height = 50,
               direction = 0) {
     this.timerCnt = 0;
@@ -8,9 +36,12 @@ class ImageSprite {
     this.canvas = canvas;
     this.x = x;
     this.y = y;
+    this.initX = 0;
+    this.initY = 0;
     this.width = width;
     this.height = height;
-
+    this.commands = [];
+    this.nextCommand = "";
     this.direction = direction;
     this.init();
   }
@@ -129,35 +160,91 @@ class ImageSprite {
     this._code = value;
   }
 
-  moveSteps(step) {
-    function _update() {
-      this_.canvas.clear();
-      this_.canvas.getContext().drawImage(this_.imageObj, x_, y_,
-          width_, height_);
+  _update() {
+    //this.canvas.clear();
+    //this.canvas.getContext().drawImage(this.imageObj, this.x, this.y, this.width, this.height);
+  }
+
+  _moveSteps(step){
+    function _update () {
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          this_.canvas.clear();
+          this_.canvas.getContext().drawImage(this_.imageObj, x_, y_,
+              width_, height_);
+          this_.nextCommand = this_.commands.shift();
+          //console.log(this_.nextCommand.replace("this_", "this"));
+          resolve("anything");
+        }, 10);
+      });
     }
 
     function toRadians(angle) {
       return angle * (Math.PI / 180);
     }
 
-    console.log("direction : ", this.direction);
-    let x = step *  Math.round(Math.cos(toRadians(this.direction)));
+    //console.log("direction : ", this.direction);
+    let x = step *  Math.round(Math.cos(toRadians(this.direction )));
     let y = step *  Math.round(Math.sin(toRadians(this.direction)));
-    console.log("step : ", step);
+
+    /*let x = step *  Math.round(Math.cos(toRadians(this.direction)));
+    let y = step *  Math.round(Math.sin(toRadians(this.direction)));*/
+
+    /*console.log("step : ", step);
     console.log("a : ", x);
-    console.log("b : ", y);
+    console.log("b : ", y);*/
     this.x += x;
     this.y += y;
-    console.log("x : ", this.x);
-    console.log("y : ", this.y);
+    /*console.log("x : ", this.x);
+    console.log("y : ", this.y);*/
 
     let this_ = this;
     let x_ = this.x;
     let y_ = this.y;
     let width_ = this.width;
     let height_ = this.height;
-    this.timerCnt++;
-    setTimeout(_update, this.timerCnt * 5);
+    _update()
+        .then(
+            function (result) {
+              if(this_.nextCommand != ""){
+                console.log("next command");
+                console.log(this_.nextCommand);
+                eval(this_.nextCommand);
+              }
+            }
+        );
+    //setTimeout(_update, this.timerCnt * 5);
+  }
+
+  moveSteps(step) {
+    function toRadians(angle) {
+      return angle * (Math.PI / 180);
+    }
+
+    //console.log("direction : ", this.direction);
+    let x = step *  Math.round(Math.cos(toRadians(this.direction )));
+    let y = step *  Math.round(Math.sin(toRadians(this.direction)));
+
+    /*let x = step *  Math.round(Math.cos(toRadians(this.direction)));
+    let y = step *  Math.round(Math.sin(toRadians(this.direction)));*/
+
+    /*console.log("step : ", step);
+    console.log("a : ", x);
+    console.log("b : ", y);*/
+    this.x += x;
+    this.y += y;
+    /*console.log("x : ", this.x);
+    console.log("y : ", this.y);*/
+
+    let this_ = this;
+    let x_ = this.x;
+    let y_ = this.y;
+    let width_ = this.width;
+    let height_ = this.height;
+    //this.timerCnt++;
+    this.commands.push("this._moveSteps(" + step + ")");
+    //this._update();
+    //setTimeout(_update, this.timerCnt * 5);
   }
 
   turn(degree) {
@@ -172,8 +259,15 @@ class ImageSprite {
     this.turn(-degree);
   }
 
+  _setDirection(degree){
+    this.direction = degree;
+    this.nextCommand = this.commands.shift();
+    eval(this.nextCommand);
+  }
+
   setDirection(degree) {
     this.direction = degree;
+    this.commands.push("this_._setDirection(" + degree + ")");
   }
 
   positionRandomly() {
@@ -195,6 +289,8 @@ class ImageSprite {
       this_.canvas.getContext().drawImage(this_.imageObj, x_, y_,
           width_, height_);
     }
+    this.initX = x;
+    this.initY = y;
 
     this.x = x;
     this.y = y;
@@ -207,18 +303,19 @@ class ImageSprite {
     this.timerCnt++;
     setTimeout(_update, this.timerCnt * 5);
   }
-
-  say(text) {
+  _say(text){
     function _update() {
       bubble.draw(100, 30, 5, text);
     }
-
     let bubble = new SpeechBubble(this);
-
     console.log("bubble");
+    this.nextCommand = this.commands.shift();
+    _update();
+    eval(this.nextCommand);
 
-    this.timerCnt++;
-    setTimeout(_update, this.timerCnt * 5);
+  }
+  say(text) {
+    this.commands.push("this_._say(" +"\"" + text + "\"" + ")");
   }
 
   isTouchingColor(r, g, b) {
@@ -279,10 +376,15 @@ class ImageSprite {
     this.timerCnt = 0;
     let this_ = this;
     eval(code);
-
+    console.log(this.commands);
+    this.nextCommand = this.commands.shift();
+    this.x = this.initX;
+    this.y = this.initY;
+    eval(this.nextCommand);
+    //this.commands = [];
     //this.moveSteps(10);
 
-    this.printProperties();
+    //this.printProperties();
     //console.log(this.image);
     //this.draw();
   }
