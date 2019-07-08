@@ -653,11 +653,6 @@ h1 {
       <script src="sprite/speech_bubble.js"></script>
 
       <script>
-        function sleep(delay) {
-          var start = new Date().getTime();
-          while (new Date().getTime() < start + delay);
-        }
-
         let manager = new SpriteManager();
         // manager.addSpriteAndSelect("black_rect.png");
         // manager.getCurrentSprite().x -= 5;
@@ -666,8 +661,8 @@ h1 {
         // manager.getCurrentSprite().height = 20;
         // manager.getCurrentSprite().draw();
         manager.addSpriteAndSelect("aww-cat.png");
-        manager.getCurrentSprite().width = 18;
-        manager.getCurrentSprite().height = 18;
+        manager.getCurrentSprite().width = 47;
+        manager.getCurrentSprite().height = 47;
         // manager.getCurrentSprite().y -= 1;
         manager.getCurrentSprite().draw();
 
@@ -1107,7 +1102,7 @@ h1 {
           </block>-->
         </category>
 
-        <category name="Sprite">
+        <category name="Sprite" expanded="true">
           <label text="Motion"></label>
           <block type="sprite_moveSteps">
             <value name="STEPS">
