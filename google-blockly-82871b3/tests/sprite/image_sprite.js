@@ -226,10 +226,10 @@ class ImageSprite {
     let data = this.manager.getOverlayingDataOf(this);
 
     for (let i = 0; i < data.length; i += 4) {
-      const dataR = data[i];
-      const dataG = data[i + 1];
-      const dataB = data[i + 2];
-      const dataA = data[i + 3];
+      const dataR = data[i] || 0;
+      const dataG = data[i + 1] || 0;
+      const dataB = data[i + 2] || 0;
+      const dataA = data[i + 3] || 0;
 
       if (dataR === r && dataG === g && dataB === b && dataA !== 0) {
         isTouching = true;

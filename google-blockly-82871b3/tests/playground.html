@@ -1,860 +1,858 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Blockly Playground</title>
-<script src="../blockly_uncompressed.js"></script>
-<script src="../generators/javascript.js"></script>
-<script src="../generators/javascript/logic.js"></script>
-<script src="../generators/javascript/loops.js"></script>
-<script src="../generators/javascript/math.js"></script>
-<script src="../generators/javascript/text.js"></script>
-<script src="../generators/javascript/lists.js"></script>
-<script src="../generators/javascript/colour.js"></script>
-<script src="../generators/javascript/variables.js"></script>
-<script src="../generators/javascript/variables_dynamic.js"></script>
-<script src="../generators/javascript/procedures.js"></script>
-<script src="../generators/javascript/import.js"></script>
-<script src="../generators/python.js"></script>
-<script src="../generators/python/logic.js"></script>
-<script src="../generators/python/loops.js"></script>
-<script src="../generators/python/math.js"></script>
-<script src="../generators/python/text.js"></script>
-<script src="../generators/python/lists.js"></script>
-<script src="../generators/python/colour.js"></script>
-<script src="../generators/python/variables.js"></script>
-<script src="../generators/python/variables_dynamic.js"></script>
-<script src="../generators/python/procedures.js"></script>
-<script src="../generators/python/import.js"></script>
-<script src="../msg/messages.js"></script>
-<script src="../blocks/logic.js"></script>
-<script src="../blocks/loops.js"></script>
-<script src="../blocks/math.js"></script>
-<script src="../blocks/text.js"></script>
-<script src="../blocks/lists.js"></script>
-<script src="../blocks/colour.js"></script>
-<script src="../blocks/variables.js"></script>
-<script src="../blocks/variables_dynamic.js"></script>
-<script src="../blocks/procedures.js"></script>
-<script src="../blocks/import.js"></script>
-<script src="../blocks/sprites/motions.js"></script>
-<script src="../blocks/sprites/looks.js"></script>
-<script src="../blocks/sprites/sounds.js"></script>
-<script src="../blocks/sprites/events.js"></script>
-<script src="../blocks/sprites/controls.js"></script>
-<script src="../blocks/sprites/sensing.js"></script>
-<script src="../blocks/sprites/operators.js"></script>
-<script src="../blocks/sprites/variables.js"></script>
-<script src="../generators/javascript/sprites/controls.js"></script>
-<script src="../generators/javascript/sprites/events.js"></script>
-<script src="../generators/javascript/sprites/looks.js"></script>
-<script src="../generators/javascript/sprites/motions.js"></script>
-<script src="../generators/javascript/sprites/operators.js"></script>
-<script src="../generators/javascript/sprites/sensing.js"></script>
-<script src="../generators/javascript/sprites/sounds.js"></script>
-<script src="blocks/test_blocks.js"></script>
-<script>
-'use strict';
-var workspace = null;
-var toolbox = null;
+  <meta charset="utf-8">
+  <title>Blockly Playground</title>
+  <script src="../blockly_uncompressed.js"></script>
+  <script src="../generators/javascript.js"></script>
+  <script src="../generators/javascript/logic.js"></script>
+  <script src="../generators/javascript/loops.js"></script>
+  <script src="../generators/javascript/math.js"></script>
+  <script src="../generators/javascript/text.js"></script>
+  <script src="../generators/javascript/lists.js"></script>
+  <script src="../generators/javascript/colour.js"></script>
+  <script src="../generators/javascript/variables.js"></script>
+  <script src="../generators/javascript/variables_dynamic.js"></script>
+  <script src="../generators/javascript/procedures.js"></script>
+  <script src="../generators/javascript/import.js"></script>
+  <script src="../generators/python.js"></script>
+  <script src="../generators/python/logic.js"></script>
+  <script src="../generators/python/loops.js"></script>
+  <script src="../generators/python/math.js"></script>
+  <script src="../generators/python/text.js"></script>
+  <script src="../generators/python/lists.js"></script>
+  <script src="../generators/python/colour.js"></script>
+  <script src="../generators/python/variables.js"></script>
+  <script src="../generators/python/variables_dynamic.js"></script>
+  <script src="../generators/python/procedures.js"></script>
+  <script src="../generators/python/import.js"></script>
+  <script src="../msg/messages.js"></script>
+  <script src="../blocks/logic.js"></script>
+  <script src="../blocks/loops.js"></script>
+  <script src="../blocks/math.js"></script>
+  <script src="../blocks/text.js"></script>
+  <script src="../blocks/lists.js"></script>
+  <script src="../blocks/colour.js"></script>
+  <script src="../blocks/variables.js"></script>
+  <script src="../blocks/variables_dynamic.js"></script>
+  <script src="../blocks/procedures.js"></script>
+  <script src="../blocks/import.js"></script>
+  <script src="../blocks/sprites/motions.js"></script>
+  <script src="../blocks/sprites/looks.js"></script>
+  <script src="../blocks/sprites/sounds.js"></script>
+  <script src="../blocks/sprites/events.js"></script>
+  <script src="../blocks/sprites/controls.js"></script>
+  <script src="../blocks/sprites/sensing.js"></script>
+  <script src="../blocks/sprites/operators.js"></script>
+  <script src="../blocks/sprites/variables.js"></script>
+  <script src="../generators/javascript/sprites/controls.js"></script>
+  <script src="../generators/javascript/sprites/events.js"></script>
+  <script src="../generators/javascript/sprites/looks.js"></script>
+  <script src="../generators/javascript/sprites/motions.js"></script>
+  <script src="../generators/javascript/sprites/operators.js"></script>
+  <script src="../generators/javascript/sprites/sensing.js"></script>
+  <script src="../generators/javascript/sprites/sounds.js"></script>
+  <script src="blocks/test_blocks.js"></script>
+  <script>
+    'use strict';
+    var workspace = null;
+    var toolbox = null;
 
-// sprite가 들어올 때마다 sprite에 해당하는 key에 XML을 저장한다.
-var XMLOfEachSprites = {
-};
-var currentSprite = "aww-cat.png"
+    function start() {
 
-// sprite들의 객체를 이름별로 저장한다.
-// canvas에 sprite의 동작을 표현하기 위함이다.
-// 저장되는 객체의 타입은 ImageSprite (extend sprite)이다.
-var objectsOfSprites = {
-
-}
-function start() {
-
-  setBackgroundColour();
-  // Parse the URL arguments.
-  var match = location.search.match(/dir=([^&]+)/);
-  var rtl = match && match[1] == 'rtl';
-  document.forms.options.elements.dir.selectedIndex = Number(rtl);
-  toolbox = getToolboxElement();
-  var toolboxNames = [
-      'toolbox-categories',
-      'toolbox-categories-typed-variables',
-      'toolbox-simple',
-      'toolbox-test-blocks'
-  ];
-  document.forms.options.elements.toolbox.selectedIndex =
-      toolboxNames.indexOf(toolbox.id);
-  match = location.search.match(/side=([^&]+)/);
-  var side = match ? match[1] : 'start';
-  document.forms.options.elements.side.value = side;
-  // Create main workspace.
-  workspace = Blockly.inject('blocklyDiv',
-      {
-        comments: true,
-        collapse: true,
-        disable: true,
-        grid:
+      setBackgroundColour();
+      // Parse the URL arguments.
+      var match = location.search.match(/dir=([^&]+)/);
+      var rtl = match && match[1] == 'rtl';
+      document.forms.options.elements.dir.selectedIndex = Number(rtl);
+      toolbox = getToolboxElement();
+      var toolboxNames = [
+        'toolbox-categories',
+        'toolbox-categories-typed-variables',
+        'toolbox-simple',
+        'toolbox-test-blocks'
+      ];
+      document.forms.options.elements.toolbox.selectedIndex =
+          toolboxNames.indexOf(toolbox.id);
+      match = location.search.match(/side=([^&]+)/);
+      var side = match ? match[1] : 'start';
+      document.forms.options.elements.side.value = side;
+      // Create main workspace.
+      workspace = Blockly.inject('blocklyDiv',
           {
-            spacing: 25,
-            length: 3,
-            colour: '#ccc',
-            snap: true
-          },
-        horizontalLayout: side == 'top' || side == 'bottom',
-        maxBlocks: Infinity,
-        maxInstances: {'limit_instances': 3},
-        media: '../media/',
-        oneBasedIndex: true,
-        readOnly: false,
-        rtl: rtl,
-        scrollbars: true,
-        toolbox: toolbox,
-        toolboxPosition: side == 'top' || side == 'start' ? 'start' : 'end',
-        zoom:
-          {
-            controls: true,
-            wheel: true,
-            startScale: 1.0,
-            maxScale: 4,
-            minScale: 0.25,
-            scaleSpeed: 1.1
-          }
-      });
-  addToolboxButtonCallbacks();
-  // Restore previously displayed text.
-  if (sessionStorage) {
-    var text = sessionStorage.getItem('textarea');
-    if (text) {
-      document.getElementById('importExport').value = text;
-    }
-    // Restore event logging state.
-    var state = sessionStorage.getItem('logEvents');
-    logEvents(Boolean(Number(state)));
-  } else {
-    // MSIE 11 does not support sessionStorage on file:// URLs.
-    logEvents(false);
-  }
-}
-
-function addToolboxButtonCallbacks() {
-  workspace.registerButtonCallback(
-      'addDynamicOption', Blockly.TestBlocks.addDynamicDropdownOption_);
-  workspace.registerButtonCallback(
-      'removeDynamicOption', Blockly.TestBlocks.removeDynamicDropdownOption_);
-}
-
-function changeTheme() {
-  var theme = document.getElementById('themeChanger');
-  if (theme.value === "modern") {
-    Blockly.setTheme(Blockly.Themes.Modern);
-  } else if (theme.value === "high_contrast") {
-    Blockly.setTheme(Blockly.Themes.HighContrast);
-  } else {
-    Blockly.setTheme(Blockly.Themes.Classic);
-  }
-}
-
-function setBackgroundColour() {
-  // Set background colour to differentiate server vs local copy.
-  if (location.protocol == 'file:') {
-    var lilac = '#d6d6ff';
-    document.body.style.backgroundColor = lilac;
-  }
-}
-
-function getToolboxElement() {
-  var match = location.search.match(/toolbox=([^&]+)/);
-  // Default to the basic toolbox with categories and untyped variables,
-  // but override that if the toolbox type is set in the URL.
-  var toolboxSuffix = (match ? match[1] : 'categories');
-  // The three possible values are: "simple", "categories",
-  // "categories-typed-variables".
-  return document.getElementById('toolbox-' + toolboxSuffix);
-}
-
-function insertTestXml() {
-  let output = document.getElementById("importExport");
-  let xmlText = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
-      "  <block type=\"import_return\" y=\"138\">\n" +
-      "    <mutation func=\"Return Function\" args=\"2\">\n" +
-      "        <arg name=\"argA\"></arg>\n" +
-      "        <arg name=\"argB\"></arg>\n" +
-      "    </mutation>\n" +
-      "  </block>\n" +
-      "  <block type=\"import_statement\" y=\"213\">\n" +
-      "    <mutation func=\"Statement Function\" args=\"2\">\n" +
-      "        <arg name=\"argA\"></arg>\n" +
-      "        <arg name=\"argB\"></arg>\n" +
-      "    </mutation>\n" +
-      "  </block>\n" +
-      "</xml>";
-  output.value = xmlText;
-
-  taChange();
-}
-
-// xml 사용 샘플 코드
-function myFunction(xml) {
-  var x, y, i, xlen, xmlDoc, txt;
-  xmlDoc = xml.responseXML;
-  x = xmlDoc.getElementsByTagName("book")[0];
-  xlen = x.childNodes.length;
-  y = x.firstChild;
-  txt = "";
-  for (i = 0; i < xlen; i++) {
-    if (y.nodeType == 1) {
-      txt += i + " " + y.nodeName + "<br>";
-    }
-    y = y.nextSibling;
-  }
-  document.getElementById("demo").innerHTML = txt;
-}
-
-// 라이브러리 xml의 원형을 본따서 arg, type, name 을 바꾼 후 리턴
-function generateLibFuncXML(arr){
-  if(arr['type'] == "procedures_defnoreturn"){
-    arr['type'] = "import_statement"
-  } else if(arr['type'] =="procedures_defreturn"){
-    arr['type'] = "import_return"
-  }
-  var a = "<block type=\"" + arr['type'] + "\" y=\"138\">" + "\n" +
-          "<mutation func=\"" + arr['funcName'] + "\" args=\"" + Object.keys(arr['arg']).length + "\">"+ "\n";
-
-  for (var key in arr['arg']) {
-    // check if the property/key is defined in the object itself, not in parent
-    if (arr['arg'].hasOwnProperty(key)) {
-      a += "<arg name=\""+ arr['arg'][key] + "\"></arg>" + "\n"
-    }
-  }
-  a += "</mutation>" + "\n" +
-  "</block>"+ "\n";
-  console.log(a);
-  return a;
-}
-
-// function xml parser
-function libFuncToMutationCode(libFunction){
-  var parser, xmlDoc,txt="";
-  var result = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">"+ "\n";
-  parser = new DOMParser();
-  xmlDoc = parser.parseFromString(libFunction,"text/xml");
-  var blockObjects = xmlDoc.getElementsByTagName("block");
-  console.log(blockObjects)
-  for(var blockIdx = 0; blockIdx < blockObjects.length; blockIdx++){
-    var dict = {}
-    var x = blockObjects[blockIdx];
-    if(x.getAttributeNode("type").nodeValue == "text_print") {
-      continue;
-    }
-    var flag = 0;
-    if(x.getAttributeNode("type").nodeValue == "procedures_defnoreturn"){
-      flag = 1;
-    }
-
-    if(x.getAttributeNode("type").nodeValue == "procedures_defreturn"){
-      flag = 1;
-    }
-    if(!flag){
-      continue;
-    }
-    console.log(x.getAttributeNode("type").nodeValue)
-
-    dict["type"] = x.getAttributeNode("type").nodeValue
-    var xlen = x.childNodes.length;
-    var y = x.firstChild;
-    for(var i = 0; i < xlen; i++){
-      if(y.nodeName == "mutation"){
-        var firstNode = y.firstChild;
-        var mLen = y.childNodes.length;
-        var argDict = {}
-        for(var j = 0; j < mLen; j++){
-          if(firstNode.nodeName != "#text"){
-            txt += firstNode.nodeName + "<br>"
-            console.log(firstNode.getAttributeNode("name").nodeValue)
-            argDict[j] = firstNode.getAttributeNode("name").nodeValue
-          }
-          firstNode = firstNode.nextSibling
+            comments: true,
+            collapse: true,
+            disable: true,
+            grid:
+                {
+                  spacing: 25,
+                  length: 3,
+                  colour: '#ccc',
+                  snap: true
+                },
+            horizontalLayout: side == 'top' || side == 'bottom',
+            maxBlocks: Infinity,
+            maxInstances: {'limit_instances': 3},
+            media: '../media/',
+            oneBasedIndex: true,
+            readOnly: false,
+            rtl: rtl,
+            scrollbars: true,
+            toolbox: toolbox,
+            toolboxPosition: side == 'top' || side == 'start' ? 'start' : 'end',
+            zoom:
+                {
+                  controls: true,
+                  wheel: true,
+                  startScale: 1.0,
+                  maxScale: 4,
+                  minScale: 0.25,
+                  scaleSpeed: 1.1
+                }
+          });
+      addToolboxButtonCallbacks();
+      // Restore previously displayed text.
+      if (sessionStorage) {
+        var text = sessionStorage.getItem('textarea');
+        if (text) {
+          document.getElementById('importExport').value = text;
         }
-        dict["arg"] = argDict
-      } else if(y.nodeName == "field") {
-        dict["funcName"] = y.childNodes[0].nodeValue
-        console.log(y.childNodes[0].nodeValue)
+        // Restore event logging state.
+        var state = sessionStorage.getItem('logEvents');
+        logEvents(Boolean(Number(state)));
+      } else {
+        // MSIE 11 does not support sessionStorage on file:// URLs.
+        logEvents(false);
       }
-      if(y.nodeType == 1)
-        txt +=  y.nodeName + "<br>";
-      y = y.nextSibling;
     }
-    console.log(dict)
-    result += generateLibFuncXML(dict)
-  }
-  result += "</xml>" + "\n";
-  return result;
-}
 
-function myImport() {
-  let input = document.getElementById("importExport");
-  // convert function xml to library xml
-  let convertedXml = libFuncToMutationCode(input.value);
-  console.log(convertedXml);
-  let xml = Blockly.Xml.textToDom(convertedXml);
-
-  let childrenCount = xml.children.length || 0;
-  for (let i = 0; i < childrenCount; i++) {
-    let child = xml.children[i];
-
-    let childIsBlock = (child.nodeName == "block");
-    let childTypeIsImportReturn = (child.getAttribute("type") == "import_return");
-    let childTypeIsImportStatement = (child.getAttribute("type") == "import_statement");
-
-    if (childIsBlock && (childTypeIsImportReturn || childTypeIsImportStatement)) {
-      document.getElementById("toolbox-categories").querySelector("[name='Import']").append(
-          child);
-      i--;
-      childrenCount--;
+    function addToolboxButtonCallbacks() {
+      workspace.registerButtonCallback(
+          'addDynamicOption', Blockly.TestBlocks.addDynamicDropdownOption_);
+      workspace.registerButtonCallback(
+          'removeDynamicOption', Blockly.TestBlocks.removeDynamicDropdownOption_);
     }
-  }
 
-  collapseToolbox();
-  workspace.updateToolbox(document.getElementById("toolbox-categories"));
-}
-
-function collapseToolbox() {
-  let tree = workspace.getToolbox().tree_;
-
-  if (tree) {
-    tree.setSelectedItem(null);
-  }
-}
-
-function toXml() {
-  var output = document.getElementById('importExport');
-  var xml = Blockly.Xml.workspaceToDom(workspace);
-  output.value = Blockly.Xml.domToPrettyText(xml);
-  output.focus();
-  output.select();
-  taChange();
-}
-
-function fromXml() {
-  var input = document.getElementById('importExport');
-  var xml = Blockly.Xml.textToDom(input.value);
-  Blockly.Xml.domToWorkspace(xml, workspace);
-  taChange();
-}
-
-function sendAjax(url, main, libraries){
-  // langType - 0:py 1:lua 2:dart 3:php
-  // libraryFunction number
-  var data = {'langType' : 0, 'main' : main, 'libraries' : libraries};
-  data = JSON.stringify(data)
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', url);
-  xhr.setRequestHeader('Content-Type', "application/json");
-  xhr.send(data);
-  xhr.addEventListener('load', function(){
-    var result = JSON.parse(xhr.responseText);
-    if(result.result!=="ok") return;
-    alert(result.output);
-    //document.querySelector(".result").innerHTML = result.output;
-  })
-}
-
-// .blk file에 위치한 코드, 샘플용
-function samplePy(){
-  var a = "argA = None" + "\n" +
-  "argB = None" + "\n" +
-  "\"\"\"Describe this function..." + "\n" +
-  "\"\"\"" + "\n" +
-  "def doSomething(argA, argB):" + "\n" +
-  "\tprint(argA + argB)" + "\n" +
-
-  "\"\"\"Describe this function..." + "\n" +
-  "\"\"\"" + "\n" +
-  "def doSomething2(argA, argB):" + "\n" +
-  "\tprint(argA + argB)"
-  return a;
-}
-
-// block을 Javascript 코드로 변환하고, 이를 실행시킨다.
-function toJSCode() {
-  let output = document.getElementById('importExport');
-  output.value = Blockly["JavaScript"].workspaceToCode(workspace);
-  //canvas.clear();
-  //alert(output.value);
-  //objectsOfSprites[currentSprite].jsCode = output.value;
-
-  manager.getCurrentSprite().printProperties();
-  // objectsOfSprites[currentSprite].printProperties();
-  manager.getCurrentSprite().executeJS(output.value);
-  // objectsOfSprites[currentSprite].executeJS(output.value);
-
-  //console.log(objectsOfSprites[currentSprite].jsCode);
-  //objectsOfSprites[currentSprite].printProperties()
-  //objectsOfSprites[currentSprite].draw();
-  console.log(currentSprite);
-
-  // 기존 코드
-  /*eval(output.value);
-  cat.draw();*/
-}
-
-function toCode(lang) {
-  var output = document.getElementById('importExport_');
-  output.value = Blockly[lang].workspaceToCode(workspace);
-  var libFunction = samplePy();
-  var pyCode = output.value;
-  pyCode = "from testFunction import *\n" + pyCode;
-  var libraries = {'numberOfLibs' : 1, 'libraryInfo' : {
-      0 : {"name" : "testFunction", "body" : libFunction}
-    }};
-  console.log(pyCode);
-  console.log(libFunction);
-
-  sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
-  taChange();
-}
-
-// Disable the "Import from XML" button if the XML is invalid.
-// Preserve text between page reloads.
-function taChange() {
-  var textarea = document.getElementById('importExport');
-  if (sessionStorage) {
-    sessionStorage.setItem('textarea', textarea.value);
-  }
-  var valid = true;
-  try {
-    Blockly.Xml.textToDom(textarea.value);
-  } catch (e) {
-    valid = false;
-  }
-  document.getElementById('import').disabled = !valid;
-}
-
-function logEvents(state) {
-  var checkbox = document.getElementById('logCheck');
-  checkbox.checked = state;
-  if (sessionStorage) {
-    sessionStorage.setItem('logEvents', Number(state));
-  }
-  if (state) {
-    workspace.addChangeListener(logger);
-  } else {
-    workspace.removeChangeListener(logger);
-  }
-}
-
-function logger(e) {
-  console.log(e);
-}
-
-function airstrike(n) {
-  var prototypes = [];
-  var toolbox = getToolboxElement();
-  var blocks = toolbox.getElementsByTagName('block');
-  for (var i = 0, block; block = blocks[i]; i++) {
-    prototypes.push(block.getAttribute('type'));
-  }
-  for (var i = 0; i < n; i++) {
-    var prototype = prototypes[Math.floor(Math.random() * prototypes.length)];
-    var block = workspace.newBlock(prototype);
-    block.initSvg();
-    block.getSvgRoot().setAttribute('transform', 'translate(' +
-        Math.round(Math.random() * 450 + 40) + ', ' +
-        Math.round(Math.random() * 600 + 40) + ')');
-    block.render();
-  }
-}
-
-function spaghetti(n) {
-  var xml = spaghettiXml;
-  for(var i = 0; i < n; i++) {
-    xml = xml.replace(/(<(statement|next)( name="DO0")?>)<\//g,
-        '$1' + spaghettiXml + '</');
-  }
-  xml = '<xml xmlns="http://www.w3.org/1999/xhtml">' + xml + '</xml>';
-  var dom = Blockly.Xml.textToDom(xml);
-  console.time('Spaghetti domToWorkspace');
-  Blockly.Xml.domToWorkspace(dom, workspace);
-  console.timeEnd('Spaghetti domToWorkspace');
-}
-var spaghettiXml = [
-  '  <block type="controls_if">',
-  '    <value name="IF0">',
-  '      <block type="logic_compare">',
-  '        <field name="OP">EQ</field>',
-  '        <value name="A">',
-  '          <block type="math_arithmetic">',
-  '            <field name="OP">MULTIPLY</field>',
-  '            <value name="A">',
-  '              <block type="math_number">',
-  '                <field name="NUM">6</field>',
-  '              </block>',
-  '            </value>',
-  '            <value name="B">',
-  '              <block type="math_number">',
-  '                <field name="NUM">7</field>',
-  '              </block>',
-  '            </value>',
-  '          </block>',
-  '        </value>',
-  '        <value name="B">',
-  '          <block type="math_number">',
-  '            <field name="NUM">42</field>',
-  '          </block>',
-  '        </value>',
-  '      </block>',
-  '    </value>',
-  '    <statement name="DO0"></statement>',
-  '    <next></next>',
-  '  </block>'].join('\n');
-
-
-function changeTab(){
-  var tab = document.getElementById('tabChanger');
-  if(tab.value == "main_tab"){
-
-  }else if(tab.value == "library_tab"){
-    //setWorkspaceFromSprite("library");
-  }
-}
-
-// 리소스 움직임용 함수
-/*function myMove() {
-  var resImage = document.getElementById("myAnimation");
-  var resContainer = document.getElementById("myContainer");
-  var top = resImage.offsetTop;
-  var left = resImage.offsetLeft;
-  //var elem = document.getElementById("myAnimation");
-  var pos = 0;
-  var id = setInterval(frame, 10);
-  function frame() {
-    if (pos == 400) {
-      clearInterval(id);
-    } else {
-      pos++;
-      resImage.style.top = top  + pos + 'px';
-      resImage.style.left = left + pos +'px';
+    function changeTheme() {
+      var theme = document.getElementById('themeChanger');
+      if (theme.value === "modern") {
+        Blockly.setTheme(Blockly.Themes.Modern);
+      } else if (theme.value === "high_contrast") {
+        Blockly.setTheme(Blockly.Themes.HighContrast);
+      } else {
+        Blockly.setTheme(Blockly.Themes.Classic);
+      }
     }
-  }
-}*/
-//-------------------------------------------------------
-</script>
 
-<style>
-html, body {
-  height: 100%;
-}
-body {
-  background-color: #fff;
-  font-family: sans-serif;
-  overflow: hidden;
-}
-h1 {
-  font-weight: bold;
-  font-size: 140%;
-}
-#blocklyDiv {
-  height: 100%;
-  width: 100%; /*70 to 40*/
-}
+    function setBackgroundColour() {
+      // Set background colour to differentiate server vs local copy.
+      if (location.protocol == 'file:') {
+        var lilac = '#d6d6ff';
+        document.body.style.backgroundColor = lilac;
+      }
+    }
 
-#importExport {
-  font-family: monospace;
-}
+    function getToolboxElement() {
+      var match = location.search.match(/toolbox=([^&]+)/);
+      // Default to the basic toolbox with categories and untyped variables,
+      // but override that if the toolbox type is set in the URL.
+      var toolboxSuffix = (match ? match[1] : 'categories');
+      // The three possible values are: "simple", "categories",
+      // "categories-typed-variables".
+      return document.getElementById('toolbox-' + toolboxSuffix);
+    }
+
+    function insertTestXml() {
+      let output = document.getElementById("importExport");
+      let xmlText = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
+          "  <block type=\"import_return\" y=\"138\">\n" +
+          "    <mutation func=\"Return Function\" args=\"2\">\n" +
+          "        <arg name=\"argA\"></arg>\n" +
+          "        <arg name=\"argB\"></arg>\n" +
+          "    </mutation>\n" +
+          "  </block>\n" +
+          "  <block type=\"import_statement\" y=\"213\">\n" +
+          "    <mutation func=\"Statement Function\" args=\"2\">\n" +
+          "        <arg name=\"argA\"></arg>\n" +
+          "        <arg name=\"argB\"></arg>\n" +
+          "    </mutation>\n" +
+          "  </block>\n" +
+          "</xml>";
+      output.value = xmlText;
+
+      taChange();
+    }
+
+    // xml 사용 샘플 코드
+    function myFunction(xml) {
+      var x, y, i, xlen, xmlDoc, txt;
+      xmlDoc = xml.responseXML;
+      x = xmlDoc.getElementsByTagName("book")[0];
+      xlen = x.childNodes.length;
+      y = x.firstChild;
+      txt = "";
+      for (i = 0; i < xlen; i++) {
+        if (y.nodeType == 1) {
+          txt += i + " " + y.nodeName + "<br>";
+        }
+        y = y.nextSibling;
+      }
+      document.getElementById("demo").innerHTML = txt;
+    }
+
+    // 라이브러리 xml의 원형을 본따서 arg, type, name 을 바꾼 후 리턴
+    function generateLibFuncXML(arr) {
+      if (arr['type'] == "procedures_defnoreturn") {
+        arr['type'] = "import_statement"
+      } else if (arr['type'] == "procedures_defreturn") {
+        arr['type'] = "import_return"
+      }
+      var a = "<block type=\"" + arr['type'] + "\" y=\"138\">" + "\n" +
+          "<mutation func=\"" + arr['funcName'] + "\" args=\"" + Object.keys(arr['arg']).length
+          + "\">" + "\n";
+
+      for (var key in arr['arg']) {
+        // check if the property/key is defined in the object itself, not in parent
+        if (arr['arg'].hasOwnProperty(key)) {
+          a += "<arg name=\"" + arr['arg'][key] + "\"></arg>" + "\n"
+        }
+      }
+      a += "</mutation>" + "\n" +
+          "</block>" + "\n";
+      console.log(a);
+      return a;
+    }
+
+    // function xml parser
+    function libFuncToMutationCode(libFunction) {
+      var parser, xmlDoc, txt = "";
+      var result = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">" + "\n";
+      parser = new DOMParser();
+      xmlDoc = parser.parseFromString(libFunction, "text/xml");
+      var blockObjects = xmlDoc.getElementsByTagName("block");
+      console.log(blockObjects)
+      for (var blockIdx = 0; blockIdx < blockObjects.length; blockIdx++) {
+        var dict = {}
+        var x = blockObjects[blockIdx];
+        if (x.getAttributeNode("type").nodeValue == "text_print") {
+          continue;
+        }
+        var flag = 0;
+        if (x.getAttributeNode("type").nodeValue == "procedures_defnoreturn") {
+          flag = 1;
+        }
+
+        if (x.getAttributeNode("type").nodeValue == "procedures_defreturn") {
+          flag = 1;
+        }
+        if (!flag) {
+          continue;
+        }
+        console.log(x.getAttributeNode("type").nodeValue)
+
+        dict["type"] = x.getAttributeNode("type").nodeValue
+        var xlen = x.childNodes.length;
+        var y = x.firstChild;
+        for (var i = 0; i < xlen; i++) {
+          if (y.nodeName == "mutation") {
+            var firstNode = y.firstChild;
+            var mLen = y.childNodes.length;
+            var argDict = {}
+            for (var j = 0; j < mLen; j++) {
+              if (firstNode.nodeName != "#text") {
+                txt += firstNode.nodeName + "<br>"
+                console.log(firstNode.getAttributeNode("name").nodeValue)
+                argDict[j] = firstNode.getAttributeNode("name").nodeValue
+              }
+              firstNode = firstNode.nextSibling
+            }
+            dict["arg"] = argDict
+          } else if (y.nodeName == "field") {
+            dict["funcName"] = y.childNodes[0].nodeValue
+            console.log(y.childNodes[0].nodeValue)
+          }
+          if (y.nodeType == 1) {
+            txt += y.nodeName + "<br>";
+          }
+          y = y.nextSibling;
+        }
+        console.log(dict)
+        result += generateLibFuncXML(dict)
+      }
+      result += "</xml>" + "\n";
+      return result;
+    }
+
+    function myImport() {
+      let input = document.getElementById("importExport");
+      // convert function xml to library xml
+      let convertedXml = libFuncToMutationCode(input.value);
+      console.log(convertedXml);
+      let xml = Blockly.Xml.textToDom(convertedXml);
+
+      let childrenCount = xml.children.length || 0;
+      for (let i = 0; i < childrenCount; i++) {
+        let child = xml.children[i];
+
+        let childIsBlock = (child.nodeName == "block");
+        let childTypeIsImportReturn = (child.getAttribute("type") == "import_return");
+        let childTypeIsImportStatement = (child.getAttribute("type") == "import_statement");
+
+        if (childIsBlock && (childTypeIsImportReturn || childTypeIsImportStatement)) {
+          document.getElementById("toolbox-categories").querySelector("[name='Import']").append(
+              child);
+          i--;
+          childrenCount--;
+        }
+      }
+
+      collapseToolbox();
+      workspace.updateToolbox(document.getElementById("toolbox-categories"));
+    }
+
+    function collapseToolbox() {
+      let tree = workspace.getToolbox().tree_;
+
+      if (tree) {
+        tree.setSelectedItem(null);
+      }
+    }
+
+    function toXml() {
+      var output = document.getElementById('importExport');
+      var xml = Blockly.Xml.workspaceToDom(workspace);
+      output.value = Blockly.Xml.domToPrettyText(xml);
+      output.focus();
+      output.select();
+      taChange();
+    }
+
+    function fromXml() {
+      var input = document.getElementById('importExport');
+      var xml = Blockly.Xml.textToDom(input.value);
+      Blockly.Xml.domToWorkspace(xml, workspace);
+      taChange();
+    }
+
+    function sendAjax(url, main, libraries) {
+      // langType - 0:py 1:lua 2:dart 3:php
+      // libraryFunction number
+      var data = {'langType': 0, 'main': main, 'libraries': libraries};
+      data = JSON.stringify(data)
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', url);
+      xhr.setRequestHeader('Content-Type', "application/json");
+      xhr.send(data);
+      xhr.addEventListener('load', function () {
+        var result = JSON.parse(xhr.responseText);
+        if (result.result !== "ok") {
+          return;
+        }
+        alert(result.output);
+        //document.querySelector(".result").innerHTML = result.output;
+      })
+    }
+
+    // .blk file에 위치한 코드, 샘플용
+    function samplePy() {
+      var a = "argA = None" + "\n" +
+          "argB = None" + "\n" +
+          "\"\"\"Describe this function..." + "\n" +
+          "\"\"\"" + "\n" +
+          "def doSomething(argA, argB):" + "\n" +
+          "\tprint(argA + argB)" + "\n" +
+
+          "\"\"\"Describe this function..." + "\n" +
+          "\"\"\"" + "\n" +
+          "def doSomething2(argA, argB):" + "\n" +
+          "\tprint(argA + argB)"
+      return a;
+    }
+
+    // block을 Javascript 코드로 변환하고, 이를 실행시킨다.
+    function toJSCode() {
+      let output = document.getElementById('importExport');
+      output.value = Blockly["JavaScript"].workspaceToCode(workspace);
+      //canvas.clear();
+      //alert(output.value);
+      //objectsOfSprites[currentSprite].jsCode = output.value;
+
+      manager.getCurrentSprite().printProperties();
+      // objectsOfSprites[currentSprite].printProperties();
+      manager.getCurrentSprite().executeJS(output.value);
+      // objectsOfSprites[currentSprite].executeJS(output.value);
+
+      //console.log(objectsOfSprites[currentSprite].jsCode);
+      //objectsOfSprites[currentSprite].printProperties()
+      //objectsOfSprites[currentSprite].draw();
+      //console.log(currentSprite);
+
+      // 기존 코드
+      /*eval(output.value);
+      cat.draw();*/
+    }
+
+    function toCode(lang) {
+      var output = document.getElementById('importExport_');
+      output.value = Blockly[lang].workspaceToCode(workspace);
+      var libFunction = samplePy();
+      var pyCode = output.value;
+      pyCode = "from testFunction import *\n" + pyCode;
+      var libraries = {
+        'numberOfLibs': 1, 'libraryInfo': {
+          0: {"name": "testFunction", "body": libFunction}
+        }
+      };
+      console.log(pyCode);
+      console.log(libFunction);
+
+      sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
+      taChange();
+    }
+
+    // Disable the "Import from XML" button if the XML is invalid.
+    // Preserve text between page reloads.
+    function taChange() {
+      var textarea = document.getElementById('importExport');
+      if (sessionStorage) {
+        sessionStorage.setItem('textarea', textarea.value);
+      }
+      var valid = true;
+      try {
+        Blockly.Xml.textToDom(textarea.value);
+      } catch (e) {
+        valid = false;
+      }
+      document.getElementById('import').disabled = !valid;
+    }
+
+    function logEvents(state) {
+      var checkbox = document.getElementById('logCheck');
+      checkbox.checked = state;
+      if (sessionStorage) {
+        sessionStorage.setItem('logEvents', Number(state));
+      }
+      if (state) {
+        workspace.addChangeListener(logger);
+      } else {
+        workspace.removeChangeListener(logger);
+      }
+    }
+
+    function logger(e) {
+      console.log(e);
+    }
+
+    function airstrike(n) {
+      var prototypes = [];
+      var toolbox = getToolboxElement();
+      var blocks = toolbox.getElementsByTagName('block');
+      for (var i = 0, block; block = blocks[i]; i++) {
+        prototypes.push(block.getAttribute('type'));
+      }
+      for (var i = 0; i < n; i++) {
+        var prototype = prototypes[Math.floor(Math.random() * prototypes.length)];
+        var block = workspace.newBlock(prototype);
+        block.initSvg();
+        block.getSvgRoot().setAttribute('transform', 'translate(' +
+            Math.round(Math.random() * 450 + 40) + ', ' +
+            Math.round(Math.random() * 600 + 40) + ')');
+        block.render();
+      }
+    }
+
+    function spaghetti(n) {
+      var xml = spaghettiXml;
+      for (var i = 0; i < n; i++) {
+        xml = xml.replace(/(<(statement|next)( name="DO0")?>)<\//g,
+            '$1' + spaghettiXml + '</');
+      }
+      xml = '<xml xmlns="http://www.w3.org/1999/xhtml">' + xml + '</xml>';
+      var dom = Blockly.Xml.textToDom(xml);
+      console.time('Spaghetti domToWorkspace');
+      Blockly.Xml.domToWorkspace(dom, workspace);
+      console.timeEnd('Spaghetti domToWorkspace');
+    }
+
+    var spaghettiXml = [
+      '  <block type="controls_if">',
+      '    <value name="IF0">',
+      '      <block type="logic_compare">',
+      '        <field name="OP">EQ</field>',
+      '        <value name="A">',
+      '          <block type="math_arithmetic">',
+      '            <field name="OP">MULTIPLY</field>',
+      '            <value name="A">',
+      '              <block type="math_number">',
+      '                <field name="NUM">6</field>',
+      '              </block>',
+      '            </value>',
+      '            <value name="B">',
+      '              <block type="math_number">',
+      '                <field name="NUM">7</field>',
+      '              </block>',
+      '            </value>',
+      '          </block>',
+      '        </value>',
+      '        <value name="B">',
+      '          <block type="math_number">',
+      '            <field name="NUM">42</field>',
+      '          </block>',
+      '        </value>',
+      '      </block>',
+      '    </value>',
+      '    <statement name="DO0"></statement>',
+      '    <next></next>',
+      '  </block>'].join('\n');
+
+    function changeTab() {
+      var tab = document.getElementById('tabChanger');
+      if (tab.value == "main_tab") {
+
+      } else if (tab.value == "library_tab") {
+        //setWorkspaceFromSprite("library");
+      }
+    }
+
+    // 리소스 움직임용 함수
+    /*function myMove() {
+      var resImage = document.getElementById("myAnimation");
+      var resContainer = document.getElementById("myContainer");
+      var top = resImage.offsetTop;
+      var left = resImage.offsetLeft;
+      //var elem = document.getElementById("myAnimation");
+      var pos = 0;
+      var id = setInterval(frame, 10);
+      function frame() {
+        if (pos == 400) {
+          clearInterval(id);
+        } else {
+          pos++;
+          resImage.style.top = top  + pos + 'px';
+          resImage.style.left = left + pos +'px';
+        }
+      }
+    }*/
+    //-------------------------------------------------------
+  </script>
+
+  <style>
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-weight: bold;
+      font-size: 140%;
+    }
+
+    #blocklyDiv {
+      height: 100%;
+      width: 100%; /*70 to 40*/
+    }
+
+    #importExport {
+      font-family: monospace;
+    }
 
 
-/* 리소스 핸들링용 CSS */
-#myContainer {
-  width: 450px;
-  height: 450px;
-  float:left;
-  border-style: solid;
-  border-bottom-color: #92a8d1;
-  border-top-color: #92a8d1;
-  border-left-color: #92a8d1;
-  border-right-color: #92a8d1;
-  background: white;
-}
-#myAnimation {
-  width: 50px;
-  height: 50px;
-  position: absolute;
-}
+    /* 리소스 핸들링용 CSS */
+    #myContainer {
+      width: 450px;
+      height: 450px;
+      float: left;
+      border-style: solid;
+      border-bottom-color: #92a8d1;
+      border-top-color: #92a8d1;
+      border-left-color: #92a8d1;
+      border-right-color: #92a8d1;
+      background: white;
+    }
 
-#importedFunctions{
-  clear: both;
-  display: none;
-  height: 90%;
-  overflow-x: hidden;
-  overflow-y: scroll;
-}
+    #myAnimation {
+      width: 50px;
+      height: 50px;
+      position: absolute;
+    }
 
-  #header {
-    height: 70px;
-  }
+    #importedFunctions {
+      clear: both;
+      display: none;
+      height: 90%;
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
 
-  #contents {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
+    #header {
+      height: 70px;
+    }
 
-  #workspace {
-    height: calc(100% - 90px);
-    margin-right: calc(500px + 5px);
-  }
+    #contents {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
 
-  #rightBar {
-    position: absolute;
-    width: 500px;
-    height: 100%;
-    top: 0;
-    right: 0;
-  }
+    #workspace {
+      height: calc(100% - 90px);
+      margin-right: calc(500px + 5px);
+    }
 
-  #canvases {
-    position: relative;
-    height: 500px;
-    margin-bottom: 5px;
-  }
+    #rightBar {
+      position: absolute;
+      width: 500px;
+      height: 100%;
+      top: 0;
+      right: 0;
+    }
 
-  canvas {
-    position: absolute;
-    border: 1px solid black;
-  }
-</style>
+    #canvases {
+      position: relative;
+      height: 500px;
+      margin-bottom: 5px;
+    }
+
+    canvas {
+      position: absolute;
+      border: 1px solid black;
+    }
+  </style>
 </head>
 <body onload="start()">
 
-  <div id="header">
-    <h1>Blockly Playground</h1>
-    <select id="tabChanger" name="theme" onchange="changeTab()">
-      <option value="main_tab">Main</option>
-      <option value="library_tab">Library</option>
-    </select>
+<div id="header">
+  <h1>Blockly Playground</h1>
+  <select id="tabChanger" name="theme" onchange="changeTab()">
+    <option value="main_tab">Main</option>
+    <option value="library_tab">Library</option>
+  </select>
+</div>
+<div id="contents">
+  <div id="workspace">
+    <div id="blocklyDiv"></div>
   </div>
-  <div id="contents">
-    <div id="workspace">
-      <div id="blocklyDiv"></div>
-    </div>
-    <div id="rightBar">
+  <div id="rightBar">
 
 
-      <div id="canvases"></div>
+    <div id="canvases"></div>
 
 
+    <script src="sprite/canvas.js"></script>
+    <script src="sprite/sprite.js"></script>
+    <script src="sprite/image_sprite.js"></script>
+    <script src="sprite/sprite_manager.js"></script>
+    <script src="sprite/sprite_exceptions.js"></script>
+    <script src="sprite/speech_bubble.js"></script>
 
-      <script src="sprite/canvas.js"></script>
-      <script src="sprite/sprite.js"></script>
-      <script src="sprite/image_sprite.js"></script>
-      <script src="sprite/sprite_manager.js"></script>
-      <script src="sprite/sprite_exceptions.js"></script>
-      <script src="sprite/speech_bubble.js"></script>
+    <script>
+      let manager = new SpriteManager();
+      // manager.addSpriteAndSelect("black_rect.png");
+      // manager.getCurrentSprite().x -= 5;
+      // manager.getCurrentSprite().y -= 5;
+      // manager.getCurrentSprite().width = 20;
+      // manager.getCurrentSprite().height = 20;
+      // manager.getCurrentSprite().draw();
+      manager.addSpriteAndSelect("aww-cat.png");
+      manager.getCurrentSprite().width = 47;
+      manager.getCurrentSprite().height = 47;
+      // manager.getCurrentSprite().y -= 1;
+      manager.getCurrentSprite().draw();
 
-      <script>
-        let manager = new SpriteManager();
-        // manager.addSpriteAndSelect("black_rect.png");
-        // manager.getCurrentSprite().x -= 5;
-        // manager.getCurrentSprite().y -= 5;
-        // manager.getCurrentSprite().width = 20;
-        // manager.getCurrentSprite().height = 20;
-        // manager.getCurrentSprite().draw();
-        manager.addSpriteAndSelect("aww-cat.png");
-        manager.getCurrentSprite().width = 47;
-        manager.getCurrentSprite().height = 47;
-        // manager.getCurrentSprite().y -= 1;
-        manager.getCurrentSprite().draw();
+      // let canvas = new Canvas("canvases", "aww-cat.png", 1, 500, 300);
+      // let canvas2 = new Canvas("canvases", "img_forest.jpg", 0, 500, 300);
+      //
+      // // 기본 sprite를 배치한다.
+      // objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 10, 10, 50, 50, 0);
+      // objectsOfSprites["aww-cat.png"].draw();
+      // objectsOfSprites["img_forest.jpg"] = new ImageSprite(canvas2, "img_forest.jpg", 0, 0, 50, 50, 0);
+      // objectsOfSprites["img_forest.jpg"].draw();
+      // //objectsOfSprites["aww-cat.png"];
+      // currentSprite = "aww-cat.png";
+    </script>
+    <style>
+      div.gallery {
+        margin: 5px;
+        border: 1px solid #ccc;
+        float: left;
+        width: 100px;
 
-        // let canvas = new Canvas("canvases", "aww-cat.png", 1, 500, 300);
-        // let canvas2 = new Canvas("canvases", "img_forest.jpg", 0, 500, 300);
-        //
-        // // 기본 sprite를 배치한다.
-        // objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 10, 10, 50, 50, 0);
-        // objectsOfSprites["aww-cat.png"].draw();
-        // objectsOfSprites["img_forest.jpg"] = new ImageSprite(canvas2, "img_forest.jpg", 0, 0, 50, 50, 0);
-        // objectsOfSprites["img_forest.jpg"].draw();
-        // //objectsOfSprites["aww-cat.png"];
-        // currentSprite = "aww-cat.png";
-      </script>
-      <style>
-        div.gallery {
-          margin: 5px;
-          border: 1px solid #ccc;
-          float: left;
-          width: 100px;
+      }
 
-        }
+      div.gallery:hover {
+        border: 1px solid #777;
+      }
 
-        div.gallery:hover {
-          border: 1px solid #777;
-        }
+      div.gallery img {
+        width: 100%;
+        height: auto;
+      }
 
-        div.gallery img {
-          width: 100%;
-          height: auto;
-        }
+      div.desc {
+        padding: 15px;
+        text-align: center;
+      }
+    </style>
 
-        div.desc {
-          padding: 15px;
-          text-align: center;
-        }
-      </style>
-
-      <script>
-        function spriteChooser() {
-          var name;
-          var x = document.getElementById("spriteChooser");
-          var txt = "";
-          if ('files' in x) {
-            if (x.files.length == 0) {
-              txt = "Select one or more files.";
-            } else {
-              for (var i = 0; i < x.files.length; i++) {
-                txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
-                var file = x.files[i];
-                if ('name' in file) {
-                  txt += "name: " + file.name + "<br>";
-                  name = file.name;
-                }
-                if ('size' in file) {
-                  txt += "size: " + file.size + " bytes <br>";
-                }
-                if ('value' in file) {
-                  txt += "value: " + file.value + " bytes <br>";
-                }
+    <script>
+      function spriteChooser() {
+        var name;
+        var x = document.getElementById("spriteChooser");
+        var txt = "";
+        if ('files' in x) {
+          if (x.files.length == 0) {
+            txt = "Select one or more files.";
+          } else {
+            for (var i = 0; i < x.files.length; i++) {
+              txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
+              var file = x.files[i];
+              if ('name' in file) {
+                txt += "name: " + file.name + "<br>";
+                name = file.name;
+              }
+              if ('size' in file) {
+                txt += "size: " + file.size + " bytes <br>";
+              }
+              if ('value' in file) {
+                txt += "value: " + file.value + " bytes <br>";
               }
             }
-          } else {
-            if (x.value == "") {
-              txt += "Select one or more files.";
-            } else {
-              txt += "The files property is not supported by your browser!";
-              txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
-            }
           }
-          var a = '<div class="gallery\">' +
-              '<img onclick="pictureEvent(\'' + name + '\')" src="' + name
-              + '" alt="냥" width="100" height="100">' +
-              '<div class="desc">냥</div>' +
-              '</div>';
-          //alert(a);
-          document.getElementById("gallary_owner").innerHTML += a;
-
-          // sprite 별로 사용자가 만들었던 XML을 저장한다.
-          // XMLOfEachSprites[name] = "";
-          // sprite에 대한 canvas 용 objects를 저장한다.
-          // 객체 생성 코드 예시 : let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
-          manager.addSprite(name);
-          manager.getSprite(name).draw();
-          manager.getSprite(name).printProperties();
-
-          // objectsOfSprites[name] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0);
-          // objectsOfSprites[name].draw();
-          // objectsOfSprites[name].printProperties();
-
+        } else {
+          if (x.value == "") {
+            txt += "Select one or more files.";
+          } else {
+            txt += "The files property is not supported by your browser!";
+            txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
+          }
         }
+        var a = '<div class="gallery\">' +
+            '<img onclick="pictureEvent(\'' + name + '\')" src="' + name
+            + '" alt="냥" width="100" height="100">' +
+            '<div class="desc">냥</div>' +
+            '</div>';
+        //alert(a);
+        document.getElementById("gallary_owner").innerHTML += a;
 
-        function stageChooser(){
-          var name;
-          var x = document.getElementById("stageChooser");
-          var txt = "";
-          if ('files' in x) {
-            if (x.files.length == 0) {
-              txt = "Select one or more files.";
-            } else {
-              for (var i = 0; i < x.files.length; i++) {
-                txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
-                var file = x.files[i];
-                if ('name' in file) {
-                  txt += "name: " + file.name + "<br>";
-                  name = file.name;
-                }
-                if ('size' in file) {
-                  txt += "size: " + file.size + " bytes <br>";
-                }
-                if ('value' in file) {
-                  txt += "value: " + file.value + " bytes <br>";
-                }
+        // sprite 별로 사용자가 만들었던 XML을 저장한다.
+        // XMLOfEachSprites[name] = "";
+        // sprite에 대한 canvas 용 objects를 저장한다.
+        // 객체 생성 코드 예시 : let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
+        manager.addSprite(name);
+        manager.getSprite(name).draw();
+        manager.getSprite(name).printProperties();
+
+        // objectsOfSprites[name] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0);
+        // objectsOfSprites[name].draw();
+        // objectsOfSprites[name].printProperties();
+
+      }
+
+      function stageChooser() {
+        var name;
+        var x = document.getElementById("stageChooser");
+        var txt = "";
+        if ('files' in x) {
+          if (x.files.length == 0) {
+            txt = "Select one or more files.";
+          } else {
+            for (var i = 0; i < x.files.length; i++) {
+              txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
+              var file = x.files[i];
+              if ('name' in file) {
+                txt += "name: " + file.name + "<br>";
+                name = file.name;
+              }
+              if ('size' in file) {
+                txt += "size: " + file.size + " bytes <br>";
+              }
+              if ('value' in file) {
+                txt += "value: " + file.value + " bytes <br>";
               }
             }
-          } else {
-            if (x.value == "") {
-              txt += "Select one or more files.";
-            } else {
-              txt += "The files property is not supported by your browser!";
-              txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
-            }
           }
-          var a = '<div class="stage\">' +
-                  '<img onclick="pictureEvent(\'' + name + '\')" src="' + name
-                  + '" alt="냥" width="100" height="100">' +
-                  '<div class="desc">냥</div>' +
-                  '</div>';
-          document.getElementById("stage_owner").innerHTML += a;
-          manager.addStage(name);
-          manager.getSprite(name).draw();
-          manager.getSprite(name).printProperties();
+        } else {
+          if (x.value == "") {
+            txt += "Select one or more files.";
+          } else {
+            txt += "The files property is not supported by your browser!";
+            txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
+          }
         }
+        var a = '<div class="stage\">' +
+            '<img onclick="pictureEvent(\'' + name + '\')" src="' + name
+            + '" alt="냥" width="100" height="100">' +
+            '<div class="desc">냥</div>' +
+            '</div>';
+        document.getElementById("stage_owner").innerHTML += a;
+        manager.addStage(name);
+        manager.getSprite(name).draw();
+        manager.getSprite(name).printProperties();
+      }
 
-        // 현재 진행되던 sprite 변수명 : currentSprite
-        // sprite xml들을 저장하는 property list : XMLOfEachSprites
-        // nameOfSprite : sprite의 이름, key로 사용
-        // sprite의 이름을 받아서 workspace에 해당 sprite의 블록을 넣어준다.
-        function pictureEvent(nameOfSprite) {
-          // to xml
+      // 현재 진행되던 sprite 변수명 : currentSprite
+      // sprite xml들을 저장하는 property list : XMLOfEachSprites
+      // nameOfSprite : sprite의 이름, key로 사용
+      // sprite의 이름을 받아서 workspace에 해당 sprite의 블록을 넣어준다.
+      function pictureEvent(nameOfSprite) {
+        // to xml
 
-          if (manager.currentSpriteName != nameOfSprite) {
+        if (manager.currentSpriteName != nameOfSprite) {
           // if (currentSprite != nameOfSprite) {
-            var xml = Blockly.Xml.workspaceToDom(workspace);
-            var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
-            //alert(prettyXMLText)
+          var xml = Blockly.Xml.workspaceToDom(workspace);
+          var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
+          //alert(prettyXMLText)
 
-            manager.spritesXml[manager.currentSpriteName] = prettyXMLText;
-            // XMLOfEachSprites[currentSprite] = prettyXMLText;
+          manager.spritesXml[manager.currentSpriteName] = prettyXMLText;
+          // XMLOfEachSprites[currentSprite] = prettyXMLText;
 
-            //taChange();
+          //taChange();
 
-            if (manager.spritesXml[nameOfSprite] == "") {
+          if (manager.spritesXml[nameOfSprite] == "") {
             // if (XMLOfEachSprites[nameOfSprite] == "") {
-              workspace.clear();
-            } else {
-              var input = document.getElementById('importExport');
+            workspace.clear();
+          } else {
+            var input = document.getElementById('importExport');
 
-              var nextXml = Blockly.Xml.textToDom(manager.spritesXml[nameOfSprite]);
-              // var nextXml = Blockly.Xml.textToDom(XMLOfEachSprites[nameOfSprite]);
+            var nextXml = Blockly.Xml.textToDom(manager.spritesXml[nameOfSprite]);
+            // var nextXml = Blockly.Xml.textToDom(XMLOfEachSprites[nameOfSprite]);
 
-              workspace.clear();
-              Blockly.Xml.domToWorkspace(nextXml, workspace);
-              taChange();
-
-            }
-
-            manager.currentSpriteName = nameOfSprite;
-            currentSprite = nameOfSprite;
-
+            workspace.clear();
+            Blockly.Xml.domToWorkspace(nextXml, workspace);
             taChange();
+
           }
 
+          manager.currentSpriteName = nameOfSprite;
+          currentSprite = nameOfSprite;
+
+          taChange();
         }
 
-      </script>
-      <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
-      <input type="file" id="stageChooser" multiple size="50" onchange="stageChooser()">
-      <div id="gallary_owner">
-        <div class="gallery">
-          <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100"
-               height="100">
-          <div class="desc">냐옹</div>
-        </div>
+      }
 
+    </script>
+    <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
+    <input type="file" id="stageChooser" multiple size="50" onchange="stageChooser()">
+    <div id="gallary_owner">
+      <div class="gallery">
+        <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100"
+             height="100">
+        <div class="desc">냐옹</div>
       </div>
 
-      <div id="stage_owner">
+    </div>
 
-      </div>
+    <div id="stage_owner">
 
-      <div>
+    </div>
+
+    <div>
       <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
         - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
 
@@ -2318,11 +2316,10 @@ h1 {
           </block>
         </category>
       </xml>
-      </div>
-
-
-
     </div>
+
+
   </div>
+</div>
 </body>
 </html>

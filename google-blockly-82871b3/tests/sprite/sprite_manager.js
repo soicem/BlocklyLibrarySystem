@@ -58,7 +58,7 @@ class SpriteManager {
     var spriteY = canvasHeight / 2 - spriteHeight / 2;
     if(isStage){
       spriteWidth = canvasWidth;
-      spriteHeight = canvasHeight
+      spriteHeight = canvasHeight;
       spriteX = 0;
       spriteY = 0;
     }
@@ -133,20 +133,12 @@ class SpriteManager {
   }
 
   getOverlayingDataOf(baseSprite) {
-    function initializedArray(size, defaultValue) {
-      let array = new Array(size);
-      for (let i = 0; i < array.length; i++) {
-        array[i] = defaultValue;
-      }
-      return array;
-    }
-
     const x = baseSprite.x;
     const y = baseSprite.y;
     const width = baseSprite.width;
     const height = baseSprite.height;
     const totalPixels = width * height;
-    let data = initializedArray(totalPixels * 4, 0);
+    let data = [];
 
     for (let i = this.spritesOrder.length - 1; i >= 0; i--) {
       let iSprite = this.spritesOrder[i];
@@ -161,7 +153,7 @@ class SpriteManager {
         const iDataB = iData[j + 2];
         const iDataA = iData[j + 3];
 
-        const isMissingPixel = (data[j + 3] === 0);
+        const isMissingPixel = !(data[j + 3] || 0);
         const hasPixelData = (iDataA !== 0);
         if (isMissingPixel && hasPixelData) {
           data[j] = iDataR;
