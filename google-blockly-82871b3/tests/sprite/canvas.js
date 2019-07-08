@@ -1,18 +1,18 @@
-// let canvas = document.getElementById("myCanvas");
-// canvas.width = 500;
-// canvas.height = 300;
-// let context = canvas.getContext("2d");
-
-// function clearCanvas() {
-//   context.clearRect(0, 0, canvas.width, canvas.height);
-// }
-
-
 class Canvas {
-  constructor(elementId, width = 500, height = 300) {
+  constructor(target, elementId, order = 0, width = 500, height = 300) {
+    Canvas.injectHtml(elementId, target);
+
     this.elementId = elementId;
+    this.order = order;
     this.width = width;
     this.height = height;
+  }
+
+  static injectHtml(elementId, target) {
+    let newCanvas = document.createElement("canvas");
+    newCanvas.id = elementId;
+
+    document.getElementById(target).appendChild(newCanvas);
   }
 
   get elementId() {
@@ -23,13 +23,22 @@ class Canvas {
     this._elementId = value;
   }
 
+  get order() {
+    return this._order;
+  }
+
+  set order(value) {
+    this._order = value;
+    this.getCanvas().style.zIndex = this._order;
+  }
+
   get width() {
     return this._width;
   }
 
   set width(value) {
     this._width = (value > 0) ? value : 0;
-    this.getCanvas().width = value;
+    this.getCanvas().width = this._width;
   }
 
   get height() {
@@ -38,7 +47,7 @@ class Canvas {
 
   set height(value) {
     this._height = (value > 0) ? value : 0;
-    this.getCanvas().height = value;
+    this.getCanvas().height = this._height;
   }
 
   getCanvas() {

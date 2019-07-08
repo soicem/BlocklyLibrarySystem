@@ -1,690 +1,723 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Blockly Playground</title>
-<script src="../blockly_uncompressed.js"></script>
-<script src="../generators/javascript.js"></script>
-<script src="../generators/javascript/logic.js"></script>
-<script src="../generators/javascript/loops.js"></script>
-<script src="../generators/javascript/math.js"></script>
-<script src="../generators/javascript/text.js"></script>
-<script src="../generators/javascript/lists.js"></script>
-<script src="../generators/javascript/colour.js"></script>
-<script src="../generators/javascript/variables.js"></script>
-<script src="../generators/javascript/variables_dynamic.js"></script>
-<script src="../generators/javascript/procedures.js"></script>
-<script src="../generators/javascript/import.js"></script>
-<script src="../generators/python.js"></script>
-<script src="../generators/python/logic.js"></script>
-<script src="../generators/python/loops.js"></script>
-<script src="../generators/python/math.js"></script>
-<script src="../generators/python/text.js"></script>
-<script src="../generators/python/lists.js"></script>
-<script src="../generators/python/colour.js"></script>
-<script src="../generators/python/variables.js"></script>
-<script src="../generators/python/variables_dynamic.js"></script>
-<script src="../generators/python/procedures.js"></script>
-<script src="../generators/python/import.js"></script>
-<script src="../msg/messages.js"></script>
-<script src="../blocks/logic.js"></script>
-<script src="../blocks/loops.js"></script>
-<script src="../blocks/math.js"></script>
-<script src="../blocks/text.js"></script>
-<script src="../blocks/lists.js"></script>
-<script src="../blocks/colour.js"></script>
-<script src="../blocks/variables.js"></script>
-<script src="../blocks/variables_dynamic.js"></script>
-<script src="../blocks/procedures.js"></script>
-<script src="../blocks/import.js"></script>
+  <meta charset="utf-8">
+  <title>Blockly Playground</title>
+  <script src="../blockly_uncompressed.js"></script>
+  <script src="../generators/javascript.js"></script>
+  <script src="../generators/javascript/logic.js"></script>
+  <script src="../generators/javascript/loops.js"></script>
+  <script src="../generators/javascript/math.js"></script>
+  <script src="../generators/javascript/text.js"></script>
+  <script src="../generators/javascript/lists.js"></script>
+  <script src="../generators/javascript/colour.js"></script>
+  <script src="../generators/javascript/variables.js"></script>
+  <script src="../generators/javascript/variables_dynamic.js"></script>
+  <script src="../generators/javascript/procedures.js"></script>
+  <script src="../generators/javascript/import.js"></script>
+  <script src="../generators/python.js"></script>
+  <script src="../generators/python/logic.js"></script>
+  <script src="../generators/python/loops.js"></script>
+  <script src="../generators/python/math.js"></script>
+  <script src="../generators/python/text.js"></script>
+  <script src="../generators/python/lists.js"></script>
+  <script src="../generators/python/colour.js"></script>
+  <script src="../generators/python/variables.js"></script>
+  <script src="../generators/python/variables_dynamic.js"></script>
+  <script src="../generators/python/procedures.js"></script>
+  <script src="../generators/python/import.js"></script>
+  <script src="../msg/messages.js"></script>
+  <script src="../blocks/logic.js"></script>
+  <script src="../blocks/loops.js"></script>
+  <script src="../blocks/math.js"></script>
+  <script src="../blocks/text.js"></script>
+  <script src="../blocks/lists.js"></script>
+  <script src="../blocks/colour.js"></script>
+  <script src="../blocks/variables.js"></script>
+  <script src="../blocks/variables_dynamic.js"></script>
+  <script src="../blocks/procedures.js"></script>
+  <script src="../blocks/import.js"></script>
 
-<script src="../blocks/sprites/motions.js"></script>
-<script src="../blocks/sprites/looks.js"></script>
-<script src="../blocks/sprites/sounds.js"></script>
-<script src="../blocks/sprites/events.js"></script>
-<script src="../blocks/sprites/controls.js"></script>
-<script src="../blocks/sprites/sensing.js"></script>
-<script src="../blocks/sprites/operators.js"></script>
-<script src="../blocks/sprites/variables.js"></script>
-<script src="../generators/javascript/sprites/motions.js"></script>
-<script src="blocks/test_blocks.js"></script>
-<script src="sprite/canvas.js"></script>
-<script src="sprite/sprite.js"></script>
-<script src="sprite/image_sprite.js"></script>
-<link rel="stylesheet" href="playground_css.css">
-<script>
-'use strict';
-var workspace = null;
-var toolbox = null;
+  <script src="../blocks/sprites/motions.js"></script>
+  <script src="../blocks/sprites/looks.js"></script>
+  <script src="../blocks/sprites/sounds.js"></script>
+  <script src="../blocks/sprites/events.js"></script>
+  <script src="../blocks/sprites/controls.js"></script>
+  <script src="../blocks/sprites/sensing.js"></script>
+  <script src="../blocks/sprites/operators.js"></script>
+  <script src="../blocks/sprites/variables.js"></script>
+  <script src="../generators/javascript/sprites/controls.js"></script>
+  <script src="../generators/javascript/sprites/events.js"></script>
+  <script src="../generators/javascript/sprites/looks.js"></script>
+  <script src="../generators/javascript/sprites/motions.js"></script>
+  <script src="../generators/javascript/sprites/operators.js"></script>
+  <script src="../generators/javascript/sprites/sensing.js"></script>
+  <script src="../generators/javascript/sprites/sounds.js"></script>
+  <script src="blocks/test_blocks.js"></script>
+  <link rel="stylesheet" href="playground_css.css">
+  <script>
+    'use strict';
+    var workspace = null;
+    var toolbox = null;
 
-// sprite가 들어올 때마다 sprite에 해당하는 key에 XML을 저장한다.
-var XMLOfEachSprites = {};
-var currentSprite = "aww-cat.png"
+    function start() {
 
-// sprite들의 객체를 이름별로 저장한다.
-// canvas에 sprite의 동작을 표현하기 위함이다.
-// 저장되는 객체의 타입은 ImageSprite (extend sprite)이다.
-var objectsOfSprites = {};
-
-function start() {
-
-  setBackgroundColour();
-  // Parse the URL arguments.
-  var match = location.search.match(/dir=([^&]+)/);
-  var rtl = match && match[1] == 'rtl';
-  document.forms.options.elements.dir.selectedIndex = Number(rtl);
-  toolbox = getToolboxElement();
-  var toolboxNames = [
-      'toolbox-categories',
-      'toolbox-categories-typed-variables',
-      'toolbox-simple',
-      'toolbox-test-blocks'
-  ];
-  document.forms.options.elements.toolbox.selectedIndex =
-      toolboxNames.indexOf(toolbox.id);
-  match = location.search.match(/side=([^&]+)/);
-  var side = match ? match[1] : 'start';
-  document.forms.options.elements.side.value = side;
-  // Create main workspace.
-  workspace = Blockly.inject('blocklyDiv',
-      {
-        comments: true,
-        collapse: true,
-        disable: true,
-        grid:
+      setBackgroundColour();
+      // Parse the URL arguments.
+      var match = location.search.match(/dir=([^&]+)/);
+      var rtl = match && match[1] == 'rtl';
+      document.forms.options.elements.dir.selectedIndex = Number(rtl);
+      toolbox = getToolboxElement();
+      var toolboxNames = [
+        'toolbox-categories',
+        'toolbox-categories-typed-variables',
+        'toolbox-simple',
+        'toolbox-test-blocks'
+      ];
+      document.forms.options.elements.toolbox.selectedIndex =
+          toolboxNames.indexOf(toolbox.id);
+      match = location.search.match(/side=([^&]+)/);
+      var side = match ? match[1] : 'start';
+      document.forms.options.elements.side.value = side;
+      // Create main workspace.
+      workspace = Blockly.inject('blocklyDiv',
           {
-            spacing: 25,
-            length: 3,
-            colour: '#ccc',
-            snap: true
-          },
-        horizontalLayout: side == 'top' || side == 'bottom',
-        maxBlocks: Infinity,
-        maxInstances: {'limit_instances': 3},
-        media: '../media/',
-        oneBasedIndex: true,
-        readOnly: false,
-        rtl: rtl,
-        scrollbars: true,
-        toolbox: toolbox,
-        toolboxPosition: side == 'top' || side == 'start' ? 'start' : 'end',
-        zoom:
-          {
-            controls: true,
-            wheel: true,
-            startScale: 1.0,
-            maxScale: 4,
-            minScale: 0.25,
-            scaleSpeed: 1.1
-          }
-      });
-  addToolboxButtonCallbacks();
-  // Restore previously displayed text.
-  if (sessionStorage) {
-    var text = sessionStorage.getItem('textarea');
-    if (text) {
-      document.getElementById('importExport').value = text;
-    }
-    // Restore event logging state.
-    var state = sessionStorage.getItem('logEvents');
-    logEvents(Boolean(Number(state)));
-  } else {
-    // MSIE 11 does not support sessionStorage on file:// URLs.
-    logEvents(false);
-  }
-  tabInit();
-}
-
-function addToolboxButtonCallbacks() {
-  workspace.registerButtonCallback(
-      'addDynamicOption', Blockly.TestBlocks.addDynamicDropdownOption_);
-  workspace.registerButtonCallback(
-      'removeDynamicOption', Blockly.TestBlocks.removeDynamicDropdownOption_);
-}
-
-function changeTheme() {
-  var theme = document.getElementById('themeChanger');
-  if (theme.value === "modern") {
-    Blockly.setTheme(Blockly.Themes.Modern);
-  } else if (theme.value === "high_contrast") {
-    Blockly.setTheme(Blockly.Themes.HighContrast);
-  } else {
-    Blockly.setTheme(Blockly.Themes.Classic);
-  }
-}
-
-function setBackgroundColour() {
-  // Set background colour to differentiate server vs local copy.
-  if (location.protocol == 'file:') {
-    var lilac = '#d6d6ff';
-    document.body.style.backgroundColor = lilac;
-  }
-}
-
-function getToolboxElement() {
-  var match = location.search.match(/toolbox=([^&]+)/);
-  // Default to the basic toolbox with categories and untyped variables,
-  // but override that if the toolbox type is set in the URL.
-  var toolboxSuffix = (match ? match[1] : 'categories');
-  // The three possible values are: "simple", "categories",
-  // "categories-typed-variables".
-  return document.getElementById('toolbox-' + toolboxSuffix);
-}
-
-// 라이브러리 xml의 원형을 본따서 arg, type, name 을 바꾼 후 리턴
-function generateLibFuncXML(arr){
-  var argument = 0;
-
-    if(arr['type'] === "procedures_defnoreturn"){
-    arr['type'] = "import_statement"
-  } else if(arr['type'] ==="procedures_defreturn"){
-    arr['type'] = "import_return"
-  }
-
-
-  if(arr['arg'] !== null && arr['arg'] !== undefined )
-      argument = Object.keys(arr['arg']).length;
-
-
-  var a = "<block type=\"" + arr['type'] + "\" y=\"138\">" + "\n" +
-          "<mutation func=\"" + arr['funcName'] + "\" args=\"" + argument + "\">"+ "\n";
-
-  for (var key in arr['arg']) {
-    // check if the property/key is defined in the object itself, not in parent
-    if (arr['arg'].hasOwnProperty(key)) {
-      a += "<arg name=\""+ arr['arg'][key] + "\"></arg>" + "\n"
-    }
-  }
-  a += "</mutation>" + "\n" +
-  "</block>"+ "\n";
-  console.log(a);
-  return a;
-}
-
-// function xml parser
-function libFuncToMutationCode(libFunction){
-  var parser, xmlDoc,txt="";
-  var result = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">"+ "\n";
-
-  parser = new DOMParser();
-  xmlDoc = parser.parseFromString(libFunction,"text/xml");
-
-  var blockObjects = xmlDoc.getElementsByTagName("block");
-  //console.log(blockObjects)
-
-    for(var blockIdx = 0; blockIdx < blockObjects.length; blockIdx++){
-    var dict = {};
-    var x = blockObjects[blockIdx];
-    if(x.getAttributeNode("type").nodeValue === "text_print") {
-      continue;
-    }
-    var flag = 0;
-    if(x.getAttributeNode("type").nodeValue === "procedures_defnoreturn"){
-      flag = 1;
-    }
-
-    if(x.getAttributeNode("type").nodeValue === "procedures_defreturn"){
-      flag = 1;
-    }
-    if(!flag){
-      continue;
-    }
-    console.log(x.getAttributeNode("type").nodeValue)
-
-    dict["type"] = x.getAttributeNode("type").nodeValue
-    var xlen = x.childNodes.length;
-    var y = x.firstChild;
-    for(var i = 0; i < xlen; i++){
-      if(y.nodeName === "mutation"){
-        var firstNode = y.firstChild;
-        var mLen = y.childNodes.length;
-        var argDict = {};
-        for(var j = 0; j < mLen; j++){
-          if(firstNode.nodeName !== "#text"){
-            txt += firstNode.nodeName + "<br>"
-            console.log(firstNode.getAttributeNode("name").nodeValue);
-            argDict[j] = firstNode.getAttributeNode("name").nodeValue
-          }
-          firstNode = firstNode.nextSibling
+            comments: true,
+            collapse: true,
+            disable: true,
+            grid:
+                {
+                  spacing: 25,
+                  length: 3,
+                  colour: '#ccc',
+                  snap: true
+                },
+            horizontalLayout: side == 'top' || side == 'bottom',
+            maxBlocks: Infinity,
+            maxInstances: {'limit_instances': 3},
+            media: '../media/',
+            oneBasedIndex: true,
+            readOnly: false,
+            rtl: rtl,
+            scrollbars: true,
+            toolbox: toolbox,
+            toolboxPosition: side == 'top' || side == 'start' ? 'start' : 'end',
+            zoom:
+                {
+                  controls: true,
+                  wheel: true,
+                  startScale: 1.0,
+                  maxScale: 4,
+                  minScale: 0.25,
+                  scaleSpeed: 1.1
+                }
+          });
+      addToolboxButtonCallbacks();
+      // Restore previously displayed text.
+      if (sessionStorage) {
+        var text = sessionStorage.getItem('textarea');
+        if (text) {
+          document.getElementById('importExport').value = text;
         }
-        dict["arg"] = argDict
-      } else if(y.nodeName === "field") {
-        dict["funcName"] = y.childNodes[0].nodeValue
-        console.log(y.childNodes[0].nodeValue)
+        // Restore event logging state.
+        var state = sessionStorage.getItem('logEvents');
+        logEvents(Boolean(Number(state)));
+      } else {
+        // MSIE 11 does not support sessionStorage on file:// URLs.
+        logEvents(false);
       }
-      if(y.nodeType === 1)
-        txt +=  y.nodeName + "<br>";
-      y = y.nextSibling;
+      tabInit();
     }
-    console.log(dict)
-    result += generateLibFuncXML(dict)
-  }
-  result += "</xml>" + "\n";
-  return result;
-}
 
-function myImport() {
-  let input = document.getElementById("importExport");
-  // convert function xml to library xml
-  let convertedXml = libFuncToMutationCode(input.value);
-  console.log(convertedXml);
-  let xml = Blockly.Xml.textToDom(convertedXml);
-
-  let childrenCount = xml.children.length || 0;
-  for (let i = 0; i < childrenCount; i++) {
-    let child = xml.children[i];
-
-    let childIsBlock = (child.nodeName === "block");
-    let childTypeIsImportReturn = (child.getAttribute("type") === "import_return");
-    let childTypeIsImportStatement = (child.getAttribute("type") === "import_statement");
-
-    if (childIsBlock && (childTypeIsImportReturn || childTypeIsImportStatement)) {
-      document.getElementById("toolbox-categories").querySelector("[name='Import']").append(
-          child);
-      i--;
-      childrenCount--;
+    function addToolboxButtonCallbacks() {
+      workspace.registerButtonCallback(
+          'addDynamicOption', Blockly.TestBlocks.addDynamicDropdownOption_);
+      workspace.registerButtonCallback(
+          'removeDynamicOption', Blockly.TestBlocks.removeDynamicDropdownOption_);
     }
-  }
 
-  collapseToolbox();
-  workspace.updateToolbox(document.getElementById("toolbox-categories"));
-}
+    function changeTheme() {
+      var theme = document.getElementById('themeChanger');
+      if (theme.value === "modern") {
+        Blockly.setTheme(Blockly.Themes.Modern);
+      } else if (theme.value === "high_contrast") {
+        Blockly.setTheme(Blockly.Themes.HighContrast);
+      } else {
+        Blockly.setTheme(Blockly.Themes.Classic);
+      }
+    }
 
-function collapseToolbox() {
-  let tree = workspace.getToolbox().tree_;
+    function setBackgroundColour() {
+      // Set background colour to differentiate server vs local copy.
+      if (location.protocol == 'file:') {
+        var lilac = '#d6d6ff';
+        document.body.style.backgroundColor = lilac;
+      }
+    }
 
-  if (tree) {
-    tree.setSelectedItem(null);
-  }
-}
+    function getToolboxElement() {
+      var match = location.search.match(/toolbox=([^&]+)/);
+      // Default to the basic toolbox with categories and untyped variables,
+      // but override that if the toolbox type is set in the URL.
+      var toolboxSuffix = (match ? match[1] : 'categories');
+      // The three possible values are: "simple", "categories",
+      // "categories-typed-variables".
+      return document.getElementById('toolbox-' + toolboxSuffix);
+    }
 
-function toXml() {
-  var output = document.getElementById('importExport');
-  var xml = Blockly.Xml.workspaceToDom(workspace);
-  output.value = Blockly.Xml.domToPrettyText(xml);
-  output.focus();
-  output.select();
-  taChange();
+    // 라이브러리 xml의 원형을 본따서 arg, type, name 을 바꾼 후 리턴
+    function generateLibFuncXML(arr) {
+      var argument = 0;
 
-  ImgToFile();
-  SpriteXMLtoBLK();
+      if (arr['type'] === "procedures_defnoreturn") {
+        arr['type'] = "import_statement"
+      } else if (arr['type'] === "procedures_defreturn") {
+        arr['type'] = "import_return"
+      }
 
-  //CodeFile('JavaScript');
-  //CodeFile('Python'); Sprite는 인식하지 못한다.
+      if (arr['arg'] !== null && arr['arg'] !== undefined) {
+        argument = Object.keys(arr['arg']).length;
+      }
 
-    CreateBLK('Test');
-}
+      var a = "<block type=\"" + arr['type'] + "\" y=\"138\">" + "\n" +
+          "<mutation func=\"" + arr['funcName'] + "\" args=\"" + argument + "\">" + "\n";
 
-//import
-function ExtractFiles(){
-    var BLK = document.getElementById("getFile");
+      for (var key in arr['arg']) {
+        // check if the property/key is defined in the object itself, not in parent
+        if (arr['arg'].hasOwnProperty(key)) {
+          a += "<arg name=\"" + arr['arg'][key] + "\"></arg>" + "\n"
+        }
+      }
+      a += "</mutation>" + "\n" +
+          "</block>" + "\n";
+      console.log(a);
+      return a;
+    }
 
-    var files = BLK.files[0]; // FileList object
-    var reader = new FileReader();
+    // function xml parser
+    function libFuncToMutationCode(libFunction) {
+      var parser, xmlDoc, txt = "";
+      var result = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">" + "\n";
 
-    reader.onload= (function(){
-        return function(evt){
-            JSZip.loadAsync(evt.target.result)
-                .then(function(blk){
-                    blk.forEach(function(relativePath, file){
-                        if( (file.name).indexOf(".xml") !== -1 ){ //xml
-                            var xmlName = file.name.substring(0, (file.name).indexOf(".xml"));
+      parser = new DOMParser();
+      xmlDoc = parser.parseFromString(libFunction, "text/xml");
 
-                            file.async('text')
-                                .then(function (data) {
-                                    XMLOfEachSprites[xmlName] = data;
-                                })
-                        }
+      var blockObjects = xmlDoc.getElementsByTagName("block");
+      //console.log(blockObjects)
 
-                        if( (file.name).indexOf("images/") !== -1){ // for images;
-                            var strArray = (file.name).split('/');
-                            var picture = strArray[1];
-                           // console.log(picture);
+      for (var blockIdx = 0; blockIdx < blockObjects.length; blockIdx++) {
+        var dict = {};
+        var x = blockObjects[blockIdx];
+        if (x.getAttributeNode("type").nodeValue === "text_print") {
+          continue;
+        }
+        var flag = 0;
+        if (x.getAttributeNode("type").nodeValue === "procedures_defnoreturn") {
+          flag = 1;
+        }
 
-                            file.async('base64')
-                                .then(function (data){
-                                        objectsOfSprites[picture] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0, data);
-                                        objectsOfSprites[picture].draw();
-                                        objectsOfSprites[picture].printProperties();
-                                        addSprite(picture ,data);
-                                });
-                        }
-                    })
-                }).then(function(){
-                    console.log('hi');
-            });
+        if (x.getAttributeNode("type").nodeValue === "procedures_defreturn") {
+          flag = 1;
+        }
+        if (!flag) {
+          continue;
+        }
+        console.log(x.getAttributeNode("type").nodeValue);
+
+        dict["type"] = x.getAttributeNode("type").nodeValue;
+        var xlen = x.childNodes.length;
+        var y = x.firstChild;
+        for (var i = 0; i < xlen; i++) {
+          if (y.nodeName === "mutation") {
+            var firstNode = y.firstChild;
+            var mLen = y.childNodes.length;
+            var argDict = {};
+            for (var j = 0; j < mLen; j++) {
+              if (firstNode.nodeName !== "#text") {
+                txt += firstNode.nodeName + "<br>";
+                console.log(firstNode.getAttributeNode("name").nodeValue);
+                argDict[j] = firstNode.getAttributeNode("name").nodeValue
+              }
+              firstNode = firstNode.nextSibling
+            }
+            dict["arg"] = argDict
+          } else if (y.nodeName === "field") {
+            dict["funcName"] = y.childNodes[0].nodeValue;
+            console.log(y.childNodes[0].nodeValue)
+          }
+          if (y.nodeType == 1) {
+            txt += y.nodeName + "<br>";
+          }
+          y = y.nextSibling;
+        }
+        console.log(dict)
+        result += generateLibFuncXML(dict)
+      }
+      result += "</xml>" + "\n";
+      return result;
+    }
+
+    function myImport() {
+      let input = document.getElementById("importExport");
+      // convert function xml to library xml
+      let convertedXml = libFuncToMutationCode(input.value);
+      console.log(convertedXml);
+      let xml = Blockly.Xml.textToDom(convertedXml);
+
+      let childrenCount = xml.children.length || 0;
+      for (let i = 0; i < childrenCount; i++) {
+        let child = xml.children[i];
+
+        let childIsBlock = (child.nodeName === "block");
+        let childTypeIsImportReturn = (child.getAttribute("type") === "import_return");
+        let childTypeIsImportStatement = (child.getAttribute("type") === "import_statement");
+
+        if (childIsBlock && (childTypeIsImportReturn || childTypeIsImportStatement)) {
+          document.getElementById("toolbox-categories").querySelector("[name='Import']").append(
+              child);
+          i--;
+          childrenCount--;
+        }
+      }
+
+      collapseToolbox();
+      workspace.updateToolbox(document.getElementById("toolbox-categories"));
+    }
+
+    function collapseToolbox() {
+      let tree = workspace.getToolbox().tree_;
+
+      if (tree) {
+        tree.setSelectedItem(null);
+      }
+    }
+
+    function toXml() {
+      var output = document.getElementById('importExport');
+      var xml = Blockly.Xml.workspaceToDom(workspace);
+      output.value = Blockly.Xml.domToPrettyText(xml);
+      output.focus();
+      output.select();
+      taChange();
+
+      ImgToFile();
+      SpriteXMLtoBLK();
+
+      //CodeFile('JavaScript');
+      //CodeFile('Python'); Sprite는 인식하지 못한다.
+
+      CreateBLK('Test');
+    }
+
+    //import
+    function ExtractFiles() {
+      var BLK = document.getElementById("getFile");
+
+      var files = BLK.files[0]; // FileList object
+      var reader = new FileReader();
+
+      reader.onload = (function () {
+        return function (evt) {
+          JSZip.loadAsync(evt.target.result)
+          .then(function (blk) {
+            blk.forEach(function (relativePath, file) {
+              if ((file.name).indexOf(".xml") !== -1) { //xml
+                var xmlName = file.name.substring(0, (file.name).indexOf(".xml"));
+
+                file.async('text')
+                .then(function (data) {
+                  XMLOfEachSprites[xmlName] = data;
+                })
+              }
+
+              if ((file.name).indexOf("images/") !== -1) { // for images;
+                var strArray = (file.name).split('/');
+                var picture = strArray[1];
+                // console.log(picture);
+
+                file.async('base64')
+                .then(function (data) {
+                  objectsOfSprites[picture] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0,
+                      data);
+                  objectsOfSprites[picture].draw();
+                  objectsOfSprites[picture].printProperties();
+                  addSprite(picture, data);
+                });
+              }
+            })
+          }).then(function () {
+            console.log('hi');
+          });
         };
-    })(files);
-    reader.readAsArrayBuffer(files);
-}
-
-function addSprite(name, Source){
-    if(Source === null || Source === undefined || Source === "")
-        return;
-
-    var base = "data:image/png;base64," +Source;
-
-    var a = '<div class="gallery\">' +
-            '<img onclick="pictureEvent(\'' + name + '\')" src="' + base + '" alt="냥" width="100" height="100">'+
-            '<div class="desc">냥</div>' +
-            '</div>' ;
-
-    document.getElementById("gallary_owner").innerHTML += a;
-    setSpriteXML();
-}
-
-function setSpriteXML(){
-    var first_value = Object.keys(XMLOfEachSprites)[1];
-
-    var output = document.getElementById('importExport');
-    output.value = XMLOfEachSprites[first_value]
-    taChange();
-}
-
-//export
-function SpriteXMLtoBLK() {
-    var arraySprite = Object.getOwnPropertyNames(XMLOfEachSprites);
-
-  arraySprite.forEach((name)=>{
-      FileToBLK(name+".xml", XMLOfEachSprites[name], false);
-  });
-}
-
-function ImgToFile(){
-    var arraySprite = Object.getOwnPropertyNames(objectsOfSprites);
-
-    arraySprite.forEach((name)=> {
-        if(name !== "aww-cat.png")
-            ImgToBLK(name, objectsOfSprites[name].data);
-    });
-}
-
-function fromXml() {
-  var input = document.getElementById('importExport');
-  var xml = Blockly.Xml.textToDom(input.value);
-  Blockly.Xml.domToWorkspace(xml, workspace);
-  taChange();
-}
-
-/*
-function sendAjax(url, main, libraries){
-  // langType - 0:py 1:lua 2:dart 3:php
-  // libraryFunction number
-  var data = {'langType' : 0, 'main' : main, 'libraries' : libraries};
-  data = JSON.stringify(data)
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', url);
-  xhr.setRequestHeader('Content-Type', "application/json");
-  xhr.send(data);
-  xhr.addEventListener('load', function(){
-    var result = JSON.parse(xhr.responseText);
-    if(result.result!=="ok") return;
-    alert(result.output);
-    //document.querySelector(".result").innerHTML = result.output;
-  })
-}
-*/
-
-function CodeFile(lang) {
-    var result = Blockly[lang].workspaceToCode(workspace);
-    var filename = 'test';
-
-    if(lang === 'JavaScript')
-        filename += '.js';
-    else if(lang === 'Python')
-        filename += '.py';
-
-    FileToBLK(filename, result, true);
-    console.log(filename);
-}
-
-// block을 Javascript 코드로 변환하고, 이를 실행시킨다.
-function toJSCode() {
-  let output = document.getElementById('importExport');
-  output.value = Blockly["JavaScript"].workspaceToCode(workspace);
-  canvas.clear();
-  //alert(output.value);
-  //objectsOfSprites[currentSprite].jsCode = output.value;
-  objectsOfSprites[currentSprite].printProperties()
-
-  objectsOfSprites[currentSprite].executeJS(output.value);
-  //console.log(objectsOfSprites[currentSprite].jsCode);
-  //objectsOfSprites[currentSprite].printProperties()
-  objectsOfSprites[currentSprite].draw();
-  console.log(currentSprite);
-
-  // 기존 코드
-  /*eval(output.value);
-  cat.draw();*/
-}
-
-function toCodeMain() {
-  var lang = document.getElementById('mainLang');
-  var output = document.getElementById('importExport');
-  output.value = Blockly[lang.value].workspaceToCode(workspace);
-  var libFunction = samplePy();
-  var pyCode = output.value;
-  pyCode = "from testFunction import *\n" + pyCode;
-  var libraries = {'numberOfLibs' : 1, 'libraryInfo' : {
-      0 : {"name" : "testFunction", "body" : libFunction}
-    }};
-  console.log(pyCode);
-  console.log(libFunction);
-
-  sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
-  taChange();
-}
-
-function toCodeLib() {
-  var lang = document.getElementById('libLang');
-  var output = document.getElementById('importExport_');
-  output.value = Blockly[lang.value].workspaceToCode(libraryspace);
-  var libFunction = samplePy();
-  var pyCode = output.value;
-  pyCode = "from testFunction import *\n" + pyCode;
-  var libraries = {'numberOfLibs' : 1, 'libraryInfo' : {
-      0 : {"name" : "testFunction", "body" : libFunction}
-    }};
-  console.log(pyCode);
-  console.log(libFunction);
-
-  sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
-  taChange();
-}
-
-// Disable the "Import from XML" button if the XML is invalid.
-// Preserve text between page reloads.
-function taChange() {
-  var textarea = document.getElementById('importExport');
-  if (sessionStorage) {
-    sessionStorage.setItem('textarea', textarea.value);
-  }
-  var valid = true;
-  try {
-    Blockly.Xml.textToDom(textarea.value);
-  } catch (e) {
-    valid = false;
-  }
-  document.getElementById('import').disabled = !valid;
-}
-
-function logEvents(state) {
-  var checkbox = document.getElementById('logCheck');
-  checkbox.checked = state;
-  if (sessionStorage) {
-    sessionStorage.setItem('logEvents', Number(state));
-  }
-  if (state) {
-    workspace.addChangeListener(logger);
-  } else {
-    workspace.removeChangeListener(logger);
-  }
-}
-
-function logger(e) {
-  console.log(e);
-}
-
-function airstrike(n) {
-  var prototypes = [];
-  var toolbox = getToolboxElement();
-  var blocks = toolbox.getElementsByTagName('block');
-  for (var i = 0, block; block = blocks[i]; i++) {
-    prototypes.push(block.getAttribute('type'));
-  }
-  for (var i = 0; i < n; i++) {
-    var prototype = prototypes[Math.floor(Math.random() * prototypes.length)];
-    var block = workspace.newBlock(prototype);
-    block.initSvg();
-    block.getSvgRoot().setAttribute('transform', 'translate(' +
-        Math.round(Math.random() * 450 + 40) + ', ' +
-        Math.round(Math.random() * 600 + 40) + ')');
-    block.render();
-  }
-}
-
-function spaghetti(n) {
-  var xml = spaghettiXml;
-  for(var i = 0; i < n; i++) {
-    xml = xml.replace(/(<(statement|next)( name="DO0")?>)<\//g,
-        '$1' + spaghettiXml + '</');
-  }
-  xml = '<xml xmlns="http://www.w3.org/1999/xhtml">' + xml + '</xml>';
-  var dom = Blockly.Xml.textToDom(xml);
-  console.time('Spaghetti domToWorkspace');
-  Blockly.Xml.domToWorkspace(dom, workspace);
-  console.timeEnd('Spaghetti domToWorkspace');
-}
-var spaghettiXml = [
-  '  <block type="controls_if">',
-  '    <value name="IF0">',
-  '      <block type="logic_compare">',
-  '        <field name="OP">EQ</field>',
-  '        <value name="A">',
-  '          <block type="math_arithmetic">',
-  '            <field name="OP">MULTIPLY</field>',
-  '            <value name="A">',
-  '              <block type="math_number">',
-  '                <field name="NUM">6</field>',
-  '              </block>',
-  '            </value>',
-  '            <value name="B">',
-  '              <block type="math_number">',
-  '                <field name="NUM">7</field>',
-  '              </block>',
-  '            </value>',
-  '          </block>',
-  '        </value>',
-  '        <value name="B">',
-  '          <block type="math_number">',
-  '            <field name="NUM">42</field>',
-  '          </block>',
-  '        </value>',
-  '      </block>',
-  '    </value>',
-  '    <statement name="DO0"></statement>',
-  '    <next></next>',
-  '  </block>'].join('\n');
-
-function tabInit(){
-  show('blocklyDiv', 'main_tab');
-  hide('library', 'library_tab');
-  hide('sprite', 'sprite_tab');
-}
-
-function changeTab(tab){
-  if(tab == "main_tab"){
-    show('blocklyDiv', 'main_tab');
-    hide('library', 'library_tab');
-    hide('sprite', 'sprite_tab');
-  }else if(tab == "library_tab"){
-    show('library', 'library_tab');
-    hide('blocklyDiv', 'main_tab');
-    hide('sprite', 'sprite_tab')
-  }else if(tab =="sprite_tab"){
-    show('sprite', 'sprite_tab');
-    hide('library', 'library_tab');
-    hide('blocklyDiv', 'main_tab');
-  }
-  taChange();
-}
-
-function hide(page, tab){
-  document.getElementById(page).style.display = 'none'
-  document.getElementById(tab).style.backgroundColor='#333'
-}
-
-function show(page, tab){
-  document.getElementById(page).style.display = 'block'
-  document.getElementById(tab).style.backgroundColor='green'
-}
-// 리소스 움직임용 함수
-/*function myMove() {
-  var resImage = document.getElementById("myAnimation");
-  var resContainer = document.getElementById("myContainer");
-  var top = resImage.offsetTop;
-  var left = resImage.offsetLeft;
-  //var elem = document.getElementById("myAnimation");
-  var pos = 0;
-  var id = setInterval(frame, 10);
-  function frame() {
-    if (pos == 400) {
-      clearInterval(id);
-    } else {
-      pos++;
-      resImage.style.top = top  + pos + 'px';
-      resImage.style.left = left + pos +'px';
+      })(files);
+      reader.readAsArrayBuffer(files);
     }
-  }
-}*/
-//-------------------------------------------------------
-</script>
+
+    function addSprite(name, Source) {
+      if (Source === null || Source === undefined || Source === "") {
+        return;
+      }
+
+      var base = "data:image/png;base64," + Source;
+
+      var a = '<div class="gallery\">' +
+          '<img onclick="pictureEvent(\'' + name + '\')" src="' + base
+          + '" alt="냥" width="100" height="100">' +
+          '<div class="desc">냥</div>' +
+          '</div>';
+
+      document.getElementById("gallary_owner").innerHTML += a;
+      setSpriteXML();
+    }
+
+    function setSpriteXML() {
+      var first_value = Object.keys(XMLOfEachSprites)[1];
+
+      var output = document.getElementById('importExport');
+      output.value = XMLOfEachSprites[first_value];
+      taChange();
+    }
+
+    //export
+    function SpriteXMLtoBLK() {
+      var arraySprite = Object.getOwnPropertyNames(XMLOfEachSprites);
+
+      arraySprite.forEach((name) => {
+        FileToBLK(name + ".xml", XMLOfEachSprites[name], false);
+      });
+    }
+
+    function ImgToFile() {
+      var arraySprite = Object.getOwnPropertyNames(objectsOfSprites);
+
+      arraySprite.forEach((name) => {
+        if (name !== "aww-cat.png") {
+          ImgToBLK(name, objectsOfSprites[name].data);
+        }
+      });
+    }
+
+    function fromXml() {
+      var input = document.getElementById('importExport');
+      var xml = Blockly.Xml.textToDom(input.value);
+      Blockly.Xml.domToWorkspace(xml, workspace);
+      taChange();
+    }
+
+    /*
+        function sendAjax(url, main, libraries) {
+          // langType - 0:py 1:lua 2:dart 3:php
+          // libraryFunction number
+          var data = {'langType': 0, 'main': main, 'libraries': libraries};
+          data = JSON.stringify(data)
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST', url);
+          xhr.setRequestHeader('Content-Type', "application/json");
+          xhr.send(data);
+          xhr.addEventListener('load', function () {
+            var result = JSON.parse(xhr.responseText);
+            if (result.result !== "ok") {
+              return;
+            }
+            alert(result.output);
+            //document.querySelector(".result").innerHTML = result.output;
+          })
+        }
+    */
+
+    function CodeFile(lang) {
+      var result = Blockly[lang].workspaceToCode(workspace);
+      var filename = 'test';
+
+      if (lang === 'JavaScript') {
+        filename += '.js';
+      } else if (lang === 'Python') {
+        filename += '.py';
+      }
+
+      FileToBLK(filename, result, true);
+      console.log(filename);
+    }
+
+    // block을 Javascript 코드로 변환하고, 이를 실행시킨다.
+    function toJSCode() {
+      let output = document.getElementById('importExport');
+      output.value = Blockly["JavaScript"].workspaceToCode(workspace);
+      //canvas.clear();
+      //alert(output.value);
+      //objectsOfSprites[currentSprite].jsCode = output.value;
+
+      manager.getCurrentSprite().printProperties();
+      // objectsOfSprites[currentSprite].printProperties();
+      manager.getCurrentSprite().executeJS(output.value);
+      // objectsOfSprites[currentSprite].executeJS(output.value);
+
+      //console.log(objectsOfSprites[currentSprite].jsCode);
+      //objectsOfSprites[currentSprite].printProperties()
+      //objectsOfSprites[currentSprite].draw();
+      //console.log(currentSprite);
+
+      // 기존 코드
+      /*eval(output.value);
+      cat.draw();*/
+    }
+
+    function toCodeMain() {
+      var lang = document.getElementById('mainLang');
+      var output = document.getElementById('importExport');
+      output.value = Blockly[lang.value].workspaceToCode(workspace);
+      var libFunction = samplePy();
+      var pyCode = output.value;
+      pyCode = "from testFunction import *\n" + pyCode;
+      var libraries = {
+        'numberOfLibs': 1, 'libraryInfo': {
+          0: {"name": "testFunction", "body": libFunction}
+        }
+      };
+      console.log(pyCode);
+      console.log(libFunction);
+
+      sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
+      taChange();
+    }
+
+    function toCodeLib() {
+      var lang = document.getElementById('libLang');
+      var output = document.getElementById('importExport_');
+      output.value = Blockly[lang.value].workspaceToCode(libraryspace);
+      var libFunction = samplePy();
+      var pyCode = output.value;
+      pyCode = "from testFunction import *\n" + pyCode;
+      var libraries = {
+        'numberOfLibs': 1, 'libraryInfo': {
+          0: {"name": "testFunction", "body": libFunction}
+        }
+      };
+      console.log(pyCode);
+      console.log(libFunction);
+
+      sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
+      taChange();
+    }
+
+    // Disable the "Import from XML" button if the XML is invalid.
+    // Preserve text between page reloads.
+    function taChange() {
+      var textarea = document.getElementById('importExport');
+      if (sessionStorage) {
+        sessionStorage.setItem('textarea', textarea.value);
+      }
+      var valid = true;
+      try {
+        Blockly.Xml.textToDom(textarea.value);
+      } catch (e) {
+        valid = false;
+      }
+      document.getElementById('import').disabled = !valid;
+    }
+
+    function logEvents(state) {
+      var checkbox = document.getElementById('logCheck');
+      checkbox.checked = state;
+      if (sessionStorage) {
+        sessionStorage.setItem('logEvents', Number(state));
+      }
+      if (state) {
+        workspace.addChangeListener(logger);
+      } else {
+        workspace.removeChangeListener(logger);
+      }
+    }
+
+    function logger(e) {
+      console.log(e);
+    }
+
+    function airstrike(n) {
+      var prototypes = [];
+      var toolbox = getToolboxElement();
+      var blocks = toolbox.getElementsByTagName('block');
+      for (var i = 0, block; block = blocks[i]; i++) {
+        prototypes.push(block.getAttribute('type'));
+      }
+      for (var i = 0; i < n; i++) {
+        var prototype = prototypes[Math.floor(Math.random() * prototypes.length)];
+        var block = workspace.newBlock(prototype);
+        block.initSvg();
+        block.getSvgRoot().setAttribute('transform', 'translate(' +
+            Math.round(Math.random() * 450 + 40) + ', ' +
+            Math.round(Math.random() * 600 + 40) + ')');
+        block.render();
+      }
+    }
+
+    function spaghetti(n) {
+      var xml = spaghettiXml;
+      for (var i = 0; i < n; i++) {
+        xml = xml.replace(/(<(statement|next)( name="DO0")?>)<\//g,
+            '$1' + spaghettiXml + '</');
+      }
+      xml = '<xml xmlns="http://www.w3.org/1999/xhtml">' + xml + '</xml>';
+      var dom = Blockly.Xml.textToDom(xml);
+      console.time('Spaghetti domToWorkspace');
+      Blockly.Xml.domToWorkspace(dom, workspace);
+      console.timeEnd('Spaghetti domToWorkspace');
+    }
+
+    var spaghettiXml = [
+      '  <block type="controls_if">',
+      '    <value name="IF0">',
+      '      <block type="logic_compare">',
+      '        <field name="OP">EQ</field>',
+      '        <value name="A">',
+      '          <block type="math_arithmetic">',
+      '            <field name="OP">MULTIPLY</field>',
+      '            <value name="A">',
+      '              <block type="math_number">',
+      '                <field name="NUM">6</field>',
+      '              </block>',
+      '            </value>',
+      '            <value name="B">',
+      '              <block type="math_number">',
+      '                <field name="NUM">7</field>',
+      '              </block>',
+      '            </value>',
+      '          </block>',
+      '        </value>',
+      '        <value name="B">',
+      '          <block type="math_number">',
+      '            <field name="NUM">42</field>',
+      '          </block>',
+      '        </value>',
+      '      </block>',
+      '    </value>',
+      '    <statement name="DO0"></statement>',
+      '    <next></next>',
+      '  </block>'].join('\n');
+
+    function tabInit() {
+      show('blocklyDiv', 'main_tab');
+      hide('library', 'library_tab');
+      hide('sprite', 'sprite_tab');
+    }
+
+    function changeTab(tab) {
+      if (tab == "main_tab") {
+        show('blocklyDiv', 'main_tab');
+        hide('library', 'library_tab');
+        hide('sprite', 'sprite_tab');
+      } else if (tab == "library_tab") {
+        show('library', 'library_tab');
+        hide('blocklyDiv', 'main_tab');
+        hide('sprite', 'sprite_tab')
+      } else if (tab == "sprite_tab") {
+        show('sprite', 'sprite_tab');
+        hide('library', 'library_tab');
+        hide('blocklyDiv', 'main_tab');
+      }
+      taChange();
+    }
+
+    function hide(page, tab) {
+      document.getElementById(page).style.display = 'none';
+      document.getElementById(tab).style.backgroundColor = '#333';
+    }
+
+    function show(page, tab) {
+      document.getElementById(page).style.display = 'block';
+      document.getElementById(tab).style.backgroundColor = 'green';
+    }
+
+    // 리소스 움직임용 함수
+    /*function myMove() {
+      var resImage = document.getElementById("myAnimation");
+      var resContainer = document.getElementById("myContainer");
+      var top = resImage.offsetTop;
+      var left = resImage.offsetLeft;
+      //var elem = document.getElementById("myAnimation");
+      var pos = 0;
+      var id = setInterval(frame, 10);
+      function frame() {
+        if (pos == 400) {
+          clearInterval(id);
+        } else {
+          pos++;
+          resImage.style.top = top  + pos + 'px';
+          resImage.style.left = left + pos +'px';
+        }
+      }
+    }*/
+    //-------------------------------------------------------
+  </script>
+
+
 </head>
-  <body onload="start()">
-  <ul>
-    <h1>Blockly Playground</h1>
-    <li><a id="main_tab" onclick="changeTab('main_tab')">Main</a></li>
-    <li><a id="library_tab" onclick="changeTab('library_tab')">Library</a></li>
-    <li><a id="sprite_tab" onclick="changeTab('sprite_tab')">Sprite</a></li>
-  </ul>
-  <br>
-  <!-- Workspace Tab -->
-  <div id="blocklyDiv"></div>
-  <!--- Library Tab --->
-  <div id="library">
-    <div id="librarySpace"></div>
-    <p>
-      <select id="libLang" name="lang" onchange="toCodeLib()">
-        <option value="default">Select</option>
-        <option value="JavaScript">JavaScript</option>
-        <option value="Python">Python</option>
-        <option value="PHP">PHP</option>
-        <option value="Lua">Lua</option>
-        <option value="Dart">Dart</option>
-      </select>
-      <br>
-      <textarea id="importExport_" style="width: 90%; height: 70%;"
-                onchange="taChange();" onkeyup="taChange()">
+<body onload="start()">
+<ul>
+  <h1>Blockly Playground</h1>
+  <li><a id="main_tab" onclick="changeTab('main_tab')">Main</a></li>
+  <li><a id="library_tab" onclick="changeTab('library_tab')">Library</a></li>
+  <li><a id="sprite_tab" onclick="changeTab('sprite_tab')">Sprite</a></li>
+</ul>
+<br>
+<div id="blocklyDiv"></div>
+<!--- Library Tab --->
+<div id="library">
+  <div id="librarySpace"></div>
+  <p>
+    <select id="libLang" name="lang" onchange="toCodeLib()">
+      <option value="default">Select</option>
+      <option value="JavaScript">JavaScript</option>
+      <option value="Python">Python</option>
+      <option value="PHP">PHP</option>
+      <option value="Lua">Lua</option>
+      <option value="Dart">Dart</option>
+    </select>
+    <br>
+    <textarea id="importExport_" style="width: 90%; height: 70%;"
+              onchange="taChange();" onkeyup="taChange()">
     </textarea>
-    </p>
-  </div>
-  <!--- Sprite Tab ---->
-  <div id="sprite"></div>
-  <!----- Content ----->
-  <div id="content">
+  </p>
+</div>
+<!--- Sprite Tab ---->
+<div id="sprite"></div>
+<!----- Content ----->
+<div id="content">
   <div id="canvasBlock">
-    <canvas id="myCanvas"></canvas>
+    <div id="canvases"></div>
+    <script src="sprite/canvas.js"></script>
+    <script src="sprite/sprite.js"></script>
+    <script src="sprite/image_sprite.js"></script>
+    <script src="sprite/sprite_manager.js"></script>
+    <script src="sprite/sprite_exceptions.js"></script>
+    <script src="sprite/speech_bubble.js"></script>
+
     <script>
+      let manager = new SpriteManager();
+      // manager.addSpriteAndSelect("black_rect.png");
+      // manager.getCurrentSprite().x -= 5;
+      // manager.getCurrentSprite().y -= 5;
+      // manager.getCurrentSprite().width = 20;
+      // manager.getCurrentSprite().height = 20;
+      // manager.getCurrentSprite().draw();
+      manager.addSpriteAndSelect("aww-cat.png");
+      manager.getCurrentSprite().width = 47;
+      manager.getCurrentSprite().height = 47;
+      // manager.getCurrentSprite().y -= 1;
+      manager.getCurrentSprite().draw();
 
-        let canvas = new Canvas("myCanvas", 500, 300);
+      // let canvas = new Canvas("canvases", "aww-cat.png", 1, 500, 300);
+      // let canvas2 = new Canvas("canvases", "img_forest.jpg", 0, 500, 300);
+      //
+      // // 기본 sprite를 배치한다.
+      // objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 10, 10, 50, 50, 0);
+      // objectsOfSprites["aww-cat.png"].draw();
+      // objectsOfSprites["img_forest.jpg"] = new ImageSprite(canvas2, "img_forest.jpg", 0, 0, 50, 50, 0);
+      // objectsOfSprites["img_forest.jpg"].draw();
+      // //objectsOfSprites["aww-cat.png"];
+      // currentSprite = "aww-cat.png";
 
-        // 기본 sprite를 배치한다.
-        objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0, null);
-        objectsOfSprites["aww-cat.png"].draw();
-        //objectsOfSprites["aww-cat.png"];
-        currentSprite = "aww-cat.png";
-
-      function spriteChooser(){
+      function spriteChooser() {
         var name;
         var x = document.getElementById("spriteChooser");
         var txt = "";
@@ -697,7 +730,7 @@ function show(page, tab){
             txt = "Select one or more files.";
           } else {
             for (var i = 0; i < x.files.length; i++) {
-              txt += "<br><strong>" + (i+1) + ". file</strong><br>";
+              txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
               var file = x.files[i];
               if ('name' in file) {
                 txt += "name: " + file.name + "<br>";
@@ -711,82 +744,141 @@ function show(page, tab){
               }
             }
           }
-        }
-        else {
+        } else {
           if (x.value === "") {
             txt += "Select one or more files.";
           } else {
             txt += "The files property is not supported by your browser!";
-            txt  += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
+            txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
           }
         }
         var a = '<div class="gallery\">' +
-                '<img onclick="pictureEvent(\'' + name + '\')" src="' + name + '" alt="냥" width="100" height="100">'+
-                '<div class="desc">냥</div>' +
-                '</div>' ;
-          //alert(a);
-          document.getElementById("gallary_owner").innerHTML += a;
+            '<img onclick="pictureEvent(\'' + name + '\')" src="' + name
+            + '" alt="냥" width="100" height="100">' +
+            '<div class="desc">냥</div>' +
+            '</div>';
+        //alert(a);
+        document.getElementById("gallary_owner").innerHTML += a;
 
+        // sprite 별로 사용자가 만들었던 XML을 저장한다.
+        // XMLOfEachSprites[name] = "";
 
-          // sprite 별로 사용자가 만들었던 XML을 저장한다.
-          XMLOfEachSprites[name] = ""
+        reader.addEventListener('load', function () {
+          // sprite에 대한 canvas 용 objects를 저장한다.
+          // 객체 생성 코드 예시 : let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
+          manager.addSprite(name);
+          manager.getSprite(name).draw();
+          manager.getSprite(name).printProperties();
+        });
+        // objectsOfSprites[name] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0);
+        // objectsOfSprites[name].draw();
+        // objectsOfSprites[name].printProperties();
 
-          reader.addEventListener('load', function(){
-              // sprite에 대한 canvas 용 objects를 저장한다.
-              // 객체 생성 코드 예시 : let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
-              objectsOfSprites[name] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0, reader.result);
-              objectsOfSprites[name].draw();
-              objectsOfSprites[name].printProperties();
-          });
+        if (ImgFile) {
+          reader.readAsArrayBuffer(ImgFile);
+        }
+      }
 
-          if(ImgFile){
-              reader.readAsArrayBuffer(ImgFile);
+      function stageChooser() {
+        var name;
+        var x = document.getElementById("stageChooser");
+        var txt = "";
+        if ('files' in x) {
+          if (x.files.length == 0) {
+            txt = "Select one or more files.";
+          } else {
+            for (var i = 0; i < x.files.length; i++) {
+              txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
+              var file = x.files[i];
+              if ('name' in file) {
+                txt += "name: " + file.name + "<br>";
+                name = file.name;
+              }
+              if ('size' in file) {
+                txt += "size: " + file.size + " bytes <br>";
+              }
+              if ('value' in file) {
+                txt += "value: " + file.value + " bytes <br>";
+              }
+            }
           }
+        } else {
+          if (x.value == "") {
+            txt += "Select one or more files.";
+          } else {
+            txt += "The files property is not supported by your browser!";
+            txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
+          }
+        }
+        var a = '<div class="stage\">' +
+            '<img onclick="pictureEvent(\'' + name + '\')" src="' + name
+            + '" alt="냥" width="100" height="100">' +
+            '<div class="desc">냥</div>' +
+            '</div>';
+        document.getElementById("stage_owner").innerHTML += a;
+        manager.addStage(name);
+        manager.getSprite(name).draw();
+        manager.getSprite(name).printProperties();
       }
 
       // 현재 진행되던 sprite 변수명 : currentSprite
       // sprite xml들을 저장하는 property list : XMLOfEachSprites
       // nameOfSprite : sprite의 이름, key로 사용
       // sprite의 이름을 받아서 workspace에 해당 sprite의 블록을 넣어준다.
-      function pictureEvent(nameOfSprite){
+      function pictureEvent(nameOfSprite) {
         // to xml
-          console.log('picture Event : ' + nameOfSprite);
 
-        if(currentSprite !== nameOfSprite){
+        if (manager.currentSpriteName != nameOfSprite) {
+          // if (currentSprite != nameOfSprite) {
           var xml = Blockly.Xml.workspaceToDom(workspace);
           var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
           //alert(prettyXMLText)
-          XMLOfEachSprites[currentSprite] = prettyXMLText;
+
+          manager.spritesXml[manager.currentSpriteName] = prettyXMLText;
+          // XMLOfEachSprites[currentSprite] = prettyXMLText;
+
           //taChange();
 
-
-          if(XMLOfEachSprites[nameOfSprite] === ""){
+          if (manager.spritesXml[nameOfSprite] == "") {
+            // if (XMLOfEachSprites[nameOfSprite] == "") {
             workspace.clear();
           } else {
-            var nextXml = Blockly.Xml.textToDom(XMLOfEachSprites[nameOfSprite]);
+            var input = document.getElementById('importExport');
+
+            var nextXml = Blockly.Xml.textToDom(manager.spritesXml[nameOfSprite]);
+            // var nextXml = Blockly.Xml.textToDom(XMLOfEachSprites[nameOfSprite]);
+
             workspace.clear();
             Blockly.Xml.domToWorkspace(nextXml, workspace);
             taChange();
           }
+
+          manager.currentSpriteName = nameOfSprite;
           currentSprite = nameOfSprite;
+
           taChange();
         }
 
       }
 
     </script>
-    <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
   </div>
+  <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
+  <input type="file" id="stageChooser" multiple size="50" onchange="stageChooser()">
   <div id="gallary_owner">
     <div class="gallery">
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAERVJREFUeNrsWntwVFWa/917+/Yr6aTzIJ2EJLS8hkdCIo7CwioNCGspqziMuLO7Ao6ujoNVqKBT84eL1srW+hgJ687ULO6WMFs1WyXlyiBOQQAT1MHXrEmAMBIBAwkhIa/Oo5+3u+9+37ndnRASSDBxd6tyisPt3D73O9/3O7/vcc5tYKJNtIk20SbaRJtoE+06reY1l5t62f8DPT3Vr7qcIx1vGsmgWjLcpKBakYG67a6qSBRPl25prfm/ZPjxX7g2kI5bZQluLYoGunXTmAFAhjutqgSLCug6PIGwXk1A7CIgXiQgGv6XDfeYZGy3qFJZXD/4Q7p7pM/LIxkUI6GErujMgoxUCQ6btMFqxjcnX3dtJ9o5v2vDiZUeWoRKu0WqTE+RytLsQDQGmGlJJUnyjqkLkOCaGAmPRnV4/TpynTIyUiRYCfFAGE8RIzaceN21gxhRfvOzrd5xNfwXLjevuNkkrbaZAaNLaOvR4QvGYDFJIhSMVJ400oFn3sjVHTYdvYEYMUJCYbZMbJAQDDMIOgPBVy+7Rcnm1vLh5LT/WxazZchgmv1oR9W1gjAZvpVWeAMbnDCcae/16WjviUFVdKSnKAzG3tlPtd4/Zgww3EBvIBdwW0w6KMigpSuGomwFqVaQEqSIWYc1JDkJiO1/KndtojEv5qdH2KDV1JdQZ78skxQLZLtrGHCSH6viq1jbE5Sr/GF5g2rCJpsqOa1xw/lKgLC/o7OXV14X9Gd3pX+1Y+oC8TjQQL4lAKCFN0DwRpGfqYiJVYWUMjEYOrFCdytS7C3ZNglyaqHRbTmQzOkjm6vvgkcP93iifY1Ip24L9EKWZdissnA7VTHGhTQdraSDRcyv0yJICJNe5K7eMQeAomsDo8vGm5MgMPoSMh1GLI3FotCVFNgLSqGkTSOD0wZZFh5ZZLbnAtQV50zxtznQhkh7NSLdpxGTjUjMunTEaa+KWzoUSRKBUB9FDBgNA86LKEuTR6PGxAxCgCDvpcAY0U1QXLfDnDGrH7RBBkuJoCMNDkF68qL3/9X/nCUd6mQPkPtnCF7+I0LddQQ+P2tQX06IIQAiMRG0vePiAlGilyRfUR8QNXVErZNhzr+D/iDHjPYbTfpwSuq/xu8lDR9kPyRd5HEd8avoxufEA6acW6GnTYXUdARmve+KKM5zsI5loyjSRuUCzACJ4Y7231dzboGSMduwgVZciivCw+SE8UJ148MVaUcfYh4pwQRdfNaNACy6HmcIzA6Yp9wNrfkoYv7WwQs1qjQ8KgYwvWSp3wRTzm3k61RxRjXDdwUjJDFGHmCsZJg/pMHD5WXDFYwHWFZMEJ6AiOrC/3mkmu+BdvEDxChGGA/LBFJsVCW6PNKBRCvBgFjcCCV9GpTUyUZg08MUgDSYpAgUaKLL3HXuEWI2ARTTIHHXr915HOLj5ESPyxQ9PoeYl7rJdZvILgw8F2qs47gwYEAmcHN0VyjYcZDj1eZYoNCK9IWtaAhNQ8jiRlhyIFXqRLZejyLrhWvSfigGhKMmnOqdAd1egN5YhpCVFavHZPN5citd9EjcWFP2PEQufYSoIfvoOAKgN0QjEbcpZ4YIdkx5hf5j471hB07qq1A0cxbS0tJgMpkQiUTg9X4fn16oxnzzAZhlbUTzdIYcqIncjSkzZ18l678bazBP+T0pHhFoRinpxxQrJHs+9N4WAkUePwakmqOUkpyQVIegKOddY+VtqJP+ErNL5sPpdEJV1QRgSE1Nhd1ux8n6MOab9l93jp6QBbX6PUJWRkbGVbJSUlLwFcmah30ia4jMQbTkYkvxNSM7RR+fGMA1PBVAHtmaTb5Mvkc+r8R99MueWzB1ZjEyMzNhsVigKIrovHJWqxVZWVlwTlmExtCUpO8O1z/3zh+RrGbNLeY24gLpQQWSZMnk+mTTuABA7SnxADFATEgU5N4bUmDNvUUoHAqF8Jvf/Af++kd/g2VLl+Oxv3sMx/5wDGazGdnZ2ei0LkwGuaF6d0CGxTVfGBkOh4eUxYzg77tSFhmBk3RQdCMwyhZRantosdzjAcB6SU0xIjJNKFPkl6g3BXLhcrnEam1+ZjN279ot/LJoyhScP38Bzz//96ioOCRWT838HjR2XS6WhuiNPhdyc3OFrGcSsqiyGSjrUEJWxkz4Ixahh4ywWAzFnJLQddOYAkCI8vbVLZvsAmnaciRTVsSUIXxz77t7cebMWaHsS9tewrZ/3AbPsmViE/PKy6+gra0NDocDPRTRh6O/YnEIWYcOHcZZklVQWIh/iMtavmIFZHKFlwfICiG1P2WSToocg6SImLF6rBmw2ihIosn8bOTtMLq0DOGjx44dEwOZnhyo2PBJk7KJ/hZxn+nLfixLvFvRhuzNgWwxpqKiIimLATFkTRKuJGQdS8iKCh0YhETNoBgAuOOLNmZZYAnnZ9mkGsbHpGSx7zD1iAhdW3tclMBNFy/i7bf3iMjf1dWJ5Xcux/v796Ovr0+MQ7CdtpENvFMaVACYkGNqoh1lDMfjsi42NwtZDCjLWkEseG/fPvT1xmXFInEG6EIcX2UpWWh4RnIyNFIAyrgCTlR1mikHgbQF0GxTEe5KF8Evkaq0sCZ81OfrI6q2I7GT4e+CwSCc2sWrjRcDItBDXUIWG+zz+RDRNFp1FX6/Hy0trckyPCHLl7OO4s1ZmPzn4PB+kASAh9HH0jFhQDyiOsVujpRsd61HIG8NrBSomJKTs/uoQPFiwYIF+OyzzxAM+HHTTW50d3fjD0T77q6uJJ1DnWdg1zuGnWuydAJNNL64uFjICgQCcLvdBEAAH3/0EbwJWZRRGIC8aYuhabehLxRGp//HyDz/Osy+CsEeAsk9Vi4gBMVMqWie+QZUKjvT7DbYbDYBQnZWJj788EMs/vPFQmlewfLt5TBRXAhRKuMozitaMq8Eyunya06UpbTgRNNxkrVIyAqTrDf++Q0hKzxA1jyWRffSqUrkCjFAYARUEzqnb0UqeYX5kii4ysY0DfYW/BhKZjEpYEcq+bedJlR02hdHI5g1axYKCwvg8SwR9AwxPeMUZoU3PvlTBGn1833vX3eeOf6dKCgowJJBsjTNKKM3PrlRgJyXl0eMjEElyqdYzEihBUkhvXpmPI9Axu08dERH9dIIXOApLWX69t5bf4s0RyocNiusbLgWNPxbMUGy2tHc3gVvTw/q6k6h+ssv4SO/zaHI/YM1PxByuFawtu6D2rAbZn/9kHP5Jq2C5H4Q7dIM9JAszv1M/YGymN6FBFCKWQECPgodmjAjRnr4KDj3BcPwdXyNrC/W8CmzNBYu4PTnPwgLBSMzpR5zhAJeoBc6Tc6nj1ApNWlh5GdTOiRWzJr1PfLhuSI+8Eqxq3Bxw1dkPYzTyiJ8XvlfCDVVQtWMw4yQbTpy5t6HBTNXiJUtonsdHR0iIzy07qGrZSlkcG8XdF8PbRuDAgDZYiMdbQiTawRTixBOu5nuH/72MeDUZQf8WU7YpPOwm00whfwoycuiybuNaK5aRDqUzFbk5uSQgnnDynrnnXdQW3OcUiSBkbLsyh3gmWbU1u3E4z95XBjJQZP7UHtyMTevfh9dQwGDx8SEU1+fg6ba4KN9su6bhZUrFHfFoYMNo3KBv1h5V5lqNq+nQsMjyXKZFE87iTM3uifSkY38bk5RHmYW5GH5HYvhyCuClJ5NLqEMO9nL//QyrWznNQGfS+xZv37dNQ8ldFr93uYLOFJ1FPWNzTh14RIClAnEsRmxZqC+4mQpFquhYFmlhcO7D1YcqBmWAbTp2EAPuGnw0WAg8DuKujV7/ra2rOOOTyt5X55uNeN0zR+h+3tx7lwD2r3dqKyuw5vvHcbSxQvx7M9/fu2XrAQOl7FcxQ25Fe7pxn333Xtd2r72L79G5cfHML0wH3OL8nHvwjJMnVIE3ZaK6SWl6NFiCDZ9hBkLfyQt9Sxz0rxlJlV1km2rycayDyqP7BpNECxrv+PT6vQ0B9JSU2CjGKD3eeMxICpigI9wPPR5NRYv8Qj6Dvt6jer7J37yhMgMyiCmcJrLy8vFzjd3XlOflpYWHKO0u2LhfKopIvEYQM1iJ7dKQ5+kosdPmaOrqWb2vIU3f+sYQJG0pr62Gb3SZNSfrsflS804eeIEBLmIapFIFIVFhXBPm3FN47lNnz4NW7ZsFhsa47i8v7LjLPHcz3523dXnOVLT0/Gf+w+i8cIFUSNAFD7kPnPnIisvH9OmTYMSaqkZkzS4atW97uKSksqmpia3LX4gUVJSTIsfhStnklCo9sRJYcSdVPdvfmYL3XPhpxs3CoOHYwIHxFZaTW6lZWVYQymONz5DtYMHDuKXv/wVVq5ciR8+sEbsFhm8UiqIWi61oPXyZbFTPH78BDo6O6gaDcKR5qhqvND48P79+xpuGICVK+96QVXV+2bPmV2zdu3aDVyWci3A+/WhGqeqH655QBQud6+6Bw/+1YPIdDoF5UfbuOrr6e3FZdpPPPHY4+LePffcjc3EoGHOK0W90EsbpYaGBmx7advTfIZBBdTvKioOvDDqSpCCh5tWuer999+7+aF1656mIOhlP+XylvPzkMIoQ8yZO0d8dqSkUhUXwjdUzHxV/zUaaZfYRXsGBmeoFiGD+bt2yv8NRO1TX51GS+tlOAawgsvp4ZpGJTHrxz3d6dxFepez7mwD2zLqGFBZ9QFTR9CntKTYe/LUn3aEwqGtalAVUZzdQZKuJBAfVy1YcBu++PwLNDY1IpVWPo2CJ9fqDAYbGIvp8dddV56Pi7dJfMKsyFBp252VmUG7ShsFvUvie2ZRaWnZsGwJknxmIC+Que3IjsR3h48cqhqTH0iQnzvJwGqqt92sDO8JLFShDQaB9/2PPPIo2i63CZ/mPfyChQuIGXMpYGoiaMYG5Or+FMk/uDAOP7kKrKurw2Hy9dpa41X/2rUP4JFHH0meEiffWJGsAPm8z+8TAPsDwfLiObOfHvNfiHCr/+S3Hj3r1ko+7DC67SoQWKGKgxV45ZVXh8wCYjdXWpr0Wyl+sHL27Fn4+nziyiAObPzMzjf/VZTJV6485ftQUJwX8JbZHwjUkM8vZcaOCwDcTtSd2kC1+Vt2m7EltlktyePrRON9/Kuvvoaqyqox+V3Qc889iztX3JksoBi4iKB9UKw+z0fda2o9tHTGkidH9V5AuhGFBAiq+haf/IhuMUBQaTPEfmxUdT0oL98xJAguWcUiNQ1psgFafSSAT7TeIefirfSqVauSmYf9PRGM2e8ZhFBfmzcM29J5xXNH/dtF6UZX5avP3l2tp895ixRzWgQAZpipKlRp16jSSrFbsE++++5e7Hl7j/g8W7HhYZsL3zdfne+7YhH8u68Fv9cM9nLKZeP5dEgluVGqOvlMgLsAIBQWQU/ztdVYm/fcf9NdrzXciB3St6HmNwe2uIN592+X7TmrORawohykmAlMV67SWGHeAB0/+jFKPzkN+8XLtJ2lYCfJyRwcpaoyTLHDZ1FRO3USYrfPx0IKnDaKM1I8RWpaRARRAwCNGeDVfU075sxf9sK3sUEaCx89frLOo8Z6tsrWbA8DIIwXXRGvrPjVNSvOx1dRygLa6XNkfP8PCDghBGxmpE0pgInBU0xQ6Hmme6Lzs4IBkYhX7jm119zx8Ys3uupjDsAAINxqpH2Tbs1dTWnNLQyh9GaAIAsgjJ+xxOLvyZM/BxGlbCLAcSYxOhlOY6NkvORrqKESYnfYnL9rNFH+OwVgMBhkrMcU6VyiWya55WifB/xWmahv/GxGuqqUHdAb+HeJdD1KvYbAqBpLo78TAK5RUDEw7qFqeX6RMV6GTrSJNtEm2kSbaBNtog1u/yPAAMsIZ4ss8i8RAAAAAElFTkSuQmCC"
-           alt="냐옹이" width="100" height="100"  onclick="pictureEvent('aww-cat.png');" >
+      <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100"
+           height="100">
       <div class="desc">냐옹</div>
     </div>
 
   </div>
+
+  <div id="stage_owner"></div>
+
+  <div>
     <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
-     - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
+      - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
 
     <form id="options">
       <select name="dir" onchange="document.forms.options.submit()">
@@ -819,7 +911,8 @@ function show(page, tab){
       <br>
       <input type="button" value="Export to XML" onclick="toXml()">
 
-      <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()" accept="application/zip">
+      <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()"
+             accept="application/zip">
       &nbsp;
       <input type="button" value="Import from XML" onclick="fromXml()" id="import">
       &nbsp
@@ -835,7 +928,7 @@ function show(page, tab){
       </select>
 
       <textarea id="importExport" style="width: 100%; height: 20%"
-        onchange="taChange();" onkeyup="taChange()"></textarea>
+                onchange="taChange();" onkeyup="taChange()"></textarea>
     </p>
 
     <p>
@@ -847,1410 +940,1414 @@ function show(page, tab){
       Log events: &nbsp;
       <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
     </p>
-  </div>
-  <!-- The next three blocks of XML are sample toolboxes for testing basic
-  configurations.  For more information on building toolboxes, see https://developers.google.com/blockly/guides/configure/web/toolbox -->
+    <!-- The next three blocks of XML are sample toolboxes for testing basic
+    configurations.  For more information on building toolboxes, see https://developers.google.com/blockly/guides/configure/web/toolbox -->
 
-  <!-- toolbox-simple is an always-open flyout with no category menu.
-  Always-open flyouts are a good idea if you have a small number of blocks. -->
-  <xml id="toolbox-simple" style="display: none">
-    <block type="controls_ifelse"></block>
-    <block type="logic_compare"></block>
-    <!-- <block type="control_repeat"></block> -->
-    <block type="logic_operation"></block>
-    <block type="controls_repeat_ext">
-      <value name="TIMES">
-        <shadow type="math_number">
-          <field name="NUM">10</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="logic_operation"></block>
-    <block type="logic_negate"></block>
-    <block type="logic_boolean"></block>
-    <block type="logic_null" disabled="true"></block>
-    <block type="logic_ternary"></block>
-    <block type="text_charAt">
-      <value name="VALUE">
-        <block type="variables_get">
-          <field name="VAR">text</field>
+    <!-- toolbox-simple is an always-open flyout with no category menu.
+    Always-open flyouts are a good idea if you have a small number of blocks. -->
+    <xml id="toolbox-simple" style="display: none">
+      <block type="controls_ifelse"></block>
+      <block type="logic_compare"></block>
+      <!-- <block type="control_repeat"></block> -->
+      <block type="logic_operation"></block>
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+      <block type="logic_null" disabled="true"></block>
+      <block type="logic_ternary"></block>
+      <block type="text_charAt">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+    </xml>
+
+    <!-- toolbox-categories has a category menu and an auto-closing flyout.  The
+    Variables category uses untyped variable blocks.
+    See https://developers.google.com/blockly/guides/create-custom-blocks/variables#untyped_variable_blocks for more information. -->
+    <xml id="toolbox-categories" style="display: none">
+      <category name="Logic" style="logic_category">
+        <block type="controls_if"></block>
+        <block type="logic_compare"></block>
+        <block type="logic_operation"></block>
+        <block type="logic_negate"></block>
+        <block type="logic_boolean"></block>
+        <block type="logic_null" disabled="true"></block>
+        <block type="logic_ternary"></block>
+      </category>
+      <category name="Loops" style="loop_category">
+        <block type="controls_repeat_ext">
+          <value name="TIMES">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
         </block>
-      </value>
-    </block>
-  </xml>
+        <block type="controls_repeat" disabled="true"></block>
+        <block type="controls_whileUntil"></block>
+        <block type="controls_for">
+          <value name="FROM">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="TO">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+          <value name="BY">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="controls_forEach"></block>
+        <block type="controls_flow_statements"></block>
+      </category>
+      <category name="Math" style="math_category">
+        <block type="math_number" gap="32">
+          <field name="NUM">123</field>
+        </block>
+        <block type="math_arithmetic">
+          <value name="A">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="B">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_single">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">9</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_trig">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">45</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_constant"></block>
+        <block type="math_number_property">
+          <value name="NUMBER_TO_CHECK">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_round">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">3.1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_on_list"></block>
+        <block type="math_modulo">
+          <value name="DIVIDEND">
+            <shadow type="math_number">
+              <field name="NUM">64</field>
+            </shadow>
+          </value>
+          <value name="DIVISOR">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_constrain">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">50</field>
+            </shadow>
+          </value>
+          <value name="LOW">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="HIGH">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_random_int">
+          <value name="FROM">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="TO">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_random_float"></block>
+        <block type="math_atan2">
+          <value name="X">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="Y">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
 
-  <!-- toolbox-categories has a category menu and an auto-closing flyout.  The
-  Variables category uses untyped variable blocks.
-  See https://developers.google.com/blockly/guides/create-custom-blocks/variables#untyped_variable_blocks for more information. -->
-  <xml id="toolbox-categories" style="display: none">
-    <category name="Logic" style="logic_category">
-      <block type="controls_if"></block>
-      <block type="logic_compare"></block>
-      <block type="logic_operation"></block>
-      <block type="logic_negate"></block>
-      <block type="logic_boolean"></block>
-      <block type="logic_null" disabled="true"></block>
-      <block type="logic_ternary"></block>
-    </category>
-    <category name="Loops" style="loop_category">
-      <block type="controls_repeat_ext">
-        <value name="TIMES">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="controls_repeat" disabled="true"></block>
-      <block type="controls_whileUntil"></block>
-      <block type="controls_for">
-        <value name="FROM">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="TO">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-        <value name="BY">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="controls_forEach"></block>
-      <block type="controls_flow_statements"></block>
-    </category>
-    <category name="Math" style="math_category">
-      <block type="math_number" gap="32">
-        <field name="NUM">123</field>
-      </block>
-      <block type="math_arithmetic">
-        <value name="A">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="B">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_single">
-        <value name="NUM">
-          <shadow type="math_number">
-            <field name="NUM">9</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_trig">
-        <value name="NUM">
-          <shadow type="math_number">
-            <field name="NUM">45</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_constant"></block>
-      <block type="math_number_property">
-        <value name="NUMBER_TO_CHECK">
-          <shadow type="math_number">
-            <field name="NUM">0</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_round">
-        <value name="NUM">
-          <shadow type="math_number">
-            <field name="NUM">3.1</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_on_list"></block>
-      <block type="math_modulo">
-        <value name="DIVIDEND">
-          <shadow type="math_number">
-            <field name="NUM">64</field>
-          </shadow>
-        </value>
-        <value name="DIVISOR">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_constrain">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">50</field>
-          </shadow>
-        </value>
-        <value name="LOW">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="HIGH">
-          <shadow type="math_number">
-            <field name="NUM">100</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_random_int">
-        <value name="FROM">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="TO">
-          <shadow type="math_number">
-            <field name="NUM">100</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_random_float"></block>
-      <block type="math_atan2">
-        <value name="X">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="Y">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-      </block>
-    </category>
+      <category name="Import">
+        <block type="import_return"></block>
+        <block type="import_statement"></block>
+        <!--<block type="import_statement" id="123">
+          <mutation func="Statement Function" args="2">
+            <arg name="argA"/>
+            <arg name="argB"/>
+          </mutation>
+        </block>-->
+      </category>
 
-    <category name="Import">
-      <block type="import_return"></block>
-      <block type="import_statement"></block>
-      <!--<block type="import_statement" id="123">
-        <mutation func="Statement Function" args="2">
-          <arg name="argA"/>
-          <arg name="argB"/>
-        </mutation>
-      </block>-->
-    </category>
+      <category name="Sprite" expanded="true">
+        <label text="Motion"></label>
+        <block type="sprite_moveSteps">
+          <value name="STEPS">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_turnAngle">
+          <value name="DEGREE">
+            <shadow type="math_number">
+              <field name="NUM">15</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_goTo"></block>
+        <block type="sprite_goToPoint">
+          <value name="X">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+          <value name="Y">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_glideTo">
+          <value name="SEC">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_glideToPoint">
+          <value name="SEC">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="X">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+          <value name="Y">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_pointTo">
+          <value name="DIR">
+            <shadow type="math_number">
+              <field name="NUM">90</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_pointToward"></block>
+        <block type="sprite_changeXY">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_setXY">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_edgeBounce"></block>
+        <block type="sprite_rotationStyle"></block>
+        <block type="sprite_getXY"></block>
+        <block type="sprite_getDir"></block>
 
-    <category name="Sprite">
-      <label text="Motion"></label>
-      <block type="sprite_moveSteps">
-        <value name="STEPS">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_turnAngle">
-        <value name="DEGREE">
-          <shadow type="math_number">
-            <field name="NUM">15</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_goTo"></block>
-      <block type="sprite_goToPoint">
-        <value name="X">
-          <shadow type="math_number">
-            <field name="NUM">0</field>
-          </shadow>
-        </value>
-        <value name="Y">
-          <shadow type="math_number">
-            <field name="NUM">0</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_glideTo">
-        <value name="SEC">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_glideToPoint">
-        <value name="SEC">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="X">
-          <shadow type="math_number">
-            <field name="NUM">0</field>
-          </shadow>
-        </value>
-        <value name="Y">
-          <shadow type="math_number">
-            <field name="NUM">0</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_pointTo">
-        <value name="DIR">
-          <shadow type="math_number">
-            <field name="NUM">90</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_pointToward"></block>
-      <block type="sprite_changeXY">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_setXY">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">0</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_edgeBounce"></block>
-      <block type="sprite_rotationStyle"></block>
-      <block type="sprite_getXY"></block>
-      <block type="sprite_getDir"></block>
+        <label text="Looks"></label>
+        <block type="sprite_say">
+          <value name="CONTENT">
+            <shadow type="text">
+              <field name="TEXT">Hello World!</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_sayTill">
+          <value name="CONTENT">
+            <shadow type="text">
+              <field name="TEXT">Hello World!</field>
+            </shadow>
+          </value>
+          <value name="SEC">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_think">
+          <value name="CONTENT">
+            <shadow type="text">
+              <field name="TEXT">Hmm...</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_thinkTill">
+          <value name="CONTENT">
+            <shadow type="text">
+              <field name="TEXT">Hmm...</field>
+            </shadow>
+          </value>
+          <value name="SEC">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_nextCostume"></block>
+        <block type="sprite_switchCostume"></block>
+        <block type="sprite_nextBackdrop"></block>
+        <block type="sprite_switchBackdrop"></block>
+        <block type="sprite_changeSize">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_setSize">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_changeEffect">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">25</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_setEffect">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_clearEffect"></block>
+        <block type="sprite_show"></block>
+        <block type="sprite_hide"></block>
+        <block type="sprite_setLayer"></block>
+        <block type="sprite_changeLayer">
+          <value name="COUNT">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_getCostume"></block>
+        <block type="sprite_getBackdrop"></block>
+        <block type="sprite_getSize"></block>
 
-      <label text="Looks"></label>
-      <block type="sprite_say">
-        <value name="CONTENT">
-          <shadow type="text">
-            <field name="TEXT">Hello World!</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_sayTill">
-        <value name="CONTENT">
-          <shadow type="text">
-            <field name="TEXT">Hello World!</field>
-          </shadow>
-        </value>
-        <value name="SEC">
-          <shadow type="math_number">
-            <field name="NUM">2</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_think">
-        <value name="CONTENT">
-          <shadow type="text">
-            <field name="TEXT">Hmm...</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_thinkTill">
-        <value name="CONTENT">
-          <shadow type="text">
-            <field name="TEXT">Hmm...</field>
-          </shadow>
-        </value>
-        <value name="SEC">
-          <shadow type="math_number">
-            <field name="NUM">2</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_nextCostume"></block>
-      <block type="sprite_switchCostume"></block>
-      <block type="sprite_nextBackdrop"></block>
-      <block type="sprite_switchBackdrop"></block>
-      <block type="sprite_changeSize">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_setSize">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">100</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_changeEffect">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">25</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_setEffect">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">0</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_clearEffect"></block>
-      <block type="sprite_show"></block>
-      <block type="sprite_hide"></block>
-      <block type="sprite_setLayer"></block>
-      <block type="sprite_changeLayer">
-        <value name="COUNT">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_getCostume"></block>
-      <block type="sprite_getBackdrop"></block>
-      <block type="sprite_getSize"></block>
+        <label text="Sounds"></label>
+        <block type="sprite_playSound"></block>
+        <block type="sprite_startSound"></block>
+        <block type="sprite_stopSound"></block>
+        <block type="sprite_changeSoundEffect">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_setSoundEffect">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_clearSoundEffect"></block>
+        <block type="sprite_changeVolume">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">-10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_setVolume">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_getVolume"></block>
 
-      <label text="Sounds"></label>
-      <block type="sprite_playSound"></block>
-      <block type="sprite_startSound"></block>
-      <block type="sprite_stopSound"></block>
-      <block type="sprite_changeSoundEffect">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_setSoundEffect">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">100</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_clearSoundEffect"></block>
-      <block type="sprite_changeVolume">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">-10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_setVolume">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">100</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_getVolume"></block>
+        <label text="Events"></label>
+        <block type="sprite_flagClicked"></block>
+        <block type="sprite_keyPressed">
+          <field name="KEY">space</field>
+        </block>
+        <block type="sprite_spriteClicked"></block>
+        <block type="sprite_backdropSwitched"></block>
+        <block type="sprite_loudnessCondition">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_timerCondition">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_messageReceived"></block>
+        <block type="sprite_messageBroadcast"></block>
+        <block type="sprite_messageBroadcastWait"></block>
 
-      <label text="Events"></label>
-      <block type="sprite_flagClicked"></block>
-      <block type="sprite_keyPressed">
-        <field name="KEY">space</field>
-      </block>
-      <block type="sprite_spriteClicked"></block>
-      <block type="sprite_backdropSwitched"></block>
-      <block type="sprite_loudnessCondition">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_timerCondition">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_messageReceived"></block>
-      <block type="sprite_messageBroadcast"></block>
-      <block type="sprite_messageBroadcastWait"></block>
+        <label text="Controls"></label>
+        <block type="sprite_wait">
+          <value name="SEC">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_repeat">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">3</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_forever"></block>
+        <block type="sprite_if"></block>
+        <block type="sprite_ifElse"></block>
+        <block type="sprite_waitTill"></block>
+        <block type="sprite_repeatTill"></block>
+        <block type="sprite_stop"></block>
+        <block type="sprite_cloneStarted"></block>
+        <block type="sprite_createClone"></block>
+        <block type="sprite_deleteClone"></block>
 
-      <label text="Controls"></label>
-      <block type="sprite_wait">
-        <value name="SEC">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_repeat">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">3</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_forever"></block>
-      <block type="sprite_if"></block>
-      <block type="sprite_ifElse"></block>
-      <block type="sprite_waitTill"></block>
-      <block type="sprite_repeatTill"></block>
-      <block type="sprite_stop"></block>
-      <block type="sprite_cloneStarted"></block>
-      <block type="sprite_createClone"></block>
-      <block type="sprite_deleteClone"></block>
+        <label text="Sensing"></label>
+        <block type="sprite_touching"></block>
+        <block type="sprite_touchingColor"></block>
+        <block type="sprite_colorTouchingColor"></block>
+        <block type="sprite_askWait">
+          <value name="MESSAGE">
+            <shadow type="text">
+              <field name="TEXT">What's your name?</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_answer"></block>
+        <block type="sprite_keyPress">
+          <field name="KEY">space</field>
+        </block>
+        <block type="sprite_mouseDown"></block>
+        <block type="sprite_getMouseXY">
+          <field name="XY">x</field>
+        </block>
+        <block type="sprite_getMouseXY">
+          <field name="XY">y</field>
+        </block>
+        <block type="sprite_setDragMode"></block>
+        <block type="sprite_getLoudness"></block>
+        <block type="sprite_getTimer"></block>
+        <block type="sprite_resetTimer"></block>
+        <block type="sprite_getStage"></block>
+        <block type="sprite_getDate">
+          <field name="OPTION">year</field>
+        </block>
+        <block type="sprite_getSince">
+          <field name="OPTION">days</field>
+        </block>
+        <block type="sprite_getUsername"></block>
 
-      <label text="Sensing"></label>
-      <block type="sprite_touching"></block>
-      <block type="sprite_touchingColor"></block>
-      <block type="sprite_colorTouchingColor"></block>
-      <block type="sprite_askWait">
-        <value name="MESSAGE">
-          <shadow type="text">
-            <field name="TEXT">What's your name?</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_answer"></block>
-      <block type="sprite_keyPress">
-        <field name="KEY">space</field>
-      </block>
-      <block type="sprite_mouseDown"></block>
-      <block type="sprite_getMouseXY">
-        <field name="XY">x</field>
-      </block>
-      <block type="sprite_getMouseXY">
-        <field name="XY">y</field>
-      </block>
-      <block type="sprite_setDragMode"></block>
-      <block type="sprite_getLoudness"></block>
-      <block type="sprite_getTimer"></block>
-      <block type="sprite_resetTimer"></block>
-      <block type="sprite_getStage"></block>
-      <block type="sprite_getDate">
-        <field name="OPTION">year</field>
-      </block>
-      <block type="sprite_getSince">
-        <field name="OPTION">days</field>
-      </block>
-      <block type="sprite_getUsername"></block>
-
-      <label text="Operators"></label>
-      <block type="sprite_operator">
-        <field name="OPTION">+</field>
-        <value name="VALUE1">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="VALUE2">
-          <shadow type="math_number">
-            <field name="NUM">2</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_operator">
-        <field name="OPTION">-</field>
-        <value name="VALUE1">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="VALUE2">
-          <shadow type="math_number">
-            <field name="NUM">2</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_operator">
-        <field name="OPTION">*</field>
-        <value name="VALUE1">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="VALUE2">
-          <shadow type="math_number">
-            <field name="NUM">2</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_operator">
-        <field name="OPTION">/</field>
-        <value name="VALUE1">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="VALUE2">
-          <shadow type="math_number">
-            <field name="NUM">2</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_operator">
-        <field name="OPTION">mod</field>
-        <value name="VALUE1">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="VALUE2">
-          <shadow type="math_number">
-            <field name="NUM">2</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_getRandom">
-        <value name="MIN">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="MAX">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_conditionalOperator">
-        <field name="OPTION">></field>
-        <value name="VALUE2">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_conditionalOperator">
-        <field name="OPTION">=</field>
-        <value name="VALUE2">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_conditionalOperator">
-        <field name="OPTION"><</field>
-        <value name="VALUE2">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_conditionalOperator">
-        <field name="OPTION">and</field>
-      </block>
-      <block type="sprite_conditionalOperator">
-        <field name="OPTION">or</field>
-      </block>
-      <block type="sprite_notOperator"></block>
-      <block type="sprite_join">
-        <value name="VALUE1">
-          <shadow type="text">
-            <field name="TEXT">pen</field>
-          </shadow>
-        </value>
-        <value name="VALUE2">
-          <shadow type="text">
-            <field name="TEXT">pineapple</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_letterAt">
-        <value name="INDEX">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="VALUE">
-          <shadow type="text">
-            <field name="TEXT">pen-pineapple</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_length">
-        <value name="VALUE">
-          <shadow type="text">
-            <field name="TEXT">pen-pineapple</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_contains">
-        <value name="VALUE">
-          <shadow type="text">
-            <field name="TEXT">pen-pineapple</field>
-          </shadow>
-        </value>
-        <value name="LOOKUP">
-          <shadow type="text">
-            <field name="TEXT">apple</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_unaryOperator">
-        <field name="OPTION">round</field>
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">33.33</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="sprite_unaryOperator">
-        <field name="OPTION">abs</field>
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">-10</field>
-          </shadow>
-        </value>
-      </block>
+        <label text="Operators"></label>
+        <block type="sprite_operator">
+          <field name="OPTION">+</field>
+          <value name="VALUE1">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_operator">
+          <field name="OPTION">-</field>
+          <value name="VALUE1">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_operator">
+          <field name="OPTION">*</field>
+          <value name="VALUE1">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_operator">
+          <field name="OPTION">/</field>
+          <value name="VALUE1">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_operator">
+          <field name="OPTION">mod</field>
+          <value name="VALUE1">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_getRandom">
+          <value name="MIN">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="MAX">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_conditionalOperator">
+          <field name="OPTION">></field>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_conditionalOperator">
+          <field name="OPTION">=</field>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_conditionalOperator">
+          <field name="OPTION"><</field>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_conditionalOperator">
+          <field name="OPTION">and</field>
+        </block>
+        <block type="sprite_conditionalOperator">
+          <field name="OPTION">or</field>
+        </block>
+        <block type="sprite_notOperator"></block>
+        <block type="sprite_join">
+          <value name="VALUE1">
+            <shadow type="text">
+              <field name="TEXT">pen</field>
+            </shadow>
+          </value>
+          <value name="VALUE2">
+            <shadow type="text">
+              <field name="TEXT">pineapple</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_letterAt">
+          <value name="INDEX">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT">pen-pineapple</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_length">
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT">pen-pineapple</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_contains">
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT">pen-pineapple</field>
+            </shadow>
+          </value>
+          <value name="LOOKUP">
+            <shadow type="text">
+              <field name="TEXT">apple</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_unaryOperator">
+          <field name="OPTION">round</field>
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">33.33</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_unaryOperator">
+          <field name="OPTION">abs</field>
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">-10</field>
+            </shadow>
+          </value>
+        </block>
 
 
-      <label text="Variables"></label>
-      <block type="sprite_emptyList"></block>
+        <label text="Variables"></label>
+        <block type="sprite_emptyList"></block>
 
 
-      <!--
-      <label text="EVENT"></label>
-      <block type="sprite_flagClicked"></block>
+        <!--
+        <label text="EVENT"></label>
+        <block type="sprite_flagClicked"></block>
 
-      <label text="SENSE"></label>
-      <block type="sprite_senseTouch">
-        <value name="SPRITE">
-          <block type="variables_get">
-            <field name="VAR">sprite</field>
-          </block>
-        </value>
-      </block>
-      <block type="sprite_touch_color"></block>
+        <label text="SENSE"></label>
+        <block type="sprite_senseTouch">
+          <value name="SPRITE">
+            <block type="variables_get">
+              <field name="VAR">sprite</field>
+            </block>
+          </value>
+        </block>
+        <block type="sprite_touch_color"></block>
 
-      <label text="LOOK"></label>
-      <block type="sprite_say"></block>
+        <label text="LOOK"></label>
+        <block type="sprite_say"></block>
 
-      <label text="CONTROL"></label>
-      <block type="sprite_forever"></block>
-      <block type="controls_if"></block>
-      &lt;!&ndash;<block type="controls_if">
-        <value name="ELSE"></value>
-      </block>&ndash;&gt;
+        <label text="CONTROL"></label>
+        <block type="sprite_forever"></block>
+        <block type="controls_if"></block>
+        &lt;!&ndash;<block type="controls_if">
+          <value name="ELSE"></value>
+        </block>&ndash;&gt;
 
-      <label text="LOGIC"></label>
-      <block type="logic_negate"></block>
-      <block type="logic_compare"></block>
+        <label text="LOGIC"></label>
+        <block type="logic_negate"></block>
+        <block type="logic_compare"></block>
 
-      <label text="TEXT"></label>
-      <block type="text_join"></block>
+        <label text="TEXT"></label>
+        <block type="text_join"></block>
 
-      <label text="VARIABLE"></label>
-      <block type="sprite_empty_list">
-        <value name="VARIABLE">
-          <block type="variables_get">
-            <field name="VAR">list</field>
-          </block>
-        </value>
-      </block>
-      <block type="lists_indexOf"></block>
-      <block type="lists_setIndex"></block>
-      -->
-    </category>
+        <label text="VARIABLE"></label>
+        <block type="sprite_empty_list">
+          <value name="VARIABLE">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_indexOf"></block>
+        <block type="lists_setIndex"></block>
+        -->
+      </category>
 
-    <category name="Text" style="text_category">
-      <block type="text"></block>
-      <block type="text_join"></block>
-      <block type="text_append">
-        <value name="TEXT">
-          <shadow type="text"></shadow>
-        </value>
-      </block>
-      <block type="text_length">
-        <value name="VALUE">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_isEmpty">
-        <value name="VALUE">
-          <shadow type="text">
-            <field name="TEXT"></field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_indexOf">
-        <value name="VALUE">
-          <block type="variables_get">
-            <field name="VAR">text</field>
-          </block>
-        </value>
-        <value name="FIND">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_charAt">
-        <value name="VALUE">
-          <block type="variables_get">
-            <field name="VAR">text</field>
-          </block>
-        </value>
-      </block>
-      <block type="text_getSubstring">
-        <value name="STRING">
-          <block type="variables_get">
-            <field name="VAR">text</field>
-          </block>
-        </value>
-      </block>
-      <block type="text_changeCase">
-        <value name="TEXT">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_trim">
-        <value name="TEXT">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_count">
-        <value name="SUB">
-          <shadow type="text"></shadow>
-        </value>
-        <value name="TEXT">
-          <shadow type="text"></shadow>
-        </value>
-      </block>
-      <block type="text_replace">
-        <value name="FROM">
-          <shadow type="text"></shadow>
-        </value>
-        <value name="TO">
-          <shadow type="text"></shadow>
-        </value>
-        <value name="TEXT">
-          <shadow type="text"></shadow>
-        </value>
-      </block>
-      <block type="text_reverse">
-        <value name="TEXT">
-          <shadow type="text"></shadow>
-        </value>
-      </block>
-      <label text="Input/Output:" web-class="ioLabel"></label>
-      <block type="text_print">
-        <value name="TEXT">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_prompt_ext">
-        <value name="TEXT">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block>
-    </category>
-    <category name="Lists" style="list_category">
-      <block type="lists_create_with">
-        <mutation items="0"></mutation>
-      </block>
-      <block type="lists_create_with"></block>
-      <block type="lists_repeat">
-        <value name="NUM">
-          <shadow type="math_number">
-            <field name="NUM">5</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="lists_length"></block>
-      <block type="lists_isEmpty"></block>
-      <block type="lists_indexOf">
-        <value name="VALUE">
-          <block type="variables_get">
-            <field name="VAR">list</field>
-          </block>
-        </value>
-      </block>
-      <block type="lists_getIndex">
-        <value name="VALUE">
-          <block type="variables_get">
-            <field name="VAR">list</field>
-          </block>
-        </value>
-      </block>
-      <block type="lists_setIndex">
-        <value name="LIST">
-          <block type="variables_get">
-            <field name="VAR">list</field>
-          </block>
-        </value>
-      </block>
-      <block type="lists_getSublist">
-        <value name="LIST">
-          <block type="variables_get">
-            <field name="VAR">list</field>
-          </block>
-        </value>
-      </block>
-      <block type="lists_split">
-        <value name="DELIM">
-          <shadow type="text">
-            <field name="TEXT">,</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="lists_sort"></block>
-      <block type="lists_reverse"></block>
-    </category>
-    <category name="Colour" style="colour_category">
-      <block type="colour_picker"></block>
-      <block type="colour_random"></block>
-      <block type="colour_rgb">
-        <value name="RED">
-          <shadow type="math_number">
-            <field name="NUM">100</field>
-          </shadow>
-        </value>
-        <value name="GREEN">
-          <shadow type="math_number">
-            <field name="NUM">50</field>
-          </shadow>
-        </value>
-        <value name="BLUE">
-          <shadow type="math_number">
-            <field name="NUM">0</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="colour_blend">
-        <value name="COLOUR1">
-          <shadow type="colour_picker">
-            <field name="COLOUR">#ff0000</field>
-          </shadow>
-        </value>
-        <value name="COLOUR2">
-          <shadow type="colour_picker">
-            <field name="COLOUR">#3333ff</field>
-          </shadow>
-        </value>
-        <value name="RATIO">
-          <shadow type="math_number">
-            <field name="NUM">0.5</field>
-          </shadow>
-        </value>
-      </block>
-    </category>
-    <sep></sep>
-    <category name="Variables" style="variable_category" custom="VARIABLE"></category>
-    <category name="Functions" style="procedure_category" custom="PROCEDURE"></category>
-  </xml>
+      <category name="Text" style="text_category">
+        <block type="text"></block>
+        <block type="text_join"></block>
+        <block type="text_append">
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <block type="text_length">
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_isEmpty">
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_indexOf">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">text</field>
+            </block>
+          </value>
+          <value name="FIND">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_charAt">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">text</field>
+            </block>
+          </value>
+        </block>
+        <block type="text_getSubstring">
+          <value name="STRING">
+            <block type="variables_get">
+              <field name="VAR">text</field>
+            </block>
+          </value>
+        </block>
+        <block type="text_changeCase">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_trim">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_count">
+          <value name="SUB">
+            <shadow type="text"></shadow>
+          </value>
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <block type="text_replace">
+          <value name="FROM">
+            <shadow type="text"></shadow>
+          </value>
+          <value name="TO">
+            <shadow type="text"></shadow>
+          </value>
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <block type="text_reverse">
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <label text="Input/Output:" web-class="ioLabel"></label>
+        <block type="text_print">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_prompt_ext">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <category name="Lists" style="list_category">
+        <block type="lists_create_with">
+          <mutation items="0"></mutation>
+        </block>
+        <block type="lists_create_with"></block>
+        <block type="lists_repeat">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">5</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="lists_length"></block>
+        <block type="lists_isEmpty"></block>
+        <block type="lists_indexOf">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_getIndex">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_setIndex">
+          <value name="LIST">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_getSublist">
+          <value name="LIST">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_split">
+          <value name="DELIM">
+            <shadow type="text">
+              <field name="TEXT">,</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="lists_sort"></block>
+        <block type="lists_reverse"></block>
+      </category>
+      <category name="Colour" style="colour_category">
+        <block type="colour_picker"></block>
+        <block type="colour_random"></block>
+        <block type="colour_rgb">
+          <value name="RED">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+          <value name="GREEN">
+            <shadow type="math_number">
+              <field name="NUM">50</field>
+            </shadow>
+          </value>
+          <value name="BLUE">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="colour_blend">
+          <value name="COLOUR1">
+            <shadow type="colour_picker">
+              <field name="COLOUR">#ff0000</field>
+            </shadow>
+          </value>
+          <value name="COLOUR2">
+            <shadow type="colour_picker">
+              <field name="COLOUR">#3333ff</field>
+            </shadow>
+          </value>
+          <value name="RATIO">
+            <shadow type="math_number">
+              <field name="NUM">0.5</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <sep></sep>
+      <category name="Variables" style="variable_category" custom="VARIABLE"></category>
+      <category name="Functions" style="procedure_category" custom="PROCEDURE"></category>
+    </xml>
 
-  <!-- toolbox-categories-typed-variables has a category menu and an
-  auto-closing flyout.  The Variables category uses typed variable blocks.
-  See https://developers.google.com/blockly/guides/create-custom-blocks/variables#typed_variable_blocks for more information. -->
-  <xml id="toolbox-categories-typed-variables" style="display: none">
-    <category name="Logic" style="logic_category">
-      <block type="controls_if"></block>
-      <block type="logic_compare"></block>
-      <block type="logic_operation"></block>
-      <block type="logic_negate"></block>
-      <block type="logic_boolean"></block>
-      <block type="logic_null" disabled="true"></block>
-      <block type="logic_ternary"></block>
-    </category>
-    <category name="Loops" style="loop_category">
-      <block type="controls_repeat_ext">
-        <value name="TIMES">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="controls_repeat" disabled="true"></block>
-      <block type="controls_whileUntil"></block>
-      <block type="controls_for">
-        <value name="FROM">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="TO">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-        <value name="BY">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="controls_forEach"></block>
-      <block type="controls_flow_statements"></block>
-    </category>
-    <category name="Math" style="math_category">
-      <block type="math_number" gap="32">
-        <field name="NUM">123</field>
-      </block>
-      <block type="math_arithmetic">
-        <value name="A">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="B">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_single">
-        <value name="NUM">
-          <shadow type="math_number">
-            <field name="NUM">9</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_trig">
-        <value name="NUM">
-          <shadow type="math_number">
-            <field name="NUM">45</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_constant"></block>
-      <block type="math_number_property">
-        <value name="NUMBER_TO_CHECK">
-          <shadow type="math_number">
-            <field name="NUM">0</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_round">
-        <value name="NUM">
-          <shadow type="math_number">
-            <field name="NUM">3.1</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_on_list"></block>
-      <block type="math_modulo">
-        <value name="DIVIDEND">
-          <shadow type="math_number">
-            <field name="NUM">64</field>
-          </shadow>
-        </value>
-        <value name="DIVISOR">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_constrain">
-        <value name="VALUE">
-          <shadow type="math_number">
-            <field name="NUM">50</field>
-          </shadow>
-        </value>
-        <value name="LOW">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="HIGH">
-          <shadow type="math_number">
-            <field name="NUM">100</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_random_int">
-        <value name="FROM">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="TO">
-          <shadow type="math_number">
-            <field name="NUM">100</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_random_float"></block>
-      <block type="math_atan2">
-        <value name="X">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="Y">
-          <shadow type="math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-      </block>
-    </category>
-    <category name="Text" style="text_category">
-      <block type="text"></block>
-      <block type="text_join"></block>
-      <block type="text_append">
-        <value name="TEXT">
-          <shadow type="text"></shadow>
-        </value>
-      </block>
-      <block type="text_length">
-        <value name="VALUE">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_isEmpty">
-        <value name="VALUE">
-          <shadow type="text">
-            <field name="TEXT"></field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_indexOf">
-        <value name="VALUE">
-          <block type="variables_get">
-            <field name="VAR">text</field>
-          </block>
-        </value>
-        <value name="FIND">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_charAt">
-        <value name="VALUE">
-          <block type="variables_get">
-            <field name="VAR">text</field>
-          </block>
-        </value>
-      </block>
-      <block type="text_getSubstring">
-        <value name="STRING">
-          <block type="variables_get">
-            <field name="VAR">text</field>
-          </block>
-        </value>
-      </block>
-      <block type="text_changeCase">
-        <value name="TEXT">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_trim">
-        <value name="TEXT">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_count">
-        <value name="SUB">
-          <shadow type="text"></shadow>
-        </value>
-        <value name="TEXT">
-          <shadow type="text"></shadow>
-        </value>
-      </block>
-      <block type="text_replace">
-        <value name="FROM">
-          <shadow type="text"></shadow>
-        </value>
-        <value name="TO">
-          <shadow type="text"></shadow>
-        </value>
-        <value name="TEXT">
-          <shadow type="text"></shadow>
-        </value>
-      </block>
-      <block type="text_reverse">
-        <value name="TEXT">
-          <shadow type="text"></shadow>
-        </value>
-      </block>
-      <label text="Input/Output:" web-class="ioLabel"></label>
-      <block type="text_print">
-        <value name="TEXT">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_prompt_ext">
-        <value name="TEXT">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block>
-    </category>
-    <category name="Lists" style="list_category">
-      <block type="lists_create_with">
-        <mutation items="0"></mutation>
-      </block>
-      <block type="lists_create_with"></block>
-      <block type="lists_repeat">
-        <value name="NUM">
-          <shadow type="math_number">
-            <field name="NUM">5</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="lists_length"></block>
-      <block type="lists_isEmpty"></block>
-      <block type="lists_indexOf">
-        <value name="VALUE">
-          <block type="variables_get">
-            <field name="VAR">list</field>
-          </block>
-        </value>
-      </block>
-      <block type="lists_getIndex">
-        <value name="VALUE">
-          <block type="variables_get">
-            <field name="VAR">list</field>
-          </block>
-        </value>
-      </block>
-      <block type="lists_setIndex">
-        <value name="LIST">
-          <block type="variables_get">
-            <field name="VAR">list</field>
-          </block>
-        </value>
-      </block>
-      <block type="lists_getSublist">
-        <value name="LIST">
-          <block type="variables_get">
-            <field name="VAR">list</field>
-          </block>
-        </value>
-      </block>
-      <block type="lists_split">
-        <value name="DELIM">
-          <shadow type="text">
-            <field name="TEXT">,</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="lists_sort"></block>
-      <block type="lists_reverse"></block>
-    </category>
-    <category name="Colour" style="colour_category">
-      <block type="colour_picker"></block>
-      <block type="colour_random"></block>
-      <block type="colour_rgb">
-        <value name="RED">
-          <shadow type="math_number">
-            <field name="NUM">100</field>
-          </shadow>
-        </value>
-        <value name="GREEN">
-          <shadow type="math_number">
-            <field name="NUM">50</field>
-          </shadow>
-        </value>
-        <value name="BLUE">
-          <shadow type="math_number">
-            <field name="NUM">0</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="colour_blend">
-        <value name="COLOUR1">
-          <shadow type="colour_picker">
-            <field name="COLOUR">#ff0000</field>
-          </shadow>
-        </value>
-        <value name="COLOUR2">
-          <shadow type="colour_picker">
-            <field name="COLOUR">#3333ff</field>
-          </shadow>
-        </value>
-        <value name="RATIO">
-          <shadow type="math_number">
-            <field name="NUM">0.5</field>
-          </shadow>
-        </value>
-      </block>
-    </category>
-    <sep></sep>
-    <category name="Variables" style="variable_category" custom="VARIABLE_DYNAMIC"></category>
-    <category name="Functions" style="procedure_category" custom="PROCEDURE"></category>
-  </xml>
-  <div id="importedFunctions">imported functions</div>
-  <!-- toolbox-test-blocks has a category menu and an auto-closing flyout.
-  The blocks in this toolbox reflect block configurations not used by
-  the standard predefined blocks, and so test alernative block rendering
-  code paths. -->
-  <xml id="toolbox-test-blocks" style="display: none">
-    <category name="Basic">
-      <block type="empty_block"></block>
-      <block type="empty_block_with_mutator"></block>
-      <block type="value_to_stack"></block>
-      <block type="value_to_statement"></block>
-      <block type="limit_instances"></block>
-    </category>
-    <category name="Drag">
-      <label text="Drag each to the workspace"></label>
-      <block type="text_print">
-        <value name="TEXT">
-          <block type="text">
-            <field name="TEXT">Drag me by this child</field>
-          </block>
-        </value>
-      </block>
-      <block type="text_print">
-        <value name="TEXT">
-          <shadow type="text">
-            <field name="TEXT">Drag me by this shadow</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_print">
-        <value name="TEXT">
-          <shadow type="text">
-            <field name="TEXT">Shadow value</field>
-          </shadow>
-        </value>
-        <next>
-          <shadow type="text_print">
-            <value name="TEXT">
-              <shadow type="text">
-                <field name="TEXT">Shadow statement</field>
-              </shadow>
-            </value>
-          </shadow>
-        </next>
-      </block>
-      <label text="Multiple Variable Refs"></label>
-      <block type="text_print">
-        <value name="TEXT">
-          <block type="variables_get">
-            <field name="VAR" id="item" variabletype="">item</field>
-          </block>
-        </value>
-        <next>
-          <block type="text_print">
-            <value name="TEXT">
-              <block type="variables_get">
-                <field name="VAR" id="item" variabletype="">item</field>
-              </block>
-            </value>
-          </block>
-        </next>
-      </block>
-      <label text="Procedure Definitions"></label>
-      <block type="procedures_defnoreturn">
-        <field name="NAME">without arguments</field>
-        <statement name="STACK">
-          <block type="text_print">
-            <value name="TEXT">
-              <shadow type="text">
-                <field name="TEXT">No argument reference.</field>
-              </shadow>
-            </value>
-          </block>
-        </statement>
-      </block>
-      <block type="procedures_defnoreturn">
-        <mutation>
-          <arg name="fnArgument"></arg>
-        </mutation>
-        <field name="NAME">with one argument</field>
-        <statement name="STACK">
-          <block type="text_print">
-            <value name="TEXT">
-              <shadow type="text">
-                <field name="TEXT">Expected an argument reference here.</field>
-              </shadow>
-              <block type="variables_get">
-                <field name="VAR">fnArgument</field>
-              </block>
-            </value>
-          </block>
-        </statement>
-      </block>
-    </category>
-    <category name="Fields">
-      <label text="Numbers"></label>
-      <block type="test_number">
-        <field name="NUM">123.456</field>
-      </block>
-      <block type="test_integer">
-        <field name="NUM">123.456</field>
-      </block>
-      <block type="test_number_hundredths">
-        <field name="NUM">123.456</field>
-      </block>
-      <block type="test_integer_bounded">
-        <field name="NOTE">60</field>
-      </block>
-      <label text="Drop-downs"></label>
-      <block type="example_dropdown_long"></block>
-      <block type="example_dropdown_images"></block>
-      <block type="example_dropdown_images_and_text"></block>
-      <label text="Dynamic Drop-downs"></label>
-      <block type="test_dropdown_dynamic"></block>
-      <button text="Add option" callbackKey="addDynamicOption"></button>
-      <button text="Remove option" callbackKey="removeDynamicOption"></button>
-      <label text="Others"></label>
-      <block type="example_angle"></block>
-      <block type="example_date"></block>
-    </category>
-    <category name="Mutators">
-      <label text="logic_compare"></label>
-      <block type="logic_compare">
-        <value name="A">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-        <value name="B">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="logic_compare">
-        <value name="A">
-          <block type="math_number">
-            <field name="NUM">10</field>
-          </block>
-        </value>
-        <value name="B">
-          <block type="math_number">
-            <field name="NUM">10</field>
-          </block>
-        </value>
-      </block>
-    </category>
-    <category name="Style">
-      <label text="Hats"></label>
-      <block type="styled_event_cap"></block>
-      <label text="Colour"></label>
-      <block type="block_colour_hex1"></block>
-      <block type="block_colour_hex2"></block>
-      <block type="block_colour_hex3"></block>
-      <block type="block_no_colour"></block>
-      <block type="block_colour_hex4"></block>
-      <block type="block_colour_hex5"></block>
-    </category>
-    <category name="Images">
-      <block type="image_datauri"></block>
-      <block type="image_small"></block>
-      <block type="image_large"></block>
-      <block type="image_fliprtl"></block>
-      <block type="image_missing"></block>
-      <block type="test_with_lots_of_network_icons"></block>
-      <label text="Unicode & Emojis"></label>
-      <block type="emoji_label_robot_face"></block>
-      <block type="text">
-        <field name="TEXT">Robot face in text field: &#x1f916;</field>
-      </block>
-      <block type="text">
-        <field name="TEXT">Zalgo in text field: B&#776;&#788;&#862;&#795;&#842;&#827;&#806;&#837;&#812;&#792;&#816;&#846;&#805;l&#771;&#832;&#833;&#864;&#849;&#849;&#789;&#861;&#801;&#854;&#863;&#811;&#826;&#812;&#790;&#803;&#819;o&#843;&#777;&#778;&#785;&#831;&#829;&#794;&#825;&#857;&#814;&#802;&#811;&#852;c&#843;&#786;&#849;&#778;&#861;&#775;&#825;&#825;&#796;&#857;&#825;&#800;&#824;k&#778;&#850;&#833;&#774;&#772;&#782;&#862;&#770;&#789;&#788;&#841;&#801;&#811;&#860;&#839;&#790;&#819;&#854;l&#832;&#774;&#836;&#831;&#776;&#787;&#855;&#816;&#793;&#798;&#819;&#809;&#800;&#854;&#815;y&#864;&#783;&#856;&#773;&#832;&#808;&#799;&#839;&#814;&#840;&#812;&#793;&#818;&#801;</field>
-      </block>
-    </category>
-  </xml>
+    <!-- toolbox-categories-typed-variables has a category menu and an
+    auto-closing flyout.  The Variables category uses typed variable blocks.
+    See https://developers.google.com/blockly/guides/create-custom-blocks/variables#typed_variable_blocks for more information. -->
+    <xml id="toolbox-categories-typed-variables" style="display: none">
+      <category name="Logic" style="logic_category">
+        <block type="controls_if"></block>
+        <block type="logic_compare"></block>
+        <block type="logic_operation"></block>
+        <block type="logic_negate"></block>
+        <block type="logic_boolean"></block>
+        <block type="logic_null" disabled="true"></block>
+        <block type="logic_ternary"></block>
+      </category>
+      <category name="Loops" style="loop_category">
+        <block type="controls_repeat_ext">
+          <value name="TIMES">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="controls_repeat" disabled="true"></block>
+        <block type="controls_whileUntil"></block>
+        <block type="controls_for">
+          <value name="FROM">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="TO">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+          <value name="BY">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="controls_forEach"></block>
+        <block type="controls_flow_statements"></block>
+      </category>
+      <category name="Math" style="math_category">
+        <block type="math_number" gap="32">
+          <field name="NUM">123</field>
+        </block>
+        <block type="math_arithmetic">
+          <value name="A">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="B">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_single">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">9</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_trig">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">45</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_constant"></block>
+        <block type="math_number_property">
+          <value name="NUMBER_TO_CHECK">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_round">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">3.1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_on_list"></block>
+        <block type="math_modulo">
+          <value name="DIVIDEND">
+            <shadow type="math_number">
+              <field name="NUM">64</field>
+            </shadow>
+          </value>
+          <value name="DIVISOR">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_constrain">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">50</field>
+            </shadow>
+          </value>
+          <value name="LOW">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="HIGH">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_random_int">
+          <value name="FROM">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="TO">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_random_float"></block>
+        <block type="math_atan2">
+          <value name="X">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="Y">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <category name="Text" style="text_category">
+        <block type="text"></block>
+        <block type="text_join"></block>
+        <block type="text_append">
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <block type="text_length">
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_isEmpty">
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_indexOf">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">text</field>
+            </block>
+          </value>
+          <value name="FIND">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_charAt">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">text</field>
+            </block>
+          </value>
+        </block>
+        <block type="text_getSubstring">
+          <value name="STRING">
+            <block type="variables_get">
+              <field name="VAR">text</field>
+            </block>
+          </value>
+        </block>
+        <block type="text_changeCase">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_trim">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_count">
+          <value name="SUB">
+            <shadow type="text"></shadow>
+          </value>
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <block type="text_replace">
+          <value name="FROM">
+            <shadow type="text"></shadow>
+          </value>
+          <value name="TO">
+            <shadow type="text"></shadow>
+          </value>
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <block type="text_reverse">
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <label text="Input/Output:" web-class="ioLabel"></label>
+        <block type="text_print">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_prompt_ext">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <category name="Lists" style="list_category">
+        <block type="lists_create_with">
+          <mutation items="0"></mutation>
+        </block>
+        <block type="lists_create_with"></block>
+        <block type="lists_repeat">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">5</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="lists_length"></block>
+        <block type="lists_isEmpty"></block>
+        <block type="lists_indexOf">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_getIndex">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_setIndex">
+          <value name="LIST">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_getSublist">
+          <value name="LIST">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_split">
+          <value name="DELIM">
+            <shadow type="text">
+              <field name="TEXT">,</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="lists_sort"></block>
+        <block type="lists_reverse"></block>
+      </category>
+      <category name="Colour" style="colour_category">
+        <block type="colour_picker"></block>
+        <block type="colour_random"></block>
+        <block type="colour_rgb">
+          <value name="RED">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+          <value name="GREEN">
+            <shadow type="math_number">
+              <field name="NUM">50</field>
+            </shadow>
+          </value>
+          <value name="BLUE">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="colour_blend">
+          <value name="COLOUR1">
+            <shadow type="colour_picker">
+              <field name="COLOUR">#ff0000</field>
+            </shadow>
+          </value>
+          <value name="COLOUR2">
+            <shadow type="colour_picker">
+              <field name="COLOUR">#3333ff</field>
+            </shadow>
+          </value>
+          <value name="RATIO">
+            <shadow type="math_number">
+              <field name="NUM">0.5</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <sep></sep>
+      <category name="Variables" style="variable_category" custom="VARIABLE_DYNAMIC"></category>
+      <category name="Functions" style="procedure_category" custom="PROCEDURE"></category>
+    </xml>
+    <div id="importedFunctions">imported functions</div>
+    <!-- toolbox-test-blocks has a category menu and an auto-closing flyout.
+    The blocks in this toolbox reflect block configurations not used by
+    the standard predefined blocks, and so test alernative block rendering
+    code paths. -->
+    <xml id="toolbox-test-blocks" style="display: none">
+      <category name="Basic">
+        <block type="empty_block"></block>
+        <block type="empty_block_with_mutator"></block>
+        <block type="value_to_stack"></block>
+        <block type="value_to_statement"></block>
+        <block type="limit_instances"></block>
+      </category>
+      <category name="Drag">
+        <label text="Drag each to the workspace"></label>
+        <block type="text_print">
+          <value name="TEXT">
+            <block type="text">
+              <field name="TEXT">Drag me by this child</field>
+            </block>
+          </value>
+        </block>
+        <block type="text_print">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">Drag me by this shadow</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_print">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">Shadow value</field>
+            </shadow>
+          </value>
+          <next>
+            <shadow type="text_print">
+              <value name="TEXT">
+                <shadow type="text">
+                  <field name="TEXT">Shadow statement</field>
+                </shadow>
+              </value>
+            </shadow>
+          </next>
+        </block>
+        <label text="Multiple Variable Refs"></label>
+        <block type="text_print">
+          <value name="TEXT">
+            <block type="variables_get">
+              <field name="VAR" id="item" variabletype="">item</field>
+            </block>
+          </value>
+          <next>
+            <block type="text_print">
+              <value name="TEXT">
+                <block type="variables_get">
+                  <field name="VAR" id="item" variabletype="">item</field>
+                </block>
+              </value>
+            </block>
+          </next>
+        </block>
+        <label text="Procedure Definitions"></label>
+        <block type="procedures_defnoreturn">
+          <field name="NAME">without arguments</field>
+          <statement name="STACK">
+            <block type="text_print">
+              <value name="TEXT">
+                <shadow type="text">
+                  <field name="TEXT">No argument reference.</field>
+                </shadow>
+              </value>
+            </block>
+          </statement>
+        </block>
+        <block type="procedures_defnoreturn">
+          <mutation>
+            <arg name="fnArgument"></arg>
+          </mutation>
+          <field name="NAME">with one argument</field>
+          <statement name="STACK">
+            <block type="text_print">
+              <value name="TEXT">
+                <shadow type="text">
+                  <field name="TEXT">Expected an argument reference here.</field>
+                </shadow>
+                <block type="variables_get">
+                  <field name="VAR">fnArgument</field>
+                </block>
+              </value>
+            </block>
+          </statement>
+        </block>
+      </category>
+      <category name="Fields">
+        <label text="Numbers"></label>
+        <block type="test_number">
+          <field name="NUM">123.456</field>
+        </block>
+        <block type="test_integer">
+          <field name="NUM">123.456</field>
+        </block>
+        <block type="test_number_hundredths">
+          <field name="NUM">123.456</field>
+        </block>
+        <block type="test_integer_bounded">
+          <field name="NOTE">60</field>
+        </block>
+        <label text="Drop-downs"></label>
+        <block type="example_dropdown_long"></block>
+        <block type="example_dropdown_images"></block>
+        <block type="example_dropdown_images_and_text"></block>
+        <label text="Dynamic Drop-downs"></label>
+        <block type="test_dropdown_dynamic"></block>
+        <button text="Add option" callbackKey="addDynamicOption"></button>
+        <button text="Remove option" callbackKey="removeDynamicOption"></button>
+        <label text="Others"></label>
+        <block type="example_angle"></block>
+        <block type="example_date"></block>
+      </category>
+      <category name="Mutators">
+        <label text="logic_compare"></label>
+        <block type="logic_compare">
+          <value name="A">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+          <value name="B">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="logic_compare">
+          <value name="A">
+            <block type="math_number">
+              <field name="NUM">10</field>
+            </block>
+          </value>
+          <value name="B">
+            <block type="math_number">
+              <field name="NUM">10</field>
+            </block>
+          </value>
+        </block>
+      </category>
+      <category name="Style">
+        <label text="Hats"></label>
+        <block type="styled_event_cap"></block>
+        <label text="Colour"></label>
+        <block type="block_colour_hex1"></block>
+        <block type="block_colour_hex2"></block>
+        <block type="block_colour_hex3"></block>
+        <block type="block_no_colour"></block>
+        <block type="block_colour_hex4"></block>
+        <block type="block_colour_hex5"></block>
+      </category>
+      <category name="Images">
+        <block type="image_datauri"></block>
+        <block type="image_small"></block>
+        <block type="image_large"></block>
+        <block type="image_fliprtl"></block>
+        <block type="image_missing"></block>
+        <block type="test_with_lots_of_network_icons"></block>
+        <label text="Unicode & Emojis"></label>
+        <block type="emoji_label_robot_face"></block>
+        <block type="text">
+          <field name="TEXT">Robot face in text field: &#x1f916;</field>
+        </block>
+        <block type="text">
+          <field name="TEXT">Zalgo in text field: B&#776;&#788;&#862;&#795;&#842;&#827;&#806;&#837;&#812;&#792;&#816;&#846;&#805;l&#771;&#832;&#833;&#864;&#849;&#849;&#789;&#861;&#801;&#854;&#863;&#811;&#826;&#812;&#790;&#803;&#819;o&#843;&#777;&#778;&#785;&#831;&#829;&#794;&#825;&#857;&#814;&#802;&#811;&#852;c&#843;&#786;&#849;&#778;&#861;&#775;&#825;&#825;&#796;&#857;&#825;&#800;&#824;k&#778;&#850;&#833;&#774;&#772;&#782;&#862;&#770;&#789;&#788;&#841;&#801;&#811;&#860;&#839;&#790;&#819;&#854;l&#832;&#774;&#836;&#831;&#776;&#787;&#855;&#816;&#793;&#798;&#819;&#809;&#800;&#854;&#815;y&#864;&#783;&#856;&#773;&#832;&#808;&#799;&#839;&#814;&#840;&#812;&#793;&#818;&#801;</field>
+        </block>
+      </category>
+    </xml>
+  </div>
+
+
+</div>
+</div>
 </body>
 <script src="../../jszip/dist/jszip.js"></script>
 <script src="../../FileSaver/dist/FileSaver.js"></script>

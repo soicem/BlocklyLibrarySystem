@@ -516,7 +516,15 @@ Blockly.BlockSvg.prototype.setCollapsed = function(collapsed) {
     for (var i = 0; i < icons.length; i++) {
       icons[i].setVisible(false);
     }
-    var text = this.toString(Blockly.COLLAPSE_CHARS);
+
+    // display comment text if it exists
+    var text;
+    if (this.getCommentText().trim() === "") {
+      text = this.toString(Blockly.COLLAPSE_CHARS);
+    } else {
+      text = this.getCommentText();
+    }
+    //var text = this.toString(Blockly.COLLAPSE_CHARS);
     this.appendDummyInput(COLLAPSED_INPUT_NAME).appendField(text).init();
 
     // Add any warnings on enclosed blocks to this block.

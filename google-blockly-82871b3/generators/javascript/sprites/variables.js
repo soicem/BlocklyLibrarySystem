@@ -24,7 +24,7 @@
  */
 'use strict';
 
-goog.provide('Blockly.JavaScript.variables');
+goog.provide('Blockly.JavaScript.vars');
 
 goog.require('Blockly.JavaScript');
 

@@ -28,4 +28,9 @@ goog.provide('Blockly.JavaScript.looks');
 
 goog.require('Blockly.JavaScript');
 
+Blockly.JavaScript['sprite_say'] = function (block) {
+  let value_content = Blockly.JavaScript.valueToCode(block, 'CONTENT',
+      Blockly.JavaScript.ORDER_ATOMIC);
 
+  return "@@say(" + value_content + ");\n";
+};

@@ -56,7 +56,8 @@ class Sprite {
     this._direction = value % 360;
   }
 
-  draw() {}
+  draw() {
+  }
 
   moveSteps(step) {
     function toRadians(angle) {
