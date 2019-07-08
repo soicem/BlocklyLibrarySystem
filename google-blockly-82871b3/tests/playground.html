@@ -37,6 +37,7 @@
   <script src="../blocks/variables_dynamic.js"></script>
   <script src="../blocks/procedures.js"></script>
   <script src="../blocks/import.js"></script>
+
   <script src="../blocks/sprites/motions.js"></script>
   <script src="../blocks/sprites/looks.js"></script>
   <script src="../blocks/sprites/sounds.js"></script>
@@ -53,6 +54,7 @@
   <script src="../generators/javascript/sprites/sensing.js"></script>
   <script src="../generators/javascript/sprites/sounds.js"></script>
   <script src="blocks/test_blocks.js"></script>
+  <link rel="stylesheet" href="playground_css.css">
   <script>
     'use strict';
     var workspace = null;
@@ -124,6 +126,7 @@
         // MSIE 11 does not support sessionStorage on file:// URLs.
         logEvents(false);
       }
+      tabInit();
     }
 
     function addToolboxButtonCallbacks() {
@@ -162,54 +165,22 @@
       return document.getElementById('toolbox-' + toolboxSuffix);
     }
 
-    function insertTestXml() {
-      let output = document.getElementById("importExport");
-      let xmlText = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
-          "  <block type=\"import_return\" y=\"138\">\n" +
-          "    <mutation func=\"Return Function\" args=\"2\">\n" +
-          "        <arg name=\"argA\"></arg>\n" +
-          "        <arg name=\"argB\"></arg>\n" +
-          "    </mutation>\n" +
-          "  </block>\n" +
-          "  <block type=\"import_statement\" y=\"213\">\n" +
-          "    <mutation func=\"Statement Function\" args=\"2\">\n" +
-          "        <arg name=\"argA\"></arg>\n" +
-          "        <arg name=\"argB\"></arg>\n" +
-          "    </mutation>\n" +
-          "  </block>\n" +
-          "</xml>";
-      output.value = xmlText;
-
-      taChange();
-    }
-
-    // xml 사용 샘플 코드
-    function myFunction(xml) {
-      var x, y, i, xlen, xmlDoc, txt;
-      xmlDoc = xml.responseXML;
-      x = xmlDoc.getElementsByTagName("book")[0];
-      xlen = x.childNodes.length;
-      y = x.firstChild;
-      txt = "";
-      for (i = 0; i < xlen; i++) {
-        if (y.nodeType == 1) {
-          txt += i + " " + y.nodeName + "<br>";
-        }
-        y = y.nextSibling;
-      }
-      document.getElementById("demo").innerHTML = txt;
-    }
-
     // 라이브러리 xml의 원형을 본따서 arg, type, name 을 바꾼 후 리턴
     function generateLibFuncXML(arr) {
-      if (arr['type'] == "procedures_defnoreturn") {
+      var argument = 0;
+
+      if (arr['type'] === "procedures_defnoreturn") {
         arr['type'] = "import_statement"
-      } else if (arr['type'] == "procedures_defreturn") {
+      } else if (arr['type'] === "procedures_defreturn") {
         arr['type'] = "import_return"
       }
+
+      if (arr['arg'] !== null && arr['arg'] !== undefined) {
+        argument = Object.keys(arr['arg']).length;
+      }
+
       var a = "<block type=\"" + arr['type'] + "\" y=\"138\">" + "\n" +
-          "<mutation func=\"" + arr['funcName'] + "\" args=\"" + Object.keys(arr['arg']).length
-          + "\">" + "\n";
+          "<mutation func=\"" + arr['funcName'] + "\" args=\"" + argument + "\">" + "\n";
 
       for (var key in arr['arg']) {
         // check if the property/key is defined in the object itself, not in parent
@@ -227,48 +198,51 @@
     function libFuncToMutationCode(libFunction) {
       var parser, xmlDoc, txt = "";
       var result = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">" + "\n";
+
       parser = new DOMParser();
       xmlDoc = parser.parseFromString(libFunction, "text/xml");
+
       var blockObjects = xmlDoc.getElementsByTagName("block");
-      console.log(blockObjects)
+      //console.log(blockObjects)
+
       for (var blockIdx = 0; blockIdx < blockObjects.length; blockIdx++) {
-        var dict = {}
+        var dict = {};
         var x = blockObjects[blockIdx];
-        if (x.getAttributeNode("type").nodeValue == "text_print") {
+        if (x.getAttributeNode("type").nodeValue === "text_print") {
           continue;
         }
         var flag = 0;
-        if (x.getAttributeNode("type").nodeValue == "procedures_defnoreturn") {
+        if (x.getAttributeNode("type").nodeValue === "procedures_defnoreturn") {
           flag = 1;
         }
 
-        if (x.getAttributeNode("type").nodeValue == "procedures_defreturn") {
+        if (x.getAttributeNode("type").nodeValue === "procedures_defreturn") {
           flag = 1;
         }
         if (!flag) {
           continue;
         }
-        console.log(x.getAttributeNode("type").nodeValue)
+        console.log(x.getAttributeNode("type").nodeValue);
 
-        dict["type"] = x.getAttributeNode("type").nodeValue
+        dict["type"] = x.getAttributeNode("type").nodeValue;
         var xlen = x.childNodes.length;
         var y = x.firstChild;
         for (var i = 0; i < xlen; i++) {
-          if (y.nodeName == "mutation") {
+          if (y.nodeName === "mutation") {
             var firstNode = y.firstChild;
             var mLen = y.childNodes.length;
-            var argDict = {}
+            var argDict = {};
             for (var j = 0; j < mLen; j++) {
-              if (firstNode.nodeName != "#text") {
-                txt += firstNode.nodeName + "<br>"
-                console.log(firstNode.getAttributeNode("name").nodeValue)
+              if (firstNode.nodeName !== "#text") {
+                txt += firstNode.nodeName + "<br>";
+                console.log(firstNode.getAttributeNode("name").nodeValue);
                 argDict[j] = firstNode.getAttributeNode("name").nodeValue
               }
               firstNode = firstNode.nextSibling
             }
             dict["arg"] = argDict
-          } else if (y.nodeName == "field") {
-            dict["funcName"] = y.childNodes[0].nodeValue
+          } else if (y.nodeName === "field") {
+            dict["funcName"] = y.childNodes[0].nodeValue;
             console.log(y.childNodes[0].nodeValue)
           }
           if (y.nodeType == 1) {
@@ -294,9 +268,9 @@
       for (let i = 0; i < childrenCount; i++) {
         let child = xml.children[i];
 
-        let childIsBlock = (child.nodeName == "block");
-        let childTypeIsImportReturn = (child.getAttribute("type") == "import_return");
-        let childTypeIsImportStatement = (child.getAttribute("type") == "import_statement");
+        let childIsBlock = (child.nodeName === "block");
+        let childTypeIsImportReturn = (child.getAttribute("type") === "import_return");
+        let childTypeIsImportStatement = (child.getAttribute("type") === "import_statement");
 
         if (childIsBlock && (childTypeIsImportReturn || childTypeIsImportStatement)) {
           document.getElementById("toolbox-categories").querySelector("[name='Import']").append(
@@ -325,6 +299,102 @@
       output.focus();
       output.select();
       taChange();
+
+      ImgToFile();
+      SpriteXMLtoBLK();
+
+      //CodeFile('JavaScript');
+      //CodeFile('Python'); Sprite는 인식하지 못한다.
+
+      CreateBLK('Test');
+    }
+
+    //import
+    function ExtractFiles() {
+      var BLK = document.getElementById("getFile");
+
+      var files = BLK.files[0]; // FileList object
+      var reader = new FileReader();
+
+      reader.onload = (function () {
+        return function (evt) {
+          JSZip.loadAsync(evt.target.result)
+          .then(function (blk) {
+            blk.forEach(function (relativePath, file) {
+              if ((file.name).indexOf(".xml") !== -1) { //xml
+                var xmlName = file.name.substring(0, (file.name).indexOf(".xml"));
+
+                file.async('text')
+                .then(function (data) {
+                  XMLOfEachSprites[xmlName] = data;
+                })
+              }
+
+              if ((file.name).indexOf("images/") !== -1) { // for images;
+                var strArray = (file.name).split('/');
+                var picture = strArray[1];
+                // console.log(picture);
+
+                file.async('base64')
+                .then(function (data) {
+                  objectsOfSprites[picture] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0,
+                      data);
+                  objectsOfSprites[picture].draw();
+                  objectsOfSprites[picture].printProperties();
+                  addSprite(picture, data);
+                });
+              }
+            })
+          }).then(function () {
+            console.log('hi');
+          });
+        };
+      })(files);
+      reader.readAsArrayBuffer(files);
+    }
+
+    function addSprite(name, Source) {
+      if (Source === null || Source === undefined || Source === "") {
+        return;
+      }
+
+      var base = "data:image/png;base64," + Source;
+
+      var a = '<div class="gallery\">' +
+          '<img onclick="pictureEvent(\'' + name + '\')" src="' + base
+          + '" alt="냥" width="100" height="100">' +
+          '<div class="desc">냥</div>' +
+          '</div>';
+
+      document.getElementById("gallary_owner").innerHTML += a;
+      setSpriteXML();
+    }
+
+    function setSpriteXML() {
+      var first_value = Object.keys(XMLOfEachSprites)[1];
+
+      var output = document.getElementById('importExport');
+      output.value = XMLOfEachSprites[first_value];
+      taChange();
+    }
+
+    //export
+    function SpriteXMLtoBLK() {
+      var arraySprite = Object.getOwnPropertyNames(XMLOfEachSprites);
+
+      arraySprite.forEach((name) => {
+        FileToBLK(name + ".xml", XMLOfEachSprites[name], false);
+      });
+    }
+
+    function ImgToFile() {
+      var arraySprite = Object.getOwnPropertyNames(objectsOfSprites);
+
+      arraySprite.forEach((name) => {
+        if (name !== "aww-cat.png") {
+          ImgToBLK(name, objectsOfSprites[name].data);
+        }
+      });
     }
 
     function fromXml() {
@@ -334,39 +404,39 @@
       taChange();
     }
 
-    function sendAjax(url, main, libraries) {
-      // langType - 0:py 1:lua 2:dart 3:php
-      // libraryFunction number
-      var data = {'langType': 0, 'main': main, 'libraries': libraries};
-      data = JSON.stringify(data)
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', url);
-      xhr.setRequestHeader('Content-Type', "application/json");
-      xhr.send(data);
-      xhr.addEventListener('load', function () {
-        var result = JSON.parse(xhr.responseText);
-        if (result.result !== "ok") {
-          return;
+    /*
+        function sendAjax(url, main, libraries) {
+          // langType - 0:py 1:lua 2:dart 3:php
+          // libraryFunction number
+          var data = {'langType': 0, 'main': main, 'libraries': libraries};
+          data = JSON.stringify(data)
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST', url);
+          xhr.setRequestHeader('Content-Type', "application/json");
+          xhr.send(data);
+          xhr.addEventListener('load', function () {
+            var result = JSON.parse(xhr.responseText);
+            if (result.result !== "ok") {
+              return;
+            }
+            alert(result.output);
+            //document.querySelector(".result").innerHTML = result.output;
+          })
         }
-        alert(result.output);
-        //document.querySelector(".result").innerHTML = result.output;
-      })
-    }
+    */
 
-    // .blk file에 위치한 코드, 샘플용
-    function samplePy() {
-      var a = "argA = None" + "\n" +
-          "argB = None" + "\n" +
-          "\"\"\"Describe this function..." + "\n" +
-          "\"\"\"" + "\n" +
-          "def doSomething(argA, argB):" + "\n" +
-          "\tprint(argA + argB)" + "\n" +
+    function CodeFile(lang) {
+      var result = Blockly[lang].workspaceToCode(workspace);
+      var filename = 'test';
 
-          "\"\"\"Describe this function..." + "\n" +
-          "\"\"\"" + "\n" +
-          "def doSomething2(argA, argB):" + "\n" +
-          "\tprint(argA + argB)"
-      return a;
+      if (lang === 'JavaScript') {
+        filename += '.js';
+      } else if (lang === 'Python') {
+        filename += '.py';
+      }
+
+      FileToBLK(filename, result, true);
+      console.log(filename);
     }
 
     // block을 Javascript 코드로 변환하고, 이를 실행시킨다.
@@ -392,9 +462,29 @@
       cat.draw();*/
     }
 
-    function toCode(lang) {
+    function toCodeMain() {
+      var lang = document.getElementById('mainLang');
+      var output = document.getElementById('importExport');
+      output.value = Blockly[lang.value].workspaceToCode(workspace);
+      var libFunction = samplePy();
+      var pyCode = output.value;
+      pyCode = "from testFunction import *\n" + pyCode;
+      var libraries = {
+        'numberOfLibs': 1, 'libraryInfo': {
+          0: {"name": "testFunction", "body": libFunction}
+        }
+      };
+      console.log(pyCode);
+      console.log(libFunction);
+
+      sendAjax('http://127.0.0.1:3000/ajax_send_email', pyCode, libraries);
+      taChange();
+    }
+
+    function toCodeLib() {
+      var lang = document.getElementById('libLang');
       var output = document.getElementById('importExport_');
-      output.value = Blockly[lang].workspaceToCode(workspace);
+      output.value = Blockly[lang.value].workspaceToCode(libraryspace);
       var libFunction = samplePy();
       var pyCode = output.value;
       pyCode = "from testFunction import *\n" + pyCode;
@@ -505,13 +595,37 @@
       '    <next></next>',
       '  </block>'].join('\n');
 
-    function changeTab() {
-      var tab = document.getElementById('tabChanger');
-      if (tab.value == "main_tab") {
+    function tabInit() {
+      show('blocklyDiv', 'main_tab');
+      hide('library', 'library_tab');
+      hide('sprite', 'sprite_tab');
+    }
 
-      } else if (tab.value == "library_tab") {
-        //setWorkspaceFromSprite("library");
+    function changeTab(tab) {
+      if (tab == "main_tab") {
+        show('blocklyDiv', 'main_tab');
+        hide('library', 'library_tab');
+        hide('sprite', 'sprite_tab');
+      } else if (tab == "library_tab") {
+        show('library', 'library_tab');
+        hide('blocklyDiv', 'main_tab');
+        hide('sprite', 'sprite_tab')
+      } else if (tab == "sprite_tab") {
+        show('sprite', 'sprite_tab');
+        hide('library', 'library_tab');
+        hide('blocklyDiv', 'main_tab');
       }
+      taChange();
+    }
+
+    function hide(page, tab) {
+      document.getElementById(page).style.display = 'none';
+      document.getElementById(tab).style.backgroundColor = '#333';
+    }
+
+    function show(page, tab) {
+      document.getElementById(page).style.display = 'block';
+      document.getElementById(tab).style.backgroundColor = 'green';
     }
 
     // 리소스 움직임용 함수
@@ -536,113 +650,41 @@
     //-------------------------------------------------------
   </script>
 
-  <style>
-    html, body {
-      height: 100%;
-    }
 
-    body {
-      background-color: #fff;
-      font-family: sans-serif;
-      overflow: hidden;
-    }
-
-    h1 {
-      font-weight: bold;
-      font-size: 140%;
-    }
-
-    #blocklyDiv {
-      height: 100%;
-      width: 100%; /*70 to 40*/
-    }
-
-    #importExport {
-      font-family: monospace;
-    }
-
-
-    /* 리소스 핸들링용 CSS */
-    #myContainer {
-      width: 450px;
-      height: 450px;
-      float: left;
-      border-style: solid;
-      border-bottom-color: #92a8d1;
-      border-top-color: #92a8d1;
-      border-left-color: #92a8d1;
-      border-right-color: #92a8d1;
-      background: white;
-    }
-
-    #myAnimation {
-      width: 50px;
-      height: 50px;
-      position: absolute;
-    }
-
-    #importedFunctions {
-      clear: both;
-      display: none;
-      height: 90%;
-      overflow-x: hidden;
-      overflow-y: scroll;
-    }
-
-    #header {
-      height: 70px;
-    }
-
-    #contents {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    #workspace {
-      height: calc(100% - 90px);
-      margin-right: calc(500px + 5px);
-    }
-
-    #rightBar {
-      position: absolute;
-      width: 500px;
-      height: 100%;
-      top: 0;
-      right: 0;
-    }
-
-    #canvases {
-      position: relative;
-      height: 500px;
-      margin-bottom: 5px;
-    }
-
-    canvas {
-      position: absolute;
-      border: 1px solid black;
-    }
-  </style>
 </head>
 <body onload="start()">
-
-<div id="header">
+<ul>
   <h1>Blockly Playground</h1>
-  <select id="tabChanger" name="theme" onchange="changeTab()">
-    <option value="main_tab">Main</option>
-    <option value="library_tab">Library</option>
-  </select>
+  <li><a id="main_tab" onclick="changeTab('main_tab')">Main</a></li>
+  <li><a id="library_tab" onclick="changeTab('library_tab')">Library</a></li>
+  <li><a id="sprite_tab" onclick="changeTab('sprite_tab')">Sprite</a></li>
+</ul>
+<br>
+<div id="blocklyDiv"></div>
+<!--- Library Tab --->
+<div id="library">
+  <div id="librarySpace"></div>
+  <p>
+    <select id="libLang" name="lang" onchange="toCodeLib()">
+      <option value="default">Select</option>
+      <option value="JavaScript">JavaScript</option>
+      <option value="Python">Python</option>
+      <option value="PHP">PHP</option>
+      <option value="Lua">Lua</option>
+      <option value="Dart">Dart</option>
+    </select>
+    <br>
+    <textarea id="importExport_" style="width: 90%; height: 70%;"
+              onchange="taChange();" onkeyup="taChange()">
+    </textarea>
+  </p>
 </div>
-<div id="contents">
-  <div id="workspace">
-    <div id="blocklyDiv"></div>
-  </div>
-  <div id="rightBar">
-
-
+<!--- Sprite Tab ---->
+<div id="sprite"></div>
+<!----- Content ----->
+<div id="content">
+  <div id="canvasBlock">
     <div id="canvases"></div>
-
-
     <script src="sprite/canvas.js"></script>
     <script src="sprite/sprite.js"></script>
     <script src="sprite/image_sprite.js"></script>
@@ -674,38 +716,17 @@
       // objectsOfSprites["img_forest.jpg"].draw();
       // //objectsOfSprites["aww-cat.png"];
       // currentSprite = "aww-cat.png";
-    </script>
-    <style>
-      div.gallery {
-        margin: 5px;
-        border: 1px solid #ccc;
-        float: left;
-        width: 100px;
 
-      }
-
-      div.gallery:hover {
-        border: 1px solid #777;
-      }
-
-      div.gallery img {
-        width: 100%;
-        height: auto;
-      }
-
-      div.desc {
-        padding: 15px;
-        text-align: center;
-      }
-    </style>
-
-    <script>
       function spriteChooser() {
         var name;
         var x = document.getElementById("spriteChooser");
         var txt = "";
+
+        var ImgFile = x.files[0];
+        var reader = new FileReader();
+
         if ('files' in x) {
-          if (x.files.length == 0) {
+          if (x.files.length === 0) {
             txt = "Select one or more files.";
           } else {
             for (var i = 0; i < x.files.length; i++) {
@@ -724,7 +745,7 @@
             }
           }
         } else {
-          if (x.value == "") {
+          if (x.value === "") {
             txt += "Select one or more files.";
           } else {
             txt += "The files property is not supported by your browser!";
@@ -741,16 +762,21 @@
 
         // sprite 별로 사용자가 만들었던 XML을 저장한다.
         // XMLOfEachSprites[name] = "";
-        // sprite에 대한 canvas 용 objects를 저장한다.
-        // 객체 생성 코드 예시 : let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
-        manager.addSprite(name);
-        manager.getSprite(name).draw();
-        manager.getSprite(name).printProperties();
 
+        reader.addEventListener('load', function () {
+          // sprite에 대한 canvas 용 objects를 저장한다.
+          // 객체 생성 코드 예시 : let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
+          manager.addSprite(name);
+          manager.getSprite(name).draw();
+          manager.getSprite(name).printProperties();
+        });
         // objectsOfSprites[name] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0);
         // objectsOfSprites[name].draw();
         // objectsOfSprites[name].printProperties();
 
+        if (ImgFile) {
+          reader.readAsArrayBuffer(ImgFile);
+        }
       }
 
       function stageChooser() {
@@ -825,7 +851,6 @@
             workspace.clear();
             Blockly.Xml.domToWorkspace(nextXml, workspace);
             taChange();
-
           }
 
           manager.currentSpriteName = nameOfSprite;
@@ -837,92 +862,129 @@
       }
 
     </script>
-    <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
-    <input type="file" id="stageChooser" multiple size="50" onchange="stageChooser()">
-    <div id="gallary_owner">
-      <div class="gallery">
-        <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100"
-             height="100">
-        <div class="desc">냐옹</div>
-      </div>
-
+  </div>
+  <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
+  <input type="file" id="stageChooser" multiple size="50" onchange="stageChooser()">
+  <div id="gallary_owner">
+    <div class="gallery">
+      <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100"
+           height="100">
+      <div class="desc">냐옹</div>
     </div>
 
-    <div id="stage_owner">
+  </div>
 
-    </div>
+  <div id="stage_owner"></div>
 
-    <div>
-      <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
-        - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
+  <div>
+    <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
+      - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
 
-      <form id="options">
-        <select name="dir" onchange="document.forms.options.submit()">
-          <option value="ltr">LTR</option>
-          <option value="rtl">RTL</option>
-        </select>
-        <select name="toolbox" onchange="document.forms.options.submit()">
-          <option value="categories">Categories (untyped variables)</option>
-          <option value="categories-typed-variables">Categories (typed variables)</option>
-          <option value="simple">Simple</option>
-          <option value="test-blocks">Test Blocks</option>
-        </select>
-        <select name="side" onchange="document.forms.options.submit()">
-          <option value="start">Start</option>
-          <option value="end">End</option>
-          <option value="top">Top</option>
-          <option value="bottom">Bottom</option>
-        </select>
-      </form>
-      <select id="themeChanger" name="theme" onchange="changeTheme()">
-        <option value="classic">Classic</option>
-        <option value="modern">Modern</option>
-        <option value="high_contrast">High Contrast</option>
+    <form id="options">
+      <select name="dir" onchange="document.forms.options.submit()">
+        <option value="ltr">LTR</option>
+        <option value="rtl">RTL</option>
       </select>
-      <p>
-        <input type="button" value="Insert test XML" onclick="insertTestXml()">
+      <select name="toolbox" onchange="document.forms.options.submit()">
+        <option value="categories">Categories (untyped variables)</option>
+        <option value="categories-typed-variables">Categories (typed variables)</option>
+        <option value="simple">Simple</option>
+        <option value="test-blocks">Test Blocks</option>
+      </select>
+      <select name="side" onchange="document.forms.options.submit()">
+        <option value="start">Start</option>
+        <option value="end">End</option>
+        <option value="top">Top</option>
+        <option value="bottom">Bottom</option>
+      </select>
+    </form>
+    <select id="themeChanger" name="theme" onchange="changeTheme()">
+      <option value="classic">Classic</option>
+      <option value="modern">Modern</option>
+      <option value="high_contrast">High Contrast</option>
+    </select>
+    <p>
 
-        <input type="button" value="My import" onclick="myImport()">
+      <input type="button" value="My import" onclick="myImport()">
 
-        <input type="button" value="Toolbox Collapse" onclick="collapseToolbox()">
-        <br>
-        <input type="button" value="Export to XML" onclick="toXml()">
-        &nbsp;
-        <input type="button" value="Import from XML" onclick="fromXml()" id="import">
-        <br>
-        <input type="button" value="To JavaScript" onclick="toJSCode()">
-        &nbsp;
-        <input type="button" value="To Python" onclick="toCode('Python')">
-        &nbsp;
-        <input type="button" value="To PHP" onclick="toCode('PHP')">
-        &nbsp;
-        <input type="button" value="To Lua" onclick="toCode('Lua')">
-        &nbsp;
-        <input type="button" value="To Dart" onclick="toCode('Dart')">
+      <input type="button" value="Toolbox Collapse" onclick="collapseToolbox()">
+      <br>
+      <input type="button" value="Export to XML" onclick="toXml()">
 
-        <textarea id="importExport" style="width: 100px; height: 12em"
-                  onchange="taChange();" onkeyup="taChange()"></textarea>
-      </p>
+      <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()"
+             accept="application/zip">
+      &nbsp;
+      <input type="button" value="Import from XML" onclick="fromXml()" id="import">
+      &nbsp
+      <input type="button" value="To JavaScript" onclick="toJSCode()">
+      &nbsp;
+      <select id="mainLang" onchange="toCodeMain()">
+        <option value="default">Select</option>
+        <option value="JavaScript">JavaScript</option>
+        <option value="Python">Python</option>
+        <option value="PHP">PHP</option>
+        <option value="Lua">Lua</option>
+        <option value="Dart">Dart</option>
+      </select>
 
-      <p>
-        Stress test: &nbsp;
-        <input type="button" value="Airstrike!" onclick="airstrike(100)">
-        <input type="button" value="Spaghetti!" onclick="spaghetti(8)">
-      </p>
-      <p>
-        Log events: &nbsp;
-        <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
-      </p>
-      <!-- The next three blocks of XML are sample toolboxes for testing basic
-      configurations.  For more information on building toolboxes, see https://developers.google.com/blockly/guides/configure/web/toolbox -->
+      <textarea id="importExport" style="width: 100%; height: 20%"
+                onchange="taChange();" onkeyup="taChange()"></textarea>
+    </p>
 
-      <!-- toolbox-simple is an always-open flyout with no category menu.
-      Always-open flyouts are a good idea if you have a small number of blocks. -->
-      <xml id="toolbox-simple" style="display: none">
-        <block type="controls_ifelse"></block>
+    <p>
+      Stress test: &nbsp;
+      <input type="button" value="Airstrike!" onclick="airstrike(100)">
+      <input type="button" value="Spaghetti!" onclick="spaghetti(8)">
+    </p>
+    <p>
+      Log events: &nbsp;
+      <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
+    </p>
+    <!-- The next three blocks of XML are sample toolboxes for testing basic
+    configurations.  For more information on building toolboxes, see https://developers.google.com/blockly/guides/configure/web/toolbox -->
+
+    <!-- toolbox-simple is an always-open flyout with no category menu.
+    Always-open flyouts are a good idea if you have a small number of blocks. -->
+    <xml id="toolbox-simple" style="display: none">
+      <block type="controls_ifelse"></block>
+      <block type="logic_compare"></block>
+      <!-- <block type="control_repeat"></block> -->
+      <block type="logic_operation"></block>
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+      <block type="logic_null" disabled="true"></block>
+      <block type="logic_ternary"></block>
+      <block type="text_charAt">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+    </xml>
+
+    <!-- toolbox-categories has a category menu and an auto-closing flyout.  The
+    Variables category uses untyped variable blocks.
+    See https://developers.google.com/blockly/guides/create-custom-blocks/variables#untyped_variable_blocks for more information. -->
+    <xml id="toolbox-categories" style="display: none">
+      <category name="Logic" style="logic_category">
+        <block type="controls_if"></block>
         <block type="logic_compare"></block>
-        <!-- <block type="control_repeat"></block> -->
         <block type="logic_operation"></block>
+        <block type="logic_negate"></block>
+        <block type="logic_boolean"></block>
+        <block type="logic_null" disabled="true"></block>
+        <block type="logic_ternary"></block>
+      </category>
+      <category name="Loops" style="loop_category">
         <block type="controls_repeat_ext">
           <value name="TIMES">
             <shadow type="math_number">
@@ -930,11 +992,679 @@
             </shadow>
           </value>
         </block>
-        <block type="logic_operation"></block>
+        <block type="controls_repeat" disabled="true"></block>
+        <block type="controls_whileUntil"></block>
+        <block type="controls_for">
+          <value name="FROM">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="TO">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+          <value name="BY">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="controls_forEach"></block>
+        <block type="controls_flow_statements"></block>
+      </category>
+      <category name="Math" style="math_category">
+        <block type="math_number" gap="32">
+          <field name="NUM">123</field>
+        </block>
+        <block type="math_arithmetic">
+          <value name="A">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="B">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_single">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">9</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_trig">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">45</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_constant"></block>
+        <block type="math_number_property">
+          <value name="NUMBER_TO_CHECK">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_round">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">3.1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_on_list"></block>
+        <block type="math_modulo">
+          <value name="DIVIDEND">
+            <shadow type="math_number">
+              <field name="NUM">64</field>
+            </shadow>
+          </value>
+          <value name="DIVISOR">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_constrain">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">50</field>
+            </shadow>
+          </value>
+          <value name="LOW">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="HIGH">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_random_int">
+          <value name="FROM">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="TO">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_random_float"></block>
+        <block type="math_atan2">
+          <value name="X">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="Y">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+
+      <category name="Import">
+        <block type="import_return"></block>
+        <block type="import_statement"></block>
+        <!--<block type="import_statement" id="123">
+          <mutation func="Statement Function" args="2">
+            <arg name="argA"/>
+            <arg name="argB"/>
+          </mutation>
+        </block>-->
+      </category>
+
+      <category name="Sprite" expanded="true">
+        <label text="Motion"></label>
+        <block type="sprite_moveSteps">
+          <value name="STEPS">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_turnAngle">
+          <value name="DEGREE">
+            <shadow type="math_number">
+              <field name="NUM">15</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_goTo"></block>
+        <block type="sprite_goToPoint">
+          <value name="X">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+          <value name="Y">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_glideTo">
+          <value name="SEC">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_glideToPoint">
+          <value name="SEC">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="X">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+          <value name="Y">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_pointTo">
+          <value name="DIR">
+            <shadow type="math_number">
+              <field name="NUM">90</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_pointToward"></block>
+        <block type="sprite_changeXY">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_setXY">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_edgeBounce"></block>
+        <block type="sprite_rotationStyle"></block>
+        <block type="sprite_getXY"></block>
+        <block type="sprite_getDir"></block>
+
+        <label text="Looks"></label>
+        <block type="sprite_say">
+          <value name="CONTENT">
+            <shadow type="text">
+              <field name="TEXT">Hello World!</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_sayTill">
+          <value name="CONTENT">
+            <shadow type="text">
+              <field name="TEXT">Hello World!</field>
+            </shadow>
+          </value>
+          <value name="SEC">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_think">
+          <value name="CONTENT">
+            <shadow type="text">
+              <field name="TEXT">Hmm...</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_thinkTill">
+          <value name="CONTENT">
+            <shadow type="text">
+              <field name="TEXT">Hmm...</field>
+            </shadow>
+          </value>
+          <value name="SEC">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_nextCostume"></block>
+        <block type="sprite_switchCostume"></block>
+        <block type="sprite_nextBackdrop"></block>
+        <block type="sprite_switchBackdrop"></block>
+        <block type="sprite_changeSize">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_setSize">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_changeEffect">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">25</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_setEffect">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_clearEffect"></block>
+        <block type="sprite_show"></block>
+        <block type="sprite_hide"></block>
+        <block type="sprite_setLayer"></block>
+        <block type="sprite_changeLayer">
+          <value name="COUNT">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_getCostume"></block>
+        <block type="sprite_getBackdrop"></block>
+        <block type="sprite_getSize"></block>
+
+        <label text="Sounds"></label>
+        <block type="sprite_playSound"></block>
+        <block type="sprite_startSound"></block>
+        <block type="sprite_stopSound"></block>
+        <block type="sprite_changeSoundEffect">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_setSoundEffect">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_clearSoundEffect"></block>
+        <block type="sprite_changeVolume">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">-10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_setVolume">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_getVolume"></block>
+
+        <label text="Events"></label>
+        <block type="sprite_flagClicked"></block>
+        <block type="sprite_keyPressed">
+          <field name="KEY">space</field>
+        </block>
+        <block type="sprite_spriteClicked"></block>
+        <block type="sprite_backdropSwitched"></block>
+        <block type="sprite_loudnessCondition">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_timerCondition">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_messageReceived"></block>
+        <block type="sprite_messageBroadcast"></block>
+        <block type="sprite_messageBroadcastWait"></block>
+
+        <label text="Controls"></label>
+        <block type="sprite_wait">
+          <value name="SEC">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_repeat">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">3</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_forever"></block>
+        <block type="sprite_if"></block>
+        <block type="sprite_ifElse"></block>
+        <block type="sprite_waitTill"></block>
+        <block type="sprite_repeatTill"></block>
+        <block type="sprite_stop"></block>
+        <block type="sprite_cloneStarted"></block>
+        <block type="sprite_createClone"></block>
+        <block type="sprite_deleteClone"></block>
+
+        <label text="Sensing"></label>
+        <block type="sprite_touching"></block>
+        <block type="sprite_touchingColor"></block>
+        <block type="sprite_colorTouchingColor"></block>
+        <block type="sprite_askWait">
+          <value name="MESSAGE">
+            <shadow type="text">
+              <field name="TEXT">What's your name?</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_answer"></block>
+        <block type="sprite_keyPress">
+          <field name="KEY">space</field>
+        </block>
+        <block type="sprite_mouseDown"></block>
+        <block type="sprite_getMouseXY">
+          <field name="XY">x</field>
+        </block>
+        <block type="sprite_getMouseXY">
+          <field name="XY">y</field>
+        </block>
+        <block type="sprite_setDragMode"></block>
+        <block type="sprite_getLoudness"></block>
+        <block type="sprite_getTimer"></block>
+        <block type="sprite_resetTimer"></block>
+        <block type="sprite_getStage"></block>
+        <block type="sprite_getDate">
+          <field name="OPTION">year</field>
+        </block>
+        <block type="sprite_getSince">
+          <field name="OPTION">days</field>
+        </block>
+        <block type="sprite_getUsername"></block>
+
+        <label text="Operators"></label>
+        <block type="sprite_operator">
+          <field name="OPTION">+</field>
+          <value name="VALUE1">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_operator">
+          <field name="OPTION">-</field>
+          <value name="VALUE1">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_operator">
+          <field name="OPTION">*</field>
+          <value name="VALUE1">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_operator">
+          <field name="OPTION">/</field>
+          <value name="VALUE1">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_operator">
+          <field name="OPTION">mod</field>
+          <value name="VALUE1">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_getRandom">
+          <value name="MIN">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="MAX">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_conditionalOperator">
+          <field name="OPTION">></field>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_conditionalOperator">
+          <field name="OPTION">=</field>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_conditionalOperator">
+          <field name="OPTION"><</field>
+          <value name="VALUE2">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_conditionalOperator">
+          <field name="OPTION">and</field>
+        </block>
+        <block type="sprite_conditionalOperator">
+          <field name="OPTION">or</field>
+        </block>
+        <block type="sprite_notOperator"></block>
+        <block type="sprite_join">
+          <value name="VALUE1">
+            <shadow type="text">
+              <field name="TEXT">pen</field>
+            </shadow>
+          </value>
+          <value name="VALUE2">
+            <shadow type="text">
+              <field name="TEXT">pineapple</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_letterAt">
+          <value name="INDEX">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT">pen-pineapple</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_length">
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT">pen-pineapple</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_contains">
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT">pen-pineapple</field>
+            </shadow>
+          </value>
+          <value name="LOOKUP">
+            <shadow type="text">
+              <field name="TEXT">apple</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_unaryOperator">
+          <field name="OPTION">round</field>
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">33.33</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="sprite_unaryOperator">
+          <field name="OPTION">abs</field>
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">-10</field>
+            </shadow>
+          </value>
+        </block>
+
+
+        <label text="Variables"></label>
+        <block type="sprite_emptyList"></block>
+
+
+        <!--
+        <label text="EVENT"></label>
+        <block type="sprite_flagClicked"></block>
+
+        <label text="SENSE"></label>
+        <block type="sprite_senseTouch">
+          <value name="SPRITE">
+            <block type="variables_get">
+              <field name="VAR">sprite</field>
+            </block>
+          </value>
+        </block>
+        <block type="sprite_touch_color"></block>
+
+        <label text="LOOK"></label>
+        <block type="sprite_say"></block>
+
+        <label text="CONTROL"></label>
+        <block type="sprite_forever"></block>
+        <block type="controls_if"></block>
+        &lt;!&ndash;<block type="controls_if">
+          <value name="ELSE"></value>
+        </block>&ndash;&gt;
+
+        <label text="LOGIC"></label>
         <block type="logic_negate"></block>
-        <block type="logic_boolean"></block>
-        <block type="logic_null" disabled="true"></block>
-        <block type="logic_ternary"></block>
+        <block type="logic_compare"></block>
+
+        <label text="TEXT"></label>
+        <block type="text_join"></block>
+
+        <label text="VARIABLE"></label>
+        <block type="sprite_empty_list">
+          <value name="VARIABLE">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_indexOf"></block>
+        <block type="lists_setIndex"></block>
+        -->
+      </category>
+
+      <category name="Text" style="text_category">
+        <block type="text"></block>
+        <block type="text_join"></block>
+        <block type="text_append">
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <block type="text_length">
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_isEmpty">
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_indexOf">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">text</field>
+            </block>
+          </value>
+          <value name="FIND">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
         <block type="text_charAt">
           <value name="VALUE">
             <block type="variables_get">
@@ -942,1384 +1672,685 @@
             </block>
           </value>
         </block>
-      </xml>
+        <block type="text_getSubstring">
+          <value name="STRING">
+            <block type="variables_get">
+              <field name="VAR">text</field>
+            </block>
+          </value>
+        </block>
+        <block type="text_changeCase">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_trim">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_count">
+          <value name="SUB">
+            <shadow type="text"></shadow>
+          </value>
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <block type="text_replace">
+          <value name="FROM">
+            <shadow type="text"></shadow>
+          </value>
+          <value name="TO">
+            <shadow type="text"></shadow>
+          </value>
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <block type="text_reverse">
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <label text="Input/Output:" web-class="ioLabel"></label>
+        <block type="text_print">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_prompt_ext">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <category name="Lists" style="list_category">
+        <block type="lists_create_with">
+          <mutation items="0"></mutation>
+        </block>
+        <block type="lists_create_with"></block>
+        <block type="lists_repeat">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">5</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="lists_length"></block>
+        <block type="lists_isEmpty"></block>
+        <block type="lists_indexOf">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_getIndex">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_setIndex">
+          <value name="LIST">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_getSublist">
+          <value name="LIST">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_split">
+          <value name="DELIM">
+            <shadow type="text">
+              <field name="TEXT">,</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="lists_sort"></block>
+        <block type="lists_reverse"></block>
+      </category>
+      <category name="Colour" style="colour_category">
+        <block type="colour_picker"></block>
+        <block type="colour_random"></block>
+        <block type="colour_rgb">
+          <value name="RED">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+          <value name="GREEN">
+            <shadow type="math_number">
+              <field name="NUM">50</field>
+            </shadow>
+          </value>
+          <value name="BLUE">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="colour_blend">
+          <value name="COLOUR1">
+            <shadow type="colour_picker">
+              <field name="COLOUR">#ff0000</field>
+            </shadow>
+          </value>
+          <value name="COLOUR2">
+            <shadow type="colour_picker">
+              <field name="COLOUR">#3333ff</field>
+            </shadow>
+          </value>
+          <value name="RATIO">
+            <shadow type="math_number">
+              <field name="NUM">0.5</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <sep></sep>
+      <category name="Variables" style="variable_category" custom="VARIABLE"></category>
+      <category name="Functions" style="procedure_category" custom="PROCEDURE"></category>
+    </xml>
 
-      <!-- toolbox-categories has a category menu and an auto-closing flyout.  The
-      Variables category uses untyped variable blocks.
-      See https://developers.google.com/blockly/guides/create-custom-blocks/variables#untyped_variable_blocks for more information. -->
-      <xml id="toolbox-categories" style="display: none">
-        <category name="Logic" style="logic_category">
-          <block type="controls_if"></block>
-          <block type="logic_compare"></block>
-          <block type="logic_operation"></block>
-          <block type="logic_negate"></block>
-          <block type="logic_boolean"></block>
-          <block type="logic_null" disabled="true"></block>
-          <block type="logic_ternary"></block>
-        </category>
-        <category name="Loops" style="loop_category">
-          <block type="controls_repeat_ext">
-            <value name="TIMES">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="controls_repeat" disabled="true"></block>
-          <block type="controls_whileUntil"></block>
-          <block type="controls_for">
-            <value name="FROM">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="TO">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-            <value name="BY">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="controls_forEach"></block>
-          <block type="controls_flow_statements"></block>
-        </category>
-        <category name="Math" style="math_category">
-          <block type="math_number" gap="32">
-            <field name="NUM">123</field>
-          </block>
-          <block type="math_arithmetic">
-            <value name="A">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="B">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_single">
-            <value name="NUM">
-              <shadow type="math_number">
-                <field name="NUM">9</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_trig">
-            <value name="NUM">
-              <shadow type="math_number">
-                <field name="NUM">45</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_constant"></block>
-          <block type="math_number_property">
-            <value name="NUMBER_TO_CHECK">
-              <shadow type="math_number">
-                <field name="NUM">0</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_round">
-            <value name="NUM">
-              <shadow type="math_number">
-                <field name="NUM">3.1</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_on_list"></block>
-          <block type="math_modulo">
-            <value name="DIVIDEND">
-              <shadow type="math_number">
-                <field name="NUM">64</field>
-              </shadow>
-            </value>
-            <value name="DIVISOR">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_constrain">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">50</field>
-              </shadow>
-            </value>
-            <value name="LOW">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="HIGH">
-              <shadow type="math_number">
-                <field name="NUM">100</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_random_int">
-            <value name="FROM">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="TO">
-              <shadow type="math_number">
-                <field name="NUM">100</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_random_float"></block>
-          <block type="math_atan2">
-            <value name="X">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="Y">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-          </block>
-        </category>
-
-        <category name="Import">
-          <block type="import_return"></block>
-          <block type="import_statement"></block>
-          <!--<block type="import_statement" id="123">
-            <mutation func="Statement Function" args="2">
-              <arg name="argA"/>
-              <arg name="argB"/>
-            </mutation>
-          </block>-->
-        </category>
-
-        <category name="Sprite" expanded="true">
-          <label text="Motion"></label>
-          <block type="sprite_moveSteps">
-            <value name="STEPS">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_turnAngle">
-            <value name="DEGREE">
-              <shadow type="math_number">
-                <field name="NUM">15</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_goTo"></block>
-          <block type="sprite_goToPoint">
-            <value name="X">
-              <shadow type="math_number">
-                <field name="NUM">0</field>
-              </shadow>
-            </value>
-            <value name="Y">
-              <shadow type="math_number">
-                <field name="NUM">0</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_glideTo">
-            <value name="SEC">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_glideToPoint">
-            <value name="SEC">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="X">
-              <shadow type="math_number">
-                <field name="NUM">0</field>
-              </shadow>
-            </value>
-            <value name="Y">
-              <shadow type="math_number">
-                <field name="NUM">0</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_pointTo">
-            <value name="DIR">
-              <shadow type="math_number">
-                <field name="NUM">90</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_pointToward"></block>
-          <block type="sprite_changeXY">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_setXY">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">0</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_edgeBounce"></block>
-          <block type="sprite_rotationStyle"></block>
-          <block type="sprite_getXY"></block>
-          <block type="sprite_getDir"></block>
-
-          <label text="Looks"></label>
-          <block type="sprite_say">
-            <value name="CONTENT">
-              <shadow type="text">
-                <field name="TEXT">Hello World!</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_sayTill">
-            <value name="CONTENT">
-              <shadow type="text">
-                <field name="TEXT">Hello World!</field>
-              </shadow>
-            </value>
-            <value name="SEC">
-              <shadow type="math_number">
-                <field name="NUM">2</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_think">
-            <value name="CONTENT">
-              <shadow type="text">
-                <field name="TEXT">Hmm...</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_thinkTill">
-            <value name="CONTENT">
-              <shadow type="text">
-                <field name="TEXT">Hmm...</field>
-              </shadow>
-            </value>
-            <value name="SEC">
-              <shadow type="math_number">
-                <field name="NUM">2</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_nextCostume"></block>
-          <block type="sprite_switchCostume"></block>
-          <block type="sprite_nextBackdrop"></block>
-          <block type="sprite_switchBackdrop"></block>
-          <block type="sprite_changeSize">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_setSize">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">100</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_changeEffect">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">25</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_setEffect">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">0</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_clearEffect"></block>
-          <block type="sprite_show"></block>
-          <block type="sprite_hide"></block>
-          <block type="sprite_setLayer"></block>
-          <block type="sprite_changeLayer">
-            <value name="COUNT">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_getCostume"></block>
-          <block type="sprite_getBackdrop"></block>
-          <block type="sprite_getSize"></block>
-
-          <label text="Sounds"></label>
-          <block type="sprite_playSound"></block>
-          <block type="sprite_startSound"></block>
-          <block type="sprite_stopSound"></block>
-          <block type="sprite_changeSoundEffect">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_setSoundEffect">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">100</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_clearSoundEffect"></block>
-          <block type="sprite_changeVolume">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">-10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_setVolume">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">100</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_getVolume"></block>
-
-          <label text="Events"></label>
-          <block type="sprite_flagClicked"></block>
-          <block type="sprite_keyPressed">
-            <field name="KEY">space</field>
-          </block>
-          <block type="sprite_spriteClicked"></block>
-          <block type="sprite_backdropSwitched"></block>
-          <block type="sprite_loudnessCondition">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_timerCondition">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_messageReceived"></block>
-          <block type="sprite_messageBroadcast"></block>
-          <block type="sprite_messageBroadcastWait"></block>
-
-          <label text="Controls"></label>
-          <block type="sprite_wait">
-            <value name="SEC">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_repeat">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">3</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_forever"></block>
-          <block type="sprite_if"></block>
-          <block type="sprite_ifElse"></block>
-          <block type="sprite_waitTill"></block>
-          <block type="sprite_repeatTill"></block>
-          <block type="sprite_stop"></block>
-          <block type="sprite_cloneStarted"></block>
-          <block type="sprite_createClone"></block>
-          <block type="sprite_deleteClone"></block>
-
-          <label text="Sensing"></label>
-          <block type="sprite_touching"></block>
-          <block type="sprite_touchingColor"></block>
-          <block type="sprite_colorTouchingColor"></block>
-          <block type="sprite_askWait">
-            <value name="MESSAGE">
-              <shadow type="text">
-                <field name="TEXT">What's your name?</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_answer"></block>
-          <block type="sprite_keyPress">
-            <field name="KEY">space</field>
-          </block>
-          <block type="sprite_mouseDown"></block>
-          <block type="sprite_getMouseXY">
-            <field name="XY">x</field>
-          </block>
-          <block type="sprite_getMouseXY">
-            <field name="XY">y</field>
-          </block>
-          <block type="sprite_setDragMode"></block>
-          <block type="sprite_getLoudness"></block>
-          <block type="sprite_getTimer"></block>
-          <block type="sprite_resetTimer"></block>
-          <block type="sprite_getStage"></block>
-          <block type="sprite_getDate">
-            <field name="OPTION">year</field>
-          </block>
-          <block type="sprite_getSince">
-            <field name="OPTION">days</field>
-          </block>
-          <block type="sprite_getUsername"></block>
-
-          <label text="Operators"></label>
-          <block type="sprite_operator">
-            <field name="OPTION">+</field>
-            <value name="VALUE1">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="VALUE2">
-              <shadow type="math_number">
-                <field name="NUM">2</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_operator">
-            <field name="OPTION">-</field>
-            <value name="VALUE1">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="VALUE2">
-              <shadow type="math_number">
-                <field name="NUM">2</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_operator">
-            <field name="OPTION">*</field>
-            <value name="VALUE1">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="VALUE2">
-              <shadow type="math_number">
-                <field name="NUM">2</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_operator">
-            <field name="OPTION">/</field>
-            <value name="VALUE1">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="VALUE2">
-              <shadow type="math_number">
-                <field name="NUM">2</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_operator">
-            <field name="OPTION">mod</field>
-            <value name="VALUE1">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="VALUE2">
-              <shadow type="math_number">
-                <field name="NUM">2</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_getRandom">
-            <value name="MIN">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="MAX">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_conditionalOperator">
-            <field name="OPTION">></field>
-            <value name="VALUE2">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_conditionalOperator">
-            <field name="OPTION">=</field>
-            <value name="VALUE2">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_conditionalOperator">
-            <field name="OPTION"><</field>
-            <value name="VALUE2">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_conditionalOperator">
-            <field name="OPTION">and</field>
-          </block>
-          <block type="sprite_conditionalOperator">
-            <field name="OPTION">or</field>
-          </block>
-          <block type="sprite_notOperator"></block>
-          <block type="sprite_join">
-            <value name="VALUE1">
-              <shadow type="text">
-                <field name="TEXT">pen</field>
-              </shadow>
-            </value>
-            <value name="VALUE2">
-              <shadow type="text">
-                <field name="TEXT">pineapple</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_letterAt">
-            <value name="INDEX">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="VALUE">
-              <shadow type="text">
-                <field name="TEXT">pen-pineapple</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_length">
-            <value name="VALUE">
-              <shadow type="text">
-                <field name="TEXT">pen-pineapple</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_contains">
-            <value name="VALUE">
-              <shadow type="text">
-                <field name="TEXT">pen-pineapple</field>
-              </shadow>
-            </value>
-            <value name="LOOKUP">
-              <shadow type="text">
-                <field name="TEXT">apple</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_unaryOperator">
-            <field name="OPTION">round</field>
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">33.33</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="sprite_unaryOperator">
-            <field name="OPTION">abs</field>
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">-10</field>
-              </shadow>
-            </value>
-          </block>
-
-
-          <label text="Variables"></label>
-          <block type="sprite_emptyList"></block>
-
-
-          <!--
-          <label text="EVENT"></label>
-          <block type="sprite_flagClicked"></block>
-
-          <label text="SENSE"></label>
-          <block type="sprite_senseTouch">
-            <value name="SPRITE">
-              <block type="variables_get">
-                <field name="VAR">sprite</field>
-              </block>
-            </value>
-          </block>
-          <block type="sprite_touch_color"></block>
-
-          <label text="LOOK"></label>
-          <block type="sprite_say"></block>
-
-          <label text="CONTROL"></label>
-          <block type="sprite_forever"></block>
-          <block type="controls_if"></block>
-          &lt;!&ndash;<block type="controls_if">
-            <value name="ELSE"></value>
-          </block>&ndash;&gt;
-
-          <label text="LOGIC"></label>
-          <block type="logic_negate"></block>
-          <block type="logic_compare"></block>
-
-          <label text="TEXT"></label>
-          <block type="text_join"></block>
-
-          <label text="VARIABLE"></label>
-          <block type="sprite_empty_list">
-            <value name="VARIABLE">
-              <block type="variables_get">
-                <field name="VAR">list</field>
-              </block>
-            </value>
-          </block>
-          <block type="lists_indexOf"></block>
-          <block type="lists_setIndex"></block>
-          -->
-        </category>
-
-        <category name="Text" style="text_category">
-          <block type="text"></block>
-          <block type="text_join"></block>
-          <block type="text_append">
-            <value name="TEXT">
-              <shadow type="text"></shadow>
-            </value>
-          </block>
-          <block type="text_length">
-            <value name="VALUE">
-              <shadow type="text">
-                <field name="TEXT">abc</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="text_isEmpty">
-            <value name="VALUE">
-              <shadow type="text">
-                <field name="TEXT"></field>
-              </shadow>
-            </value>
-          </block>
-          <block type="text_indexOf">
-            <value name="VALUE">
-              <block type="variables_get">
-                <field name="VAR">text</field>
-              </block>
-            </value>
-            <value name="FIND">
-              <shadow type="text">
-                <field name="TEXT">abc</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="text_charAt">
-            <value name="VALUE">
-              <block type="variables_get">
-                <field name="VAR">text</field>
-              </block>
-            </value>
-          </block>
-          <block type="text_getSubstring">
-            <value name="STRING">
-              <block type="variables_get">
-                <field name="VAR">text</field>
-              </block>
-            </value>
-          </block>
-          <block type="text_changeCase">
-            <value name="TEXT">
-              <shadow type="text">
-                <field name="TEXT">abc</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="text_trim">
-            <value name="TEXT">
-              <shadow type="text">
-                <field name="TEXT">abc</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="text_count">
-            <value name="SUB">
-              <shadow type="text"></shadow>
-            </value>
-            <value name="TEXT">
-              <shadow type="text"></shadow>
-            </value>
-          </block>
-          <block type="text_replace">
-            <value name="FROM">
-              <shadow type="text"></shadow>
-            </value>
-            <value name="TO">
-              <shadow type="text"></shadow>
-            </value>
-            <value name="TEXT">
-              <shadow type="text"></shadow>
-            </value>
-          </block>
-          <block type="text_reverse">
-            <value name="TEXT">
-              <shadow type="text"></shadow>
-            </value>
-          </block>
-          <label text="Input/Output:" web-class="ioLabel"></label>
-          <block type="text_print">
-            <value name="TEXT">
-              <shadow type="text">
-                <field name="TEXT">abc</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="text_prompt_ext">
-            <value name="TEXT">
-              <shadow type="text">
-                <field name="TEXT">abc</field>
-              </shadow>
-            </value>
-          </block>
-        </category>
-        <category name="Lists" style="list_category">
-          <block type="lists_create_with">
-            <mutation items="0"></mutation>
-          </block>
-          <block type="lists_create_with"></block>
-          <block type="lists_repeat">
-            <value name="NUM">
-              <shadow type="math_number">
-                <field name="NUM">5</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="lists_length"></block>
-          <block type="lists_isEmpty"></block>
-          <block type="lists_indexOf">
-            <value name="VALUE">
-              <block type="variables_get">
-                <field name="VAR">list</field>
-              </block>
-            </value>
-          </block>
-          <block type="lists_getIndex">
-            <value name="VALUE">
-              <block type="variables_get">
-                <field name="VAR">list</field>
-              </block>
-            </value>
-          </block>
-          <block type="lists_setIndex">
-            <value name="LIST">
-              <block type="variables_get">
-                <field name="VAR">list</field>
-              </block>
-            </value>
-          </block>
-          <block type="lists_getSublist">
-            <value name="LIST">
-              <block type="variables_get">
-                <field name="VAR">list</field>
-              </block>
-            </value>
-          </block>
-          <block type="lists_split">
-            <value name="DELIM">
-              <shadow type="text">
-                <field name="TEXT">,</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="lists_sort"></block>
-          <block type="lists_reverse"></block>
-        </category>
-        <category name="Colour" style="colour_category">
-          <block type="colour_picker"></block>
-          <block type="colour_random"></block>
-          <block type="colour_rgb">
-            <value name="RED">
-              <shadow type="math_number">
-                <field name="NUM">100</field>
-              </shadow>
-            </value>
-            <value name="GREEN">
-              <shadow type="math_number">
-                <field name="NUM">50</field>
-              </shadow>
-            </value>
-            <value name="BLUE">
-              <shadow type="math_number">
-                <field name="NUM">0</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="colour_blend">
-            <value name="COLOUR1">
-              <shadow type="colour_picker">
-                <field name="COLOUR">#ff0000</field>
-              </shadow>
-            </value>
-            <value name="COLOUR2">
-              <shadow type="colour_picker">
-                <field name="COLOUR">#3333ff</field>
-              </shadow>
-            </value>
-            <value name="RATIO">
-              <shadow type="math_number">
-                <field name="NUM">0.5</field>
-              </shadow>
-            </value>
-          </block>
-        </category>
-        <sep></sep>
-        <category name="Variables" style="variable_category" custom="VARIABLE"></category>
-        <category name="Functions" style="procedure_category" custom="PROCEDURE"></category>
-      </xml>
-
-      <!-- toolbox-categories-typed-variables has a category menu and an
-      auto-closing flyout.  The Variables category uses typed variable blocks.
-      See https://developers.google.com/blockly/guides/create-custom-blocks/variables#typed_variable_blocks for more information. -->
-      <xml id="toolbox-categories-typed-variables" style="display: none">
-        <category name="Logic" style="logic_category">
-          <block type="controls_if"></block>
-          <block type="logic_compare"></block>
-          <block type="logic_operation"></block>
-          <block type="logic_negate"></block>
-          <block type="logic_boolean"></block>
-          <block type="logic_null" disabled="true"></block>
-          <block type="logic_ternary"></block>
-        </category>
-        <category name="Loops" style="loop_category">
-          <block type="controls_repeat_ext">
-            <value name="TIMES">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="controls_repeat" disabled="true"></block>
-          <block type="controls_whileUntil"></block>
-          <block type="controls_for">
-            <value name="FROM">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="TO">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-            <value name="BY">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="controls_forEach"></block>
-          <block type="controls_flow_statements"></block>
-        </category>
-        <category name="Math" style="math_category">
-          <block type="math_number" gap="32">
-            <field name="NUM">123</field>
-          </block>
-          <block type="math_arithmetic">
-            <value name="A">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="B">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_single">
-            <value name="NUM">
-              <shadow type="math_number">
-                <field name="NUM">9</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_trig">
-            <value name="NUM">
-              <shadow type="math_number">
-                <field name="NUM">45</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_constant"></block>
-          <block type="math_number_property">
-            <value name="NUMBER_TO_CHECK">
-              <shadow type="math_number">
-                <field name="NUM">0</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_round">
-            <value name="NUM">
-              <shadow type="math_number">
-                <field name="NUM">3.1</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_on_list"></block>
-          <block type="math_modulo">
-            <value name="DIVIDEND">
-              <shadow type="math_number">
-                <field name="NUM">64</field>
-              </shadow>
-            </value>
-            <value name="DIVISOR">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_constrain">
-            <value name="VALUE">
-              <shadow type="math_number">
-                <field name="NUM">50</field>
-              </shadow>
-            </value>
-            <value name="LOW">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="HIGH">
-              <shadow type="math_number">
-                <field name="NUM">100</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_random_int">
-            <value name="FROM">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="TO">
-              <shadow type="math_number">
-                <field name="NUM">100</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="math_random_float"></block>
-          <block type="math_atan2">
-            <value name="X">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-            <value name="Y">
-              <shadow type="math_number">
-                <field name="NUM">1</field>
-              </shadow>
-            </value>
-          </block>
-        </category>
-        <category name="Text" style="text_category">
-          <block type="text"></block>
-          <block type="text_join"></block>
-          <block type="text_append">
-            <value name="TEXT">
-              <shadow type="text"></shadow>
-            </value>
-          </block>
-          <block type="text_length">
-            <value name="VALUE">
-              <shadow type="text">
-                <field name="TEXT">abc</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="text_isEmpty">
-            <value name="VALUE">
-              <shadow type="text">
-                <field name="TEXT"></field>
-              </shadow>
-            </value>
-          </block>
-          <block type="text_indexOf">
-            <value name="VALUE">
-              <block type="variables_get">
-                <field name="VAR">text</field>
-              </block>
-            </value>
-            <value name="FIND">
-              <shadow type="text">
-                <field name="TEXT">abc</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="text_charAt">
-            <value name="VALUE">
-              <block type="variables_get">
-                <field name="VAR">text</field>
-              </block>
-            </value>
-          </block>
-          <block type="text_getSubstring">
-            <value name="STRING">
-              <block type="variables_get">
-                <field name="VAR">text</field>
-              </block>
-            </value>
-          </block>
-          <block type="text_changeCase">
-            <value name="TEXT">
-              <shadow type="text">
-                <field name="TEXT">abc</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="text_trim">
-            <value name="TEXT">
-              <shadow type="text">
-                <field name="TEXT">abc</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="text_count">
-            <value name="SUB">
-              <shadow type="text"></shadow>
-            </value>
-            <value name="TEXT">
-              <shadow type="text"></shadow>
-            </value>
-          </block>
-          <block type="text_replace">
-            <value name="FROM">
-              <shadow type="text"></shadow>
-            </value>
-            <value name="TO">
-              <shadow type="text"></shadow>
-            </value>
-            <value name="TEXT">
-              <shadow type="text"></shadow>
-            </value>
-          </block>
-          <block type="text_reverse">
-            <value name="TEXT">
-              <shadow type="text"></shadow>
-            </value>
-          </block>
-          <label text="Input/Output:" web-class="ioLabel"></label>
-          <block type="text_print">
-            <value name="TEXT">
-              <shadow type="text">
-                <field name="TEXT">abc</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="text_prompt_ext">
-            <value name="TEXT">
-              <shadow type="text">
-                <field name="TEXT">abc</field>
-              </shadow>
-            </value>
-          </block>
-        </category>
-        <category name="Lists" style="list_category">
-          <block type="lists_create_with">
-            <mutation items="0"></mutation>
-          </block>
-          <block type="lists_create_with"></block>
-          <block type="lists_repeat">
-            <value name="NUM">
-              <shadow type="math_number">
-                <field name="NUM">5</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="lists_length"></block>
-          <block type="lists_isEmpty"></block>
-          <block type="lists_indexOf">
-            <value name="VALUE">
-              <block type="variables_get">
-                <field name="VAR">list</field>
-              </block>
-            </value>
-          </block>
-          <block type="lists_getIndex">
-            <value name="VALUE">
-              <block type="variables_get">
-                <field name="VAR">list</field>
-              </block>
-            </value>
-          </block>
-          <block type="lists_setIndex">
-            <value name="LIST">
-              <block type="variables_get">
-                <field name="VAR">list</field>
-              </block>
-            </value>
-          </block>
-          <block type="lists_getSublist">
-            <value name="LIST">
-              <block type="variables_get">
-                <field name="VAR">list</field>
-              </block>
-            </value>
-          </block>
-          <block type="lists_split">
-            <value name="DELIM">
-              <shadow type="text">
-                <field name="TEXT">,</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="lists_sort"></block>
-          <block type="lists_reverse"></block>
-        </category>
-        <category name="Colour" style="colour_category">
-          <block type="colour_picker"></block>
-          <block type="colour_random"></block>
-          <block type="colour_rgb">
-            <value name="RED">
-              <shadow type="math_number">
-                <field name="NUM">100</field>
-              </shadow>
-            </value>
-            <value name="GREEN">
-              <shadow type="math_number">
-                <field name="NUM">50</field>
-              </shadow>
-            </value>
-            <value name="BLUE">
-              <shadow type="math_number">
-                <field name="NUM">0</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="colour_blend">
-            <value name="COLOUR1">
-              <shadow type="colour_picker">
-                <field name="COLOUR">#ff0000</field>
-              </shadow>
-            </value>
-            <value name="COLOUR2">
-              <shadow type="colour_picker">
-                <field name="COLOUR">#3333ff</field>
-              </shadow>
-            </value>
-            <value name="RATIO">
-              <shadow type="math_number">
-                <field name="NUM">0.5</field>
-              </shadow>
-            </value>
-          </block>
-        </category>
-        <sep></sep>
-        <category name="Variables" style="variable_category" custom="VARIABLE_DYNAMIC"></category>
-        <category name="Functions" style="procedure_category" custom="PROCEDURE"></category>
-      </xml>
-      <div id="importedFunctions">imported functions</div>
-      <!-- toolbox-test-blocks has a category menu and an auto-closing flyout.
-      The blocks in this toolbox reflect block configurations not used by
-      the standard predefined blocks, and so test alernative block rendering
-      code paths. -->
-      <xml id="toolbox-test-blocks" style="display: none">
-        <category name="Basic">
-          <block type="empty_block"></block>
-          <block type="empty_block_with_mutator"></block>
-          <block type="value_to_stack"></block>
-          <block type="value_to_statement"></block>
-          <block type="limit_instances"></block>
-        </category>
-        <category name="Drag">
-          <label text="Drag each to the workspace"></label>
-          <block type="text_print">
-            <value name="TEXT">
-              <block type="text">
-                <field name="TEXT">Drag me by this child</field>
-              </block>
-            </value>
-          </block>
-          <block type="text_print">
-            <value name="TEXT">
-              <shadow type="text">
-                <field name="TEXT">Drag me by this shadow</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="text_print">
-            <value name="TEXT">
-              <shadow type="text">
-                <field name="TEXT">Shadow value</field>
-              </shadow>
-            </value>
-            <next>
-              <shadow type="text_print">
-                <value name="TEXT">
-                  <shadow type="text">
-                    <field name="TEXT">Shadow statement</field>
-                  </shadow>
-                </value>
-              </shadow>
-            </next>
-          </block>
-          <label text="Multiple Variable Refs"></label>
-          <block type="text_print">
-            <value name="TEXT">
-              <block type="variables_get">
-                <field name="VAR" id="item" variabletype="">item</field>
-              </block>
-            </value>
-            <next>
-              <block type="text_print">
-                <value name="TEXT">
-                  <block type="variables_get">
-                    <field name="VAR" id="item" variabletype="">item</field>
-                  </block>
-                </value>
-              </block>
-            </next>
-          </block>
-          <label text="Procedure Definitions"></label>
-          <block type="procedures_defnoreturn">
-            <field name="NAME">without arguments</field>
-            <statement name="STACK">
-              <block type="text_print">
-                <value name="TEXT">
-                  <shadow type="text">
-                    <field name="TEXT">No argument reference.</field>
-                  </shadow>
-                </value>
-              </block>
-            </statement>
-          </block>
-          <block type="procedures_defnoreturn">
-            <mutation>
-              <arg name="fnArgument"></arg>
-            </mutation>
-            <field name="NAME">with one argument</field>
-            <statement name="STACK">
-              <block type="text_print">
-                <value name="TEXT">
-                  <shadow type="text">
-                    <field name="TEXT">Expected an argument reference here.</field>
-                  </shadow>
-                  <block type="variables_get">
-                    <field name="VAR">fnArgument</field>
-                  </block>
-                </value>
-              </block>
-            </statement>
-          </block>
-        </category>
-        <category name="Fields">
-          <label text="Numbers"></label>
-          <block type="test_number">
-            <field name="NUM">123.456</field>
-          </block>
-          <block type="test_integer">
-            <field name="NUM">123.456</field>
-          </block>
-          <block type="test_number_hundredths">
-            <field name="NUM">123.456</field>
-          </block>
-          <block type="test_integer_bounded">
-            <field name="NOTE">60</field>
-          </block>
-          <label text="Drop-downs"></label>
-          <block type="example_dropdown_long"></block>
-          <block type="example_dropdown_images"></block>
-          <block type="example_dropdown_images_and_text"></block>
-          <label text="Dynamic Drop-downs"></label>
-          <block type="test_dropdown_dynamic"></block>
-          <button text="Add option" callbackKey="addDynamicOption"></button>
-          <button text="Remove option" callbackKey="removeDynamicOption"></button>
-          <label text="Others"></label>
-          <block type="example_angle"></block>
-          <block type="example_date"></block>
-        </category>
-        <category name="Mutators">
-          <label text="logic_compare"></label>
-          <block type="logic_compare">
-            <value name="A">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-            <value name="B">
-              <shadow type="math_number">
-                <field name="NUM">10</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="logic_compare">
-            <value name="A">
-              <block type="math_number">
-                <field name="NUM">10</field>
-              </block>
-            </value>
-            <value name="B">
-              <block type="math_number">
-                <field name="NUM">10</field>
-              </block>
-            </value>
-          </block>
-        </category>
-        <category name="Style">
-          <label text="Hats"></label>
-          <block type="styled_event_cap"></block>
-          <label text="Colour"></label>
-          <block type="block_colour_hex1"></block>
-          <block type="block_colour_hex2"></block>
-          <block type="block_colour_hex3"></block>
-          <block type="block_no_colour"></block>
-          <block type="block_colour_hex4"></block>
-          <block type="block_colour_hex5"></block>
-        </category>
-        <category name="Images">
-          <block type="image_datauri"></block>
-          <block type="image_small"></block>
-          <block type="image_large"></block>
-          <block type="image_fliprtl"></block>
-          <block type="image_missing"></block>
-          <block type="test_with_lots_of_network_icons"></block>
-          <label text="Unicode & Emojis"></label>
-          <block type="emoji_label_robot_face"></block>
-          <block type="text">
-            <field name="TEXT">Robot face in text field: &#x1f916;</field>
-          </block>
-          <block type="text">
-            <field name="TEXT">Zalgo in text field: B&#776;&#788;&#862;&#795;&#842;&#827;&#806;&#837;&#812;&#792;&#816;&#846;&#805;l&#771;&#832;&#833;&#864;&#849;&#849;&#789;&#861;&#801;&#854;&#863;&#811;&#826;&#812;&#790;&#803;&#819;o&#843;&#777;&#778;&#785;&#831;&#829;&#794;&#825;&#857;&#814;&#802;&#811;&#852;c&#843;&#786;&#849;&#778;&#861;&#775;&#825;&#825;&#796;&#857;&#825;&#800;&#824;k&#778;&#850;&#833;&#774;&#772;&#782;&#862;&#770;&#789;&#788;&#841;&#801;&#811;&#860;&#839;&#790;&#819;&#854;l&#832;&#774;&#836;&#831;&#776;&#787;&#855;&#816;&#793;&#798;&#819;&#809;&#800;&#854;&#815;y&#864;&#783;&#856;&#773;&#832;&#808;&#799;&#839;&#814;&#840;&#812;&#793;&#818;&#801;</field>
-          </block>
-        </category>
-      </xml>
-    </div>
-
-
+    <!-- toolbox-categories-typed-variables has a category menu and an
+    auto-closing flyout.  The Variables category uses typed variable blocks.
+    See https://developers.google.com/blockly/guides/create-custom-blocks/variables#typed_variable_blocks for more information. -->
+    <xml id="toolbox-categories-typed-variables" style="display: none">
+      <category name="Logic" style="logic_category">
+        <block type="controls_if"></block>
+        <block type="logic_compare"></block>
+        <block type="logic_operation"></block>
+        <block type="logic_negate"></block>
+        <block type="logic_boolean"></block>
+        <block type="logic_null" disabled="true"></block>
+        <block type="logic_ternary"></block>
+      </category>
+      <category name="Loops" style="loop_category">
+        <block type="controls_repeat_ext">
+          <value name="TIMES">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="controls_repeat" disabled="true"></block>
+        <block type="controls_whileUntil"></block>
+        <block type="controls_for">
+          <value name="FROM">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="TO">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+          <value name="BY">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="controls_forEach"></block>
+        <block type="controls_flow_statements"></block>
+      </category>
+      <category name="Math" style="math_category">
+        <block type="math_number" gap="32">
+          <field name="NUM">123</field>
+        </block>
+        <block type="math_arithmetic">
+          <value name="A">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="B">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_single">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">9</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_trig">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">45</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_constant"></block>
+        <block type="math_number_property">
+          <value name="NUMBER_TO_CHECK">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_round">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">3.1</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_on_list"></block>
+        <block type="math_modulo">
+          <value name="DIVIDEND">
+            <shadow type="math_number">
+              <field name="NUM">64</field>
+            </shadow>
+          </value>
+          <value name="DIVISOR">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_constrain">
+          <value name="VALUE">
+            <shadow type="math_number">
+              <field name="NUM">50</field>
+            </shadow>
+          </value>
+          <value name="LOW">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="HIGH">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_random_int">
+          <value name="FROM">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="TO">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_random_float"></block>
+        <block type="math_atan2">
+          <value name="X">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="Y">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <category name="Text" style="text_category">
+        <block type="text"></block>
+        <block type="text_join"></block>
+        <block type="text_append">
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <block type="text_length">
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_isEmpty">
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT"></field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_indexOf">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">text</field>
+            </block>
+          </value>
+          <value name="FIND">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_charAt">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">text</field>
+            </block>
+          </value>
+        </block>
+        <block type="text_getSubstring">
+          <value name="STRING">
+            <block type="variables_get">
+              <field name="VAR">text</field>
+            </block>
+          </value>
+        </block>
+        <block type="text_changeCase">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_trim">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_count">
+          <value name="SUB">
+            <shadow type="text"></shadow>
+          </value>
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <block type="text_replace">
+          <value name="FROM">
+            <shadow type="text"></shadow>
+          </value>
+          <value name="TO">
+            <shadow type="text"></shadow>
+          </value>
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <block type="text_reverse">
+          <value name="TEXT">
+            <shadow type="text"></shadow>
+          </value>
+        </block>
+        <label text="Input/Output:" web-class="ioLabel"></label>
+        <block type="text_print">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_prompt_ext">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">abc</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <category name="Lists" style="list_category">
+        <block type="lists_create_with">
+          <mutation items="0"></mutation>
+        </block>
+        <block type="lists_create_with"></block>
+        <block type="lists_repeat">
+          <value name="NUM">
+            <shadow type="math_number">
+              <field name="NUM">5</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="lists_length"></block>
+        <block type="lists_isEmpty"></block>
+        <block type="lists_indexOf">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_getIndex">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_setIndex">
+          <value name="LIST">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_getSublist">
+          <value name="LIST">
+            <block type="variables_get">
+              <field name="VAR">list</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_split">
+          <value name="DELIM">
+            <shadow type="text">
+              <field name="TEXT">,</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="lists_sort"></block>
+        <block type="lists_reverse"></block>
+      </category>
+      <category name="Colour" style="colour_category">
+        <block type="colour_picker"></block>
+        <block type="colour_random"></block>
+        <block type="colour_rgb">
+          <value name="RED">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+          <value name="GREEN">
+            <shadow type="math_number">
+              <field name="NUM">50</field>
+            </shadow>
+          </value>
+          <value name="BLUE">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="colour_blend">
+          <value name="COLOUR1">
+            <shadow type="colour_picker">
+              <field name="COLOUR">#ff0000</field>
+            </shadow>
+          </value>
+          <value name="COLOUR2">
+            <shadow type="colour_picker">
+              <field name="COLOUR">#3333ff</field>
+            </shadow>
+          </value>
+          <value name="RATIO">
+            <shadow type="math_number">
+              <field name="NUM">0.5</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <sep></sep>
+      <category name="Variables" style="variable_category" custom="VARIABLE_DYNAMIC"></category>
+      <category name="Functions" style="procedure_category" custom="PROCEDURE"></category>
+    </xml>
+    <div id="importedFunctions">imported functions</div>
+    <!-- toolbox-test-blocks has a category menu and an auto-closing flyout.
+    The blocks in this toolbox reflect block configurations not used by
+    the standard predefined blocks, and so test alernative block rendering
+    code paths. -->
+    <xml id="toolbox-test-blocks" style="display: none">
+      <category name="Basic">
+        <block type="empty_block"></block>
+        <block type="empty_block_with_mutator"></block>
+        <block type="value_to_stack"></block>
+        <block type="value_to_statement"></block>
+        <block type="limit_instances"></block>
+      </category>
+      <category name="Drag">
+        <label text="Drag each to the workspace"></label>
+        <block type="text_print">
+          <value name="TEXT">
+            <block type="text">
+              <field name="TEXT">Drag me by this child</field>
+            </block>
+          </value>
+        </block>
+        <block type="text_print">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">Drag me by this shadow</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_print">
+          <value name="TEXT">
+            <shadow type="text">
+              <field name="TEXT">Shadow value</field>
+            </shadow>
+          </value>
+          <next>
+            <shadow type="text_print">
+              <value name="TEXT">
+                <shadow type="text">
+                  <field name="TEXT">Shadow statement</field>
+                </shadow>
+              </value>
+            </shadow>
+          </next>
+        </block>
+        <label text="Multiple Variable Refs"></label>
+        <block type="text_print">
+          <value name="TEXT">
+            <block type="variables_get">
+              <field name="VAR" id="item" variabletype="">item</field>
+            </block>
+          </value>
+          <next>
+            <block type="text_print">
+              <value name="TEXT">
+                <block type="variables_get">
+                  <field name="VAR" id="item" variabletype="">item</field>
+                </block>
+              </value>
+            </block>
+          </next>
+        </block>
+        <label text="Procedure Definitions"></label>
+        <block type="procedures_defnoreturn">
+          <field name="NAME">without arguments</field>
+          <statement name="STACK">
+            <block type="text_print">
+              <value name="TEXT">
+                <shadow type="text">
+                  <field name="TEXT">No argument reference.</field>
+                </shadow>
+              </value>
+            </block>
+          </statement>
+        </block>
+        <block type="procedures_defnoreturn">
+          <mutation>
+            <arg name="fnArgument"></arg>
+          </mutation>
+          <field name="NAME">with one argument</field>
+          <statement name="STACK">
+            <block type="text_print">
+              <value name="TEXT">
+                <shadow type="text">
+                  <field name="TEXT">Expected an argument reference here.</field>
+                </shadow>
+                <block type="variables_get">
+                  <field name="VAR">fnArgument</field>
+                </block>
+              </value>
+            </block>
+          </statement>
+        </block>
+      </category>
+      <category name="Fields">
+        <label text="Numbers"></label>
+        <block type="test_number">
+          <field name="NUM">123.456</field>
+        </block>
+        <block type="test_integer">
+          <field name="NUM">123.456</field>
+        </block>
+        <block type="test_number_hundredths">
+          <field name="NUM">123.456</field>
+        </block>
+        <block type="test_integer_bounded">
+          <field name="NOTE">60</field>
+        </block>
+        <label text="Drop-downs"></label>
+        <block type="example_dropdown_long"></block>
+        <block type="example_dropdown_images"></block>
+        <block type="example_dropdown_images_and_text"></block>
+        <label text="Dynamic Drop-downs"></label>
+        <block type="test_dropdown_dynamic"></block>
+        <button text="Add option" callbackKey="addDynamicOption"></button>
+        <button text="Remove option" callbackKey="removeDynamicOption"></button>
+        <label text="Others"></label>
+        <block type="example_angle"></block>
+        <block type="example_date"></block>
+      </category>
+      <category name="Mutators">
+        <label text="logic_compare"></label>
+        <block type="logic_compare">
+          <value name="A">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+          <value name="B">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="logic_compare">
+          <value name="A">
+            <block type="math_number">
+              <field name="NUM">10</field>
+            </block>
+          </value>
+          <value name="B">
+            <block type="math_number">
+              <field name="NUM">10</field>
+            </block>
+          </value>
+        </block>
+      </category>
+      <category name="Style">
+        <label text="Hats"></label>
+        <block type="styled_event_cap"></block>
+        <label text="Colour"></label>
+        <block type="block_colour_hex1"></block>
+        <block type="block_colour_hex2"></block>
+        <block type="block_colour_hex3"></block>
+        <block type="block_no_colour"></block>
+        <block type="block_colour_hex4"></block>
+        <block type="block_colour_hex5"></block>
+      </category>
+      <category name="Images">
+        <block type="image_datauri"></block>
+        <block type="image_small"></block>
+        <block type="image_large"></block>
+        <block type="image_fliprtl"></block>
+        <block type="image_missing"></block>
+        <block type="test_with_lots_of_network_icons"></block>
+        <label text="Unicode & Emojis"></label>
+        <block type="emoji_label_robot_face"></block>
+        <block type="text">
+          <field name="TEXT">Robot face in text field: &#x1f916;</field>
+        </block>
+        <block type="text">
+          <field name="TEXT">Zalgo in text field: B&#776;&#788;&#862;&#795;&#842;&#827;&#806;&#837;&#812;&#792;&#816;&#846;&#805;l&#771;&#832;&#833;&#864;&#849;&#849;&#789;&#861;&#801;&#854;&#863;&#811;&#826;&#812;&#790;&#803;&#819;o&#843;&#777;&#778;&#785;&#831;&#829;&#794;&#825;&#857;&#814;&#802;&#811;&#852;c&#843;&#786;&#849;&#778;&#861;&#775;&#825;&#825;&#796;&#857;&#825;&#800;&#824;k&#778;&#850;&#833;&#774;&#772;&#782;&#862;&#770;&#789;&#788;&#841;&#801;&#811;&#860;&#839;&#790;&#819;&#854;l&#832;&#774;&#836;&#831;&#776;&#787;&#855;&#816;&#793;&#798;&#819;&#809;&#800;&#854;&#815;y&#864;&#783;&#856;&#773;&#832;&#808;&#799;&#839;&#814;&#840;&#812;&#793;&#818;&#801;</field>
+        </block>
+      </category>
+    </xml>
   </div>
+
+
+</div>
 </div>
 </body>
+<script src="../../jszip/dist/jszip.js"></script>
+<script src="../../FileSaver/dist/FileSaver.js"></script>
+<script src="../../exportTest.js"></script>
+<script src="../../blkImport.js"></script>
 </html>

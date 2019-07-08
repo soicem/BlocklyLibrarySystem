@@ -28,7 +28,7 @@ class SpeechBubble {
 
     context.lineTo(r - radius, y);
     context.quadraticCurveTo(r, y, r, y + radius);
-    context.lineTo(r, y + h-radius);
+    context.lineTo(r, y + h - radius);
     context.quadraticCurveTo(r, b, r - radius, b);
     context.lineTo(x + radius, b);
     context.quadraticCurveTo(x, b, x, b - radius);

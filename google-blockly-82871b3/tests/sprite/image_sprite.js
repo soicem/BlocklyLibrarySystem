@@ -1,34 +1,6 @@
 class ImageSprite {
-  get initY() {
-    return this._initY;
-  }
-
-  set initY(value) {
-    this._initY = value;
-  }
-  get initX() {
-    return this._initX;
-  }
-
-  set initX(value) {
-    this._initX = value;
-  }
-  get nextCommand() {
-    return this._nextCommand;
-  }
-
-  set nextCommand(value) {
-    this._nextCommand = value;
-  }
-  get commands() {
-    return this._commands;
-  }
-
-  set commands(value) {
-    this._commands = value;
-  }
   constructor(manager, canvas, imageSrc, x = 0, y = 0, width = 50, height = 50,
-              direction = 0) {
+      direction = 0) {
     this.timerCnt = 0;
     this.manager = manager;
     this.imageSrc = imageSrc;
@@ -62,6 +34,38 @@ class ImageSprite {
     console.log("y : ", this.y);
     console.log("height : ", this.height);
     console.log("width : ", this.width);
+  }
+
+  get initY() {
+    return this._initY;
+  }
+
+  set initY(value) {
+    this._initY = value;
+  }
+
+  get initX() {
+    return this._initX;
+  }
+
+  set initX(value) {
+    this._initX = value;
+  }
+
+  get nextCommand() {
+    return this._nextCommand;
+  }
+
+  set nextCommand(value) {
+    this._nextCommand = value;
+  }
+
+  get commands() {
+    return this._commands;
+  }
+
+  set commands(value) {
+    this._commands = value;
   }
 
   get timerCnt() {
@@ -165,8 +169,8 @@ class ImageSprite {
     //this.canvas.getContext().drawImage(this.imageObj, this.x, this.y, this.width, this.height);
   }
 
-  _moveSteps(step){
-    function _update () {
+  _moveSteps(step) {
+    function _update() {
       return new Promise(function (resolve, reject) {
         setTimeout(function () {
           this_.canvas.clear();
@@ -184,8 +188,8 @@ class ImageSprite {
     }
 
     //console.log("direction : ", this.direction);
-    let x = step *  Math.round(Math.cos(toRadians(this.direction )));
-    let y = step *  Math.round(Math.sin(toRadians(this.direction)));
+    let x = step * Math.round(Math.cos(toRadians(this.direction)));
+    let y = step * Math.round(Math.sin(toRadians(this.direction)));
 
     /*let x = step *  Math.round(Math.cos(toRadians(this.direction)));
     let y = step *  Math.round(Math.sin(toRadians(this.direction)));*/
@@ -204,15 +208,15 @@ class ImageSprite {
     let width_ = this.width;
     let height_ = this.height;
     _update()
-        .then(
-            function (result) {
-              if(this_.nextCommand != ""){
-                console.log("next command");
-                console.log(this_.nextCommand);
-                eval(this_.nextCommand);
-              }
-            }
-        );
+    .then(
+        function (result) {
+          if (this_.nextCommand != "") {
+            console.log("next command");
+            console.log(this_.nextCommand);
+            eval(this_.nextCommand);
+          }
+        }
+    );
     //setTimeout(_update, this.timerCnt * 5);
   }
 
@@ -222,8 +226,8 @@ class ImageSprite {
     }
 
     //console.log("direction : ", this.direction);
-    let x = step *  Math.round(Math.cos(toRadians(this.direction )));
-    let y = step *  Math.round(Math.sin(toRadians(this.direction)));
+    let x = step * Math.round(Math.cos(toRadians(this.direction)));
+    let y = step * Math.round(Math.sin(toRadians(this.direction)));
 
     /*let x = step *  Math.round(Math.cos(toRadians(this.direction)));
     let y = step *  Math.round(Math.sin(toRadians(this.direction)));*/
@@ -259,7 +263,7 @@ class ImageSprite {
     this.turn(-degree);
   }
 
-  _setDirection(degree){
+  _setDirection(degree) {
     this.direction = degree;
     this.nextCommand = this.commands.shift();
     eval(this.nextCommand);
@@ -289,6 +293,7 @@ class ImageSprite {
       this_.canvas.getContext().drawImage(this_.imageObj, x_, y_,
           width_, height_);
     }
+
     this.initX = x;
     this.initY = y;
 
@@ -303,10 +308,12 @@ class ImageSprite {
     this.timerCnt++;
     setTimeout(_update, this.timerCnt * 5);
   }
-  _say(text){
+
+  _say(text) {
     function _update() {
       bubble.draw(100, 30, 5, text);
     }
+
     let bubble = new SpeechBubble(this);
     console.log("bubble");
     this.nextCommand = this.commands.shift();
@@ -314,8 +321,9 @@ class ImageSprite {
     eval(this.nextCommand);
 
   }
+
   say(text) {
-    this.commands.push("this_._say(" +"\"" + text + "\"" + ")");
+    this.commands.push("this_._say(" + "\"" + text + "\"" + ")");
   }
 
   isTouchingColor(r, g, b) {

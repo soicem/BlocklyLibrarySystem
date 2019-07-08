@@ -45,7 +45,7 @@ class SpriteManager {
   _createSprite(spriteName, isStage) {
     const canvasContainer = "canvases";
     var canvasOrder = this.spritesOrder.length + 1;
-    if(isStage){
+    if (isStage) {
       canvasOrder = 0;
     }
     const canvasWidth = 500;
@@ -56,7 +56,7 @@ class SpriteManager {
     var spriteHeight = 50;
     var spriteX = canvasWidth / 2 - spriteWidth / 2;
     var spriteY = canvasHeight / 2 - spriteHeight / 2;
-    if(isStage){
+    if (isStage) {
       spriteWidth = canvasWidth;
       spriteHeight = canvasHeight;
       spriteX = 0;
@@ -111,8 +111,6 @@ class SpriteManager {
     return this.sprites[spriteName];
   }
 
-
-
   getCurrentSprite() {
     return this.getSprite(this.currentSpriteName);
   }
@@ -143,11 +141,15 @@ class SpriteManager {
     for (let i = this.spritesOrder.length - 1; i >= 0; i--) {
       let iSprite = this.spritesOrder[i];
 
-      if (iSprite === baseSprite) continue; //skip if it's sprite itself
+      if (iSprite === baseSprite) {
+        continue;
+      } //skip if it's sprite itself
 
-      let iData = iSprite.canvas.getContext().getImageData(x, y, width, height).data;
+      let iData = iSprite.canvas.getContext().getImageData(x, y, width,
+          height).data;
 
-      for (let j = 0, filled = 0; j < iData.length && filled < totalPixels; j += 4) {
+      for (let j = 0, filled = 0; j < iData.length && filled < totalPixels;
+          j += 4) {
         const iDataR = iData[j];
         const iDataG = iData[j + 1];
         const iDataB = iData[j + 2];

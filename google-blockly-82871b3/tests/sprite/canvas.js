@@ -1,4 +1,3 @@
-
 class Canvas {
   constructor(target, elementId, order = 0, width = 500, height = 300) {
     Canvas.injectHtml(elementId, target);
