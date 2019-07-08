@@ -2,6 +2,7 @@ class SpriteManager {
   constructor() {
     this.sprites = {};
     this.spritesXml = {};
+    this.spritesImg = {};
     this.spritesOrder = [""];
     this.currentSpriteName = null;
   }
@@ -21,6 +22,15 @@ class SpriteManager {
   set spritesXml(value) {
     this._spriteXmls = value;
   }
+
+    get spritesImg() {
+        return this._spritesImg;
+    }
+
+    set spritesImg(value) {
+        this._spritesImg = value;
+    }
+
 
   get spritesOrder() {
     return this._spritesOrder;
@@ -66,7 +76,7 @@ class SpriteManager {
         spriteWidth, spriteHeight);
   }
 
-  addSprite(spriteName) {
+  addSprite(spriteName, ImgData) {
     if (this.exists(spriteName)) {
       throw new ExistingSpriteException(
           "the name '" + spriteName + "' is already in use.")
@@ -74,6 +84,7 @@ class SpriteManager {
 
     let newSprite = this._createSprite(spriteName);
     this.sprites[spriteName] = newSprite;
+    this.spritesImg[spriteName] = ImgData;
     this.spritesXml[spriteName] = "";
     this.spritesOrder.push(newSprite);
 

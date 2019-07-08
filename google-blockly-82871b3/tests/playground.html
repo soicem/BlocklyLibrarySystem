@@ -293,64 +293,84 @@
     }
 
     function toXml() {
-      var output = document.getElementById('importExport');
-      var xml = Blockly.Xml.workspaceToDom(workspace);
-      output.value = Blockly.Xml.domToPrettyText(xml);
-      output.focus();
-      output.select();
-      taChange();
+        var output = document.getElementById('importExport');
+        var xml = Blockly.Xml.workspaceToDom(workspace);
+        output.value = Blockly.Xml.domToPrettyText(xml);
+        output.focus();
+        output.select();
+        taChange();
 
-      ImgToFile();
-      SpriteXMLtoBLK();
 
-      //CodeFile('JavaScript');
-      //CodeFile('Python'); Sprite는 인식하지 못한다.
+       CurrentSpritesXML();
+       ImgToFile();          // for img
+       SpriteXMLtoBLK();     //for xml
+       jsFile();           // for JS
 
-      CreateBLK('Test');
+       CreateBLK('Test');
     }
 
+    //----check
     //import
-    function ExtractFiles() {
-      var BLK = document.getElementById("getFile");
+    function ExtractFiles(){
+        var BLK = document.getElementById("getFile");
+        var tmpJS = {};
 
-      var files = BLK.files[0]; // FileList object
-      var reader = new FileReader();
+        var files = BLK.files[0]; // FileList object
+        var reader = new FileReader();
 
-      reader.onload = (function () {
-        return function (evt) {
-          JSZip.loadAsync(evt.target.result)
-          .then(function (blk) {
-            blk.forEach(function (relativePath, file) {
-              if ((file.name).indexOf(".xml") !== -1) { //xml
-                var xmlName = file.name.substring(0, (file.name).indexOf(".xml"));
+        reader.onload= (function(){
+            return function(evt){
+                JSZip.loadAsync(evt.target.result)
+                    .then(function(blk){
+                        blk.forEach(function(relativePath, file){
+                            if( (file.name).indexOf("images/") !== -1){ // for images;
+                                var strArray = (file.name).split('/');
+                                var picture = strArray[1];
 
-                file.async('text')
-                .then(function (data) {
-                  XMLOfEachSprites[xmlName] = data;
-                })
-              }
+                                file.async('base64')
+                                    .then(function (data){
+                                        if((picture !== "") && (picture !== null) && (picture !== undefined)) {
+                                            manager.addSprite(picture, data);
+                                            manager.getSprite(picture).draw();
+                                            addSprite(picture, data);
+                                            manager.currentSpriteName = picture;
+                                        }
+                                    });
+                            }else if( (file.name).indexOf(".xml") !== -1 ){ //xml
+                                var xmlName = file.name.substring(0, (file.name).indexOf(".xml"));
+                                file.async('text')
+                                    .then(function (data) {
+                                        manager.spritesXml[xmlName] = data;
+                                        setSpriteXML();
+                                    })
+                            }else if( (file.name.indexOf('.js') !== -1) && (file.name.indexOf('.json') === -1) ){
+                                var jsName = file.name.substring(0, (file.name).indexOf(".js"));
+                                file.async('text')
+                                    .then(function (data){
+                                        if(manager.sprites[jsName] === undefined){
+                                            if(jsName !== "")
+                                                tmpJS[jsName] = data;
+                                        }else
+                                            manager.sprites[jsName].jsCode = data;
+                                    })
+                            }
+                        })
+                    }).then(function(){
+                    setTimeout(function() {
+                        var isEmpty = Object.keys(tmpJS).length;
+                        var matching;
 
-              if ((file.name).indexOf("images/") !== -1) { // for images;
-                var strArray = (file.name).split('/');
-                var picture = strArray[1];
-                // console.log(picture);
-
-                file.async('base64')
-                .then(function (data) {
-                  objectsOfSprites[picture] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0,
-                      data);
-                  objectsOfSprites[picture].draw();
-                  objectsOfSprites[picture].printProperties();
-                  addSprite(picture, data);
+                        if (isEmpty > 0) {
+                            matching = Object.keys(tmpJS);
+                            matching.forEach(function (data) {
+                                manager.sprites[data].jsCode = tmpJS[data];
+                            })
+                        }
+                    },100);
                 });
-              }
-            })
-          }).then(function () {
-            console.log('hi');
-          });
-        };
-      })(files);
-      reader.readAsArrayBuffer(files);
+            };
+        })(files);
+        reader.readAsArrayBuffer(files);
     }
 
     function addSprite(name, Source) {
@@ -367,32 +387,39 @@
           '</div>';
 
       document.getElementById("gallary_owner").innerHTML += a;
-      setSpriteXML();
     }
 
     function setSpriteXML() {
-      var first_value = Object.keys(XMLOfEachSprites)[1];
+      var first_value = Object.keys(manager.spritesXml)[1];
 
       var output = document.getElementById('importExport');
-      output.value = XMLOfEachSprites[first_value];
+      output.value = manager.spritesXml[first_value];
       taChange();
     }
 
     //export
     function SpriteXMLtoBLK() {
-      var arraySprite = Object.getOwnPropertyNames(XMLOfEachSprites);
+      var arraySprite = Object.getOwnPropertyNames(manager.spritesXml);
 
       arraySprite.forEach((name) => {
-        FileToBLK(name + ".xml", XMLOfEachSprites[name], false);
+          console.log(name + ": "+ manager.spritesXml[name]);
+        FileToBLK(name + ".xml", manager.spritesXml[name], false);
       });
+
+    }
+
+    function CurrentSpritesXML(){
+            var xml = Blockly.Xml.workspaceToDom(workspace);
+            var XMLtext = Blockly.Xml.domToPrettyText(xml);
+            manager.spritesXml[manager.currentSpriteName] = XMLtext;
     }
 
     function ImgToFile() {
-      var arraySprite = Object.getOwnPropertyNames(objectsOfSprites);
+      var arraySprite = Object.getOwnPropertyNames(manager.spritesImg);
 
       arraySprite.forEach((name) => {
         if (name !== "aww-cat.png") {
-          ImgToBLK(name, objectsOfSprites[name].data);
+            ImgToBLK(name, manager.spritesImg[name]);
         }
       });
     }
@@ -425,41 +452,44 @@
         }
     */
 
-    function CodeFile(lang) {
-      var result = Blockly[lang].workspaceToCode(workspace);
-      var filename = 'test';
 
-      if (lang === 'JavaScript') {
-        filename += '.js';
-      } else if (lang === 'Python') {
-        filename += '.py';
-      }
+    function jsFile() {
+        var arraySprite = Object.getOwnPropertyNames(manager.sprites);
+        var result, DOM;
 
-      FileToBLK(filename, result, true);
-      console.log(filename);
+        arraySprite.forEach(function(name){
+            manager.sprites[name].draw();
+
+            DOM = Blockly.Xml.textToDom(manager.spritesXml[name]);
+            workspace.clear();
+            Blockly.Xml.domToWorkspace(DOM, workspace);
+            result = Blockly['JavaScript'].workspaceToCode(workspace);
+
+            manager.sprites[name].jsCode = result;
+            // canvas.clear();
+
+            console.log(name+' : '+result);
+            FileToBLK(name+'.js', result, true);
+        })
     }
+
 
     // block을 Javascript 코드로 변환하고, 이를 실행시킨다.
     function toJSCode() {
-      let output = document.getElementById('importExport');
-      output.value = Blockly["JavaScript"].workspaceToCode(workspace);
-      //canvas.clear();
-      //alert(output.value);
-      //objectsOfSprites[currentSprite].jsCode = output.value;
+        var jsCode = Blockly["JavaScript"].workspaceToCode(workspace);
+        canvas.clear();
+        objectsOfSprites[currentSprite].jsCode = jsCode;
+        objectsOfSprites[currentSprite].printProperties()
 
-      manager.getCurrentSprite().printProperties();
-      // objectsOfSprites[currentSprite].printProperties();
-      manager.getCurrentSprite().executeJS(output.value);
-      // objectsOfSprites[currentSprite].executeJS(output.value);
+        console.log(objectsOfSprites[currentSprite].jsCode);
+        objectsOfSprites[currentSprite].draw();
 
-      //console.log(objectsOfSprites[currentSprite].jsCode);
-      //objectsOfSprites[currentSprite].printProperties()
-      //objectsOfSprites[currentSprite].draw();
-      //console.log(currentSprite);
+        //objectsOfSprites[currentSprite].executeJS(jsCode);
+        // objectsOfSprites[currentSprite].printProperties()
 
-      // 기존 코드
-      /*eval(output.value);
-      cat.draw();*/
+        // 기존 코드
+        /*eval(output.value);
+        cat.draw();*/
     }
 
     function toCodeMain() {
@@ -602,15 +632,15 @@
     }
 
     function changeTab(tab) {
-      if (tab == "main_tab") {
+      if (tab === "main_tab") {
         show('blocklyDiv', 'main_tab');
         hide('library', 'library_tab');
         hide('sprite', 'sprite_tab');
-      } else if (tab == "library_tab") {
+      } else if (tab === "library_tab") {
         show('library', 'library_tab');
         hide('blocklyDiv', 'main_tab');
         hide('sprite', 'sprite_tab')
-      } else if (tab == "sprite_tab") {
+      } else if (tab === "sprite_tab") {
         show('sprite', 'sprite_tab');
         hide('library', 'library_tab');
         hide('blocklyDiv', 'main_tab');
@@ -760,19 +790,14 @@
         //alert(a);
         document.getElementById("gallary_owner").innerHTML += a;
 
-        // sprite 별로 사용자가 만들었던 XML을 저장한다.
-        // XMLOfEachSprites[name] = "";
 
         reader.addEventListener('load', function () {
           // sprite에 대한 canvas 용 objects를 저장한다.
-          // 객체 생성 코드 예시 : let cat = new ImageSprite(canvas, "aww-cat.png", 0, 0, 50, 50, 0);
-          manager.addSprite(name);
+          manager.addSprite(name,reader.result);
           manager.getSprite(name).draw();
           manager.getSprite(name).printProperties();
+
         });
-        // objectsOfSprites[name] = new ImageSprite(canvas, name, 50, 50, 50, 50, 0);
-        // objectsOfSprites[name].draw();
-        // objectsOfSprites[name].printProperties();
 
         if (ImgFile) {
           reader.readAsArrayBuffer(ImgFile);
@@ -784,7 +809,7 @@
         var x = document.getElementById("stageChooser");
         var txt = "";
         if ('files' in x) {
-          if (x.files.length == 0) {
+          if (x.files.length === 0) {
             txt = "Select one or more files.";
           } else {
             for (var i = 0; i < x.files.length; i++) {
@@ -803,7 +828,7 @@
             }
           }
         } else {
-          if (x.value == "") {
+          if (x.value === "") {
             txt += "Select one or more files.";
           } else {
             txt += "The files property is not supported by your browser!";
@@ -826,39 +851,28 @@
       // nameOfSprite : sprite의 이름, key로 사용
       // sprite의 이름을 받아서 workspace에 해당 sprite의 블록을 넣어준다.
       function pictureEvent(nameOfSprite) {
-        // to xml
+          console.log(nameOfSprite);
+          console.log(manager.spritesXml[nameOfSprite]);
 
-        if (manager.currentSpriteName != nameOfSprite) {
-          // if (currentSprite != nameOfSprite) {
+        if (manager.currentSpriteName !== nameOfSprite) {
           var xml = Blockly.Xml.workspaceToDom(workspace);
           var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
-          //alert(prettyXMLText)
 
           manager.spritesXml[manager.currentSpriteName] = prettyXMLText;
-          // XMLOfEachSprites[currentSprite] = prettyXMLText;
 
           //taChange();
 
-          if (manager.spritesXml[nameOfSprite] == "") {
-            // if (XMLOfEachSprites[nameOfSprite] == "") {
+          if (manager.spritesXml[nameOfSprite] === "") {
             workspace.clear();
           } else {
-            var input = document.getElementById('importExport');
-
-            var nextXml = Blockly.Xml.textToDom(manager.spritesXml[nameOfSprite]);
-            // var nextXml = Blockly.Xml.textToDom(XMLOfEachSprites[nameOfSprite]);
-
-            workspace.clear();
-            Blockly.Xml.domToWorkspace(nextXml, workspace);
-            taChange();
+              var nextXml = Blockly.Xml.textToDom(manager.spritesXml[nameOfSprite]);
+              workspace.clear();
+              Blockly.Xml.domToWorkspace(nextXml, workspace);
+              taChange();
           }
-
           manager.currentSpriteName = nameOfSprite;
-          currentSprite = nameOfSprite;
-
           taChange();
         }
-
       }
 
     </script>
