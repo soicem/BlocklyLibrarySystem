@@ -5,7 +5,7 @@ html, body {
 body {
   background-color: #fff;
   font-family: sans-serif;
-  overflow: hidden;
+  overflow: auto;
 }
 
 h1 {
@@ -49,10 +49,20 @@ canvas {
   border: 1px solid black;
   position: absolute;
 }
+/*
+#spriteCanvas{
+  width: 500px;
+  height: 500px;
+}
 
+#spriteCanvas_container{
+  float: left;
+  width: 500px;
+  height: 500px;
+}
+*/
 #canvasBlock {
   height: 500px;
-  background-color: white;
 }
 
 #canvases {
@@ -109,18 +119,19 @@ canvas {
   float: left;
   height: calc(100% - 80px);
   width: calc(100% - 520px);
+
 }
 
 #library {
   float: left;
-  height: 80%;
-  width: 65%;
+  height: calc(100% - 80px);
+  width: calc(100% - 520px);
 }
 
 #sprite {
   float: left;
-  height: 80%;
-  width: 65%;
+  height: calc(100% - 80px);
+  width: calc(100% - 520px);
 }
 
 #importExport {
@@ -152,7 +163,7 @@ canvas {
   width: 500px;
   background-color: #e9f1fc;
   padding: 10px;
-  overflow: scroll;
+  overflow: auto;
 }
 
 
@@ -168,6 +179,22 @@ div.gallery:hover {
 }
 
 div.gallery img {
+  width: 100%;
+  height: auto;
+}
+
+div.stage {
+  margin: 5px;
+  border: 1px solid #ccc;
+  float: left;
+  width: 100px;
+}
+
+div.stage:hover {
+  border: 1px solid #777;
+}
+
+div.stage img {
   width: 100%;
   height: auto;
 }

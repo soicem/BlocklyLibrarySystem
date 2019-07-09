@@ -689,6 +689,7 @@
   <li><a id="sprite_tab" onclick="changeTab('sprite_tab')">Sprite</a></li>
 </ul>
 <br>
+<!---- Main Tab ----->
 <div id="blocklyDiv"></div>
 <!--- Library Tab --->
 <div id="library">
@@ -709,7 +710,12 @@
   </p>
 </div>
 <!--- Sprite Tab ---->
-<div id="sprite"></div>
+<div id="sprite">
+    <script src="sprite/paint_editor.js"></script>
+    <div id="spriteCanvas_container">
+      <canvas id="spriteCanvas"></canvas>
+    </div>
+</div>
 <!----- Content ----->
 <div id="content">
   <div id="canvasBlock">
@@ -890,9 +896,6 @@
   <div id="stage_owner"></div>
 
   <div>
-    <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
-      - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
-
     <form id="options">
       <select name="dir" onchange="document.forms.options.submit()">
         <option value="ltr">LTR</option>
@@ -2360,7 +2363,7 @@
 
 
 </div>
-</div>
+
 </body>
 <script src="../../jszip/dist/jszip.js"></script>
 <script src="../../FileSaver/dist/FileSaver.js"></script>
