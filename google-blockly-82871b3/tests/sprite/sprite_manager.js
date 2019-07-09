@@ -23,14 +23,13 @@ class SpriteManager {
     this._spriteXmls = value;
   }
 
-    get spritesImg() {
-        return this._spritesImg;
-    }
+  get spritesImg() {
+    return this._spritesImg;
+  }
 
-    set spritesImg(value) {
-        this._spritesImg = value;
-    }
-
+  set spritesImg(value) {
+    this._spritesImg = value;
+  }
 
   get spritesOrder() {
     return this._spritesOrder;
@@ -54,7 +53,7 @@ class SpriteManager {
 
   _createSprite(spriteName, isStage) {
     const canvasContainer = "canvases";
-    var canvasOrder = this.spritesOrder.length + 1;
+    let canvasOrder = this.spritesOrder.length + 1;
     if (isStage) {
       canvasOrder = 0;
     }
@@ -62,10 +61,10 @@ class SpriteManager {
     const canvasHeight = 500;
     let baseCanvas = new Canvas(canvasContainer, spriteName,
         canvasOrder, canvasWidth, canvasHeight);
-    var spriteWidth = 50;
-    var spriteHeight = 50;
-    var spriteX = canvasWidth / 2 - spriteWidth / 2;
-    var spriteY = canvasHeight / 2 - spriteHeight / 2;
+    let spriteWidth = 50;
+    let spriteHeight = 50;
+    let spriteX = canvasWidth / 2 - spriteWidth / 2;
+    let spriteY = canvasHeight / 2 - spriteHeight / 2;
     if (isStage) {
       spriteWidth = canvasWidth;
       spriteHeight = canvasHeight;
@@ -141,38 +140,56 @@ class SpriteManager {
     this.spritesOrder.splice(foundAt, 1);
   }
 
+  /**
+   * Returns reduced image data of all layers that are visible in front.
+   *    ignores the image data of sprite that is the base
+   * @param {!ImageSprite} baseSprite The sprite that is base of searching conditions
+   * @return {!Array} The reduced image data from all visible layers
+   *    (1D array of x,y and rgba for each x,y)
+   */
   getOverlayingDataOf(baseSprite) {
+    let data = []; // data record (passed back to the caller)
+
     const x = baseSprite.x;
     const y = baseSprite.y;
     const width = baseSprite.width;
     const height = baseSprite.height;
     const totalPixels = width * height;
-    let data = [];
 
-    for (let i = this.spritesOrder.length - 1; i >= 0; i--) {
-      let iSprite = this.spritesOrder[i];
+    let filled = 0; // used to skip hidden layers when all pixels are found
 
+    // loop through each sprite layers
+    for (let layerIdx = this.spritesOrder.length - 1;
+        layerIdx >= 0 && filled < totalPixels;
+        layerIdx--) {
+      let iSprite = this.spritesOrder[layerIdx];
+
+      // skips if it's sprite itself
       if (iSprite === baseSprite) {
         continue;
-      } //skip if it's sprite itself
+      }
 
       let iData = iSprite.canvas.getContext().getImageData(x, y, width,
           height).data;
 
-      for (let j = 0, filled = 0; j < iData.length && filled < totalPixels;
-          j += 4) {
-        const iDataR = iData[j];
-        const iDataG = iData[j + 1];
-        const iDataB = iData[j + 2];
-        const iDataA = iData[j + 3];
+      // loop through each pixels of current selected layer (within base sprite's area)
+      for (let pixelIdx = 0;
+          pixelIdx < iData.length && filled < totalPixels;
+          pixelIdx += 4) {
+        const iDataR = iData[pixelIdx]; // Red
+        const iDataG = iData[pixelIdx + 1]; // Green
+        const iDataB = iData[pixelIdx + 2]; // Blue
+        const iDataA = iData[pixelIdx + 3]; // Alpha
 
-        const isMissingPixel = !(data[j + 3] || 0);
+        const isMissingPixel = !(data[pixelIdx + 3] || 0);
         const hasPixelData = (iDataA !== 0);
+        // record pixel info if and only if this pixel info wasn't filled in previously
+        // and has pixel data on current layer
         if (isMissingPixel && hasPixelData) {
-          data[j] = iDataR;
-          data[j + 1] = iDataG;
-          data[j + 2] = iDataB;
-          data[j + 3] = iDataA;
+          data[pixelIdx] = iDataR;
+          data[pixelIdx + 1] = iDataG;
+          data[pixelIdx + 2] = iDataB;
+          data[pixelIdx + 3] = iDataA;
 
           filled++;
         }
