@@ -6,7 +6,7 @@ var pos = {
 
 var canvas, ctx;
 
-window.onload = function() {
+window.addEventListener("load", function() {
     canvas = document.getElementById("spriteCanvas");
     ctx = canvas.getContext("2d");
 
@@ -14,7 +14,7 @@ window.onload = function() {
     canvas.addEventListener("mousemove", listener);
     canvas.addEventListener("mouseup", listener);
     canvas.addEventListener("mouseout", listener);
-}
+},false);
 
 function listener(event) {
     switch(event.type) {
