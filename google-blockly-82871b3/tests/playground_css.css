@@ -5,7 +5,7 @@ html, body {
 body {
   background-color: #fff;
   font-family: sans-serif;
-  overflow: hidden;
+  overflow: auto;
 }
 
 h1 {
@@ -29,7 +29,7 @@ li {
   float: left;
 }
 
-li a, .dropbtn {
+li a {
   display: inline-block;
   color: white;
   text-align: center;
@@ -37,12 +37,35 @@ li a, .dropbtn {
   text-decoration: none;
 }
 
-li a:hover, .dropdown:hover .dropbtn {
+li a:hover {
   background-color: green;
 }
 
-li.dropdown {
-  display: inline-block;
+div ul{
+  width: 100%;
+}
+
+li1 {
+  float: left;
+  width: 50%;
+}
+
+li1 a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 7px 0px;
+  text-decoration: none;
+  border: 1px solid white;
+  width:100%
+}
+
+li1 a:hover {
+  background-color: green;
+}
+
+#buttonCollection {
+  width:100%;
 }
 
 canvas {
@@ -50,9 +73,14 @@ canvas {
   position: absolute;
 }
 
+#spriteCanvas_container{
+  float: left;
+  width: 500px;
+  height: 500px;
+}
+
 #canvasBlock {
   height: 500px;
-  background-color: white;
 }
 
 #canvases {
@@ -78,49 +106,23 @@ canvas {
   position: absolute;
 }
 
-/*---------------------*/
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-}
-
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  text-align: left;
-}
-
-.dropdown-content a:hover {
-  background-color: #f1f1f1;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
 #blocklyDiv {
   float: left;
   height: calc(100% - 80px);
-  width: calc(100% - 520px);
+  width: calc(100% - 540px);
+
 }
 
 #library {
   float: left;
-  height: 80%;
-  width: 65%;
+  height: calc(100% - 80px);
+  width: calc(100% - 540px);
 }
 
 #sprite {
   float: left;
-  height: 80%;
-  width: 65%;
+  height: calc(100% - 80px);
+  width: calc(100% - 540px);
 }
 
 #importExport {
@@ -151,10 +153,13 @@ canvas {
   height: calc(100% - 80px);
   width: 500px;
   background-color: #e9f1fc;
-  padding: 10px;
-  overflow: scroll;
+  padding: 20px;
+  overflow: auto;
 }
 
+#gallery_owner {
+  height: 100px;
+}
 
 div.gallery {
   margin: 5px;
@@ -168,6 +173,22 @@ div.gallery:hover {
 }
 
 div.gallery img {
+  width: 100%;
+  height: auto;
+}
+
+div.stage {
+  margin: 5px;
+  border: 1px solid #ccc;
+  float: left;
+  width: 100px;
+}
+
+div.stage:hover {
+  border: 1px solid #777;
+}
+
+div.stage img {
   width: 100%;
   height: auto;
 }

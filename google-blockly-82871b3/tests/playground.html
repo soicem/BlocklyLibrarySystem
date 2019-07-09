@@ -54,6 +54,7 @@
   <script src="../generators/javascript/sprites/sensing.js"></script>
   <script src="../generators/javascript/sprites/sounds.js"></script>
   <script src="blocks/test_blocks.js"></script>
+  <script src="sprite/paint_editor.js"></script>
   <link rel="stylesheet" href="playground_css.css">
   <script>
     'use strict';
@@ -491,9 +492,9 @@
     }
 
     function toCodeMain() {
-      var lang = document.getElementById('mainLang');
+      //var lang = document.getElementById('mainLang');
       var output = document.getElementById('importExport');
-      output.value = Blockly[lang.value].workspaceToCode(workspace);
+      output.value = Blockly["Python"].workspaceToCode(workspace);
       var libFunction = samplePy();
       var pyCode = output.value;
       pyCode = "from testFunction import *\n" + pyCode;
@@ -688,6 +689,7 @@
   <li><a id="sprite_tab" onclick="changeTab('sprite_tab')">Sprite</a></li>
 </ul>
 <br>
+<!---- Main Tab ----->
 <div id="blocklyDiv"></div>
 <!--- Library Tab --->
 <div id="library">
@@ -708,7 +710,13 @@
   </p>
 </div>
 <!--- Sprite Tab ---->
-<div id="sprite"></div>
+<div id="sprite">
+
+  <div id="spriteCanvas_container">
+    <canvas id="spriteCanvas" width="500" height="500"></canvas>
+  </div>
+  <input type="button" value="파일 저장">
+</div>
 <!----- Content ----->
 <div id="content">
   <div id="canvasBlock">
@@ -861,16 +869,12 @@
            height="100">
       <div class="desc">냐옹</div>
     </div>
-
   </div>
 
   <div id="stage_owner"></div>
 
   <div>
-    <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
-      - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
-
-    <form id="options">
+    <form id="options" style="display: none">
       <select name="dir" onchange="document.forms.options.submit()">
         <option value="ltr">LTR</option>
         <option value="rtl">RTL</option>
@@ -894,38 +898,40 @@
       <option value="high_contrast">High Contrast</option>
     </select>
     <p>
-
-      <input type="button" value="My import" onclick="myImport()">
-
-      <input type="button" value="Toolbox Collapse" onclick="collapseToolbox()">
-      <br>
-      <input type="button" value="Export to XML" onclick="toXml()">
-
       <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()"
-             accept=".blk, .zip">
-      &nbsp;
-      <input type="button" value="Import from XML" onclick="fromXml()" id="import">
-      &nbsp
-      <input type="button" value="To JavaScript" onclick="toJSCode()">
-      &nbsp;
-      <select id="mainLang" onchange="toCodeMain()">
-        <option value="default">Select</option>
-        <option value="JavaScript">JavaScript</option>
-        <option value="Python">Python</option>
-        <option value="PHP">PHP</option>
-        <option value="Lua">Lua</option>
-        <option value="Dart">Dart</option>
-      </select>
-
+        accept=".blk, .zip">
+    <div id="buttonCollection">
+      <ul>
+        <li1><a id="ToolboxCollapse" onclick="myImport()">Toolbox Collapse</a></li1>
+        <li1><a id="Myimport" onclick="collapseToolbox()">My import</a></li1>
+      </ul>
+      <ul>
+        <li1><a id="ExportXML" onclick="toXml()">Export to XML</a></li1>
+        <li1><a id="ImportXML" onclick="fromXml()">Import from XML</a></li1>
+      </ul>
+      <ul>
+        <li1><a id="toJavaScript" onclick="toJSCode()">To JavaScript</a></li1>
+        <li1><a id="toCode" onclick="toCodeMain()">To Python</a></li1>
+        <!--<li1><select id="mainLang">
+            <option value="default">Select</option>
+            <option value="JavaScript">JavaScript</option>
+            <option value="Python">Python</option>
+            <option value="PHP">PHP</option>
+            <option value="Lua">Lua</option>
+            <option value="Dart">Dart</option>
+          </select></li1>-->
+       </ul>
+  </div>
       <textarea id="importExport" style="width: 100%; height: 20%"
                 onchange="taChange();" onkeyup="taChange()"></textarea>
     </p>
-
+<!--
     <p>
       Stress test: &nbsp;
       <input type="button" value="Airstrike!" onclick="airstrike(100)">
       <input type="button" value="Spaghetti!" onclick="spaghetti(8)">
     </p>
+-->
     <p>
       Log events: &nbsp;
       <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
@@ -2337,7 +2343,7 @@
 
 
 </div>
-</div>
+
 </body>
 <script src="../../jszip/dist/jszip.js"></script>
 <script src="../../FileSaver/dist/FileSaver.js"></script>
