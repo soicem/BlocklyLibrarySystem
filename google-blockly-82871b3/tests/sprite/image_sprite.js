@@ -326,17 +326,27 @@ class ImageSprite {
     this.commands.push("this_._say(" + "\"" + text + "\"" + ")");
   }
 
-  isTouchingColor(r, g, b) {
+  /**
+   * Return if given RGB color is detected on overlaying area of this sprite
+   * @param {!red} int The binary value of red
+   * @param {!green} int The binary value of green
+   * @param {!blue} int The binary value of blue
+   * @return {!bool} The result of whether given RGB color was detected
+   */
+  isTouchingColor(red, green, blue) {
     let isTouching = false;
     let data = this.manager.getOverlayingDataOf(this);
 
+    // go through each pixel data of overlaying data
     for (let i = 0; i < data.length; i += 4) {
-      const dataR = data[i] || 0;
-      const dataG = data[i + 1] || 0;
-      const dataB = data[i + 2] || 0;
-      const dataA = data[i + 3] || 0;
+      const dataR = data[i] || 0; // Red
+      const dataG = data[i + 1] || 0; // Green
+      const dataB = data[i + 2] || 0; // Blue
+      const dataA = data[i + 3] || 0; // Alpha
 
-      if (dataR === r && dataG === g && dataB === b && dataA !== 0) {
+      let isPixelVisible = (dataA !== 0);
+      let isLookupColor = (dataR === red && dataG === green && dataB === blue);
+      if (isPixelVisible && isLookupColor) {
         isTouching = true;
         break;
       }
@@ -376,7 +386,7 @@ class ImageSprite {
       return ret;
     }
 
-    code = validationCheck(code);
+    code = validationCheck(this.code + "\n" + code);
     console.log(code);
     console.log("in executeJS");
     this.printProperties();
