@@ -476,20 +476,19 @@
 
     // block을 Javascript 코드로 변환하고, 이를 실행시킨다.
     function toJSCode() {
-        var jsCode = Blockly["JavaScript"].workspaceToCode(workspace);
-        canvas.clear();
-        objectsOfSprites[currentSprite].jsCode = jsCode;
-        objectsOfSprites[currentSprite].printProperties()
-
-        console.log(objectsOfSprites[currentSprite].jsCode);
-        objectsOfSprites[currentSprite].draw();
-
-        //objectsOfSprites[currentSprite].executeJS(jsCode);
-        // objectsOfSprites[currentSprite].printProperties()
-
-        // 기존 코드
-        /*eval(output.value);
-        cat.draw();*/
+      let output = document.getElementById('importExport');
+      output.value = Blockly["JavaScript"].workspaceToCode(workspace);
+      //canvas.clear();
+      //alert(output.value);
+      //objectsOfSprites[currentSprite].jsCode = output.value;
+      manager.getCurrentSprite().printProperties();
+      // objectsOfSprites[currentSprite].printProperties();
+      manager.getCurrentSprite().executeJS(output.value);
+      // objectsOfSprites[currentSprite].executeJS(output.value);
+      //console.log(objectsOfSprites[currentSprite].jsCode);
+      //objectsOfSprites[currentSprite].printProperties()
+      //objectsOfSprites[currentSprite].draw();
+      console.log(currentSprite);
     }
 
     function toCodeMain() {
