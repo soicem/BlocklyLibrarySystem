@@ -54,6 +54,7 @@
   <script src="../generators/javascript/sprites/sensing.js"></script>
   <script src="../generators/javascript/sprites/sounds.js"></script>
   <script src="blocks/test_blocks.js"></script>
+  <script src="sprite/paint_editor.js"></script>
   <link rel="stylesheet" href="playground_css.css">
   <script>
     'use strict';
@@ -710,10 +711,11 @@
 </div>
 <!--- Sprite Tab ---->
 <div id="sprite">
-    <script src="sprite/paint_editor.js"></script>
-    <div id="spriteCanvas_container">
-      <canvas id="spriteCanvas"></canvas>
-    </div>
+
+  <div id="spriteCanvas_container">
+    <canvas id="spriteCanvas" width="500" height="500"></canvas>
+  </div>
+  <input type="button" value="파일 저장">
 </div>
 <!----- Content ----->
 <div id="content">
@@ -881,7 +883,7 @@
   </div>
   <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
   <input type="file" id="stageChooser" multiple size="50" onchange="stageChooser()">
-  <div id="gallary_owner">
+  <div id="gallery_owner">
     <div class="gallery">
       <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100"
            height="100">
@@ -943,12 +945,13 @@
       <textarea id="importExport" style="width: 100%; height: 20%"
                 onchange="taChange();" onkeyup="taChange()"></textarea>
     </p>
-
+<!--
     <p>
       Stress test: &nbsp;
       <input type="button" value="Airstrike!" onclick="airstrike(100)">
       <input type="button" value="Spaghetti!" onclick="spaghetti(8)">
     </p>
+-->
     <p>
       Log events: &nbsp;
       <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
