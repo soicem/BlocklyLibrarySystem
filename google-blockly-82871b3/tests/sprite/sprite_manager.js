@@ -61,8 +61,8 @@ class SpriteManager {
     const canvasHeight = 500;
     let baseCanvas = new Canvas(canvasContainer, spriteName,
         canvasOrder, canvasWidth, canvasHeight);
-    let spriteWidth = 25;
-    let spriteHeight = 25;
+    let spriteWidth = 47;
+    let spriteHeight = 47;
     let spriteX = canvasWidth / 2 - spriteWidth / 2;
     let spriteY = canvasHeight / 2 - spriteHeight / 2;
     if (isStage) {
