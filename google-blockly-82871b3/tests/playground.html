@@ -391,7 +391,7 @@
     }
 
     function setSpriteXML() {
-      var first_value = Object.keys(manager.spritesXml)[1];
+      var first_value = Object.keys(manager.spritesXml)[0];
 
       var output = document.getElementById('importExport');
       output.value = manager.spritesXml[first_value];
@@ -728,8 +728,8 @@
       // manager.getCurrentSprite().height = 20;
       // manager.getCurrentSprite().draw();
       manager.addSpriteAndSelect("aww-cat.png");
-      manager.getCurrentSprite().width = 47;
-      manager.getCurrentSprite().height = 47;
+      manager.getCurrentSprite().width = 22;
+      manager.getCurrentSprite().height = 22;
       // manager.getCurrentSprite().y -= 1;
       manager.getCurrentSprite().draw();
 

@@ -386,7 +386,7 @@ class ImageSprite {
       return ret;
     }
 
-    code = validationCheck(code);
+    code = validationCheck(this.code + "\n" + code);
     console.log(code);
     console.log("in executeJS");
     this.printProperties();
