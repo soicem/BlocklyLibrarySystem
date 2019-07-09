@@ -52,6 +52,7 @@ canvas {
 
 #canvasBlock {
   height: 500px;
+  background-color: white;
 }
 
 #canvases {
@@ -151,6 +152,7 @@ canvas {
   width: 500px;
   background-color: #e9f1fc;
   padding: 10px;
+  overflow: scroll;
 }
 
 
