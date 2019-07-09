@@ -729,28 +729,8 @@
 
     <script>
       let manager = new SpriteManager();
-      // manager.addSpriteAndSelect("black_rect.png");
-      // manager.getCurrentSprite().x -= 5;
-      // manager.getCurrentSprite().y -= 5;
-      // manager.getCurrentSprite().width = 20;
-      // manager.getCurrentSprite().height = 20;
-      // manager.getCurrentSprite().draw();
       manager.addSpriteAndSelect("aww-cat.png");
-      manager.getCurrentSprite().width = 22;
-      manager.getCurrentSprite().height = 22;
-      // manager.getCurrentSprite().y -= 1;
       manager.getCurrentSprite().draw();
-
-      // let canvas = new Canvas("canvases", "aww-cat.png", 1, 500, 300);
-      // let canvas2 = new Canvas("canvases", "img_forest.jpg", 0, 500, 300);
-      //
-      // // 기본 sprite를 배치한다.
-      // objectsOfSprites["aww-cat.png"] = new ImageSprite(canvas, "aww-cat.png", 10, 10, 50, 50, 0);
-      // objectsOfSprites["aww-cat.png"].draw();
-      // objectsOfSprites["img_forest.jpg"] = new ImageSprite(canvas2, "img_forest.jpg", 0, 0, 50, 50, 0);
-      // objectsOfSprites["img_forest.jpg"].draw();
-      // //objectsOfSprites["aww-cat.png"];
-      // currentSprite = "aww-cat.png";
 
       function spriteChooser() {
         var name;
@@ -881,9 +861,9 @@
 
     </script>
   </div>
-  <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
-  <input type="file" id="stageChooser" multiple size="50" onchange="stageChooser()">
-  <div id="gallery_owner">
+  <input type="file" id="spriteChooser" accept="image/*" multiple size="50" onchange="spriteChooser()">
+  <input type="file" id="stageChooser" accept="image/*" multiple size="50" onchange="stageChooser()">
+  <div id="gallary_owner">
     <div class="gallery">
       <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100"
            height="100">
@@ -919,7 +899,7 @@
     </select>
     <p>
       <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()"
-             accept="application/zip">
+        accept=".blk, .zip">
     <div id="buttonCollection">
       <ul>
         <li1><a id="ToolboxCollapse" onclick="myImport()">Toolbox Collapse</a></li1>
