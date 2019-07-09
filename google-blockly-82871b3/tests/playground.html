@@ -873,8 +873,8 @@
 
     </script>
   </div>
-  <input type="file" id="spriteChooser" multiple size="50" onchange="spriteChooser()">
-  <input type="file" id="stageChooser" multiple size="50" onchange="stageChooser()">
+  <input type="file" id="spriteChooser" accept="image/*" multiple size="50" onchange="spriteChooser()">
+  <input type="file" id="stageChooser" accept="image/*" multiple size="50" onchange="stageChooser()">
   <div id="gallary_owner">
     <div class="gallery">
       <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100"
@@ -922,7 +922,7 @@
       <input type="button" value="Export to XML" onclick="toXml()">
 
       <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()"
-             accept="application/zip">
+             accept=".blk, .zip">
       &nbsp;
       <input type="button" value="Import from XML" onclick="fromXml()" id="import">
       &nbsp
