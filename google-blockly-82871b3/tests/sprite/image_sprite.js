@@ -246,7 +246,7 @@ class ImageSprite {
     let width_ = this.width;
     let height_ = this.height;
     //this.timerCnt++;
-    this.commands.push("this._moveSteps(" + step + ")");
+    this.commands.push("this_._moveSteps(" + step + ")");
     //this._update();
     //setTimeout(_update, this.timerCnt * 5);
   }
@@ -266,6 +266,8 @@ class ImageSprite {
   _setDirection(degree) {
     this.direction = degree;
     this.nextCommand = this.commands.shift();
+
+    let this_ = this;
     eval(this.nextCommand);
   }
 
