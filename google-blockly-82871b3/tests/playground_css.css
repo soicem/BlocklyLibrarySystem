@@ -29,7 +29,7 @@ li {
   float: left;
 }
 
-li a, .dropbtn {
+li a {
   display: inline-block;
   color: white;
   text-align: center;
@@ -37,12 +37,35 @@ li a, .dropbtn {
   text-decoration: none;
 }
 
-li a:hover, .dropdown:hover .dropbtn {
+li a:hover {
   background-color: green;
 }
 
-li.dropdown {
-  display: inline-block;
+div ul{
+  width: 100%;
+}
+
+li1 {
+  float: left;
+  width: 50%;
+}
+
+li1 a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 7px 0px;
+  text-decoration: none;
+  border: 1px solid white;
+  width:100%
+}
+
+li1 a:hover {
+  background-color: green;
+}
+
+#buttonCollection {
+  width:100%;
 }
 
 canvas {
@@ -132,6 +155,10 @@ canvas {
   background-color: #e9f1fc;
   padding: 20px;
   overflow: auto;
+}
+
+#gallery_owner {
+  height: 100px;
 }
 
 div.gallery {
