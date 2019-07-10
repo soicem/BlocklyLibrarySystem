@@ -678,6 +678,26 @@
       }
     }*/
     //-------------------------------------------------------
+    function loadImage(){
+
+      //이미지 객체 생성
+      var imgClo = new Image();
+
+      //페이지 로드후 이미지가 로드 되었을 때 이미지 출력
+      imgClo.addEventListener('load', function(){
+        //로드된 이미지를 캔버스에 출력
+        var ctx = document.getElementById('spriteCanvas').getContext("2d");
+
+        //canvas.drawImage() 함수를 사용하여 이미지 출력
+        //drawImage ( image sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+        ctx.drawImage( imgClo , 250, 250);
+
+      },false);
+
+      //이미지 경로 설정
+      imgClo.src="aww-cat.png";
+
+    }
   </script>
 
 
@@ -716,7 +736,7 @@
   <div id="spriteCanvas_container">
     <canvas id="spriteCanvas" width="500" height="500"></canvas>
   </div>
-  <input type="button" value="파일 저장">
+  <input type="button" value="파일 불러오기" onclick="loadImage()">
 </div>
 <!----- Content ----->
 <div id="content">
