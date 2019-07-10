@@ -12,7 +12,8 @@ h1 {
   float: left;
   font-weight: bold;
   font-size: 140%;
-  background-color: white;
+  color: white;
+  background-color: #333;
   padding: 3px;
   margin: 8px;
 }
