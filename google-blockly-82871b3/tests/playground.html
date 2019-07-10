@@ -259,6 +259,7 @@
     }
 
     function myImport() {
+      console.log("myImport");
       let input = document.getElementById("importExport");
       // convert function xml to library xml
       let convertedXml = libFuncToMutationCode(input.value);
@@ -542,7 +543,7 @@
       } catch (e) {
         valid = false;
       }
-      document.getElementById('import').disabled = !valid;
+      document.getElementById('importExport').disabled = !valid;
     }
 
     function logEvents(state) {
@@ -902,8 +903,8 @@
         accept=".blk, .zip">
     <div id="buttonCollection">
       <ul>
-        <li1><a id="ToolboxCollapse" onclick="myImport()">Toolbox Collapse</a></li1>
-        <li1><a id="Myimport" onclick="collapseToolbox()">My import</a></li1>
+        <li1><a id="Myimport" onclick="myImport()">My import</a></li1>
+        <li1><a id="ToolboxCollapse" onclick="collapseToolbox()">Toolbox Collapse</a></li1>
       </ul>
       <ul>
         <li1><a id="ExportXML" onclick="toXml()">Export to XML</a></li1>
