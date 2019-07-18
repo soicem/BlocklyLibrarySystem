@@ -57,7 +57,8 @@
   <script src="sprite/paint_editor.js"></script>
   <link rel="stylesheet" href="playground_css.css">
 
-  <script src="../JSInterpreter/acorn_interpreter.js"></script>
+  <script src="../JSInterpreter/acorn.js"></script>
+  <script src="../JSInterpreter/interpreter.js"></script>
 
   <script>
     'use strict';
@@ -116,7 +117,7 @@
                   scaleSpeed: 1.1
                 }
           });
-
+      // block이 바뀔 때마다 최신코드 생성
       blockWorkspace.addChangeListener(function(event) {
         if (!(event instanceof Blockly.Events.Ui)) {
           // Something changed. Parser needs to be reloaded.
@@ -508,12 +509,18 @@
     }
 
     function initApi(interpreter, scope) {
+      interpreter.setProperty(scope, 'moveSteps',
+              interpreter.createNativeFunction(function(text) {
+                text = text ? text.toString() : '';
+                manager.getCurrentSprite()._moveSteps(parseInt(text));
+
+              }));
+
       // Add an API function for the alert() block, generated for "text_print" blocks.
       interpreter.setProperty(scope, 'alert',
               interpreter.createNativeFunction(function(text) {
                 text = text ? text.toString() : '';
                 var output = document.getElementById('importExport');
-
                 output.value += '\n' + text;
               }));
 
@@ -557,9 +564,7 @@
       Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
       Blockly.JavaScript.addReservedWords('highlightBlock');
       latestCode = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
-      //resetStepUi(true);
     }
-
     function stepCode() {
       if (!myInterpreter) {
         // First statement of this code.
@@ -579,9 +584,11 @@
         return;
       }
       highlightPause = false;
+
       do {
         try {
           var hasMoreCode = myInterpreter.step();
+          //console.log(myInterpreter.T.test);
         } finally {
           if (!hasMoreCode) {
             // Program complete, no more code to execute.

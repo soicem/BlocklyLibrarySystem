@@ -210,11 +210,7 @@ class ImageSprite {
     _update()
     .then(
         function (result) {
-          if (this_.nextCommand != "") {
-            console.log("next command");
-            console.log(this_.nextCommand);
-            eval(this_.nextCommand);
-          }
+
         }
     );
     //setTimeout(_update, this.timerCnt * 5);
@@ -401,12 +397,6 @@ class ImageSprite {
     this.x = this.initX;
     this.y = this.initY;
     eval(this.nextCommand);
-    //this.commands = [];
-    //this.moveSteps(10);
-
-    //this.printProperties();
-    //console.log(this.image);
-    //this.draw();
   }
 
   clear() {
