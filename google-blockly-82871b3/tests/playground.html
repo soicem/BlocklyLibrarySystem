@@ -56,9 +56,12 @@
   <script src="blocks/test_blocks.js"></script>
   <script src="sprite/paint_editor.js"></script>
   <link rel="stylesheet" href="playground_css.css">
+
+  <script src="../JSInterpreter/acorn_interpreter.js"></script>
+
   <script>
     'use strict';
-    var workspace = null;
+    var blockWorkspace = null;
     var toolbox = null;
 
     function start() {
@@ -81,7 +84,7 @@
       var side = match ? match[1] : 'start';
       document.forms.options.elements.side.value = side;
       // Create main workspace.
-      workspace = Blockly.inject('blocklyDiv',
+      blockWorkspace = Blockly.inject('blocklyDiv',
           {
             comments: true,
             collapse: true,
@@ -113,6 +116,13 @@
                   scaleSpeed: 1.1
                 }
           });
+
+      blockWorkspace.addChangeListener(function(event) {
+        if (!(event instanceof Blockly.Events.Ui)) {
+          // Something changed. Parser needs to be reloaded.
+          generateCodeAndLoadIntoInterpreter();
+        }
+      });
       addToolboxButtonCallbacks();
       // Restore previously displayed text.
       if (sessionStorage) {
@@ -131,9 +141,9 @@
     }
 
     function addToolboxButtonCallbacks() {
-      workspace.registerButtonCallback(
+      blockWorkspace.registerButtonCallback(
           'addDynamicOption', Blockly.TestBlocks.addDynamicDropdownOption_);
-      workspace.registerButtonCallback(
+      blockWorkspace.registerButtonCallback(
           'removeDynamicOption', Blockly.TestBlocks.removeDynamicDropdownOption_);
     }
 
@@ -283,11 +293,11 @@
       }
 
       collapseToolbox();
-      workspace.updateToolbox(document.getElementById("toolbox-categories"));
+      blockWorkspace.updateToolbox(document.getElementById("toolbox-categories"));
     }
 
     function collapseToolbox() {
-      let tree = workspace.getToolbox().tree_;
+      let tree = blockWorkspace.getToolbox().tree_;
 
       if (tree) {
         tree.setSelectedItem(null);
@@ -295,8 +305,9 @@
     }
 
     function toXml() {
+      var xml = Blockly.Xml.workspaceToDom(blockWorkspace);
       var output = document.getElementById('importExport');
-      var xml = Blockly.Xml.workspaceToDom(workspace);
+
       output.value = Blockly.Xml.domToPrettyText(xml);
       output.focus();
       output.select();
@@ -394,8 +405,8 @@
 
     function setSpriteXML() {
       var first_value = Object.keys(manager.spritesXml)[0];
-
       var output = document.getElementById('importExport');
+
       output.value = manager.spritesXml[first_value];
       taChange();
     }
@@ -412,7 +423,7 @@
     }
 
     function CurrentSpritesXML() {
-      var xml = Blockly.Xml.workspaceToDom(workspace);
+      var xml = Blockly.Xml.workspaceToDom(blockWorkspace);
       var XMLtext = Blockly.Xml.domToPrettyText(xml);
       manager.spritesXml[manager.currentSpriteName] = XMLtext;
     }
@@ -430,7 +441,7 @@
     function fromXml() {
       var input = document.getElementById('importExport');
       var xml = Blockly.Xml.textToDom(input.value);
-      Blockly.Xml.domToWorkspace(xml, workspace);
+      Blockly.Xml.domToWorkspace(xml, blockWorkspace);
       taChange();
     }
 
@@ -463,9 +474,9 @@
         manager.sprites[name].draw();
 
         DOM = Blockly.Xml.textToDom(manager.spritesXml[name]);
-        workspace.clear();
-        Blockly.Xml.domToWorkspace(DOM, workspace);
-        result = Blockly['JavaScript'].workspaceToCode(workspace);
+        blockWorkspace.clear();
+        Blockly.Xml.domToWorkspace(DOM, blockWorkspace);
+        result = Blockly['JavaScript'].workspaceToCode(blockWorkspace);
 
         manager.sprites[name].jsCode = result;
         // canvas.clear();
@@ -475,10 +486,133 @@
       })
     }
 
+
+    var myInterpreter = null;
+
+    function delayWraper() {
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          var isFalse = stepCode();
+          resolve(isFalse);
+        }, 1000);
+      });
+    }
+    function goStep(){
+      delayWraper()
+              .then(
+                      function (result) {
+                        if(result != false)
+                          goStep();
+                      }
+              );
+    }
+
+    function initApi(interpreter, scope) {
+      // Add an API function for the alert() block, generated for "text_print" blocks.
+      interpreter.setProperty(scope, 'alert',
+              interpreter.createNativeFunction(function(text) {
+                text = text ? text.toString() : '';
+                var output = document.getElementById('importExport');
+
+                output.value += '\n' + text;
+              }));
+
+      // Add an API function for the prompt() block.
+      var wrapper = function(text) {
+        text = text ? text.toString() : '';
+        return interpreter.createPrimitive(prompt(text));
+      };
+      interpreter.setProperty(scope, 'prompt',
+              interpreter.createNativeFunction(wrapper));
+
+      // Add an API function for highlighting blocks.
+      var wrapper = function(id) {
+        id = id ? id.toString() : '';
+        return interpreter.createPrimitive(highlightBlock(id));
+      };
+      interpreter.setProperty(scope, 'highlightBlock',
+              interpreter.createNativeFunction(wrapper));
+    }
+
+    var highlightPause = false;
+    var latestCode = '';
+
+    function highlightBlock(id) {
+      blockWorkspace.highlightBlock(id);
+      highlightPause = true;
+    }
+
+    function resetStepUi(clearOutput) {
+      blockWorkspace.highlightBlock(null);
+      highlightPause = false;
+
+      if (clearOutput) {
+        var output = document.getElementById('importExport');
+        output.value = 'Program output:\n=================';
+      }
+    }
+
+    function generateCodeAndLoadIntoInterpreter() {
+      // Generate JavaScript code and parse it.
+      Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
+      Blockly.JavaScript.addReservedWords('highlightBlock');
+      latestCode = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
+      //resetStepUi(true);
+    }
+
+    function stepCode() {
+      if (!myInterpreter) {
+        // First statement of this code.
+        // Clear the program output.
+        console.log(latestCode);
+        resetStepUi(true);
+        myInterpreter = new Interpreter(latestCode, initApi);
+
+        // And then show generated code in an alert.
+        // In a timeout to allow the outputArea.value to reset first.
+        /*setTimeout(function() {
+          alert('Ready to execute the following code\n' +
+                  '===================================\n' + latestCode);
+          highlightPause = true;
+          stepCode();
+        }, 1);*/
+        return;
+      }
+      highlightPause = false;
+      do {
+        try {
+          var hasMoreCode = myInterpreter.step();
+        } finally {
+          if (!hasMoreCode) {
+            // Program complete, no more code to execute.
+            var output = document.getElementById('importExport');
+
+            output.value += '\n\n<< Program complete >>';
+
+            myInterpreter = null;
+            resetStepUi(false);
+
+            // Cool down, to discourage accidentally restarting the program.
+            //stepButton.disabled = 'disabled';
+            setTimeout(function() {
+              //stepButton.disabled = '';
+            }, 2000);
+            return false;
+          }
+        }
+        // Keep executing until a highlight statement is reached,
+        // or the code completes or errors.
+      } while (hasMoreCode && !highlightPause);
+    }
+
+    // Load the interpreter now, and upon future changes.
+    //generateCodeAndLoadIntoInterpreter();
+
+
     // block을 Javascript 코드로 변환하고, 이를 실행시킨다.
     function toJSCode() {
       let output = document.getElementById('importExport');
-      output.value = Blockly["JavaScript"].workspaceToCode(workspace);
+      output.value = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
       //canvas.clear();
       //alert(output.value);
       //objectsOfSprites[currentSprite].jsCode = output.value;
@@ -494,8 +628,7 @@
 
     function toCodeMain() {
       //var lang = document.getElementById('mainLang');
-      var output = document.getElementById('importExport');
-      output.value = Blockly["Python"].workspaceToCode(workspace);
+      output.value = Blockly["Python"].workspaceToCode(blockWorkspace);
       var libFunction = samplePy();
       var pyCode = output.value;
       pyCode = "from testFunction import *\n" + pyCode;
@@ -513,7 +646,6 @@
 
     function toCodeLib() {
       var lang = document.getElementById('libLang');
-      var output = document.getElementById('importExport_');
       output.value = Blockly[lang.value].workspaceToCode(libraryspace);
       var libFunction = samplePy();
       var pyCode = output.value;
@@ -543,7 +675,7 @@
       } catch (e) {
         valid = false;
       }
-      document.getElementById('importExport').disabled = !valid;
+      //document.getElementById('importExport').disabled = !valid;
     }
 
     function logEvents(state) {
@@ -553,9 +685,9 @@
         sessionStorage.setItem('logEvents', Number(state));
       }
       if (state) {
-        workspace.addChangeListener(logger);
+        blockWorkspace.addChangeListener(logger);
       } else {
-        workspace.removeChangeListener(logger);
+        blockWorkspace.removeChangeListener(logger);
       }
     }
 
@@ -572,7 +704,7 @@
       }
       for (var i = 0; i < n; i++) {
         var prototype = prototypes[Math.floor(Math.random() * prototypes.length)];
-        var block = workspace.newBlock(prototype);
+        var block = blockWorkspace.newBlock(prototype);
         block.initSvg();
         block.getSvgRoot().setAttribute('transform', 'translate(' +
             Math.round(Math.random() * 450 + 40) + ', ' +
@@ -590,7 +722,7 @@
       xml = '<xml xmlns="http://www.w3.org/1999/xhtml">' + xml + '</xml>';
       var dom = Blockly.Xml.textToDom(xml);
       console.time('Spaghetti domToWorkspace');
-      Blockly.Xml.domToWorkspace(dom, workspace);
+      Blockly.Xml.domToWorkspace(dom, blockWorkspace);
       console.timeEnd('Spaghetti domToWorkspace');
     }
 
@@ -658,26 +790,6 @@
       document.getElementById(tab).style.backgroundColor = 'green';
     }
 
-    // 리소스 움직임용 함수
-    /*function myMove() {
-      var resImage = document.getElementById("myAnimation");
-      var resContainer = document.getElementById("myContainer");
-      var top = resImage.offsetTop;
-      var left = resImage.offsetLeft;
-      //var elem = document.getElementById("myAnimation");
-      var pos = 0;
-      var id = setInterval(frame, 10);
-      function frame() {
-        if (pos == 400) {
-          clearInterval(id);
-        } else {
-          pos++;
-          resImage.style.top = top  + pos + 'px';
-          resImage.style.left = left + pos +'px';
-        }
-      }
-    }*/
-    //-------------------------------------------------------
     function loadImage(){
 
       //이미지 객체 생성
@@ -860,7 +972,7 @@
         console.log(manager.spritesXml[nameOfSprite]);
 
         if (manager.currentSpriteName !== nameOfSprite) {
-          var xml = Blockly.Xml.workspaceToDom(workspace);
+          var xml = Blockly.Xml.workspaceToDom(blockWorkspace);
           var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
 
           manager.spritesXml[manager.currentSpriteName] = prettyXMLText;
@@ -868,11 +980,11 @@
           //taChange();
 
           if (manager.spritesXml[nameOfSprite] === "") {
-            workspace.clear();
+            blockWorkspace.clear();
           } else {
             var nextXml = Blockly.Xml.textToDom(manager.spritesXml[nameOfSprite]);
-            workspace.clear();
-            Blockly.Xml.domToWorkspace(nextXml, workspace);
+            blockWorkspace.clear();
+            Blockly.Xml.domToWorkspace(nextXml, blockWorkspace);
             taChange();
           }
           manager.currentSpriteName = nameOfSprite;
@@ -931,7 +1043,7 @@
         <li1><a id="ImportXML" onclick="fromXml()">Import from XML</a></li1>
       </ul>
       <ul>
-        <li1><a id="toJavaScript" onclick="toJSCode()">To JavaScript</a></li1>
+        <li1><a id="toJavaScript" onclick="goStep()">To JavaScript</a></li1>
         <li1><a id="toCode" onclick="toCodeMain()">To Python</a></li1>
         <!--<li1><select id="mainLang">
             <option value="default">Select</option>
