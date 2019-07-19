@@ -54,7 +54,7 @@
   <script src="../generators/javascript/sprites/sensing.js"></script>
   <script src="../generators/javascript/sprites/sounds.js"></script>
   <script src="blocks/test_blocks.js"></script>
-  <script src="sprite/paint_editor.js"></script>
+  <script src="src/paint_editor.js"></script>
   <link rel="stylesheet" href="playground_css.css">
   <script>
     'use strict';
@@ -258,6 +258,16 @@
       return result;
     }
 
+    function test() {
+      function aa(){
+        const s = myCanvas.getCurrentSprite();
+        s.turnLeft(15);
+        s.moveSteps(10);
+      }
+
+      setInterval(aa, 50);
+    }
+
     function myImport() {
       console.log("myImport");
       let input = document.getElementById("importExport");
@@ -331,29 +341,29 @@
                 file.async('base64')
                 .then(function (data) {
                   if ((picture !== "") && (picture !== null) && (picture !== undefined)) {
-                    manager.addSprite(picture, data);
-                    manager.getSprite(picture).draw();
+                    myCanvas.addSprite(picture, data);
+                    // myCanvas.getSpriteByName(picture).draw();
                     addSprite(picture, data);
-                    manager.currentSpriteName = picture;
+                    myCanvas.setCurrentSpriteName(picture);
                   }
                 });
               } else if ((file.name).indexOf(".xml") !== -1) { //xml
                 var xmlName = file.name.substring(0, (file.name).indexOf(".xml"));
                 file.async('text')
                 .then(function (data) {
-                  manager.spritesXml[xmlName] = data;
+                  myCanvas.getSpriteByName(xmlName).setXml(data);
                   setSpriteXML();
                 })
               } else if ((file.name.indexOf('.js') !== -1) && (file.name.indexOf('.json') === -1)) {
                 var jsName = file.name.substring(0, (file.name).indexOf(".js"));
                 file.async('text')
                 .then(function (data) {
-                  if (manager.sprites[jsName] === undefined) {
+                  if (myCanvas.getSpriteByName(jsName) === undefined) {
                     if (jsName !== "") {
                       tmpJS[jsName] = data;
                     }
                   } else {
-                    manager.sprites[jsName].jsCode = data;
+                    myCanvas.getSpriteByName(jsName).setJsCode(data);
                   }
                 })
               }
@@ -366,7 +376,7 @@
               if (isEmpty > 0) {
                 matching = Object.keys(tmpJS);
                 matching.forEach(function (data) {
-                  manager.sprites[data].jsCode = tmpJS[data];
+                  myCanvas.getSpriteByName(data).setJsCode(tmpJS[data]);
                 })
               }
             }, 100);
@@ -393,36 +403,36 @@
     }
 
     function setSpriteXML() {
-      var first_value = Object.keys(manager.spritesXml)[0];
+      var first_value = Object.keys(myCanvas.getSprites())[0];
 
       var output = document.getElementById('importExport');
-      output.value = manager.spritesXml[first_value];
+      output.value = myCanvas.getSpriteByName(first_value).getXml();
       taChange();
     }
 
     //export
     function SpriteXMLtoBLK() {
-      var arraySprite = Object.getOwnPropertyNames(manager.spritesXml);
+      var arraySprite = Object.getOwnPropertyNames(myCanvas.getSprites());
 
       arraySprite.forEach((name) => {
-        console.log(name + ": " + manager.spritesXml[name]);
-        FileToBLK(name + ".xml", manager.spritesXml[name], false);
+        console.log(name + ": " + myCanvas.getSpriteByName(name).getXml());
+        FileToBLK(name + ".xml", myCanvas.getSpriteByName(name).getXml(), false);
       });
 
     }
 
     function CurrentSpritesXML() {
       var xml = Blockly.Xml.workspaceToDom(workspace);
-      var XMLtext = Blockly.Xml.domToPrettyText(xml);
-      manager.spritesXml[manager.currentSpriteName] = XMLtext;
+      var XmlText = Blockly.Xml.domToPrettyText(xml);
+      myCanvas.getCurrentSprite().setXml(XmlText);
     }
 
     function ImgToFile() {
-      var arraySprite = Object.getOwnPropertyNames(manager.spritesImg);
+      var arraySprite = Object.getOwnPropertyNames(myCanvas.getSprites());
 
       arraySprite.forEach((name) => {
         if (name !== "aww-cat.png") {
-          ImgToBLK(name, manager.spritesImg[name]);
+          ImgToBLK(name, myCanvas.getSpriteByName(name).getImageSource());
         }
       });
     }
@@ -456,18 +466,18 @@
     */
 
     function jsFile() {
-      var arraySprite = Object.getOwnPropertyNames(manager.sprites);
+      var arraySprite = Object.getOwnPropertyNames(myCanvas.getSprites());
       var result, DOM;
 
       arraySprite.forEach(function (name) {
-        manager.sprites[name].draw();
+        // myCanvas.getSpriteByName(name).draw();
 
-        DOM = Blockly.Xml.textToDom(manager.spritesXml[name]);
+        DOM = Blockly.Xml.textToDom(myCanvas.getSpriteByName(name).getXml());
         workspace.clear();
         Blockly.Xml.domToWorkspace(DOM, workspace);
         result = Blockly['JavaScript'].workspaceToCode(workspace);
 
-        manager.sprites[name].jsCode = result;
+        myCanvas.getSpriteByName(name).jsCode = result;
         // canvas.clear();
 
         console.log(name + ' : ' + result);
@@ -482,14 +492,14 @@
       //canvas.clear();
       //alert(output.value);
       //objectsOfSprites[currentSprite].jsCode = output.value;
-      manager.getCurrentSprite().printProperties();
+      myCanvas.getCurrentSprite().printProperties();
       // objectsOfSprites[currentSprite].printProperties();
-      manager.getCurrentSprite().executeJS(output.value);
+      myCanvas.getCurrentSprite().executeJS(output.value);
       // objectsOfSprites[currentSprite].executeJS(output.value);
       //console.log(objectsOfSprites[currentSprite].jsCode);
       //objectsOfSprites[currentSprite].printProperties()
       //objectsOfSprites[currentSprite].draw();
-      console.log(manager.getCurrentSprite());
+      console.log(myCanvas.getCurrentSprite());
     }
 
     function toCodeMain() {
@@ -734,24 +744,35 @@
 <div id="sprite">
 
   <div id="spriteCanvas_container">
-    <canvas id="spriteCanvas" width="500" height="500"></canvas>
+    <canvas id="spriteCanvas"></canvas>
   </div>
   <input type="button" value="파일 불러오기" onclick="loadImage()">
 </div>
 <!----- Content ----->
 <div id="content">
   <div id="canvasBlock">
-    <div id="canvases"></div>
-    <script src="sprite/canvas.js"></script>
-    <script src="sprite/image_sprite.js"></script>
-    <script src="sprite/sprite_manager.js"></script>
-    <script src="sprite/sprite_exceptions.js"></script>
-    <script src="sprite/speech_bubble.js"></script>
+    <div id="canvases">
+      <canvas id="canvas"></canvas>
+    </div>
+    <script src="src/animation/animation_updater.js"></script>
+    <script src="src/canvas/canvas.js"></script>
+    <script src="src/canvas/sprite.js"></script>
+    <script src="src/canvas/sprite_factory.js"></script>
+    <script src="src/exception/my_exception.js"></script>
+    <script src="src/math/point.js"></script>
+    <script src="src/math/size.js"></script>
+    <script src="src/math/degree.js"></script>
+    <script src="src/math/radian.js"></script>
 
     <script>
-      let manager = new SpriteManager();
-      manager.addSpriteAndSelect("aww-cat.png");
-      manager.getCurrentSprite().draw();
+      let animationUpdater = new AnimationUpdater();
+      let myCanvas = new Canvas(document.getElementById("canvas"), new Size(500, 500));
+
+      myCanvas.addSpriteAndSelect("aww-cat.png");
+
+      animationUpdater.addCallFunction({caller: myCanvas, method: myCanvas.render});
+      animationUpdater.start();
+      // myCanvas.getCurrentSprite().render();
 
       function spriteChooser() {
         var name;
@@ -798,10 +819,9 @@
 
         reader.addEventListener('load', function () {
           // sprite에 대한 canvas 용 objects를 저장한다.
-          manager.addSprite(name, reader.result);
-          manager.getSprite(name).draw();
-          manager.getSprite(name).printProperties();
-
+          myCanvas.addSprite(name, reader.result);
+          // myCanvas.getSpriteByName(name).draw();
+          myCanvas.getSpriteByName(name).printProperties();
         });
 
         if (ImgFile) {
@@ -846,9 +866,9 @@
             '<div class="desc">냥</div>' +
             '</div>';
         document.getElementById("stage_owner").innerHTML += a;
-        manager.addStage(name);
-        manager.getSprite(name).draw();
-        manager.getSprite(name).printProperties();
+        myCanvas.addStage(name);
+        // myCanvas.getSprite(name).draw();
+        myCanvas.getSpriteByName(name).printProperties();
       }
 
       // 현재 진행되던 sprite 변수명 : currentSprite
@@ -857,25 +877,23 @@
       // sprite의 이름을 받아서 workspace에 해당 sprite의 블록을 넣어준다.
       function pictureEvent(nameOfSprite) {
         console.log(nameOfSprite);
-        console.log(manager.spritesXml[nameOfSprite]);
+        console.log(myCanvas.getSpriteByName(nameOfSprite).getXml());
 
-        if (manager.currentSpriteName !== nameOfSprite) {
+        if (myCanvas.getCurrentSpriteName() !== nameOfSprite) {
           var xml = Blockly.Xml.workspaceToDom(workspace);
           var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
 
-          manager.spritesXml[manager.currentSpriteName] = prettyXMLText;
+          myCanvas.getCurrentSprite().setXml(prettyXMLText);
 
           //taChange();
 
-          if (manager.spritesXml[nameOfSprite] === "") {
-            workspace.clear();
-          } else {
-            var nextXml = Blockly.Xml.textToDom(manager.spritesXml[nameOfSprite]);
-            workspace.clear();
+          workspace.clear();
+          if (myCanvas.getSpriteByName(nameOfSprite).getXml() !== "") {
+            var nextXml = Blockly.Xml.textToDom(myCanvas.getSpriteByName(nameOfSprite).getXml());
             Blockly.Xml.domToWorkspace(nextXml, workspace);
-            taChange();
           }
-          manager.currentSpriteName = nameOfSprite;
+
+          myCanvas.setCurrentSpriteName(nameOfSprite);
           taChange();
         }
       }
@@ -924,7 +942,7 @@
     <div id="buttonCollection">
       <ul>
         <li1><a id="Myimport" onclick="myImport()">My import</a></li1>
-        <li1><a id="ToolboxCollapse" onclick="collapseToolbox()">Toolbox Collapse</a></li1>
+        <li1><a id="ToolboxCollapse" onclick="test()">test</a></li1>
       </ul>
       <ul>
         <li1><a id="ExportXML" onclick="toXml()">Export to XML</a></li1>
