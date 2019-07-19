@@ -495,7 +495,7 @@
         setTimeout(function () {
           var isFalse = stepCode();
           resolve(isFalse);
-        }, 1000);
+        }, 1);
       });
     }
     function goStep(){
@@ -513,6 +513,45 @@
               interpreter.createNativeFunction(function(text) {
                 text = text ? text.toString() : '';
                 manager.getCurrentSprite()._moveSteps(parseInt(text));
+
+              }));
+
+      interpreter.setProperty(scope, 'say',
+              interpreter.createNativeFunction(function(text) {
+                text = text ? text.toString() : '';
+                manager.getCurrentSprite().say(text);
+              }));
+
+      interpreter.setProperty(scope, 'setDirection',
+              interpreter.createNativeFunction(function(text) {
+                text = text ? text.toString() : '';
+                manager.getCurrentSprite().setDirection(text);
+              }));
+
+      interpreter.setProperty(scope, 'isTouchingColorHex',
+              interpreter.createNativeFunction(function(hexValue) {
+                hexValue = hexValue ? hexValue.toString() : '';
+                return manager.getCurrentSprite().isTouchingColorHex(hexValue);
+              }));
+
+      interpreter.setProperty(scope, 'sprite_getX',
+              interpreter.createNativeFunction(function() {
+                return manager.getCurrentSprite().x;
+              }));
+
+      interpreter.setProperty(scope, 'sprite_getY',
+              interpreter.createNativeFunction(function() {
+                console.log(manager.getCurrentSprite().y);
+                return manager.getCurrentSprite().y;
+              }));
+
+      interpreter.setProperty(scope, 'setXY',
+              interpreter.createNativeFunction(function(x, y) {
+                //text = text ? text.toString() : '';
+                x = parseInt(x);
+                y = parseInt(y);
+                manager.getCurrentSprite().setXY(x, y);
+                //manager.getCurrentSprite()._moveSteps(parseInt(text));
 
               }));
 
@@ -601,9 +640,6 @@
 
             // Cool down, to discourage accidentally restarting the program.
             //stepButton.disabled = 'disabled';
-            setTimeout(function() {
-              //stepButton.disabled = '';
-            }, 2000);
             return false;
           }
         }
