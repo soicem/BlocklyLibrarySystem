@@ -1,10 +1,10 @@
 class Sprite {
-  constructor(canvas, image, position, size, direction) {
+  constructor(canvas, image, position, size, angle) {
     this.setCanvas(canvas);
     this.setImage(image);
     this.setPosition(position);
     this.setSize(size);
-    this.setDirection(direction);
+    this.setAngle(angle);
 
     this.setJsCode("");
     this.setXml("");
@@ -50,11 +50,11 @@ class Sprite {
     this._size = size;
   }
 
-  getDirection() {
+  getAngle() {
     return this._direction;
   }
 
-  setDirection(direction) {
+  setAngle(direction) {
     this._direction = direction;
   }
 
@@ -107,24 +107,25 @@ class Sprite {
 
   render() {
     this.getCanvas().getContext().drawImage(
-        this.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight()
+        this.getImage(), this.getX(), this.getY(), this.getWidth(),
+        this.getHeight()
     );
   }
 
   moveSteps(step) {
-    this.getPosition().offsetByRadian(this.getDirection().toRadian(), step);
+    this.getPosition().offsetByAngle(this.getAngle(), step);
   }
 
   turnRight(degree) {
-    this.getDirection().plus(degree);
+    this.getAngle().plus(degree);
   }
 
   turnLeft(degree) {
-    this.getDirection().minus(degree);
+    this.getAngle().minus(degree);
   }
 
   changeDirection(degree) {
-    this.getDirection().setRadian(degree);
+    this.setAngle(new Degree(degree));
   }
 
   positionRandomly() {
@@ -142,4 +143,26 @@ class Sprite {
     //ToDo
   }
 
+  isTouchingColor(rgb) {
+    return this.getCanvas().isOverlayingColor(this, rgb);
+  }
+
+  isTouchingColorHex(hex) {
+    function hexToRgb(hex) {
+      let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+      return result ? {
+        red: parseInt(result[1], 16),
+        green: parseInt(result[2], 16),
+        blue: parseInt(result[3], 16)
+      } : null;
+    }
+
+    let rgb = hexToRgb(hex);
+    if (rgb) {
+      return this.isTouchingColor(rgb);
+    } else {
+      return false;
+    }
+  }
 }

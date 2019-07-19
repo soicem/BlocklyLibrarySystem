@@ -129,62 +129,72 @@ class Canvas {
     this.getSpritesOrder().splice(foundAt, 1);
   }
 
-  /**
-   * Returns reduced image data of all layers that are visible in front.
-   *    ignores the image data of sprite that is the base
-   * @param {!ImageSprite} baseSprite The sprite that is base of searching conditions
-   * @return {!Array} The reduced image data from all visible layers
-   *    (1D array of x,y and rgba for each x,y)
-   */
-  getOverlayingDataOf(baseSprite) {
-    let data = []; // data record (passed back to the caller)
+  isOverlayingColor(baseSprite, rgb) {
+    const baseX = baseSprite.getX();
+    const baseY = baseSprite.getY();
+    const baseWidth = baseSprite.getWidth();
+    const baseHeight = baseSprite.getHeight();
+    let canvas = document.createElement('canvas');
+    let context = canvas.getContext('2d');
+    canvas.width = baseWidth;
+    canvas.height = baseHeight;
 
-    const x = baseSprite.x;
-    const y = baseSprite.y;
-    const width = baseSprite.width;
-    const height = baseSprite.height;
-    const totalPixels = width * height;
+    for (let layer = 0; layer < this.getSpritesOrder().length; layer++) {
+      const currentSprite = this.getSpritesOrder()[layer];
 
-    let filled = 0; // used to skip hidden layers when all pixels are found
-
-    // loop through each sprite layers
-    for (let layerIdx = this.getSpritesOrder().length - 1;
-        layerIdx >= 0 && filled < totalPixels;
-        layerIdx--) {
-      let iSprite = this.getSpritesOrder()[layerIdx];
-
-      // skips if it's sprite itself
-      if (iSprite === baseSprite) {
+      if (currentSprite === "") {
         continue;
       }
 
-      let iData = iSprite.canvas.getContext().getImageData(x, y, width,
-          height).data;
+      const currentX = currentSprite.getX();
+      const currentY = currentSprite.getY();
+      const currentWidth = currentSprite.getWidth();
+      const currentHeight = currentSprite.getHeight();
 
-      // loop through each pixels of current selected layer (within base sprite's area)
-      for (let pixelIdx = 0;
-          pixelIdx < iData.length && filled < totalPixels;
-          pixelIdx += 4) {
-        const iDataR = iData[pixelIdx]; // Red
-        const iDataG = iData[pixelIdx + 1]; // Green
-        const iDataB = iData[pixelIdx + 2]; // Blue
-        const iDataA = iData[pixelIdx + 3]; // Alpha
+      if (currentSprite === baseSprite) {
+        if (layer !== 0 && layer !== this.getSpritesOrder().length - 1) {
 
-        const isMissingPixel = !(data[pixelIdx + 3] || 0);
-        const hasPixelData = (iDataA !== 0);
-        // record pixel info if and only if this pixel info wasn't filled in previously
-        // and has pixel data on current layer
-        if (isMissingPixel && hasPixelData) {
-          data[pixelIdx] = iDataR;
-          data[pixelIdx + 1] = iDataG;
-          data[pixelIdx + 2] = iDataB;
-          data[pixelIdx + 3] = iDataA;
+          let data = context.getImageData(0, 0, baseWidth, baseHeight).data;
+          for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            const a = data[i + 3];
 
-          filled++;
+            if (a === 0) {
+              continue;
+            }
+
+            if (r === rgb.red && g === rgb.green && b === rgb.blue) {
+              return true;
+            }
+          }
+
         }
+      } else {
+        context.drawImage(currentSprite.getImage(), currentX - baseX,
+            currentY - baseY, currentWidth, currentHeight);
       }
     }
-    return data;
+
+    let data = context.getImageData(0, 0, baseWidth, baseHeight).data;
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+      const a = data[i + 3];
+
+      if (a === 0) {
+        continue;
+      }
+
+      if (r === rgb.red && g === rgb.green && b === rgb.blue) {
+        return true;
+      }
+    }
+
+    return false;
   }
+
 }
 

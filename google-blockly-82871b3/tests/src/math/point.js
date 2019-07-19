@@ -43,9 +43,9 @@ class Point {
     this.setY(this.getY() + y);
   }
 
-  offsetByRadian(radian, distance) {
-    let xOffset = Math.round(distance * Math.cos(radian.getRadian()));
-    let yOffset = Math.round(distance * Math.sin(radian.getRadian()));
+  offsetByAngle(angle, distance) {
+    let xOffset = Math.round(distance * Math.cos(angle.getRadian()));
+    let yOffset = Math.round(distance * Math.sin(angle.getRadian()));
 
     this.offset(xOffset, yOffset);
   }

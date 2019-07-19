@@ -1,29 +1,31 @@
-class Radian {
+class Radian extends Angle {
   constructor(radian) {
-    this.setRadian(radian);
+    super(radian);
   }
 
   ////////// Getter & Setter //////////
 
-  getRadian() {
-    return this._radian;
+  // --- More ---
+
+  getFullAngle() {
+    return 2 * Math.PI;
   }
 
-  setRadian(radian) {
-    this._radian = radian % (2 * Math.PI);
+  getRadian() {
+    return super.getAngle();
+  }
+
+  getDegree() {
+    return super.getAngle() * 180 / Math.PI;
   }
 
   ////////// Class Methods //////////
 
+  toRadian() {
+    return this;
+  }
+
   toDegree() {
-    return new Degree(this.getRadian() * (180 / Math.PI));
-  }
-
-  plus(radian) {
-    this.setRadian(this.getRadian() + radian);
-  }
-
-  minus(radian) {
-    this.setRadian(this.getRadian() - radian);
+    return new Degree(this.getDegree());
   }
 }

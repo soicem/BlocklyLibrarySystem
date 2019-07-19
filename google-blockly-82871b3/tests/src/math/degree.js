@@ -8,32 +8,35 @@
  *          90
  */
 
-class Degree {
+class Degree extends Angle {
   constructor(degree) {
-    this.setDegree(degree);
+    super(degree);
   }
 
   ////////// Getter & Setter //////////
 
-  getDegree() {
-    return this._degree;
+  // --- More ---
+
+  getFullAngle() {
+    return 360;
   }
 
-  setDegree(degree) {
-    this._degree = degree % 360;
+  getDegree() {
+    return super.getAngle();
+  }
+
+  getRadian() {
+    return super.getAngle() * Math.PI / 180;
   }
 
   ////////// Class Methods //////////
 
+  toDegree() {
+    return this;
+  }
+
   toRadian() {
-    return new Radian(this.getDegree() * (Math.PI / 180));
+    return new Radian(this.getRadian());
   }
 
-  plus(degree) {
-    this.setDegree(this.getDegree() + degree);
-  }
-
-  minus(degree) {
-    this.setDegree(this.getDegree() - degree);
-  }
 }

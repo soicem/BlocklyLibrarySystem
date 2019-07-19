@@ -25,23 +25,20 @@ class MyException {
   }
 }
 
-/**
- * Custom exceptions that inherits MyException class
- */
 class IllegalArgumentException extends MyException {
   constructor(message) {
     super("IllegalArgumentException", message);
   }
 }
 
-class ExistingSpriteException extends MyException {
+class AbstractClassConstructException extends MyException {
   constructor(message) {
-    super("ExistingSpriteException", message);
+    super("AbstractClassConstructException", message);
   }
 }
 
-class NotExistingSpriteException extends MyException {
+class AbstractMethodCallException extends  MyException {
   constructor(message) {
-    super("NotExistingSpriteException", message);
+    super("AbstractMethodCallException", message);
   }
 }

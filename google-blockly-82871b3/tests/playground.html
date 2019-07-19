@@ -261,10 +261,15 @@
     function test() {
       function aa(){
         const s = myCanvas.getCurrentSprite();
-        s.turnLeft(15);
-        s.moveSteps(10);
+        if (s.isTouchingColorHex("#ff0000")) {
+          s.moveSteps(1);
+        } else {
+          s.turnRight(180);
+          s.moveSteps(1);
+        }
       }
 
+      //aa();
       setInterval(aa, 50);
     }
 
@@ -758,11 +763,13 @@
     <script src="src/canvas/canvas.js"></script>
     <script src="src/canvas/sprite.js"></script>
     <script src="src/canvas/sprite_factory.js"></script>
-    <script src="src/exception/my_exception.js"></script>
     <script src="src/math/point.js"></script>
     <script src="src/math/size.js"></script>
+    <script src="src/math/angle.js"></script>
     <script src="src/math/degree.js"></script>
     <script src="src/math/radian.js"></script>
+    <script src="src/exception/my_exception.js"></script>
+    <script src="src/exception/sprite_exception.js"></script>
 
     <script>
       let animationUpdater = new AnimationUpdater();
