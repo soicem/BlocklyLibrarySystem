@@ -210,11 +210,7 @@ class ImageSprite {
     _update()
     .then(
         function (result) {
-          if (this_.nextCommand != "") {
-            console.log("next command");
-            console.log(this_.nextCommand);
-            eval(this_.nextCommand);
-          }
+
         }
     );
     //setTimeout(_update, this.timerCnt * 5);
@@ -263,17 +259,9 @@ class ImageSprite {
     this.turn(-degree);
   }
 
-  _setDirection(degree) {
-    this.direction = degree;
-    this.nextCommand = this.commands.shift();
-
-    let this_ = this;
-    eval(this.nextCommand);
-  }
-
   setDirection(degree) {
     this.direction = degree;
-    this.commands.push("this_._setDirection(" + degree + ")");
+    //this.commands.push("this_._setDirection(" + degree + ")");
   }
 
   positionRandomly() {
@@ -308,24 +296,17 @@ class ImageSprite {
     let width_ = this.width;
     let height_ = this.height;
     this.timerCnt++;
-    setTimeout(_update, this.timerCnt * 5);
+    setTimeout(_update, 5);
   }
 
-  _say(text) {
+  say(text) {
     function _update() {
       bubble.draw(100, 30, 5, text);
     }
 
     let bubble = new SpeechBubble(this);
     console.log("bubble");
-    this.nextCommand = this.commands.shift();
     _update();
-    eval(this.nextCommand);
-
-  }
-
-  say(text) {
-    this.commands.push("this_._say(" + "\"" + text + "\"" + ")");
   }
 
   /**
@@ -401,12 +382,6 @@ class ImageSprite {
     this.x = this.initX;
     this.y = this.initY;
     eval(this.nextCommand);
-    //this.commands = [];
-    //this.moveSteps(10);
-
-    //this.printProperties();
-    //console.log(this.image);
-    //this.draw();
   }
 
   clear() {

@@ -36,7 +36,7 @@
   <p>&rarr; <a href="https://developers.google.com/blockly/guides/configure-blockly/web/running-javascript#js_interpreter">More info on running code with JS Interpreter</a></p>
 
   <p>
-    <button onclick="stepCode()" id="stepButton">Step JavaScript</button>
+    <button onclick="goStep()" id="stepButton">Step JavaScript</button>
   </p>
 
   <div style="width: 100%">
@@ -149,6 +149,24 @@
     var stepButton = document.getElementById('stepButton');
     var myInterpreter = null;
 
+    function delayWraper() {
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          var isFalse = stepCode();
+          resolve(isFalse);
+        }, 1000);
+      });
+    }
+    function goStep(){
+      delayWraper()
+              .then(
+                      function (result) {
+                        if(result != false)
+                          goStep();
+                      }
+              );
+    }
+
     function initApi(interpreter, scope) {
       // Add an API function for the alert() block, generated for "text_print" blocks.
       interpreter.setProperty(scope, 'alert',
@@ -234,7 +252,7 @@
               stepButton.disabled = '';
             }, 2000);
 
-            return;
+            return false;
           }
         }
         // Keep executing until a highlight statement is reached,
