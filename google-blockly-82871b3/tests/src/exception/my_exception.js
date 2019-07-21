@@ -25,14 +25,20 @@ class MyException {
   }
 }
 
-class ExistingSpriteException extends MyException {
+class IllegalArgumentException extends MyException {
   constructor(message) {
-    super("ExistingSpriteException", message);
+    super("IllegalArgumentException", message);
   }
 }
 
-class NotExistingSpriteException extends MyException {
+class AbstractClassConstructException extends MyException {
   constructor(message) {
-    super("NotExistingSpriteException", message);
+    super("AbstractClassConstructException", message);
+  }
+}
+
+class AbstractMethodCallException extends  MyException {
+  constructor(message) {
+    super("AbstractMethodCallException", message);
   }
 }
