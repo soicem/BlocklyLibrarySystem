@@ -76,18 +76,31 @@ canvas {
   position: absolute;
 }
 
-#spriteCanvas_container{
+.rounded{
+  background-color: #1966dd;
+  border-radius:0.5em;
+  -moz-border-radius: 0.5em;
+  -webkit-border-radius: 0.5em;
+  width: 100%;
+  padding: 11px;
+  border-bottom-width: 1px;
+}
+
+#spriteCanvas_container {
   float: left;
   width: 500px;
   height: 500px;
 }
 
 #canvasBlock {
-  height: 500px;
+  height: 400px;
 }
 
 #canvases {
   position: relative;
+  height: 402px;
+  width: 502px;
+  background-color: white;
 }
 
 /* 리소스 핸들링용 CSS */
@@ -112,7 +125,7 @@ canvas {
 #blocklyDiv {
   float: left;
   height: calc(100% - 80px);
-  width: calc(100% - 540px);
+  width: calc(100% - 560px);
 
 }
 
@@ -154,7 +167,7 @@ canvas {
 #content {
   float: right;
   height: calc(100% - 80px);
-  width: 500px;
+  width: 520px;
   background-color: #e9f1fc;
   padding: 20px;
   overflow: auto;
@@ -197,7 +210,6 @@ div.stage img {
 }
 
 div.desc {
-  padding: 15px;
   text-align: center;
 }
 

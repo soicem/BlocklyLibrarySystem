@@ -14,6 +14,9 @@ window.addEventListener("load", function () {
   canvas.addEventListener("mousemove", listener);
   canvas.addEventListener("mouseup", listener);
   canvas.addEventListener("mouseout", listener);
+
+  canvas.width = 500;
+  canvas.height = 500;
 }, false);
 
 function listener(event) {
