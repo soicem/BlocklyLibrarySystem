@@ -36,6 +36,7 @@ li a {
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
+  cursor: pointer;
 }
 
 li a:hover {
@@ -58,7 +59,8 @@ li1 a {
   padding: 7px 0px;
   text-decoration: none;
   border: 1px solid white;
-  width:100%
+  width:100%;
+  cursor: pointer;
 }
 
 li1 a:hover {
