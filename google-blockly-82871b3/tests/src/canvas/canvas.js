@@ -3,13 +3,20 @@ class Canvas {
     this.setCanvas(canvas);
     this.setContext(canvas.getContext("2d"));
     this.setSize(size);
-
-    this._sprites = {};
-    this._spritesOrder = [""]; // Index 0 is reserved for a stage
-    this._currentSpriteName = null;
+    this.setHandler(new CanvasHandler(this));
+    this.initialize();
   }
 
-  ////////// Getter & Setter //////////
+  initialize() {
+    this._sprites = {};
+    this._spritesOrder = [null]; // Index 0 is reserved for a stage
+    this._currentSpriteName = null;
+
+    this.getHandler().startTrackMousePosition();
+    this.getHandler().startSelectSprite();
+  }
+
+////////// Getter & Setter //////////
 
   getCanvas() {
     return this._canvas;
@@ -29,6 +36,14 @@ class Canvas {
 
   getSize() {
     return this._size;
+  }
+
+  getHandler() {
+    return this._handler;
+  }
+
+  setHandler(handler) {
+    this._handler = handler;
   }
 
   setSize(size) {
@@ -69,8 +84,58 @@ class Canvas {
     return this.getSprites()[spriteName];
   }
 
+  getActualSpriteObject(uniformSprite) {
+    let actualSpriteObject = null;
+
+    if (uniformSprite instanceof Sprite) {
+      actualSpriteObject = uniformSprite;
+    } else if (typeof (uniformSprite) === "string") {
+      actualSpriteObject = this.getSpriteByName(uniformSprite);
+    } else {
+      // Error
+    }
+
+    return actualSpriteObject;
+  }
+
   getCurrentSprite() {
     return this.getSpriteByName(this.getCurrentSpriteName());
+  }
+
+  getLayerNumber(sprite) {
+    sprite = this.getActualSpriteObject(sprite);
+    let result = null;
+
+    for (let i = 0; i < this.getSpritesOrder().length; i++) {
+      if (this.getSpritesOrder()[i] === sprite) {
+        result = i;
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  getSpriteAtPosition(point) {
+    let foundSprite = null;
+
+    for (let i = this.getSpritesOrder().length - 1; i >= 0; i--) {
+      const sprite = this.getSpritesOrder()[i];
+
+      if (sprite === null) {
+        continue;
+      }
+
+      if (sprite.getX() <= point.getX() &&
+          point.getX() <= sprite.getX() + sprite.getWidth() &&
+          sprite.getY() <= point.getY() &&
+          point.getY() <= sprite.getY() + sprite.getHeight()) {
+        foundSprite = sprite;
+        break;
+      }
+    }
+
+    return foundSprite;
   }
 
   ////////// Class Methods //////////
@@ -84,14 +149,14 @@ class Canvas {
     this.clear();
 
     for (let i = 0; i < this.getSpritesOrder().length; i++) {
-      if (this.getSpritesOrder()[i] !== "") {
+      if (this.getSpritesOrder()[i] !== null) {
         this.getSpritesOrder()[i].render();
       }
     }
   }
 
   addSprite(spriteName) {
-    const defaultSize = new Size(50, 50);
+    const defaultSize = new Size(48, 48);
     let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName);
 
     this._sprites[spriteName] = sprite;
@@ -120,13 +185,29 @@ class Canvas {
     this.setCurrentSpriteName(stageName);
   }
 
-  removeSprite(sprite) {
+  removeSprite(spriteName) {
     //@TODO: must remove canvas and sprite objects itself
 
-    delete this.getSprites()[sprite];
+    delete this.getSprites()[spriteName];
 
-    const foundAt = this.getSpritesOrder().indexOf(sprite);
+    const foundAt = this.getSpritesOrder().indexOf(spriteName);
     this.getSpritesOrder().splice(foundAt, 1);
+  }
+
+  changeSpriteOrder(sprite, newLayer) {
+    sprite = this.getActualSpriteObject(sprite);
+    let currentLayer = this.getLayerNumber(sprite);
+
+    if (currentLayer === newLayer) {
+      return;
+    }
+
+    this._spritesOrder.splice(currentLayer, 1);
+    this._spritesOrder.splice(newLayer, 0, sprite);
+  }
+
+  moveSpriteToTop(sprite) {
+    this.changeSpriteOrder(sprite, this.getSpritesOrder().length - 1)
   }
 
   isOverlayingColor(baseSprite, rgb) {
@@ -142,7 +223,7 @@ class Canvas {
     for (let layer = 0; layer < this.getSpritesOrder().length; layer++) {
       const currentSprite = this.getSpritesOrder()[layer];
 
-      if (currentSprite === "") {
+      if (currentSprite === null) {
         continue;
       }
 
