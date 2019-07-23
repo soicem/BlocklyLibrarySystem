@@ -269,19 +269,19 @@
       return result;
     }
 
-    function test() {
-      function aa(){
-        const s = myCanvas.getCurrentSprite();
-        if (s.isTouchingColorHex("#000000")) {
-          s.moveSteps(1);
-        } else {
-          s.turnRight(180);
-          s.moveSteps(1);
-        }
-      }
+    let state = true;
+    function test1() {
+      state = !state;
 
-      //aa();
-      setInterval(aa, 50);
+      if (state) {
+        myCanvas.getHandler().startTrackMousePosition();
+      } else {
+        myCanvas.getHandler().stopTrackMousePosition();
+      }
+    }
+
+    function test() {
+      console.log(myCanvas.getSpriteAtPosition(new Point(250, 250)).getImageSource());
     }
 
     function myImport() {
@@ -548,7 +548,7 @@
       interpreter.setProperty(scope, 'isTouchingColorHex',
               interpreter.createNativeFunction(function(hexValue) {
                 hexValue = hexValue ? hexValue.toString() : '';
-                console.log(myCanvas.getSpritesOrder()[0].isTouchingColorHex("#000000"));
+                //console.log(myCanvas.getSpritesOrder()[0].isTouchingColorHex("#000000"));
                 console.log(myCanvas.getCurrentSprite().isTouchingColorHex(hexValue));
                 return myCanvas.getCurrentSprite().isTouchingColorHex(hexValue);
               }));
@@ -925,6 +925,7 @@
     </div>
     <script src="src/animation/animation_updater.js"></script>
     <script src="src/canvas/canvas.js"></script>
+    <script src="src/canvas/canvas_handler.js"></script>
     <script src="src/canvas/sprite.js"></script>
     <script src="src/canvas/sprite_factory.js"></script>
     <script src="src/math/point.js"></script>
