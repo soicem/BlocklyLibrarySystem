@@ -6,6 +6,7 @@ class Sprite {
     this.setPosition(position);
     this.setSize(size);
     this.setAngle(angle);
+    this.setSpeechBubble(null);
 
     this.setJsCode("");
     this.setXml("");
@@ -67,6 +68,14 @@ class Sprite {
     this._direction = direction;
   }
 
+  getSpeechBubble() {
+    return this._speechBubble;
+  }
+
+  setSpeechBubble(speechBubble) {
+    this._speechBubble = speechBubble;
+  }
+
   getJsCode() {
     return this._jsCode;
   }
@@ -88,6 +97,10 @@ class Sprite {
   }
 
   // --- More ---
+
+  getContext() {
+    return this.getCanvas().getContext();
+  }
 
   getImageSource() {
     return this.getImage().src;
@@ -160,6 +173,10 @@ class Sprite {
         this.getImage(), this.getX(), this.getY(), this.getWidth(),
         this.getHeight()
     );
+
+    if (this.getSpeechBubble()) {
+      this.getSpeechBubble().render();
+    }
   }
 
   moveSteps(step) {
@@ -190,7 +207,7 @@ class Sprite {
   }
 
   say(text) {
-    //ToDo
+    this.setSpeechBubble(new SpeechBubble(this, text));
   }
 
   isTouchingColorHex(lookupHex) {
