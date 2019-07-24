@@ -858,24 +858,12 @@
     }
 
     function loadImage(){
-
-      //이미지 객체 생성
       var imgClo = new Image();
-
-      //페이지 로드후 이미지가 로드 되었을 때 이미지 출력
       imgClo.addEventListener('load', function(){
-        //로드된 이미지를 캔버스에 출력
         var ctx = document.getElementById('spriteCanvas').getContext("2d");
-
-        //canvas.drawImage() 함수를 사용하여 이미지 출력
-        //drawImage ( image sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
         ctx.drawImage( imgClo , 250, 250);
-
       },false);
-
-      //이미지 경로 설정
       imgClo.src="aww-cat.png";
-
     }
 
     function changeTextValue(textbox, value){
@@ -1077,25 +1065,24 @@
     </div>
     <input type="file" id="spriteChooser" accept="image/*" multiple size="50" onchange="spriteChooser()">
     <input type="file" id="stageChooser" accept="image/*" multiple size="50" onchange="stageChooser()">
-    <div id="spriteAttributes">
-      X: <input type="text" id="sprite_X" style="width:50px">
-      Y: <input type="text" id="sprite_Y" style="width:50px">
-      <br>
-      Height: <input type="text" id="sprite_H" style="width:50px">
-      Width: <input type="text" id="sprite_W" style="width:50px">
-      <!--sprite 객체 선택 가능해지면 onchange 추가-->
-    <input type="button" id="attributeRefresh" onclick="changeTextValue('sprite_X', 50)" value="refresh">
-    </div>
   </div>
-  <br>
   <div id="gallery_owner" class="rounded">
+    <div id="spriteAttributes">
+      <ul1>
+        <li1> X <input type="text" id="sprite_X" style="width:50px" onchange="myCanvas.getCurrentSprite().getPosition().setX(document.getElementById('sprite_X').value)"> </li1>
+        <li1> Y <input type="text" id="sprite_Y" style="width:50px" onchange="myCanvas.getCurrentSprite().getPosition().setY(document.getElementById('sprite_Y').value)"> </li1>
+      </ul1>
+      <ul1>
+        <li1> Height <input type="text" id="sprite_H" style="width:50px" onchange="myCanvas.getCurrentSprite().getSize().setHeight(document.getElementById('sprite_H').value)"> </li1>
+        <li1> Width <input type="text" id="sprite_W" style="width:50px" onchange="myCanvas.getCurrentSprite().getSize().setWidth(document.getElementById('sprite_W').value)"> </li1>
+      </ul1>
+    </div>
     <div class="gallery">
       <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100"
            height="100">
       <div class="desc">냐옹</div>
     </div>
   </div>
-  <br>
   <div id="stage_owner" class="rounded"></div>
   <br>
   <div>
@@ -1127,16 +1114,16 @@
         accept=".blk, .zip">
     <div id="buttonCollection" class="rounded">
       <ul>
-        <li1><a id="Myimport" onclick="myImport()">My import</a></li1>
-        <li1><a id="ToolboxCollapse" onclick="test()">test</a></li1>
+        <li2><a id="Myimport" onclick="myImport()">My import</a></li2>
+        <li2><a id="ToolboxCollapse" onclick="test()">test</a></li2>
       </ul>
       <ul>
-        <li1><a id="ExportXML" onclick="toXml()">Export to XML</a></li1>
-        <li1><a id="ImportXML" onclick="fromXml()">Import from XML</a></li1>
+        <li2><a id="ExportXML" onclick="toXml()">Export to XML</a></li2>
+        <li2><a id="ImportXML" onclick="fromXml()">Import from XML</a></li2>
       </ul>
       <ul>
-        <li1><a id="toJavaScript" onclick="goStep()">To JavaScript</a></li1>
-        <li1><a id="toCode" onclick="toCodeMain()">To Python</a></li1>
+        <li2><a id="toJavaScript" onclick="goStep()">To JavaScript</a></li2>
+        <li2><a id="toCode" onclick="toCodeMain()">To Python</a></li2>
         <!--<li1><select id="mainLang">
             <option value="default">Select</option>
             <option value="JavaScript">JavaScript</option>

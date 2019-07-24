@@ -47,12 +47,27 @@ div ul{
   width: 100%;
 }
 
+ul1 {
+  display: block;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
 li1 {
+  width: 50%;
+  display: block;
+  float: left;
+}
+
+li2 {
   float: left;
   width: 50%;
 }
 
-li1 a {
+li2 a {
   display: block;
   color: white;
   text-align: center;
@@ -63,7 +78,7 @@ li1 a {
   cursor: pointer;
 }
 
-li1 a:hover {
+li2 a:hover {
   background-color: green;
 }
 
@@ -83,7 +98,8 @@ canvas {
   -webkit-border-radius: 0.5em;
   width: 100%;
   padding: 11px;
-  border-bottom-width: 1px;
+  margin-block-start: 0.67em;
+  margin-block-end: 0.67em;
 }
 
 #spriteCanvas_container {
@@ -174,8 +190,22 @@ canvas {
 }
 
 #gallery_owner {
-  height: 100px;
+  height: 400px;
+  width: 70%;
+  float: left;
 }
+
+#spriteAttributes {
+  background-color: white;
+  padding: 5px;
+}
+
+#stage_owner {
+  height: 400px;
+  width: 20%;
+  float: right;
+}
+
 
 div.gallery {
   margin: 5px;
@@ -189,7 +219,7 @@ div.gallery:hover {
 }
 
 div.gallery img {
-  width: 100%;
+  width: 100px;
   height: auto;
 }
 

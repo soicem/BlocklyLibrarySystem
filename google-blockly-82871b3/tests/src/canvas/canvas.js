@@ -156,8 +156,7 @@ class Canvas {
   }
 
   addSprite(spriteName, imageData = null) {
-    const defaultSize = new Size(48, 48);
-    let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName, imageData);
+    let sprite = SpriteFactory.getSprite(this, spriteName, imageData);
 
     this._sprites[spriteName] = sprite;
     this._spritesOrder.push(sprite);
