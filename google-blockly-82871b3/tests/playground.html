@@ -419,9 +419,9 @@
 
       var base = "data:image/png;base64," + Source;
 
-      var a = '<div class="spriteImg\">' +
-          '<img onclick="pictureEvent(\'' + name + '\')" src="' + base
-          + '" alt="냥" width="100" height="100">' +
+      var a = '<div class="spriteImg\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\'' + name + '\')">' +
+          '<img src="' + base
+          + '" alt="냥">' +
           '<div class="desc">냥</div>' +
           '</div>';
 
@@ -838,34 +838,34 @@
       '  </block>'].join('\n');
 
     function tabInit() {
-      show('blocklyDiv', 'main_tab');
-      hide('library', 'library_tab');
-      hide('sprite', 'sprite_tab');
+      showTab('blocklyDiv', 'main_tab');
+      hideTab('library', 'library_tab');
+      hideTab('sprite', 'sprite_tab');
     }
 
     function changeTab(tab) {
       if (tab === "main_tab") {
-        show('blocklyDiv', 'main_tab');
-        hide('library', 'library_tab');
-        hide('sprite', 'sprite_tab');
+        showTab('blocklyDiv', 'main_tab');
+        hideTab('library', 'library_tab');
+        hideTab('sprite', 'sprite_tab');
       } else if (tab === "library_tab") {
-        show('library', 'library_tab');
-        hide('blocklyDiv', 'main_tab');
-        hide('sprite', 'sprite_tab')
+        showTab('library', 'library_tab');
+        hideTab('blocklyDiv', 'main_tab');
+        hideTab('sprite', 'sprite_tab')
       } else if (tab === "sprite_tab") {
-        show('sprite', 'sprite_tab');
-        hide('library', 'library_tab');
-        hide('blocklyDiv', 'main_tab');
+        showTab('sprite', 'sprite_tab');
+        hideTab('library', 'library_tab');
+        hideTab('blocklyDiv', 'main_tab');
       }
       taChange();
     }
 
-    function hide(page, tab) {
+    function hideTab(page, tab) {
       document.getElementById(page).style.display = 'none';
       document.getElementById(tab).style.backgroundColor = '#333';
     }
 
-    function show(page, tab) {
+    function showTab(page, tab) {
       document.getElementById(page).style.display = 'block';
       document.getElementById(tab).style.backgroundColor = 'green';
     }
@@ -882,11 +882,22 @@
     function changeTextValue(textbox, value){
       document.getElementById(textbox).value = value;
     }
+
+    function myStart() {
+      animationUpdater = new AnimationUpdater();
+      myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400), blockWorkspace);
+
+      myCanvas.addSpriteAndSelect("aww-cat.png");
+
+      animationUpdater.addCallFunction({caller: myCanvas, method: myCanvas.render});
+      animationUpdater.start();
+      return myCanvas;
+    }
   </script>
 
 
 </head>
-<body onload="start()">
+<body onload="start(); myStart();">
 <ul>
   <h1>Blockly Playground</h1>
   <li><a id="main_tab" onclick="changeTab('main_tab')">Main</a></li>
@@ -944,14 +955,10 @@
     <script src="src/exception/sprite_exception.js"></script>
 
     <script>
-      let animationUpdater = new AnimationUpdater();
-      let myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400));
+      let animationUpdater;
+      let myCanvas;
 
-      myCanvas.addSpriteAndSelect("aww-cat.png");
 
-      animationUpdater.addCallFunction({caller: myCanvas, method: myCanvas.render});
-      animationUpdater.start();
-      // myCanvas.getCurrentSprite().render();
 
       function spriteChooser() {
         var name;
@@ -988,11 +995,10 @@
             txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
           }
         }
-        var a = '<div class="spriteImg\">' +
-            '<img onclick="pictureEvent(\'' + name + '\')" src="' + name
-            + '" alt="냥" width="100" height="100">' +
-            '<div class="desc">냥</div>' +
-            '</div>';
+        var a = '<div class="spriteImg\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\'' + name + '\')">'
+                + '<img src="' + name + '" alt="냥">'
+                + '<div class="desc">냥</div>'
+                + '</div>';
         //alert(a);
         document.getElementById("spriteGallery").innerHTML += a;
 
@@ -1043,11 +1049,10 @@
             txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
           }
         }
-        var a = '<div class="stage\">' +
-            '<img onclick="pictureEvent(\'' + name + '\')" src="' + name
-            + '" alt="냥" width="100" height="100">' +
-            '<div class="desc">냥</div>' +
-            '</div>';
+        var a = '<div class="stage\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\'' + name + '\')">'
+                + '<img src="' + name + '" alt="냥">'
+                + '<div class="desc">냥</div>'
+                + '</div>';
         document.getElementById("stageGallery").innerHTML += a;
 
         reader.addEventListener('load', function() {
@@ -1060,62 +1065,46 @@
           reader.readAsArrayBuffer(imageFile);
         }
       }
-
-      // 현재 진행되던 sprite 변수명 : currentSprite
-      // sprite xml들을 저장하는 property list : XMLOfEachSprites
-      // nameOfSprite : sprite의 이름, key로 사용
-      // sprite의 이름을 받아서 workspace에 해당 sprite의 블록을 넣어준다.
-      function pictureEvent(nameOfSprite) {
-        console.log(nameOfSprite);
-        console.log(myCanvas.getSpriteByName(nameOfSprite).getXml());
-
-        if (myCanvas.getCurrentSpriteName() !== nameOfSprite) {
-          var xml = Blockly.Xml.workspaceToDom(blockWorkspace);
-          var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
-
-          myCanvas.getCurrentSprite().setXml(prettyXMLText);
-
-          blockWorkspace.clear();
-          if (myCanvas.getSpriteByName(nameOfSprite).getXml() !== "") {
-            var nextXml = Blockly.Xml.textToDom(myCanvas.getSpriteByName(nameOfSprite).getXml());
-            Blockly.Xml.domToWorkspace(nextXml, blockWorkspace);
-          }
-
-          myCanvas.setCurrentSpriteName(nameOfSprite);
-          taChange();
-        }
-      }
-
       </script>
     </div>
-    <input type="file" id="spriteChooser" accept="image/*" multiple size="50" onchange="spriteChooser()">
-    <input type="file" id="stageChooser" accept="image/*" multiple size="50" onchange="stageChooser()">
   </div>
 
   <div id="gallery_owner">
     <div id="sprite_owner" class="rounded">
       <div id="spriteAttributes">
         <ul1>
-          <li1> X <input type="text" id="sprite_X" style="width:50px" onchange="myCanvas.getCurrentSprite().getPosition().setX(parseInt(document.getElementById('sprite_X').value, 10))"> </li1>
-          <li1> Y <input type="text" id="sprite_Y" style="width:50px" onchange="myCanvas.getCurrentSprite().getPosition().setY(parseInt(document.getElementById('sprite_Y').value, 10))"> </li1>
+          <li1> X <input type="text" id="sprite_X" onchange="myCanvas.getCurrentSprite().getPosition().setX(parseInt(document.getElementById('sprite_X').value, 10))"> </li1>
+          <li1> Y <input type="text" id="sprite_Y" onchange="myCanvas.getCurrentSprite().getPosition().setY(parseInt(document.getElementById('sprite_Y').value, 10))"> </li1>
         </ul1>
         <ul1>
-          <li1> Height <input type="text" id="sprite_H" style="width:50px" onchange="myCanvas.getCurrentSprite().getSize().setHeight(parseInt(document.getElementById('sprite_H').value, 10))"> </li1>
-          <li1> Width <input type="text" id="sprite_W" style="width:50px" onchange="myCanvas.getCurrentSprite().getSize().setWidth(parseInt(document.getElementById('sprite_W').value, 10))"> </li1>
+          <li1> Height <input type="text" id="sprite_H" onchange="myCanvas.getCurrentSprite().getSize().setHeight(parseInt(document.getElementById('sprite_H').value, 10))"> </li1>
+          <li1> Width <input type="text" id="sprite_W" onchange="myCanvas.getCurrentSprite().getSize().setWidth(parseInt(document.getElementById('sprite_W').value, 10))"> </li1>
         </ul1>
       </div>
       <div id="spriteGallery">
-        <div class="spriteImg">
-          <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100"
-               height="100">
+        <div class="spriteImg" id="aww-cat.png" onclick="myCanvas.setCurrentSprite('aww-cat.png')" style="border: solid 2px #415DCC;">
+          <img src="aww-cat.png" alt="냐옹이">
           <div class="desc">냐옹</div>
         </div>
       </div>
-      <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()"
-             accept=".blk, .zip">
+      <div class="plusButtonContainer">
+        <div class="plusButton">
+          <span class="plus">
+            <input type="file" id="spriteChooser" accept="image/*" multiple size="50" onchange="spriteChooser()">
+          </span>
+        </div>
+      </div>
+
     </div>
     <div id="stage_owner" class="rounded">
       <div id="stageGallery"></div>
+      <div class="plusButtonContainer">
+        <div class="plusButton">
+          <span class="plus">
+            <input type="file" id="stageChooser" accept="image/*" multiple size="50" onchange="stageChooser()">
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1141,8 +1130,7 @@
     <select id="themeChanger" name="theme" onchange="changeTheme()" style="display:none">
       <option value="classic">Classic</option>
       <option value="modern">Modern</option>
-      <option value="high_contrast">High Contrast</option>
-    </select>
+      <option value="high_contrast">High Contrast</option></select>
     <div id="buttonCollection" class="rounded">
       <ul>
         <li2><a id="Myimport" onclick="myImport()">My import</a></li2>
@@ -1166,6 +1154,14 @@
        </ul>
       <textarea id="importExport" style="width: calc(100% - 5px); height: 60%"
                 onchange="taChange();" onkeyup="taChange()"></textarea>
+      <div class="plusButtonContainer">
+        <div class="plusButton">
+          <span class="plus">
+            <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()"
+                   accept=".blk, .zip">
+          </span>
+        </div>
+      </div>
   </div>
 <!--
     <p>
