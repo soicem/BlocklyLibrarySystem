@@ -507,23 +507,28 @@
       })
     }
 
-
-    var myInterpreter = null;
-
-    function delayWraper() {
+    function delayWraper(keyOfSprite) {
       return new Promise(function (resolve, reject) {
         setTimeout(function () {
-          var isFalse = stepCode();
+          console.log("keyOfSprite : " , keyOfSprite)
+          myCanvas.setSpecificSpriteName(keyOfSprite);
+          var isFalse = stepCode(keyOfSprite);
           resolve(isFalse);
-        }, 1);
+        }, 2);
       });
     }
     function goStep(){
-      delayWraper()
+      for(var i = 1; i < myCanvas.getSpritesOrder().length; i++){
+        _goStep(myCanvas.getSpritesOrder()[i].getImageFilename())
+      }
+    }
+
+    function _goStep(keyOfSprite){
+      delayWraper(keyOfSprite)
               .then(
                       function (result) {
                         if(result != false)
-                          goStep();
+                          _goStep(keyOfSprite);
                       }
               );
     }
@@ -532,40 +537,40 @@
       interpreter.setProperty(scope, 'moveSteps',
               interpreter.createNativeFunction(function(text) {
                 text = text ? text.toString() : '';
-                myCanvas.getCurrentSprite().moveSteps(parseInt(text));
+                myCanvas.getSpecificSprite().moveSteps(parseInt(text));
 
               }));
 
       interpreter.setProperty(scope, 'say',
               interpreter.createNativeFunction(function(text) {
                 text = text ? text.toString() : '';
-                myCanvas.getCurrentSprite().say(text);
+                myCanvas.getSpecificSprite().say(text);
               }));
 
       interpreter.setProperty(scope, 'setDirection',
               interpreter.createNativeFunction(function(text) {
                 text = text ? text.toString() : '';
-                myCanvas.getCurrentSprite().changeDirection(text);
+                myCanvas.getSpecificSprite().changeDirection(text);
               }));
 
       interpreter.setProperty(scope, 'isTouchingColorHex',
               interpreter.createNativeFunction(function(hexValue) {
                 hexValue = hexValue ? hexValue.toString() : '';
                 //console.log(myCanvas.getSpritesOrder()[0].isTouchingColorHex("#000000"));
-                console.log(myCanvas.getCurrentSprite().isTouchingColorHex(hexValue));
-                return myCanvas.getCurrentSprite().isTouchingColorHex(hexValue);
+                //console.log(myCanvas.getSpritesOrder()[0].isTouchingColorHex(hexValue));
+                return myCanvas.getSpecificSprite().isTouchingColorHex(hexValue);
               }));
 
       interpreter.setProperty(scope, 'sprite_getX',
               interpreter.createNativeFunction(function() {
-                console.log(myCanvas.getCurrentSprite().getX());
-                return myCanvas.getCurrentSprite().getX();
+                console.log(myCanvas.getSpecificSprite().getX());
+                return myCanvas.getSpecificSprite().getX();
               }));
 
       interpreter.setProperty(scope, 'sprite_getY',
               interpreter.createNativeFunction(function() {
-                console.log(myCanvas.getCurrentSprite().getY());
-                return myCanvas.getCurrentSprite().getY();
+                console.log(myCanvas.getSpecificSprite().getY());
+                return myCanvas.getSpecificSprite().getY();
               }));
 
       interpreter.setProperty(scope, 'setXY',
@@ -573,8 +578,7 @@
                 //text = text ? text.toString() : '';
                 x = parseInt(x);
                 y = parseInt(y);
-                myCanvas.getCurrentSprite().goToPoint(x, y);
-
+                myCanvas.getSpecificSprite().goToPoint(x, y);
               }));
 
       // Add an API function for the alert() block, generated for "text_print" blocks.
@@ -602,9 +606,6 @@
               interpreter.createNativeFunction(wrapper));
     }
 
-    var highlightPause = false;
-    var latestCode = '';
-
     function highlightBlock(id) {
       blockWorkspace.highlightBlock(id);
       highlightPause = true;
@@ -620,49 +621,51 @@
       }
     }
 
+    var myInterpreters = {};
+    var highlightPause = false;
+    var latestCodes = {};
+
     function generateCodeAndLoadIntoInterpreter() {
       // Generate JavaScript code and parse it.
       Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
       Blockly.JavaScript.addReservedWords('highlightBlock');
-      latestCode = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
+      let keyOfLatestCode = myCanvas.getCurrentSpriteName()
+      latestCodes[keyOfLatestCode] = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
+      //latestCode = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
       var libCode = myCanvas.getCurrentSprite().jsCode;
       if(libCode){
-        latestCode += latestCode + "\n\n" + myCanvas.getCurrentSprite().jsCode;
-        console.log(latestCode);
+        latestCodes[keyOfLatestCode] += latestCodes[keyOfLatestCode] + "\n\n" + myCanvas.getCurrentSprite().jsCode;
+      }
+      console.log("latestCodes : ", latestCodes);
+
+      // step execution 용 코드
+      if(!myInterpreters[myCanvas.getCurrentSpriteName()])
+        console.log("soicem");
+      for(var i = 1; i < myCanvas.getSpritesOrder().length; i++){
+        console.log(myCanvas.getSpritesOrder()[i].getImageFilename());
       }
     }
-    function stepCode() {
-      if (!myInterpreter) {
+    function stepCode(keyOfSprite) {
+      var keyOfCode = keyOfSprite;
+      if (!myInterpreters[keyOfCode]) {
         // First statement of this code.
         // Clear the program output.
-        console.log(latestCode);
         resetStepUi(true);
-        myInterpreter = new Interpreter(latestCode, initApi);
-
-        // And then show generated code in an alert.
-        // In a timeout to allow the outputArea.value to reset first.
-        /*setTimeout(function() {
-          alert('Ready to execute the following code\n' +
-                  '===================================\n' + latestCode);
-          highlightPause = true;
-          stepCode();
-        }, 1);*/
+        myInterpreters[keyOfCode] = new Interpreter(latestCodes[keyOfCode], initApi);
         return;
       }
       highlightPause = false;
 
       do {
         try {
-          var hasMoreCode = myInterpreter.step();
-          //console.log(myInterpreter.T.test);
+          var hasMoreCode = myInterpreters[keyOfCode].step();
         } finally {
           if (!hasMoreCode) {
             // Program complete, no more code to execute.
             var output = document.getElementById('importExport');
-
             output.value += '\n\n<< Program complete >>';
 
-            myInterpreter = null;
+            myInterpreters[keyOfCode] = null;
             resetStepUi(false);
 
             // Cool down, to discourage accidentally restarting the program.
@@ -673,6 +676,7 @@
         // Keep executing until a highlight statement is reached,
         // or the code completes or errors.
       } while (hasMoreCode && !highlightPause);
+
     }
 
     // Load the interpreter now, and upon future changes.
