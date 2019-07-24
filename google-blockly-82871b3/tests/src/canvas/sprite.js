@@ -83,6 +83,10 @@ class Sprite {
     this._xml = xml.trim();
   }
 
+  getImageFilename() {
+    return this.getImageSource().substring(this.getImageSource().lastIndexOf('/') + 1);
+  }
+
   // --- More ---
 
   getImageSource() {
