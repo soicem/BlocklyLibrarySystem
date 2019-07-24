@@ -499,7 +499,7 @@
         Blockly.Xml.domToWorkspace(DOM, blockWorkspace);
         result = Blockly['JavaScript'].workspaceToCode(blockWorkspace);
 
-        myCanvas.getSpriteByName(name).jsCode = result;
+        myCanvas.getSpriteByName(name).setJsCode(result);
         // canvas.clear();
 
         console.log(name + ' : ' + result);
