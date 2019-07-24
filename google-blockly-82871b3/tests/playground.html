@@ -380,6 +380,8 @@
                       tmpJS[jsName] = data;
                     }
                   } else {
+                    console.log(data);
+                    myCanvas.setLibCode(data);
                     myCanvas.getSpriteByName(jsName).setJsCode(data);
                   }
                   //console.log(jsName);
@@ -395,12 +397,14 @@
               if (isEmpty > 0) {
                 matching = Object.keys(tmpJS);
                 matching.forEach(function (data) {
+                  console.log(tmpJS[data])
+                  myCanvas.setLibCode(tmpJS[data]);
                   myCanvas.getSpriteByName(data).setJsCode(tmpJS[data]);
                 })
               }
 
               let xml = Blockly.Xml.textToDom(myCanvas.getCurrentSprite().getXml());
-              Blockly.Xml.domToWorkspace(xml, blockWorkspace);
+              //Blockly.Xml.domToWorkspace(xml, blockWorkspace);
             }, 100);
           });
         };
@@ -498,7 +502,8 @@
         blockWorkspace.clear();
         Blockly.Xml.domToWorkspace(DOM, blockWorkspace);
         result = Blockly['JavaScript'].workspaceToCode(blockWorkspace);
-
+        console.log(result);
+        myCanvas.setLibCode(result);
         myCanvas.getSpriteByName(name).setJsCode(result);
         // canvas.clear();
 
@@ -632,9 +637,10 @@
       let keyOfLatestCode = myCanvas.getCurrentSpriteName()
       latestCodes[keyOfLatestCode] = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
       //latestCode = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
-      var libCode = myCanvas.getCurrentSprite().jsCode;
+      var libCode = myCanvas.getLibCode();
+      console.log("lib : " , libCode)
       if(libCode){
-        latestCodes[keyOfLatestCode] += latestCodes[keyOfLatestCode] + "\n\n" + myCanvas.getCurrentSprite().jsCode;
+        latestCodes[keyOfLatestCode] += latestCodes[keyOfLatestCode] + "\n\n" + libCode;
       }
       console.log("latestCodes : ", latestCodes);
 

@@ -15,9 +15,18 @@ class Canvas {
     this.getHandler().startTrackMousePosition();
     this.getHandler().startSelectSprite();
     this.setSpecificSpriteName("aww-cat.png")
+    this._libCode = null;
   }
 
 ////////// Getter & Setter //////////
+
+  getLibCode() {
+    return this._libCode;
+  }
+
+  setLibCode(libCode) {
+    this._libCode += this._libCode + "\n" + libCode;
+  }
 
   getCanvas() {
     return this._canvas;
