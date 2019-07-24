@@ -415,13 +415,13 @@
 
       var base = "data:image/png;base64," + Source;
 
-      var a = '<div class="gallery\">' +
+      var a = '<div class="spriteImg\">' +
           '<img onclick="pictureEvent(\'' + name + '\')" src="' + base
           + '" alt="냥" width="100" height="100">' +
           '<div class="desc">냥</div>' +
           '</div>';
 
-      document.getElementById("gallery_owner").innerHTML += a;
+      document.getElementById("sprite_gallery").innerHTML += a;
     }
 
     function setSpriteXML() {
@@ -507,23 +507,28 @@
       })
     }
 
-
-    var myInterpreter = null;
-
-    function delayWraper() {
+    function delayWraper(keyOfSprite) {
       return new Promise(function (resolve, reject) {
         setTimeout(function () {
-          var isFalse = stepCode();
+          console.log("keyOfSprite : " , keyOfSprite)
+          myCanvas.setSpecificSpriteName(keyOfSprite);
+          var isFalse = stepCode(keyOfSprite);
           resolve(isFalse);
-        }, 1);
+        }, 2);
       });
     }
     function goStep(){
-      delayWraper()
+      for(var i = 1; i < myCanvas.getSpritesOrder().length; i++){
+        _goStep(myCanvas.getSpritesOrder()[i].getImageFilename())
+      }
+    }
+
+    function _goStep(keyOfSprite){
+      delayWraper(keyOfSprite)
               .then(
                       function (result) {
                         if(result != false)
-                          goStep();
+                          _goStep(keyOfSprite);
                       }
               );
     }
@@ -532,40 +537,40 @@
       interpreter.setProperty(scope, 'moveSteps',
               interpreter.createNativeFunction(function(text) {
                 text = text ? text.toString() : '';
-                myCanvas.getCurrentSprite().moveSteps(parseInt(text));
+                myCanvas.getSpecificSprite().moveSteps(parseInt(text));
 
               }));
 
       interpreter.setProperty(scope, 'say',
               interpreter.createNativeFunction(function(text) {
                 text = text ? text.toString() : '';
-                myCanvas.getCurrentSprite().say(text);
+                myCanvas.getSpecificSprite().say(text);
               }));
 
       interpreter.setProperty(scope, 'setDirection',
               interpreter.createNativeFunction(function(text) {
                 text = text ? text.toString() : '';
-                myCanvas.getCurrentSprite().changeDirection(text);
+                myCanvas.getSpecificSprite().changeDirection(text);
               }));
 
       interpreter.setProperty(scope, 'isTouchingColorHex',
               interpreter.createNativeFunction(function(hexValue) {
                 hexValue = hexValue ? hexValue.toString() : '';
                 //console.log(myCanvas.getSpritesOrder()[0].isTouchingColorHex("#000000"));
-                console.log(myCanvas.getCurrentSprite().isTouchingColorHex(hexValue));
-                return myCanvas.getCurrentSprite().isTouchingColorHex(hexValue);
+                //console.log(myCanvas.getSpritesOrder()[0].isTouchingColorHex(hexValue));
+                return myCanvas.getSpecificSprite().isTouchingColorHex(hexValue);
               }));
 
       interpreter.setProperty(scope, 'sprite_getX',
               interpreter.createNativeFunction(function() {
-                console.log(myCanvas.getCurrentSprite().getX());
-                return myCanvas.getCurrentSprite().getX();
+                console.log(myCanvas.getSpecificSprite().getX());
+                return myCanvas.getSpecificSprite().getX();
               }));
 
       interpreter.setProperty(scope, 'sprite_getY',
               interpreter.createNativeFunction(function() {
-                console.log(myCanvas.getCurrentSprite().getY());
-                return myCanvas.getCurrentSprite().getY();
+                console.log(myCanvas.getSpecificSprite().getY());
+                return myCanvas.getSpecificSprite().getY();
               }));
 
       interpreter.setProperty(scope, 'setXY',
@@ -573,8 +578,7 @@
                 //text = text ? text.toString() : '';
                 x = parseInt(x);
                 y = parseInt(y);
-                myCanvas.getCurrentSprite().goToPoint(x, y);
-
+                myCanvas.getSpecificSprite().goToPoint(x, y);
               }));
 
       // Add an API function for the alert() block, generated for "text_print" blocks.
@@ -602,9 +606,6 @@
               interpreter.createNativeFunction(wrapper));
     }
 
-    var highlightPause = false;
-    var latestCode = '';
-
     function highlightBlock(id) {
       blockWorkspace.highlightBlock(id);
       highlightPause = true;
@@ -620,49 +621,51 @@
       }
     }
 
+    var myInterpreters = {};
+    var highlightPause = false;
+    var latestCodes = {};
+
     function generateCodeAndLoadIntoInterpreter() {
       // Generate JavaScript code and parse it.
       Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
       Blockly.JavaScript.addReservedWords('highlightBlock');
-      latestCode = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
+      let keyOfLatestCode = myCanvas.getCurrentSpriteName()
+      latestCodes[keyOfLatestCode] = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
+      //latestCode = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
       var libCode = myCanvas.getCurrentSprite().jsCode;
       if(libCode){
-        latestCode += latestCode + "\n\n" + myCanvas.getCurrentSprite().jsCode;
-        console.log(latestCode);
+        latestCodes[keyOfLatestCode] += latestCodes[keyOfLatestCode] + "\n\n" + myCanvas.getCurrentSprite().jsCode;
+      }
+      console.log("latestCodes : ", latestCodes);
+
+      // step execution 용 코드
+      if(!myInterpreters[myCanvas.getCurrentSpriteName()])
+        console.log("soicem");
+      for(var i = 1; i < myCanvas.getSpritesOrder().length; i++){
+        console.log(myCanvas.getSpritesOrder()[i].getImageFilename());
       }
     }
-    function stepCode() {
-      if (!myInterpreter) {
+    function stepCode(keyOfSprite) {
+      var keyOfCode = keyOfSprite;
+      if (!myInterpreters[keyOfCode]) {
         // First statement of this code.
         // Clear the program output.
-        console.log(latestCode);
         resetStepUi(true);
-        myInterpreter = new Interpreter(latestCode, initApi);
-
-        // And then show generated code in an alert.
-        // In a timeout to allow the outputArea.value to reset first.
-        /*setTimeout(function() {
-          alert('Ready to execute the following code\n' +
-                  '===================================\n' + latestCode);
-          highlightPause = true;
-          stepCode();
-        }, 1);*/
+        myInterpreters[keyOfCode] = new Interpreter(latestCodes[keyOfCode], initApi);
         return;
       }
       highlightPause = false;
 
       do {
         try {
-          var hasMoreCode = myInterpreter.step();
-          //console.log(myInterpreter.T.test);
+          var hasMoreCode = myInterpreters[keyOfCode].step();
         } finally {
           if (!hasMoreCode) {
             // Program complete, no more code to execute.
             var output = document.getElementById('importExport');
-
             output.value += '\n\n<< Program complete >>';
 
-            myInterpreter = null;
+            myInterpreters[keyOfCode] = null;
             resetStepUi(false);
 
             // Cool down, to discourage accidentally restarting the program.
@@ -673,6 +676,7 @@
         // Keep executing until a highlight statement is reached,
         // or the code completes or errors.
       } while (hasMoreCode && !highlightPause);
+
     }
 
     // Load the interpreter now, and upon future changes.
@@ -861,24 +865,12 @@
     }
 
     function loadImage(){
-
-      //이미지 객체 생성
       var imgClo = new Image();
-
-      //페이지 로드후 이미지가 로드 되었을 때 이미지 출력
       imgClo.addEventListener('load', function(){
-        //로드된 이미지를 캔버스에 출력
         var ctx = document.getElementById('spriteCanvas').getContext("2d");
-
-        //canvas.drawImage() 함수를 사용하여 이미지 출력
-        //drawImage ( image sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
         ctx.drawImage( imgClo , 250, 250);
-
       },false);
-
-      //이미지 경로 설정
       imgClo.src="aww-cat.png";
-
     }
 
     function changeTextValue(textbox, value){
@@ -946,7 +938,7 @@
 
     <script>
       let animationUpdater = new AnimationUpdater();
-      let myCanvas = new Canvas(document.getElementById("canvas"), new Size(500, 400));
+      let myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400));
 
       myCanvas.addSpriteAndSelect("aww-cat.png");
 
@@ -989,13 +981,13 @@
             txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
           }
         }
-        var a = '<div class="gallery\">' +
+        var a = '<div class="spriteImg\">' +
             '<img onclick="pictureEvent(\'' + name + '\')" src="' + name
             + '" alt="냥" width="100" height="100">' +
             '<div class="desc">냥</div>' +
             '</div>';
         //alert(a);
-        document.getElementById("gallery_owner").innerHTML += a;
+        document.getElementById("spriteGallery").innerHTML += a;
 
         reader.addEventListener('load', function () {
           // sprite에 대한 canvas 용 objects를 저장한다.
@@ -1045,7 +1037,7 @@
             + '" alt="냥" width="100" height="100">' +
             '<div class="desc">냥</div>' +
             '</div>';
-        document.getElementById("stage_owner").innerHTML += a;
+        document.getElementById("stageGallery").innerHTML += a;
         myCanvas.addStage(name);
         // myCanvas.getSprite(name).draw();
         myCanvas.getSpriteByName(name).printProperties();
@@ -1080,27 +1072,35 @@
     </div>
     <input type="file" id="spriteChooser" accept="image/*" multiple size="50" onchange="spriteChooser()">
     <input type="file" id="stageChooser" accept="image/*" multiple size="50" onchange="stageChooser()">
-    <div id="spriteAttributes">
-      X: <input type="text" id="sprite_X" style="width:50px">
-      Y: <input type="text" id="sprite_Y" style="width:50px">
-      <br>
-      Height: <input type="text" id="sprite_H" style="width:50px">
-      Width: <input type="text" id="sprite_W" style="width:50px">
-      <!--sprite 객체 선택 가능해지면 onchange 추가-->
-    <input type="button" id="attributeRefresh" onclick="changeTextValue('sprite_X', 50)" value="refresh">
+  </div>
+
+  <div id="gallery_owner">
+    <div id="sprite_owner" class="rounded">
+      <div id="spriteAttributes">
+        <ul1>
+          <li1> X <input type="text" id="sprite_X" style="width:50px" onchange="myCanvas.getCurrentSprite().getPosition().setX(parseInt(document.getElementById('sprite_X').value, 10))"> </li1>
+          <li1> Y <input type="text" id="sprite_Y" style="width:50px" onchange="myCanvas.getCurrentSprite().getPosition().setY(parseInt(document.getElementById('sprite_Y').value, 10))"> </li1>
+        </ul1>
+        <ul1>
+          <li1> Height <input type="text" id="sprite_H" style="width:50px" onchange="myCanvas.getCurrentSprite().getSize().setHeight(parseInt(document.getElementById('sprite_H').value, 10))"> </li1>
+          <li1> Width <input type="text" id="sprite_W" style="width:50px" onchange="myCanvas.getCurrentSprite().getSize().setWidth(parseInt(document.getElementById('sprite_W').value, 10))"> </li1>
+        </ul1>
+      </div>
+      <div id="spriteGallery">
+        <div class="spriteImg">
+          <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100"
+               height="100">
+          <div class="desc">냐옹</div>
+        </div>
+      </div>
+      <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()"
+             accept=".blk, .zip">
+    </div>
+    <div id="stage_owner" class="rounded">
+      <div id="stageGallery"></div>
     </div>
   </div>
-  <br>
-  <div id="gallery_owner" class="rounded">
-    <div class="gallery">
-      <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100"
-           height="100">
-      <div class="desc">냐옹</div>
-    </div>
-  </div>
-  <br>
-  <div id="stage_owner" class="rounded"></div>
-  <br>
+
   <div>
     <form id="options" style="display: none">
       <select name="dir" onchange="document.forms.options.submit()">
@@ -1125,21 +1125,18 @@
       <option value="modern">Modern</option>
       <option value="high_contrast">High Contrast</option>
     </select>
-    <p>
-      <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()"
-        accept=".blk, .zip">
     <div id="buttonCollection" class="rounded">
       <ul>
-        <li1><a id="Myimport" onclick="myImport()">My import</a></li1>
-        <li1><a id="ToolboxCollapse" onclick="test()">test</a></li1>
+        <li2><a id="Myimport" onclick="myImport()">My import</a></li2>
+        <li2><a id="ToolboxCollapse" onclick="test()">test</a></li2>
       </ul>
       <ul>
-        <li1><a id="ExportXML" onclick="toXml()">Export to XML</a></li1>
-        <li1><a id="ImportXML" onclick="fromXml()">Import from XML</a></li1>
+        <li2><a id="ExportXML" onclick="toXml()">Export to XML</a></li2>
+        <li2><a id="ImportXML" onclick="fromXml()">Import from XML</a></li2>
       </ul>
       <ul>
-        <li1><a id="toJavaScript" onclick="goStep()">To JavaScript</a></li1>
-        <li1><a id="toCode" onclick="toCodeMain()">To Python</a></li1>
+        <li2><a id="toJavaScript" onclick="goStep()">To JavaScript</a></li2>
+        <li2><a id="toCode" onclick="toCodeMain()">To Python</a></li2>
         <!--<li1><select id="mainLang">
             <option value="default">Select</option>
             <option value="JavaScript">JavaScript</option>
@@ -1149,7 +1146,7 @@
             <option value="Dart">Dart</option>
           </select></li1>-->
        </ul>
-      <textarea id="importExport" style="width: 100%; height: 20%"
+      <textarea id="importExport" style="width: calc(100% - 5px); height: 60%"
                 onchange="taChange();" onkeyup="taChange()"></textarea>
   </div>
 <!--
@@ -2567,8 +2564,6 @@
       </category>
     </xml>
   </div>
-
-
 </div>
 
 </body>

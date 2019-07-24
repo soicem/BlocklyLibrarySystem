@@ -11,9 +11,10 @@ class Canvas {
     this._sprites = {};
     this._spritesOrder = [null]; // Index 0 is reserved for a stage
     this._currentSpriteName = null;
-
+    this._specificSpriteName = null;
     this.getHandler().startTrackMousePosition();
     this.getHandler().startSelectSprite();
+    this.setSpecificSpriteName("aww-cat.png")
   }
 
 ////////// Getter & Setter //////////
@@ -70,6 +71,14 @@ class Canvas {
     this._currentSpriteName = spriteName;
   }
 
+  getSpecificSpriteName() {
+    return this._specificSpriteName
+  }
+
+  setSpecificSpriteName(spriteName) {
+    this._specificSpriteName = spriteName;
+  }
+
   // --- More ---
 
   getWidth() {
@@ -96,6 +105,10 @@ class Canvas {
     }
 
     return actualSpriteObject;
+  }
+
+  getSpecificSprite(){
+    return this.getSpriteByName(this.getSpecificSpriteName());
   }
 
   getCurrentSprite() {
@@ -127,9 +140,9 @@ class Canvas {
       }
 
       if (sprite.getX() <= point.getX() &&
-          point.getX() <= sprite.getX() + sprite.getWidth() &&
+          point.getX() <= (sprite.getX() + sprite.getWidth()) &&
           sprite.getY() <= point.getY() &&
-          point.getY() <= sprite.getY() + sprite.getHeight()) {
+          point.getY() <= (sprite.getY() + sprite.getHeight())) {
         foundSprite = sprite;
         break;
       }
@@ -156,9 +169,8 @@ class Canvas {
   }
 
   addSprite(spriteName, imageData = null) {
-    const defaultSize = new Size(48, 48);
-    let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName,
-        imageData);
+    const defaultSize = new Size(40, 40);
+    let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName, imageData);
 
     this._sprites[spriteName] = sprite;
     this._spritesOrder.push(sprite);

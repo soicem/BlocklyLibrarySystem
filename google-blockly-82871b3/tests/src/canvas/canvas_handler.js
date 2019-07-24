@@ -54,6 +54,8 @@ class CanvasHandler {
 
         selectedSprite.setPosition(
             this.getMousePosition().offset(offset).clone());
+        document.getElementById('sprite_X').value = this.getCanvasObj().getCurrentSprite().getX();
+        document.getElementById('sprite_Y').value = this.getCanvasObj().getCurrentSprite().getY();
       }
     }
   }
