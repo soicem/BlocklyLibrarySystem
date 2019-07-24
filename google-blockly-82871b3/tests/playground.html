@@ -118,7 +118,7 @@
                 }
           });
       // block이 바뀔 때마다 최신코드 생성
-      blockWorkspace.addChangeListener(function(event) {
+      blockWorkspace.addChangeListener(function (event) {
         if (!(event instanceof Blockly.Events.Ui)) {
           // Something changed. Parser needs to be reloaded.
           generateCodeAndLoadIntoInterpreter();
@@ -269,19 +269,20 @@
       return result;
     }
 
-    function test() {
-      function aa(){
-        const s = myCanvas.getCurrentSprite();
-        if (s.isTouchingColorHex("#000000")) {
-          s.moveSteps(1);
-        } else {
-          s.turnRight(180);
-          s.moveSteps(1);
-        }
-      }
+    let state = true;
 
-      //aa();
-      setInterval(aa, 50);
+    function test1() {
+      state = !state;
+
+      if (state) {
+        myCanvas.getHandler().startTrackMousePosition();
+      } else {
+        myCanvas.getHandler().stopTrackMousePosition();
+      }
+    }
+
+    function test() {
+      console.log(myCanvas.getSpriteAtPosition(new Point(250, 250)).getImageSource());
     }
 
     function myImport() {
@@ -504,7 +505,6 @@
       })
     }
 
-
     var myInterpreter = null;
 
     function delayWraper() {
@@ -515,88 +515,90 @@
         }, 1);
       });
     }
-    function goStep(){
+
+    function goStep() {
       delayWraper()
-              .then(
-                      function (result) {
-                        if(result != false)
-                          goStep();
-                      }
-              );
+      .then(
+          function (result) {
+            if (result != false) {
+              goStep();
+            }
+          }
+      );
     }
 
     function initApi(interpreter, scope) {
       interpreter.setProperty(scope, 'moveSteps',
-              interpreter.createNativeFunction(function(text) {
-                text = text ? text.toString() : '';
-                myCanvas.getCurrentSprite().moveSteps(parseInt(text));
+          interpreter.createNativeFunction(function (text) {
+            text = text ? text.toString() : '';
+            myCanvas.getCurrentSprite().moveSteps(parseInt(text));
 
-              }));
+          }));
 
       interpreter.setProperty(scope, 'say',
-              interpreter.createNativeFunction(function(text) {
-                text = text ? text.toString() : '';
-                myCanvas.getCurrentSprite().say(text);
-              }));
+          interpreter.createNativeFunction(function (text) {
+            text = text ? text.toString() : '';
+            myCanvas.getCurrentSprite().say(text);
+          }));
 
       interpreter.setProperty(scope, 'setDirection',
-              interpreter.createNativeFunction(function(text) {
-                text = text ? text.toString() : '';
-                myCanvas.getCurrentSprite().changeDirection(text);
-              }));
+          interpreter.createNativeFunction(function (text) {
+            text = text ? text.toString() : '';
+            myCanvas.getCurrentSprite().changeDirection(text);
+          }));
 
       interpreter.setProperty(scope, 'isTouchingColorHex',
-              interpreter.createNativeFunction(function(hexValue) {
-                hexValue = hexValue ? hexValue.toString() : '';
-                console.log(myCanvas.getSpritesOrder()[0].isTouchingColorHex("#000000"));
-                console.log(myCanvas.getCurrentSprite().isTouchingColorHex(hexValue));
-                return myCanvas.getCurrentSprite().isTouchingColorHex(hexValue);
-              }));
+          interpreter.createNativeFunction(function (hexValue) {
+            hexValue = hexValue ? hexValue.toString() : '';
+            //console.log(myCanvas.getSpritesOrder()[0].isTouchingColorHex("#000000"));
+            console.log(myCanvas.getCurrentSprite().isTouchingColorHex(hexValue));
+            return myCanvas.getCurrentSprite().isTouchingColorHex(hexValue);
+          }));
 
       interpreter.setProperty(scope, 'sprite_getX',
-              interpreter.createNativeFunction(function() {
-                console.log(myCanvas.getCurrentSprite().getX());
-                return myCanvas.getCurrentSprite().getX();
-              }));
+          interpreter.createNativeFunction(function () {
+            console.log(myCanvas.getCurrentSprite().getX());
+            return myCanvas.getCurrentSprite().getX();
+          }));
 
       interpreter.setProperty(scope, 'sprite_getY',
-              interpreter.createNativeFunction(function() {
-                console.log(myCanvas.getCurrentSprite().getY());
-                return myCanvas.getCurrentSprite().getY();
-              }));
+          interpreter.createNativeFunction(function () {
+            console.log(myCanvas.getCurrentSprite().getY());
+            return myCanvas.getCurrentSprite().getY();
+          }));
 
       interpreter.setProperty(scope, 'setXY',
-              interpreter.createNativeFunction(function(x, y) {
-                //text = text ? text.toString() : '';
-                x = parseInt(x);
-                y = parseInt(y);
-                myCanvas.getCurrentSprite().goToPoint(x, y);
+          interpreter.createNativeFunction(function (x, y) {
+            //text = text ? text.toString() : '';
+            x = parseInt(x);
+            y = parseInt(y);
+            myCanvas.getCurrentSprite().goToPoint(x, y);
 
-              }));
+          }));
 
       // Add an API function for the alert() block, generated for "text_print" blocks.
       interpreter.setProperty(scope, 'alert',
-              interpreter.createNativeFunction(function(text) {
-                text = text ? text.toString() : '';
-                var output = document.getElementById('importExport');
-                output.value += '\n' + text;
-              }));
+          interpreter.createNativeFunction(function (text) {
+            text = text ? text.toString() : '';
+            var output = document.getElementById('importExport');
+            output.value += '\n' + text;
+          }));
 
       // Add an API function for the prompt() block.
-      var wrapper = function(text) {
+      var wrapper = function (text) {
         text = text ? text.toString() : '';
         return interpreter.createPrimitive(prompt(text));
       };
       interpreter.setProperty(scope, 'prompt',
-              interpreter.createNativeFunction(wrapper));
+          interpreter.createNativeFunction(wrapper));
 
       // Add an API function for highlighting blocks.
-      var wrapper = function(id) {
+      var wrapper = function (id) {
         id = id ? id.toString() : '';
         return interpreter.createPrimitive(highlightBlock(id));
       };
       interpreter.setProperty(scope, 'highlightBlock',
-              interpreter.createNativeFunction(wrapper));
+          interpreter.createNativeFunction(wrapper));
     }
 
     var highlightPause = false;
@@ -623,11 +625,12 @@
       Blockly.JavaScript.addReservedWords('highlightBlock');
       latestCode = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
       var libCode = myCanvas.getCurrentSprite().jsCode;
-      if(libCode){
+      if (libCode) {
         latestCode += latestCode + "\n\n" + myCanvas.getCurrentSprite().jsCode;
         console.log(latestCode);
       }
     }
+
     function stepCode() {
       if (!myInterpreter) {
         // First statement of this code.
@@ -674,7 +677,6 @@
 
     // Load the interpreter now, and upon future changes.
     //generateCodeAndLoadIntoInterpreter();
-
 
     // block을 Javascript 코드로 변환하고, 이를 실행시킨다.
     function toJSCode() {
@@ -857,28 +859,28 @@
       document.getElementById(tab).style.backgroundColor = 'green';
     }
 
-    function loadImage(){
+    function loadImage() {
 
       //이미지 객체 생성
       var imgClo = new Image();
 
       //페이지 로드후 이미지가 로드 되었을 때 이미지 출력
-      imgClo.addEventListener('load', function(){
+      imgClo.addEventListener('load', function () {
         //로드된 이미지를 캔버스에 출력
         var ctx = document.getElementById('spriteCanvas').getContext("2d");
 
         //canvas.drawImage() 함수를 사용하여 이미지 출력
         //drawImage ( image sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
-        ctx.drawImage( imgClo , 250, 250);
+        ctx.drawImage(imgClo, 250, 250);
 
-      },false);
+      }, false);
 
       //이미지 경로 설정
-      imgClo.src="aww-cat.png";
+      imgClo.src = "aww-cat.png";
 
     }
 
-    function changeTextValue(textbox, value){
+    function changeTextValue(textbox, value) {
       document.getElementById(textbox).value = value;
     }
   </script>
@@ -930,6 +932,7 @@
       </div>
       <script src="src/animation/animation_updater.js"></script>
       <script src="src/canvas/canvas.js"></script>
+      <script src="src/canvas/canvas_handler.js"></script>
       <script src="src/canvas/sprite.js"></script>
       <script src="src/canvas/sprite_factory.js"></script>
       <script src="src/math/point.js"></script>
@@ -948,6 +951,7 @@
 
         animationUpdater.addCallFunction({caller: myCanvas, method: myCanvas.render});
         animationUpdater.start();
+
         // myCanvas.getCurrentSprite().render();
 
         function spriteChooser() {
@@ -1074,8 +1078,10 @@
 
       </script>
     </div>
-    <input type="file" id="spriteChooser" accept="image/*" multiple size="50" onchange="spriteChooser()">
-    <input type="file" id="stageChooser" accept="image/*" multiple size="50" onchange="stageChooser()">
+    <input type="file" id="spriteChooser" accept="image/*" multiple size="50"
+           onchange="spriteChooser()">
+    <input type="file" id="stageChooser" accept="image/*" multiple size="50"
+           onchange="stageChooser()">
     <div id="spriteAttributes">
       X: <input type="text" id="sprite_X" style="width:50px">
       Y: <input type="text" id="sprite_Y" style="width:50px">
@@ -1083,7 +1089,8 @@
       Height: <input type="text" id="sprite_H" style="width:50px">
       Width: <input type="text" id="sprite_W" style="width:50px">
       <!--sprite 객체 선택 가능해지면 onchange 추가-->
-    <input type="button" id="attributeRefresh" onclick="changeTextValue('sprite_X', 50)" value="refresh">
+      <input type="button" id="attributeRefresh" onclick="changeTextValue('sprite_X', 50)"
+             value="refresh">
     </div>
   </div>
   <br>
@@ -1123,7 +1130,7 @@
     </select>
     <p>
       <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()"
-        accept=".blk, .zip">
+             accept=".blk, .zip">
     <div id="buttonCollection" class="rounded">
       <ul>
         <li1><a id="Myimport" onclick="myImport()">My import</a></li1>
@@ -1144,17 +1151,17 @@
             <option value="Lua">Lua</option>
             <option value="Dart">Dart</option>
           </select></li1>-->
-       </ul>
+      </ul>
       <textarea id="importExport" style="width: 100%; height: 20%"
                 onchange="taChange();" onkeyup="taChange()"></textarea>
-  </div>
-<!--
-    <p>
-      Stress test: &nbsp;
-      <input type="button" value="Airstrike!" onclick="airstrike(100)">
-      <input type="button" value="Spaghetti!" onclick="spaghetti(8)">
-    </p>
--->
+    </div>
+    <!--
+        <p>
+          Stress test: &nbsp;
+          <input type="button" value="Airstrike!" onclick="airstrike(100)">
+          <input type="button" value="Spaghetti!" onclick="spaghetti(8)">
+        </p>
+    -->
     <p>
       <!--Log events: &nbsp;-->
       <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck" style="display:none">

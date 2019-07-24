@@ -28,11 +28,13 @@ goog.provide('Blockly.JavaScript.motions');
 
 goog.require('Blockly.JavaScript');
 
+
 Blockly.JavaScript["sprite_moveSteps"] = function (block) {
   let steps = Blockly.JavaScript.valueToCode(block, "STEPS",
       Blockly.JavaScript.ORDER_ATOMIC);
   return "moveSteps(" + steps + ");\n";
 };
+
 Blockly.JavaScript['sprite_turnAngle'] = function (block) {
   let DIRECTIONS = {
     RIGHT: "turnRight",
@@ -42,8 +44,9 @@ Blockly.JavaScript['sprite_turnAngle'] = function (block) {
   let funcName = DIRECTIONS[dropdown_dir];
   let value_degree = Blockly.JavaScript.valueToCode(block, 'DEGREE',
       Blockly.JavaScript.ORDER_ATOMIC);
-  return "@@" + funcName + "(" + value_degree + ");\n";
+  return funcName + "(" + value_degree + ");\n";
 };
+
 Blockly.JavaScript['sprite_goTo'] = function (block) {
   let WHERES = {
     RANDOM: "positionRandomly",
@@ -51,7 +54,7 @@ Blockly.JavaScript['sprite_goTo'] = function (block) {
   };
   let dropdown_where = block.getFieldValue('WHERE');
   let funcName = WHERES[dropdown_where];
-  return  + funcName + "();\n";
+  return funcName + "();\n";
 };
 
 Blockly.JavaScript['sprite_goToPoint'] = function (block) {
@@ -68,9 +71,11 @@ Blockly.JavaScript['sprite_pointTo'] = function (block) {
   return "setDirection(" + value_dir + ");\n";
 };
 
-Blockly.JavaScript['sprite_gotoPoint'] = function(block) {
-  let value_x = Blockly.JavaScript.valueToCode(block, 'X', Blockly.JavaScript.ORDER_ATOMIC);
-  let value_y = Blockly.JavaScript.valueToCode(block, 'Y', Blockly.JavaScript.ORDER_ATOMIC);
+Blockly.JavaScript['sprite_gotoPoint'] = function (block) {
+  let value_x = Blockly.JavaScript.valueToCode(block, 'X',
+      Blockly.JavaScript.ORDER_ATOMIC);
+  let value_y = Blockly.JavaScript.valueToCode(block, 'Y',
+      Blockly.JavaScript.ORDER_ATOMIC);
 
   return "setXY(" + value_x + ", " + value_y + ");\n";
 };
