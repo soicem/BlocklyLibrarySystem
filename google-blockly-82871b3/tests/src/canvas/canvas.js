@@ -127,9 +127,9 @@ class Canvas {
       }
 
       if (sprite.getX() <= point.getX() &&
-          point.getX() <= sprite.getX() + sprite.getWidth() &&
+          point.getX() <= (sprite.getX() + sprite.getWidth()) &&
           sprite.getY() <= point.getY() &&
-          point.getY() <= sprite.getY() + sprite.getHeight()) {
+          point.getY() <= (sprite.getY() + sprite.getHeight())) {
         foundSprite = sprite;
         break;
       }
