@@ -44,7 +44,7 @@ li a:hover {
 }
 
 div ul{
-  width: 100%;
+  width:100%;
 }
 
 ul1 {
@@ -83,7 +83,7 @@ li2 a:hover {
 }
 
 #buttonCollection {
-  width:100%;
+  width:auto;
 }
 
 canvas {
@@ -92,13 +92,12 @@ canvas {
 }
 
 .rounded{
-  background-color: #1966dd;
+  width: auto;
+  background-color: #2797dd;
   border-radius:0.5em;
   -moz-border-radius: 0.5em;
   -webkit-border-radius: 0.5em;
-  width: 100%;
   padding: 11px;
-  margin-block-start: 0.67em;
   margin-block-end: 0.67em;
 }
 
@@ -115,7 +114,7 @@ canvas {
 #canvases {
   position: relative;
   height: 402px;
-  width: 502px;
+  width: 482px;
   background-color: white;
 }
 
@@ -190,8 +189,13 @@ canvas {
 }
 
 #gallery_owner {
+  height: 420px;
+  margin-block-end: 0.67em;
+}
+
+#sprite_owner {
   height: 400px;
-  width: 70%;
+  width: 65%;
   float: left;
 }
 
@@ -202,23 +206,35 @@ canvas {
 
 #stage_owner {
   height: 400px;
-  width: 20%;
+  width: 25%;
   float: right;
 }
 
+#spriteGallery {
+  width: 100%;
+  height: calc(100% - 90px);
+  background-color: white;
+  margin-block-start: 0.67em;
+}
 
-div.gallery {
+#stageGallery {
+  width: 100%;
+  height: calc(100% - 10px);
+  background-color: white;
+}
+
+div.spriteImg {
   margin: 5px;
   border: 1px solid #ccc;
   float: left;
   width: 100px;
 }
 
-div.gallery:hover {
+div.spriteImg:hover {
   border: 1px solid #777;
 }
 
-div.gallery img {
+div.spriteImg img {
   width: 100px;
   height: auto;
 }
