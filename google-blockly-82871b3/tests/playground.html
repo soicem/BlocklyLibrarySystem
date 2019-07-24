@@ -404,7 +404,7 @@
               }
 
               let xml = Blockly.Xml.textToDom(myCanvas.getCurrentSprite().getXml());
-              //Blockly.Xml.domToWorkspace(xml, blockWorkspace);
+              Blockly.Xml.domToWorkspace(xml, blockWorkspace);
             }, 100);
           });
         };
@@ -425,7 +425,7 @@
           '<div class="desc">냥</div>' +
           '</div>';
 
-      document.getElementById("sprite_gallery").innerHTML += a;
+      document.getElementById("spriteGallery").innerHTML += a;
     }
 
     function setSpriteXML() {
@@ -957,7 +957,7 @@
         var x = document.getElementById("spriteChooser");
         var txt = "";
 
-        var ImgFile = x.files[0];
+        var imageFile = x.files[0];
         var reader = new FileReader();
 
         if ('files' in x) {
@@ -1002,8 +1002,8 @@
           myCanvas.getSpriteByName(name).printProperties();
         });
 
-        if (ImgFile) {
-          reader.readAsArrayBuffer(ImgFile);
+        if (imageFile) {
+          reader.readAsArrayBuffer(imageFile);
         }
       }
 
@@ -1011,6 +1011,10 @@
         var name;
         var x = document.getElementById("stageChooser");
         var txt = "";
+
+        var imageFile = x.files[0];
+        var reader = new FileReader();
+
         if ('files' in x) {
           if (x.files.length === 0) {
             txt = "Select one or more files.";
@@ -1044,9 +1048,16 @@
             '<div class="desc">냥</div>' +
             '</div>';
         document.getElementById("stageGallery").innerHTML += a;
-        myCanvas.addStage(name);
-        // myCanvas.getSprite(name).draw();
-        myCanvas.getSpriteByName(name).printProperties();
+
+        reader.addEventListener('load', function() {
+          myCanvas.addStage(name, reader.result);
+          // myCanvas.getSprite(name).draw();
+          myCanvas.getSpriteByName(name).printProperties();
+        });
+
+        if (imageFile) {
+          reader.readAsArrayBuffer(imageFile);
+        }
       }
 
       // 현재 진행되던 sprite 변수명 : currentSprite

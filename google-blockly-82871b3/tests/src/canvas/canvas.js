@@ -192,9 +192,9 @@ class Canvas {
     this.setCurrentSpriteName(spriteName);
   }
 
-  addStage(stageName) {
-    const defaultSize = new Size(500, 500);
-    let stage = SpriteFactory.getSprite(this, defaultSize, stageName);
+  addStage(stageName, imageData = null) {
+    const defaultSize = new Size(this.getWidth(), this.getHeight());
+    let stage = SpriteFactory.getSprite(this, defaultSize, stageName, imageData);
 
     this._sprites[stageName] = stage;
     this._spritesOrder[0] = stage;
@@ -202,8 +202,8 @@ class Canvas {
     return stage;
   }
 
-  addStageAndSelect(stageName) {
-    this.addStage(stageName);
+  addStageAndSelect(stageName, imageData = null) {
+    this.addStage(stageName, imageData);
     this.setCurrentSpriteName(stageName);
   }
 
