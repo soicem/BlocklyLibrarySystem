@@ -105,6 +105,43 @@ class Sprite {
     return this.getSize().getHeight();
   }
 
+  getPixelsOfRgb(rgb) {
+    let foundPixels = [];
+
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext("2d");
+    canvas.width = this.getWidth();
+    canvas.height = this.getHeight();
+    context.drawImage(this.getImage(), 0, 0, this.getWidth(), this.getHeight());
+    const data = context.getImageData(0, 0, this.getWidth(),
+        this.getHeight()).data;
+
+    let i = 0;
+    for (let y = 0; y < canvas.height; y++) {
+      for (let x = 0; x < canvas.width; x++, i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const a = data[i + 3];
+
+        if (a === 0) {
+          continue;
+        }
+
+        if ((rgb === null || rgb.a === 0) ||
+            (r === rgb.r && g === rgb.g && b === rgb.b)) {
+          foundPixels.push(new Point(x, y));
+        }
+      }
+    }
+
+    return foundPixels;
+  }
+
+  getPixelsOfAnyColor() {
+    return this.getPixelsOfRgb(null);
+  }
+
   ////////// Class Methods //////////
 
   printProperties() {
@@ -152,24 +189,39 @@ class Sprite {
     //ToDo
   }
 
-  isTouchingColor(rgb) {
-    return this.getCanvas().isOverlayingColor(this, rgb);
-  }
-
-  isTouchingColorHex(hex) {
+  isTouchingColorHex(lookupHex) {
     function hexToRgb(hex) {
       let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 
       return result ? {
-        red: parseInt(result[1], 16),
-        green: parseInt(result[2], 16),
-        blue: parseInt(result[3], 16)
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
       } : null;
     }
 
-    let rgb = hexToRgb(hex);
-    if (rgb) {
-      return this.isTouchingColor(rgb);
+    if (hexToRgb(lookupHex)) {
+      return this.getCanvas().isOverlayingColor(this, this.hexToRgb(lookupHex));
+    } else {
+      return false;
+    }
+  }
+
+  isColorTouchingColorHex(baseHex, lookupHex) {
+    function hexToRgba(hex) {
+      let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+        a: parseInt(result[4], 16)
+      } : null;
+    }
+
+    if (hexToRgba(baseHex) && hexToRgba(lookupHex)) {
+      return this.getCanvas().isColorOverlayingColor(this, hexToRgba(baseHex),
+          hexToRgba(lookupHex));
     } else {
       return false;
     }

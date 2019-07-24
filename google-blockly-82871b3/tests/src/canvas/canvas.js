@@ -157,7 +157,8 @@ class Canvas {
 
   addSprite(spriteName, imageData = null) {
     const defaultSize = new Size(48, 48);
-    let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName, imageData);
+    let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName,
+        imageData);
 
     this._sprites[spriteName] = sprite;
     this._spritesOrder.push(sprite);
@@ -210,17 +211,18 @@ class Canvas {
     this.changeSpriteOrder(sprite, this.getSpritesOrder().length - 1)
   }
 
-  isOverlayingColor(baseSprite, rgb) {
-    const baseX = baseSprite.getX();
-    const baseY = baseSprite.getY();
+  isColorOverlayingColor(baseSprite, baseRgb, lookupRgb) {
+    let isOverlaying = false;
+
     const baseWidth = baseSprite.getWidth();
     const baseHeight = baseSprite.getHeight();
     let canvas = document.createElement('canvas');
     let context = canvas.getContext('2d');
     canvas.width = baseWidth;
     canvas.height = baseHeight;
+    const pixels = baseSprite.getPixelsOfRgb(baseRgb);
 
-    for (let layer = 0; layer < this.getSpritesOrder().length; layer++) {
+    for (let layer = 0; layer < this.getSpritesOrder().length && !isOverlaying; layer++) {
       const currentSprite = this.getSpritesOrder()[layer];
 
       if (currentSprite === null) {
@@ -234,47 +236,51 @@ class Canvas {
 
       if (currentSprite === baseSprite) {
         if (layer !== 0 && layer !== this.getSpritesOrder().length - 1) {
-
           let data = context.getImageData(0, 0, baseWidth, baseHeight).data;
-          for (let i = 0; i < data.length; i += 4) {
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-            const a = data[i + 3];
-
-            if (a === 0) {
-              continue;
-            }
-
-            if (r === rgb.red && g === rgb.green && b === rgb.blue) {
-              return true;
-            }
-          }
-
+          isOverlaying = this.isPixelsOverlayingRgb(data, baseSprite.getSize(), pixels, lookupRgb);
         }
       } else {
+        const baseX = baseSprite.getX();
+        const baseY = baseSprite.getY();
+
         context.drawImage(currentSprite.getImage(), currentX - baseX,
             currentY - baseY, currentWidth, currentHeight);
       }
     }
 
     let data = context.getImageData(0, 0, baseWidth, baseHeight).data;
-    for (let i = 0; i < data.length; i += 4) {
-      const r = data[i];
-      const g = data[i + 1];
-      const b = data[i + 2];
-      const a = data[i + 3];
+    if (!isOverlaying) {
+      isOverlaying = this.isPixelsOverlayingRgb(data, baseSprite.getSize(), pixels, lookupRgb);
+    }
+
+    return isOverlaying;
+  }
+
+  isOverlayingColor(baseSprite, lookupRgb) {
+    return this.isColorOverlayingColor(baseSprite, null, lookupRgb);
+  }
+
+  isPixelsOverlayingRgb(data, size, pixels, rgb) {
+    let isOverlaying = false;
+
+    for (let i = 0; i < pixels.length; i++) {
+      const index = (pixels[i].getY() * size.getWidth() + pixels[i].getX()) * 4;
+      const r = data[index];
+      const g = data[index + 1];
+      const b = data[index + 2];
+      const a = data[index + 3];
 
       if (a === 0) {
         continue;
       }
 
-      if (r === rgb.red && g === rgb.green && b === rgb.blue) {
-        return true;
+      if (r === rgb.r && g === rgb.g && b === rgb.b) {
+        isOverlaying = true;
+        break;
       }
     }
 
-    return false;
+    return isOverlaying;
   }
 
 }
