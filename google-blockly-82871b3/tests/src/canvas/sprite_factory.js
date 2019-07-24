@@ -1,8 +1,7 @@
 class SpriteFactory {
-  static getSprite(canvas, imageSrc, imageData) {
+  static getSprite(canvas, spriteSize, imageSrc, imageData) {
     let image = new Image();
     image.src = imageSrc;
-    const spriteSize = new Size(50, 50);
 
     let width = canvas.getWidth() / 2 - spriteSize.getWidth() / 2;
     let height = canvas.getHeight() / 2 - spriteSize.getHeight() / 2;

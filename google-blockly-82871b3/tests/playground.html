@@ -418,7 +418,7 @@
           '<div class="desc">냥</div>' +
           '</div>';
 
-      document.getElementById("sprite_owner").innerHTML += a;
+      document.getElementById("sprite_gallery").innerHTML += a;
     }
 
     function setSpriteXML() {
@@ -974,13 +974,13 @@
             txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
           }
         }
-        var a = '<div class="gallery\">' +
+        var a = '<div class="spriteImg\">' +
             '<img onclick="pictureEvent(\'' + name + '\')" src="' + name
             + '" alt="냥" width="100" height="100">' +
             '<div class="desc">냥</div>' +
             '</div>';
         //alert(a);
-        document.getElementById("sprite_owner").innerHTML += a;
+        document.getElementById("spriteGallery").innerHTML += a;
 
         reader.addEventListener('load', function () {
           // sprite에 대한 canvas 용 objects를 저장한다.
@@ -1030,7 +1030,7 @@
             + '" alt="냥" width="100" height="100">' +
             '<div class="desc">냥</div>' +
             '</div>';
-        document.getElementById("stage_owner").innerHTML += a;
+        document.getElementById("stageGallery").innerHTML += a;
         myCanvas.addStage(name);
         // myCanvas.getSprite(name).draw();
         myCanvas.getSpriteByName(name).printProperties();
@@ -1071,12 +1071,12 @@
     <div id="sprite_owner" class="rounded">
       <div id="spriteAttributes">
         <ul1>
-          <li1> X <input type="text" id="sprite_X" style="width:50px" onchange="myCanvas.getCurrentSprite().getPosition().setX(document.getElementById('sprite_X').value)"> </li1>
-          <li1> Y <input type="text" id="sprite_Y" style="width:50px" onchange="myCanvas.getCurrentSprite().getPosition().setY(document.getElementById('sprite_Y').value)"> </li1>
+          <li1> X <input type="text" id="sprite_X" style="width:50px" onchange="myCanvas.getCurrentSprite().getPosition().setX(parseInt(document.getElementById('sprite_X').value, 10))"> </li1>
+          <li1> Y <input type="text" id="sprite_Y" style="width:50px" onchange="myCanvas.getCurrentSprite().getPosition().setY(parseInt(document.getElementById('sprite_Y').value, 10))"> </li1>
         </ul1>
         <ul1>
-          <li1> Height <input type="text" id="sprite_H" style="width:50px" onchange="myCanvas.getCurrentSprite().getSize().setHeight(document.getElementById('sprite_H').value)"> </li1>
-          <li1> Width <input type="text" id="sprite_W" style="width:50px" onchange="myCanvas.getCurrentSprite().getSize().setWidth(document.getElementById('sprite_W').value)"> </li1>
+          <li1> Height <input type="text" id="sprite_H" style="width:50px" onchange="myCanvas.getCurrentSprite().getSize().setHeight(parseInt(document.getElementById('sprite_H').value, 10))"> </li1>
+          <li1> Width <input type="text" id="sprite_W" style="width:50px" onchange="myCanvas.getCurrentSprite().getSize().setWidth(parseInt(document.getElementById('sprite_W').value, 10))"> </li1>
         </ul1>
       </div>
       <div id="spriteGallery">

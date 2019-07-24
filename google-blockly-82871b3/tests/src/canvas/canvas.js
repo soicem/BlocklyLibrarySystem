@@ -127,9 +127,9 @@ class Canvas {
       }
 
       if (sprite.getX() <= point.getX() &&
-          point.getX() <= sprite.getX() + sprite.getWidth() &&
+          point.getX() <= (sprite.getX() + sprite.getWidth()) &&
           sprite.getY() <= point.getY() &&
-          point.getY() <= sprite.getY() + sprite.getHeight()) {
+          point.getY() <= (sprite.getY() + sprite.getHeight())) {
         foundSprite = sprite;
         break;
       }
@@ -156,7 +156,8 @@ class Canvas {
   }
 
   addSprite(spriteName, imageData = null) {
-    let sprite = SpriteFactory.getSprite(this, spriteName, imageData);
+    const defaultSize = new Size(48, 48);
+    let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName, imageData);
 
     this._sprites[spriteName] = sprite;
     this._spritesOrder.push(sprite);
