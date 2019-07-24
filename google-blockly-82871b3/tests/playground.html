@@ -398,6 +398,9 @@
                   myCanvas.getSpriteByName(data).setJsCode(tmpJS[data]);
                 })
               }
+
+              let xml = Blockly.Xml.textToDom(myCanvas.getCurrentSprite().getXml());
+              Blockly.Xml.domToWorkspace(xml, blockWorkspace);
             }, 100);
           });
         };
