@@ -451,7 +451,7 @@
 
       arraySprite.forEach((name) => {
         if (name !== "aww-cat.png") {
-          ImgToBLK(name, myCanvas.getSpriteByName(name).getImageSource());
+          ImgToBLK(name, myCanvas.getSpriteByName(name).getImageData());
         }
       });
     }
