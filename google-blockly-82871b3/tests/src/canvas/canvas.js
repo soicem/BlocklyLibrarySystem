@@ -155,9 +155,9 @@ class Canvas {
     }
   }
 
-  addSprite(spriteName) {
+  addSprite(spriteName, imageData = null) {
     const defaultSize = new Size(48, 48);
-    let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName);
+    let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName, imageData);
 
     this._sprites[spriteName] = sprite;
     this._spritesOrder.push(sprite);
@@ -165,8 +165,8 @@ class Canvas {
     return sprite;
   }
 
-  addSpriteAndSelect(spriteName) {
-    this.addSprite(spriteName);
+  addSpriteAndSelect(spriteName, imageData = null) {
+    this.addSprite(spriteName, imageData);
     this.setCurrentSpriteName(spriteName);
   }
 
