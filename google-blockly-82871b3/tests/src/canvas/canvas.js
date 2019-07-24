@@ -1,8 +1,9 @@
 class Canvas {
-  constructor(canvas, size) {
+  constructor(canvas, size, workspace) {
     this.setCanvas(canvas);
     this.setContext(canvas.getContext("2d"));
     this.setSize(size);
+    this.setWorkspace(workspace);
     this.setHandler(new CanvasHandler(this));
     this.initialize();
   }
@@ -68,6 +69,14 @@ class Canvas {
     return this._sprites;
   }
 
+  setWorkspace(workspace) {
+    this._workspace = workspace;
+  }
+
+  getWorkspace() {
+    return this._workspace;
+  }
+
   getSpritesOrder() {
     return this._spritesOrder;
   }
@@ -122,6 +131,35 @@ class Canvas {
 
   getCurrentSprite() {
     return this.getSpriteByName(this.getCurrentSpriteName());
+  }
+
+  setCurrentSprite(nameOfSprite) {
+    if (this.getCurrentSpriteName() !== nameOfSprite) {
+      var xml = Blockly.Xml.workspaceToDom(this.getWorkspace());
+      var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
+
+      this.getCurrentSprite().setXml(prettyXMLText);
+
+      this.getWorkspace().clear();
+
+      if (this.getSpriteByName(nameOfSprite).getXml() !== "") {
+        var nextXml = Blockly.Xml.textToDom(this.getSpriteByName(nameOfSprite).getXml());
+        Blockly.Xml.domToWorkspace(nextXml, this.getWorkspace());
+      }
+
+      this.setCurrentSpriteName(nameOfSprite);
+    }
+    // Highlight the selected sprite
+    var l = document.getElementsByClassName('spriteImg');
+
+    for(var i = 0; i < l.length; i++){
+      l[i].style.border = 'solid 1px #ccc';
+    }
+    document.getElementById(this.getCurrentSpriteName()).style.border = "solid 2px #415DCC";
+    document.getElementById('sprite_X').value = this.getCurrentSprite().getX();
+    document.getElementById('sprite_Y').value = this.getCurrentSprite().getY();
+    document.getElementById('sprite_H').value = this.getCurrentSprite().getHeight();
+    document.getElementById('sprite_W').value = this.getCurrentSprite().getWidth();
   }
 
   getLayerNumber(sprite) {

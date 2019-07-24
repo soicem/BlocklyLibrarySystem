@@ -39,9 +39,12 @@ class CanvasHandler {
           sprite: sprite,
           mouseOffset: this.getMousePosition().getOffsetTo(sprite.getPosition())
         });
-
+        // Move selected sprite to the top
         this.getCanvasObj().moveSpriteToTop(sprite);
         this.startSelectedSpriteMove();
+
+        // Make selected sprite a selected sprite all over the project
+        this.getCanvasObj().setCurrentSprite(sprite.getImageFilename());
       }
     }
   }
@@ -56,6 +59,8 @@ class CanvasHandler {
             this.getMousePosition().offset(offset).clone());
         document.getElementById('sprite_X').value = this.getCanvasObj().getCurrentSprite().getX();
         document.getElementById('sprite_Y').value = this.getCanvasObj().getCurrentSprite().getY();
+        document.getElementById('sprite_H').value = this.getCanvasObj().getCurrentSprite().getHeight();
+        document.getElementById('sprite_W').value = this.getCanvasObj().getCurrentSprite().getWidth();
       }
     }
   }
