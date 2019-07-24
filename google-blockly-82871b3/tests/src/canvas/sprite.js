@@ -1,7 +1,8 @@
 class Sprite {
-  constructor(canvas, image, position, size, angle) {
+  constructor(canvas, image, imageData, position, size, angle) {
     this.setCanvas(canvas);
     this.setImage(image);
+    this.setImageData(imageData);
     this.setPosition(position);
     this.setSize(size);
     this.setAngle(angle);
@@ -32,6 +33,14 @@ class Sprite {
 
   setImage(image) {
     this._image = image;
+  }
+
+  getImageData() {
+    return this._imageData;
+  }
+
+  setImageData(imageData) {
+    this._imageData = imageData;
   }
 
   getPosition() {
