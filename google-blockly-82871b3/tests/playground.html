@@ -418,7 +418,7 @@
           '<div class="desc">냥</div>' +
           '</div>';
 
-      document.getElementById("gallary_owner").innerHTML += a;
+      document.getElementById("gallery_owner").innerHTML += a;
     }
 
     function setSpriteXML() {
@@ -877,6 +877,10 @@
       imgClo.src="aww-cat.png";
 
     }
+
+    function changeTextValue(textbox, value){
+      document.getElementById(textbox).value = value;
+    }
   </script>
 
 
@@ -919,6 +923,7 @@
 </div>
 <!----- Content ----->
 <div id="content">
+  <div id="canvasArea" class="rounded">
   <div id="canvasBlock">
     <div id="canvases">
       <canvas id="canvas"></canvas>
@@ -938,7 +943,7 @@
 
     <script>
       let animationUpdater = new AnimationUpdater();
-      let myCanvas = new Canvas(document.getElementById("canvas"), new Size(500, 500));
+      let myCanvas = new Canvas(document.getElementById("canvas"), new Size(500, 400));
 
       myCanvas.addSpriteAndSelect("aww-cat.png");
 
@@ -987,7 +992,7 @@
             '<div class="desc">냥</div>' +
             '</div>';
         //alert(a);
-        document.getElementById("gallary_owner").innerHTML += a;
+        document.getElementById("gallery_owner").innerHTML += a;
 
         reader.addEventListener('load', function () {
           // sprite에 대한 canvas 용 objects를 저장한다.
@@ -1068,20 +1073,31 @@
         }
       }
 
-    </script>
+      </script>
+    </div>
+    <input type="file" id="spriteChooser" accept="image/*" multiple size="50" onchange="spriteChooser()">
+    <input type="file" id="stageChooser" accept="image/*" multiple size="50" onchange="stageChooser()">
+    <div id="spriteAttributes">
+      X: <input type="text" id="sprite_X" style="width:50px">
+      Y: <input type="text" id="sprite_Y" style="width:50px">
+      <br>
+      Height: <input type="text" id="sprite_H" style="width:50px">
+      Width: <input type="text" id="sprite_W" style="width:50px">
+      <!--sprite 객체 선택 가능해지면 onchange 추가-->
+    <input type="button" id="attributeRefresh" onclick="changeTextValue('sprite_X', 50)" value="refresh">
+    </div>
   </div>
-  <input type="file" id="spriteChooser" accept="image/*" multiple size="50" onchange="spriteChooser()">
-  <input type="file" id="stageChooser" accept="image/*" multiple size="50" onchange="stageChooser()">
-  <div id="gallary_owner">
+  <br>
+  <div id="gallery_owner" class="rounded">
     <div class="gallery">
       <img onclick="pictureEvent('aww-cat.png')" src="aww-cat.png" alt="냐옹이" width="100"
            height="100">
       <div class="desc">냐옹</div>
     </div>
   </div>
-
-  <div id="stage_owner"></div>
-
+  <br>
+  <div id="stage_owner" class="rounded"></div>
+  <br>
   <div>
     <form id="options" style="display: none">
       <select name="dir" onchange="document.forms.options.submit()">
@@ -1101,7 +1117,7 @@
         <option value="bottom">Bottom</option>
       </select>
     </form>
-    <select id="themeChanger" name="theme" onchange="changeTheme()">
+    <select id="themeChanger" name="theme" onchange="changeTheme()" style="display:none">
       <option value="classic">Classic</option>
       <option value="modern">Modern</option>
       <option value="high_contrast">High Contrast</option>
@@ -1109,7 +1125,7 @@
     <p>
       <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()"
         accept=".blk, .zip">
-    <div id="buttonCollection">
+    <div id="buttonCollection" class="rounded">
       <ul>
         <li1><a id="Myimport" onclick="myImport()">My import</a></li1>
         <li1><a id="ToolboxCollapse" onclick="test()">test</a></li1>
@@ -1130,10 +1146,9 @@
             <option value="Dart">Dart</option>
           </select></li1>-->
        </ul>
-  </div>
       <textarea id="importExport" style="width: 100%; height: 20%"
                 onchange="taChange();" onkeyup="taChange()"></textarea>
-    </p>
+  </div>
 <!--
     <p>
       Stress test: &nbsp;
@@ -1142,8 +1157,8 @@
     </p>
 -->
     <p>
-      Log events: &nbsp;
-      <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
+      <!--Log events: &nbsp;-->
+      <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck" style="display:none">
     </p>
     <!-- The next three blocks of XML are sample toolboxes for testing basic
     configurations.  For more information on building toolboxes, see https://developers.google.com/blockly/guides/configure/web/toolbox -->
