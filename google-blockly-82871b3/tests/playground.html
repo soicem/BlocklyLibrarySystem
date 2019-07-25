@@ -339,8 +339,8 @@
 
     //----check
     //import
-    function ExtractFiles() {
-      var BLK = document.getElementById("getFile");
+    function ExtractFiles(id) {
+      var BLK = document.getElementById(id);
       var tmpJS = {};
 
       var files = BLK.files[0]; // FileList object
@@ -417,7 +417,10 @@
               }
 
               let xml = Blockly.Xml.textToDom(myCanvas.getCurrentSprite().getXml());
-              Blockly.Xml.domToWorkspace(xml, blockWorkspace);
+              if(id === "getLib"){
+                myImport()
+              } else
+                Blockly.Xml.domToWorkspace(xml, blockWorkspace);
             }, 100);
           });
         };
@@ -1166,40 +1169,48 @@
       <option value="high_contrast">High Contrast</option></select>
     <div id="buttonCollection" class="rounded">
       <ul>
-        <li2><a id="myImport" onclick="myImport()">My import</a></li2>
-        <li2><a id="toolboxCollapse" onclick="test()">test</a></li2>
-      </ul>
-      <ul>
         <li2><a id="exportPro" onclick="toXml()">Export Project</a></li2>
-        <li2><a id="importPro" onclick="fromXml()">Import Project</a></li2>
+        <li2 style="width:50%;">
+          <a>
+            <div>
+              <label for="getFile">Import Project</label>
+
+            </div>
+          </a>
+
+        </li2>
       </ul>
       <ul>
         <li2><a id="ExportLib" onclick="toXml()">Export Library</a></li2>
-        <li2><a id="ImportLib" onclick="fromXml()">Import Library</a></li2>
+        <li2 style="width:50%;">
+          <a>
+            <div>
+              <label for="getLib">Import Library</label>
+            </div>
+          </a>
+
+        </li2>
       </ul>
       <ul>
         <li2><a id="toJavaScript" onclick="goStep()">To JavaScript</a></li2>
         <li2><a id="toCode" onclick="toCodeMain()">To Python</a></li2>
-        <!--<li1><select id="mainLang">
-            <option value="default">Select</option>
-            <option value="JavaScript">JavaScript</option>
-            <option value="Python">Python</option>
-            <option value="PHP">PHP</option>
-            <option value="Lua">Lua</option>
-            <option value="Dart">Dart</option>
-          </select></li1>-->
       </ul>
 
       <ul>
-        <li2 style="width:100%;">
+        <li2 style="width:50%;">
           <a id="insertBlk">
             <div id="filebox">
               <label for="getFile">Insert</label>
-              <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()"
+              <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles(this.id)"
                    accept=".blk, .zip">
+              <input type="file" value="add File" name="files[]" id="getLib" onchange="ExtractFiles(this.id)"
+                     accept=".blk, .zip">
+
             </div>
           </a>
+
         </li2>
+        <li2><a id="insertXML" onclick="fromXml()">insert from XML</a></li2>
       </ul>
       <textarea id="importExport" style="width: calc(100% - 5px); height: 60%"
                 onchange="taChange();" onkeyup="taChange()"></textarea>
