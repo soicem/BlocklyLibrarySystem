@@ -318,46 +318,45 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 225,
     "tooltip": "",
     "helpUrl": ""
+  },
+  {
+    "type": "sprite_edgeBounce",
+    "message0": "%{BKY_SPRITE_EDGEBOUNCE_MSG}",
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_rotationStyle",
+    "message0": "%{BKY_SPRITE_RETATIONSTYLE_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "STYLE",
+        "options": [
+          [
+            "%{BKY_SPRITE_RETATIONSTYLE_OPT_ALL}",
+            "ALL"
+          ],
+          [
+            "%{BKY_SPRITE_RETATIONSTYLE_OPT_SIDE}",
+            "LEFTRIGHT"
+          ],
+          [
+            "%{BKY_SPRITE_RETATIONSTYLE_OPT_NONE}",
+            "NONE"
+          ]
+        ]
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
   }
 ]);
-
-Blockly.Blocks['sprite_getDir'] = {
-  init: function () {
-    this.appendDummyInput()
-    .appendField("direction");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_edgeBounce'] = {
-  init: function () {
-    this.appendDummyInput()
-    .appendField("bounce if on edge");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_rotationStyle'] = {
-  init: function () {
-    this.appendDummyInput()
-    .appendField("set rotation style:")
-    .appendField(new Blockly.FieldDropdown(
-        [["all around", "ALL"], ["left-right", "LEFTRIGHT"],
-          ["do not rotate", "NONE"]]), "STYLE");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
