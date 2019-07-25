@@ -9,7 +9,7 @@ class Sprite {
     this.setSpeechBubble(null);
 
     this.setJsCode("");
-    this.setXml("");
+    this.resetXml();
   }
 
   initImage() {
@@ -160,6 +160,10 @@ class Sprite {
   }
 
   ////////// Class Methods //////////
+
+  resetXml() {
+    this.setXml("<xml xmlns='http://www.w3.org/1999/xhtml'></xml>");
+  }
 
   printProperties() {
     console.log("x : ", this.getPosition().getX());

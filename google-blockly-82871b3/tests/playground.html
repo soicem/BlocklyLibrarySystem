@@ -493,7 +493,9 @@
       // });
 
       const stage = myCanvas.getSpritesOrder()[0];
-      BackImgToBLK(stage.getImageFilename(), stage.getImageData());
+      if (stage) {
+        BackImgToBLK(stage.getImageFilename(), stage.getImageData());
+      }
 
       for (let i = 1; i < myCanvas.getSpritesOrder().length; i++) {
         const sprite = myCanvas.getSpritesOrder()[i];
