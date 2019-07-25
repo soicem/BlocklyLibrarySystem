@@ -1037,8 +1037,8 @@
           }
         }
         var a = '<div class="spriteImg\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\'' + name + '\')">'
-                + '<img src="' + name + '" alt="냥">'
-                + '<div class="desc">냥</div>'
+                + '<img src="' + name + '" alt="">'
+                + '<div class="desc">' + name.split('.')[0] + '</div>'
                 + '</div>';
         //alert(a);
         document.getElementById("spriteGallery").innerHTML += a;
@@ -1091,8 +1091,8 @@
           }
         }
         var a = '<div class="stage\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\'' + name + '\')">'
-                + '<img src="' + name + '" alt="냥">'
-                + '<div class="desc">냥</div>'
+                + '<img src="' + name + '" alt="">'
+                + '<div class="desc">' + name.split(".")[0] + '</div>'
                 + '</div>';
         document.getElementById("stageGallery").innerHTML += a;
 
@@ -1124,8 +1124,8 @@
       </div>
       <div id="spriteGallery">
         <div class="spriteImg" id="aww-cat.png" onclick="myCanvas.setCurrentSprite('aww-cat.png')" style="border: solid 2px #415DCC;">
-          <img src="aww-cat.png" alt="냐옹이">
-          <div class="desc">냐옹</div>
+          <img src="aww-cat.png" alt="">
+          <div class="desc">cat</div>
         </div>
       </div>
       <div class="plusButtonContainer">
