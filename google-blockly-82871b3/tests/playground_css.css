@@ -263,6 +263,7 @@ div.stage img {
 
 div.desc {
   text-align: center;
+  font-size: 80%;
 }
 
 .plusButtonContainer{
@@ -293,17 +294,17 @@ div.desc {
   background-size: 75% 75%;
 }
 
-#filebox label {
+.fileBox label {
   display: inline-block;
   width: 100%;
   cursor: pointer;
 }
 
-#filebox label:hover {
+.fileBox label:hover {
   background-color: green;
 }
 
-#filebox input[type="file"] {
+.fileBox input[type="file"] {
   position: absolute;
   width: 1px;
   height: 1px;

@@ -904,7 +904,6 @@
         hideTab('library', 'library_tab');
         hideTab('blocklyDiv', 'main_tab');
       }
-      taChange();
     }
 
     function hideTab(page, tab) {
@@ -926,16 +925,10 @@
       imgClo.src="aww-cat.png";
     }
 
-    function changeTextValue(textbox, value){
-      document.getElementById(textbox).value = value;
-    }
-
     function myStart() {
       animationUpdater = new AnimationUpdater();
       myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400), blockWorkspace);
-
       myCanvas.addSpriteAndSelect("aww-cat.png");
-
       animationUpdater.addCallFunction({caller: myCanvas, method: myCanvas.render});
       animationUpdater.start();
       return myCanvas;
@@ -1179,25 +1172,26 @@
     <div id="buttonCollection" class="rounded">
       <ul>
         <li2><a id="proj" onclick="toXml(this.id)">Export Project</a></li2>
-        <li2 style="width:50%;">
+        <li2>
           <a>
-            <div>
+            <div class="fileBox">
               <label for="getFile">Import Project</label>
-
+              <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles(this.id)"
+                     accept=".proj, .zip">
             </div>
           </a>
-
         </li2>
       </ul>
       <ul>
         <li2><a id="blk" onclick="toXml(this.id)">Export Library</a></li2>
-        <li2 style="width:50%;">
+        <li2>
           <a>
-            <div>
+            <div class="fileBox">
               <label for="getLib">Import Library</label>
+              <input type="file" value="add File" name="files[]" id="getLib" onchange="ExtractFiles(this.id)"
+                     accept=".blk, .zip">
             </div>
           </a>
-
         </li2>
       </ul>
       <ul>
@@ -1206,20 +1200,7 @@
       </ul>
 
       <ul>
-        <li2 style="width:50%;">
-          <a id="insertBlk">
-            <div id="filebox">
-              <label for="getFile">Insert</label>
-              <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles(this.id)"
-                   accept=".proj, .zip">
-              <input type="file" value="add File" name="files[]" id="getLib" onchange="ExtractFiles(this.id)"
-                     accept=".blk, .zip">
-
-            </div>
-          </a>
-
-        </li2>
-        <li2><a id="insertXML" onclick="fromXml()">insert from XML</a></li2>
+        <li2 style="width:100%;"><a id="insertXML" onclick="fromXml()">insert from XML</a></li2>
       </ul>
       <textarea id="importExport" style="width: calc(100% - 5px); height: 60%"
                 onchange="taChange();" onkeyup="taChange()"></textarea>
