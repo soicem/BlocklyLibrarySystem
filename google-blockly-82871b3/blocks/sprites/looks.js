@@ -29,296 +29,432 @@ goog.provide('Blockly.Blocks.looks');
 goog.require('Blockly.Blocks');
 goog.require('Blockly');
 
-
-Blockly.Blocks['sprite_say'] = {
-  init: function() {
-    this.appendValueInput("CONTENT")
-    .setCheck(null)
-    .appendField("say");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
+Blockly.defineBlocksWithJsonArray([
+  {
+    "type": "sprite_say",
+    "message0": "%{BKY_SPRITE_SAY_MSG}",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "CONTENT"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_sayTill",
+    "message0": "%{BKY_SPRITE_SAYTILL_MSG}",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "CONTENT"
+      },
+      {
+        "type": "input_value",
+        "name": "SEC"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_think",
+    "message0": "%{BKY_SPRITE_THINK_MSG}",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "CONTENT"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_thinkTill",
+    "message0": "%{BKY_SPRITE_THINKTILL_MSG}",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "CONTENT"
+      },
+      {
+        "type": "input_value",
+        "name": "SEC"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_nextCostume",
+    "message0": "%{BKY_SPRITE_NEXTCOSTUME_MSG}",
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_switchCostume",
+    "message0": "%{BKY_SPRITE_SWITCHCOSTUME_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "COSTUME",
+        "options": [
+          [
+            "costume1",
+            "COSTUME1"
+          ],
+          [
+            "costume2",
+            "COSTUME2"
+          ]
+        ]
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_nextBackdrop",
+    "message0": "%{BKY_SPRITE_NEXTBACKDROP_MSG}",
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_switchBackdrop",
+    "message0": "%{BKY_SPRITE_SWITCHBACKDROP_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "BACKDROP",
+        "options": [
+          [
+            "backdrop1",
+            "BACKDROP1"
+          ],
+          [
+            "backdrop2",
+            "BACKDROP2"
+          ]
+        ]
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_changeSize",
+    "message0": "%{BKY_SPRITE_CHANGESIZE_MSG}",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "VALUE"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_setSize",
+    "message0": "%{BKY_SPRITE_SETSIZE_MSG}",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "VALUE"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_changeEffect",
+    "message0": "%{BKY_SPRITE_CHANGEEFFECT_MSG_PREFIX}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "EFFECT",
+        "options": [
+          [
+            "color",
+            "COLOR"
+          ],
+          [
+            "fisheye",
+            "FISHEYE"
+          ],
+          [
+            "whirl",
+            "WHIRL"
+          ],
+          [
+            "pixelate",
+            "PIXELATE"
+          ],
+          [
+            "mosaic",
+            "MOSAIC"
+          ],
+          [
+            "brightness",
+            "BRIGHTNESS"
+          ],
+          [
+            "ghost",
+            "GHOST"
+          ]
+        ]
+      }
+    ],
+    "message1": "%{BKY_SPRITE_CHANGEEFFECT_MSG}",
+    "args1": [
+      {
+        "type": "input_value",
+        "name": "VALUE"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_setEffect",
+    "message0": "%{BKY_SPRITE_SETEFFECT_MSG_PREFIX}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "EFFECT",
+        "options": [
+          [
+            "color",
+            "COLOR"
+          ],
+          [
+            "fisheye",
+            "FISHEYE"
+          ],
+          [
+            "whirl",
+            "WHIRL"
+          ],
+          [
+            "pixelate",
+            "PIXELATE"
+          ],
+          [
+            "mosaic",
+            "MOSAIC"
+          ],
+          [
+            "brightness",
+            "BRIGHTNESS"
+          ],
+          [
+            "ghost",
+            "GHOST"
+          ]
+        ]
+      }
+    ],
+    message1: "%{BKY_SPRITE_SETEFFECT_MSG}",
+    args1: [
+      {
+        "type": "input_value",
+        "name": "VALUE"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_clearEffect",
+    "message0": "%{BKY_SPRITE_CLEAREFFECT_MSG}",
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_show",
+    "message0": "%{BKY_SPRITE_SHOW}",
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_hide",
+    "message0": "%{BKY_SPRITE_HIDE}",
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_setLayer",
+    "message0": "%{BKY_SPRITE_SETLAYER_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "ORDER",
+        "options": [
+          [
+            "%{BKY_SPRITE_FRONT}",
+            "FRONT"
+          ],
+          [
+            "%{BKY_SPRITE_BACK}",
+            "BACK"
+          ]
+        ]
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_changeLayer",
+    "message0": "%{BKY_SPRITE_CHANGELAYER_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "ORDER",
+        "options": [
+          [
+            "%{BKY_SPRITE_FORWARD}",
+            "FORWARD"
+          ],
+          [
+            "%{BKY_SPRITE_BACKWARD}",
+            "BACKWARD"
+          ]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "COUNT"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_getCostume",
+    "message0": "%{BKY_SPRITE_GETCOSTUME_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "OPTION",
+        "options": [
+          [
+            "%{BKY_SPRITE_NUMBER}",
+            "NUMBER"
+          ],
+          [
+            "%{BKY_SPRITE_NAME}",
+            "NAME"
+          ]
+        ]
+      }
+    ],
+    "inputsInline": true,
+    "output": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_getBackdrop",
+    "message0": "%{BKY_SPRITE_GETBACKDROP_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "OPTION",
+        "options": [
+          [
+            "%{BKY_SPRITE_NUMBER}",
+            "NUMBER"
+          ],
+          [
+            "%{BKY_SPRITE_NAME}",
+            "NAME"
+          ]
+        ]
+      }
+    ],
+    "inputsInline": true,
+    "output": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_getSize",
+    "message0": "%{BKY_SPRITE_SIZE}",
+    "inputsInline": true,
+    "output": null,
+    "colour": 255,
+    "tooltip": "",
+    "helpUrl": ""
   }
-};
-
-Blockly.Blocks['sprite_sayTill'] = {
-  init: function() {
-    this.appendValueInput("CONTENT")
-    .setCheck(null)
-    .appendField("say");
-    this.appendValueInput("SEC")
-    .setCheck(null)
-    .appendField("for");
-    this.appendDummyInput()
-    .appendField("seconds");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_think'] = {
-  init: function() {
-    this.appendValueInput("CONTENT")
-    .setCheck(null)
-    .appendField("think");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_thinkTill'] = {
-  init: function() {
-    this.appendValueInput("CONTENT")
-    .setCheck(null)
-    .appendField("think");
-    this.appendValueInput("SEC")
-    .setCheck(null)
-    .appendField("for");
-    this.appendDummyInput()
-    .appendField("seconds");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_nextCostume'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("next costume");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_switchCostume'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("switch costume to")
-    .appendField(new Blockly.FieldDropdown([["costume1","COSTUME1"], ["costume2","COSTUME2"]]), "COSTUME");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_nextBackdrop'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("next backdrop");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_switchBackdrop'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("switch backdrop to")
-    .appendField(new Blockly.FieldDropdown([["backdrop1","BACKDROP1"], ["backdrop2","BACKDROP2"]]), "BACKDROP");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_changeSize'] = {
-  init: function() {
-    this.appendValueInput("VALUE")
-    .setCheck(null)
-    .appendField("change size by");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_setSize'] = {
-  init: function() {
-    this.appendValueInput("VALUE")
-    .setCheck(null)
-    .appendField("set size to");
-    this.appendDummyInput()
-    .appendField("%");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_changeEffect'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("change")
-    .appendField(new Blockly.FieldDropdown([["color","COLOR"], ["fisheye","FISHEYE"], ["whirl","WHIRL"], ["pixelate","PIXELATE"], ["mosaic","MOSAIC"], ["brightness","BRIGHTNESS"], ["ghost","GHOST"]]), "EFFECT");
-    this.appendValueInput("VALUE")
-    .setCheck(null)
-    .appendField("effect by");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_setEffect'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("set")
-    .appendField(new Blockly.FieldDropdown([["color","COLOR"], ["fisheye","FISHEYE"], ["whirl","WHIRL"], ["pixelate","PIXELATE"], ["mosaic","MOSAIC"], ["brightness","BRIGHTNESS"], ["ghost","GHOST"]]), "EFFECT");
-    this.appendValueInput("VALUE")
-    .setCheck(null)
-    .appendField("effect to");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_clearEffect'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("clear graphic effects");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_show'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("show");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_hide'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("hide");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_setLayer'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("go to")
-    .appendField(new Blockly.FieldDropdown([["front","FRONT"], ["back","BACK"]]), "ORDER")
-    .appendField("layer");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_changeLayer'] = {
-  init: function() {
-    this.appendValueInput("COUNT")
-    .setCheck(null)
-    .appendField("go")
-    .appendField(new Blockly.FieldDropdown([["forward","FORWARD"], ["backward","BACKWARD"]]), "ORDER");
-    this.appendDummyInput()
-    .appendField("layers");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_getCostume'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("costume")
-    .appendField(new Blockly.FieldDropdown([["number","NUMBER"], ["name","NAME"]]), "OPTION");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_getBackdrop'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("costume")
-    .appendField(new Blockly.FieldDropdown([["number","NUMBER"], ["name","NAME"]]), "OPTION");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_getSize'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("size");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(255);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
+]);

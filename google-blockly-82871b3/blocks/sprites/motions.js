@@ -29,227 +29,334 @@ goog.provide('Blockly.Blocks.motions');
 goog.require('Blockly.Blocks');
 goog.require('Blockly');
 
-
-Blockly.Blocks['sprite_moveSteps'] = {
-  init: function() {
-    this.appendValueInput("STEPS")
-    .setCheck(null)
-    .appendField("move");
-    this.appendDummyInput()
-    .appendField("steps");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
+Blockly.defineBlocksWithJsonArray([
+  {
+    "type": "sprite_moveSteps",
+    "message0": "%{BKY_SPRITE_MOVESTEPS_MSG}",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "STEPS"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_turnAngle",
+    "message0": "%{BKY_SPRITE_TURNANGLE_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "DIR",
+        "options": [
+          [
+            {
+              "src": "http://downloadicons.net/sites/default/files/rotate-clockwise-arrow-icon-63159.png",
+              "width": 15,
+              "height": 15,
+              "alt": "*"
+            },
+            "RIGHT"
+          ],
+          [
+            {
+              "src": "http://downloadicons.net/sites/default/files/360-degree-counterclockwise-rotation-arrow-icon-63158.png",
+              "width": 15,
+              "height": 15,
+              "alt": "*"
+            },
+            "LEFT"
+          ]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "DEGREE"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_goTo",
+    "message0": "%{BKY_SPRITE_GOTO_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "WHERE",
+        "options": [
+          [
+            "%{BKY_SPRITE_RANDOM_POSITION}",
+            "RANDOM"
+          ],
+          [
+            "%{BKY_SPRITE_MOUSE_POSITION}",
+            "MOUSE"
+          ]
+        ]
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_goToPoint",
+    "message0": "%{BKY_SPRITE_GOTOPOINT_MSG_PREFIX}",
+    "message1": "%{BKY_SPRITE_GOTOPOINT_MSG}",
+    "args1": [
+      {
+        "type": "input_value",
+        "name": "X"
+      },
+      {
+        "type": "input_value",
+        "name": "Y"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_glideTo",
+    "message0": "%{BKY_SPRITE_GLIDETO_MSG}",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "SEC"
+      },
+      {
+        "type": "field_dropdown",
+        "name": "WHERE",
+        "options": [
+          [
+            "%{BKY_SPRITE_RANDOM_POSITION}",
+            "RANDOM"
+          ],
+          [
+            "%{BKY_SPRITE_MOUSE_POSITION}",
+            "MOUSE"
+          ]
+        ]
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_glideToPoint",
+    "message0": "%{BKY_SPRITE_GLIDETOPOINT_MSG}",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "SEC"
+      },
+      {
+        "type": "input_value",
+        "name": "X"
+      },
+      {
+        "type": "input_value",
+        "name": "Y"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_pointTo",
+    "message0": "%{BKY_SPRITE_POINTTO_MSG}",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "DIR"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_pointToward",
+    "message0": "%{BKY_SPRITE_POINTTOWARD_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "DEST",
+        "options": [
+          [
+            "%{BKY_SPRITE_MOUSE_POSITION}",
+            "MOUSE"
+          ]
+        ]
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_changeXY",
+    "message0": "%{BKY_SPRITE_CHANGEXY_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "XY",
+        "options": [
+          [
+            "x",
+            "X"
+          ],
+          [
+            "y",
+            "Y"
+          ]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "VALUE"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_setXY",
+    "message0": "%{BKY_SPRITE_SETXY_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "XY",
+        "options": [
+          [
+            "x",
+            "X"
+          ],
+          [
+            "y",
+            "Y"
+          ]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "VALUE"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_getXY",
+    "message0": "%{BKY_SPRITE_GETXY_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "XY",
+        "options": [
+          [
+            "x",
+            "X"
+          ],
+          [
+            "y",
+            "Y"
+          ]
+        ]
+      }
+    ],
+    "inputsInline": true,
+    "output": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_getDir",
+    "message0": "%{BKY_SPRITE_GETDIR_MSG}",
+    "inputsInline": true,
+    "output": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_edgeBounce",
+    "message0": "%{BKY_SPRITE_EDGEBOUNCE_MSG}",
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_rotationStyle",
+    "message0": "%{BKY_SPRITE_RETATIONSTYLE_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "STYLE",
+        "options": [
+          [
+            "%{BKY_SPRITE_RETATIONSTYLE_OPT_ALL}",
+            "ALL"
+          ],
+          [
+            "%{BKY_SPRITE_RETATIONSTYLE_OPT_SIDE}",
+            "LEFTRIGHT"
+          ],
+          [
+            "%{BKY_SPRITE_RETATIONSTYLE_OPT_NONE}",
+            "NONE"
+          ]
+        ]
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 225,
+    "tooltip": "",
+    "helpUrl": ""
   }
-};
-
-Blockly.Blocks['sprite_turnAngle'] = {
-  init: function () {
-    this.appendValueInput("DEGREE")
-    .setCheck(null)
-    .appendField("turn")
-    .appendField(new Blockly.FieldDropdown([[{
-      "src": "http://downloadicons.net/sites/default/files/rotate-clockwise-arrow-icon-63159.png",
-      "width": 15,
-      "height": 15,
-      "alt": "*"
-    }, "RIGHT"], [{
-      "src": "http://downloadicons.net/sites/default/files/360-degree-counterclockwise-rotation-arrow-icon-63158.png",
-      "width": 15,
-      "height": 15,
-      "alt": "*"
-    }, "LEFT"]]), "DIR");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_goTo'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("go to")
-    .appendField(new Blockly.FieldDropdown([["random position","RANDOM"], ["mouse position","MOUSE"]]), "WHERE");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_goToPoint'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("go to");
-    this.appendValueInput("X")
-    .setCheck(null)
-    .appendField("x:");
-    this.appendValueInput("Y")
-    .setCheck(null)
-    .appendField("y:");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_glideTo'] = {
-  init: function() {
-    this.appendValueInput("SEC")
-    .setCheck(null)
-    .appendField("glide");
-    this.appendDummyInput()
-    .appendField("secs to")
-    .appendField(new Blockly.FieldDropdown([["random position","RANDOM"], ["mouse position","MOUSE"]]), "WHERE");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_glideToPoint'] = {
-  init: function() {
-    this.appendValueInput("SEC")
-    .setCheck(null)
-    .appendField("glide");
-    this.appendValueInput("X")
-    .setCheck(null)
-    .appendField("secs to")
-    .appendField("x:");
-    this.appendValueInput("Y")
-    .setCheck(null)
-    .appendField("y:");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_pointTo'] = {
-  init: function() {
-    this.appendValueInput("DIR")
-    .setCheck(null)
-    .appendField("point in direction");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_pointToward'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("point towards")
-    .appendField(new Blockly.FieldDropdown([["mouse position","MOUSE"]]), "DEST");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_changeXY'] = {
-  init: function() {
-    this.appendValueInput("VALUE")
-    .setCheck(null)
-    .appendField("change")
-    .appendField(new Blockly.FieldDropdown([["x","X"], ["y","Y"]]), "XY")
-    .appendField("by");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_setXY'] = {
-  init: function() {
-    this.appendValueInput("VALUE")
-    .setCheck(null)
-    .appendField("set")
-    .appendField(new Blockly.FieldDropdown([["x","X"], ["y","Y"]]), "XY")
-    .appendField("to");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_getXY'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField(new Blockly.FieldDropdown([["x","X"], ["y","Y"]]), "XY")
-    .appendField("position");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_getDir'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("direction");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_edgeBounce'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("bounce if on edge");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_rotationStyle'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("set rotation style:")
-    .appendField(new Blockly.FieldDropdown([["all around","ALL"], ["left-right","LEFTRIGHT"], ["do not rotate","NONE"]]), "STYLE");
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(225);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
+]);
