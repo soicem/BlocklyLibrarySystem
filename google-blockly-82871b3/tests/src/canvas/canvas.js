@@ -135,12 +135,13 @@ class Canvas {
 
   setCurrentSprite(nameOfSprite) {
     if (this.getCurrentSpriteName() !== nameOfSprite) {
-      var xml = Blockly.Xml.workspaceToDom(this.getWorkspace());
-      var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
+      if (this.getCurrentSprite()) {
+        var xml = Blockly.Xml.workspaceToDom(this.getWorkspace());
+        var prettyXMLText = Blockly.Xml.domToPrettyText(xml);
 
-      this.getCurrentSprite().setXml(prettyXMLText);
-
-      this.getWorkspace().clear();
+        this.getCurrentSprite().setXml(prettyXMLText);
+        this.getWorkspace().clear();
+      }
 
       if (this.getSpriteByName(nameOfSprite).getXml() !== "") {
         var nextXml = Blockly.Xml.textToDom(this.getSpriteByName(nameOfSprite).getXml());
@@ -227,7 +228,7 @@ class Canvas {
 
   addSpriteAndSelect(spriteName, imageData = null) {
     this.addSprite(spriteName, imageData);
-    this.setCurrentSpriteName(spriteName);
+    this.setCurrentSprite(spriteName);
   }
 
   addStage(stageName, imageData = null) {

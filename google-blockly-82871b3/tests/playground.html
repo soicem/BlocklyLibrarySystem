@@ -1049,7 +1049,7 @@
 
         reader.addEventListener('load', function () {
           // sprite에 대한 canvas 용 objects를 저장한다.
-          myCanvas.addSprite(name, reader.result);
+          myCanvas.addSpriteAndSelect(name, reader.result);
           // myCanvas.getSpriteByName(name).draw();
           myCanvas.getSpriteByName(name).printProperties();
         });
@@ -1127,7 +1127,7 @@
         </ul1>
       </div>
       <div id="spriteGallery">
-        <div class="spriteImg" id="aww-cat.png" onclick="myCanvas.setCurrentSprite('aww-cat.png')" style="border: solid 2px #415DCC;">
+        <div class="spriteImg" id="aww-cat.png" onclick="myCanvas.setCurrentSprite('aww-cat.png')">
           <img src="aww-cat.png" alt="">
           <div class="desc">cat</div>
         </div>
