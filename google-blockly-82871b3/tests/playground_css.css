@@ -195,12 +195,12 @@ canvas {
 }
 
 #gallery_owner {
-  height: 360px;
+  height: 240px;
   margin-block-end: 0.67em;
 }
 
 #sprite_owner {
-  height: 340px;
+  height: 220px;
   width: 65%;
   float: left;
 }
@@ -211,7 +211,7 @@ canvas {
 }
 
 #stage_owner {
-  height: 340px;
+  height: 220px;
   width: 25%;
   float: right;
 }
@@ -291,4 +291,25 @@ div.desc {
   cursor: pointer;
   background: url("plus_button.png") center center no-repeat;
   background-size: 75% 75%;
+}
+
+#filebox label {
+  display: inline-block;
+  width: 100%;
+  cursor: pointer;
+}
+
+#filebox label:hover {
+  background-color: green;
+}
+
+#filebox input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip(0, 0, 0, 0);
+  border: 0;
 }

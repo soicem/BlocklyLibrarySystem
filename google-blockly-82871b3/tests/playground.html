@@ -958,8 +958,6 @@
       let animationUpdater;
       let myCanvas;
 
-
-
       function spriteChooser() {
         var name;
         var x = document.getElementById("spriteChooser");
@@ -1133,12 +1131,16 @@
       <option value="high_contrast">High Contrast</option></select>
     <div id="buttonCollection" class="rounded">
       <ul>
-        <li2><a id="Myimport" onclick="myImport()">My import</a></li2>
-        <li2><a id="ToolboxCollapse" onclick="test()">test</a></li2>
+        <li2><a id="myImport" onclick="myImport()">My import</a></li2>
+        <li2><a id="toolboxCollapse" onclick="test()">test</a></li2>
       </ul>
       <ul>
-        <li2><a id="ExportXML" onclick="toXml()">Export to XML</a></li2>
-        <li2><a id="ImportXML" onclick="fromXml()">Import from XML</a></li2>
+        <li2><a id="exportPro" onclick="toXml()">Export Project</a></li2>
+        <li2><a id="importPro" onclick="fromXml()">Import Project</a></li2>
+      </ul>
+      <ul>
+        <li2><a id="ExportLib" onclick="toXml()">Export Library</a></li2>
+        <li2><a id="ImportLib" onclick="fromXml()">Import Library</a></li2>
       </ul>
       <ul>
         <li2><a id="toJavaScript" onclick="goStep()">To JavaScript</a></li2>
@@ -1151,17 +1153,21 @@
             <option value="Lua">Lua</option>
             <option value="Dart">Dart</option>
           </select></li1>-->
-       </ul>
+      </ul>
+
+      <ul>
+        <li2 style="width:100%;">
+          <a id="insertBlk">
+            <div id="filebox">
+              <label for="getFile">Insert</label>
+              <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()"
+                   accept=".blk, .zip">
+            </div>
+          </a>
+        </li2>
+      </ul>
       <textarea id="importExport" style="width: calc(100% - 5px); height: 60%"
                 onchange="taChange();" onkeyup="taChange()"></textarea>
-      <div class="plusButtonContainer">
-        <div class="plusButton">
-          <span class="plus">
-            <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles()"
-                   accept=".blk, .zip">
-          </span>
-        </div>
-      </div>
   </div>
 <!--
     <p>
