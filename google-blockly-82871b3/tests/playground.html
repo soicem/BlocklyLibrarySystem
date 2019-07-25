@@ -678,17 +678,19 @@
       latestCodes[keyOfLatestCode] = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
       //latestCode = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
       var libCode = myCanvas.getLibCode();
-      console.log("lib : " , libCode)
       if(libCode){
-        latestCodes[keyOfLatestCode] += latestCodes[keyOfLatestCode] + "\n\n" + libCode;
+        libCode = libCode.replace("null", "")
+        libCode = libCode.replace("null", "")
+        //console.log(libCode);
+        latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode]  ;
+        console.log(latestCodes[keyOfLatestCode]);
       }
-      console.log("latestCodes : ", latestCodes);
 
       // step execution 용 코드
       if(!myInterpreters[myCanvas.getCurrentSpriteName()])
-        console.log("soicem");
+        //console.log("soicem");
       for(var i = 1; i < myCanvas.getSpritesOrder().length; i++){
-        console.log(myCanvas.getSpritesOrder()[i].getImageFilename());
+        //console.log(myCanvas.getSpritesOrder()[i].getImageFilename());
       }
     }
     function stepCode(keyOfSprite) {
@@ -697,6 +699,7 @@
         // First statement of this code.
         // Clear the program output.
         resetStepUi(true);
+        //console.log("soicem", keyOfCode, latestCodes[keyOfCode]);
         myInterpreters[keyOfCode] = new Interpreter(latestCodes[keyOfCode], initApi);
         return;
       }
