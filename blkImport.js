@@ -27,9 +27,9 @@ function BackImgToBLK(name, Source){
     backimg.file(name, Source, {base64:true});
 };
 
-var CreateBLK = function (blkName){
+var CreateBLK = function (blkName, ext){
     zip.file("info.json", JSON.stringify(jsoninfo));
-    blkName += ".blk";
+    blkName += "." + ext;
 
     zip.generateAsync({type:"blob"})
         .then((content)=>{

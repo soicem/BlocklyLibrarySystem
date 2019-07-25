@@ -323,7 +323,7 @@
       }
     }
 
-    function toXml() {
+    function toXml(ext) {
       var xml = Blockly.Xml.workspaceToDom(blockWorkspace);
       var output = document.getElementById('importExport');
 
@@ -337,7 +337,8 @@
       SpriteXMLtoBLK();     //for xml
       jsFile();           // for JS
 
-      CreateBLK('Test');
+      var nameOfBLK = "Test";
+      CreateBLK(nameOfBLK, ext);
     }
 
     //----check
@@ -439,8 +440,8 @@
       var base = "data:image/png;base64," + Source;
 
       var a = '<div class="spriteImg\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\'' + name + '\')">' +
-          '<img src="' + base + '" alt="냥">' +
-          '<div class="desc">냥</div>' +
+          '<img src="' + base + '" alt="">' +
+          '<div class="desc">' + name.split(".")[0] + '</div>' +
           '</div>';
 
       document.getElementById("spriteGallery").innerHTML += a;
@@ -454,8 +455,8 @@
       var base = "data:image/png;base64," + Source;
 
       var a = '<div class="stage\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\'' + name + '\')">' +
-          '<img src="' + base + '" alt="냥">' +
-          '<div class="desc">냥</div>' +
+          '<img src="' + base + '" alt="">' +
+          '<div class="desc">' + name.split(".")[0] + '</div>' +
           '</div>';
 
       document.getElementById("stageGallery").innerHTML += a;
@@ -1177,7 +1178,7 @@
       <option value="high_contrast">High Contrast</option></select>
     <div id="buttonCollection" class="rounded">
       <ul>
-        <li2><a id="exportPro" onclick="toXml()">Export Project</a></li2>
+        <li2><a id="proj" onclick="toXml(this.id)">Export Project</a></li2>
         <li2 style="width:50%;">
           <a>
             <div>
@@ -1189,7 +1190,7 @@
         </li2>
       </ul>
       <ul>
-        <li2><a id="ExportLib" onclick="toXml()">Export Library</a></li2>
+        <li2><a id="blk" onclick="toXml(this.id)">Export Library</a></li2>
         <li2 style="width:50%;">
           <a>
             <div>
@@ -1210,7 +1211,7 @@
             <div id="filebox">
               <label for="getFile">Insert</label>
               <input type="file" value="add File" name="files[]" id="getFile" onchange="ExtractFiles(this.id)"
-                   accept=".blk, .zip">
+                   accept=".proj, .zip">
               <input type="file" value="add File" name="files[]" id="getLib" onchange="ExtractFiles(this.id)"
                      accept=".blk, .zip">
 
