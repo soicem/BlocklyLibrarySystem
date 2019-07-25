@@ -206,7 +206,6 @@ canvas {
 }
 
 #spriteAttributes {
-  background-color: white;
   padding: 5px;
 }
 
@@ -218,14 +217,14 @@ canvas {
 
 #spriteGallery {
   width: 100%;
-  height: calc(100% - 130px);
+  height: calc(100% - 120px);
   background-color: white;
   margin-block-start: 0.67em;
 }
 
 #stageGallery {
   width: 100%;
-  height: calc(100% - 60px);
+  height: calc(100% - 50px);
   background-color: white;
 }
 
@@ -269,7 +268,7 @@ div.desc {
 .plusButtonContainer{
   display: block;
   width: 100%;
-  height: 60px;
+  height: 50px;
   background-color: white;
 }
 .plusButton {
