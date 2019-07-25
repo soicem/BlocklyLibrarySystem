@@ -93,7 +93,7 @@ class Sprite {
   }
 
   getImageFilename() {
-    return this.getImageSource().substring(this.getImageSource().lastIndexOf('/') + 1);
+    return decodeURI(this.getImageSource().substring(this.getImageSource().lastIndexOf('/') + 1));
   }
 
   // --- More ---

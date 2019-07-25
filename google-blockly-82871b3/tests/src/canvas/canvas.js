@@ -296,7 +296,7 @@ class Canvas {
       if (currentSprite === baseSprite) {
         if (layer !== 0 && layer !== this.getSpritesOrder().length - 1) {
           let data = context.getImageData(0, 0, baseWidth, baseHeight).data;
-          isOverlaying = this.isPixelsOverlayingRgb(data, baseSprite.getSize(), pixels, lookupRgb);
+          isOverlaying = this._isPixelsOverlayingRgb(data, baseSprite.getSize(), pixels, lookupRgb);
         }
       } else {
         const baseX = baseSprite.getX();
@@ -309,7 +309,7 @@ class Canvas {
 
     let data = context.getImageData(0, 0, baseWidth, baseHeight).data;
     if (!isOverlaying) {
-      isOverlaying = this.isPixelsOverlayingRgb(data, baseSprite.getSize(), pixels, lookupRgb);
+      isOverlaying = this._isPixelsOverlayingRgb(data, baseSprite.getSize(), pixels, lookupRgb);
     }
 
     return isOverlaying;
@@ -319,7 +319,7 @@ class Canvas {
     return this.isColorOverlayingColor(baseSprite, null, lookupRgb);
   }
 
-  isPixelsOverlayingRgb(data, size, pixels, rgb) {
+  _isPixelsOverlayingRgb(data, size, pixels, rgb) {
     let isOverlaying = false;
 
     for (let i = 0; i < pixels.length; i++) {

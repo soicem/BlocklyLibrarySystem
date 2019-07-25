@@ -351,7 +351,20 @@
           JSZip.loadAsync(evt.target.result)
           .then(function (blk) {
             blk.forEach(function (relativePath, file) {
-              if ((file.name).indexOf("images/") !== -1) { // for images;
+              if ((file.name).indexOf("backImage/") !== -1) { // for images;
+                var strArray = (file.name).split('/');
+                var picture = strArray[1];
+
+                file.async('base64')
+                .then(function (data) {
+                  if ((picture !== "") && (picture !== null) && (picture !== undefined)) {
+                    myCanvas.addStage(picture, data);
+                    // myCanvas.getSpriteByName(picture).draw();
+                    addStage(picture, data);
+                    myCanvas.setCurrentSpriteName(picture);
+                  }
+                });
+              } else if ((file.name).indexOf("images/") !== -1) { // for images;
                 var strArray = (file.name).split('/');
                 var picture = strArray[1];
 
@@ -420,12 +433,26 @@
       var base = "data:image/png;base64," + Source;
 
       var a = '<div class="spriteImg\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\'' + name + '\')">' +
-          '<img src="' + base
-          + '" alt="냥">' +
+          '<img src="' + base + '" alt="냥">' +
           '<div class="desc">냥</div>' +
           '</div>';
 
       document.getElementById("spriteGallery").innerHTML += a;
+    }
+
+    function addStage(name, Source) {
+      if (Source === null || Source === undefined || Source === "") {
+        return;
+      }
+
+      var base = "data:image/png;base64," + Source;
+
+      var a = '<div class="stage\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\'' + name + '\')">' +
+          '<img src="' + base + '" alt="냥">' +
+          '<div class="desc">냥</div>' +
+          '</div>';
+
+      document.getElementById("stageGallery").innerHTML += a;
     }
 
     function setSpriteXML() {
@@ -454,13 +481,21 @@
     }
 
     function ImgToFile() {
-      var arraySprite = Object.getOwnPropertyNames(myCanvas.getSprites());
+      // var arraySprite = Object.getOwnPropertyNames(myCanvas.getSprites());
+      //
+      // arraySprite.forEach((name) => {
+      //   if (name !== "aww-cat.png") {
+      //     ImgToBLK(name, myCanvas.getSpriteByName(name).getImageData());
+      //   }
+      // });
 
-      arraySprite.forEach((name) => {
-        if (name !== "aww-cat.png") {
-          ImgToBLK(name, myCanvas.getSpriteByName(name).getImageData());
-        }
-      });
+      const stage = myCanvas.getSpritesOrder()[0];
+      BackImgToBLK(stage.getImageFilename(), stage.getImageData());
+
+      for (let i = 1; i < myCanvas.getSpritesOrder().length; i++) {
+        const sprite = myCanvas.getSpritesOrder()[i];
+        ImgToBLK(sprite.getImageFilename(), sprite.getImageData());
+      }
     }
 
     function fromXml() {

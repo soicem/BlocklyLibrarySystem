@@ -2,6 +2,7 @@
 var jsoninfo    = [];
 var zip         = new JSZip();
 var img = zip.folder("images");
+var backimg = zip.folder("backImage");
 
 var FileToBLK = function (fileName, data, isLib) {
     var Fileinfo = {};
@@ -19,6 +20,12 @@ function ImgToBLK(name, Source){
     img.file(name, Source, {base64:true});
 };
 
+function BackImgToBLK(name, Source){
+    if(Source === undefined || Source === null)
+        return;
+
+    backimg.file(name, Source, {base64:true});
+};
 
 var CreateBLK = function (blkName){
     zip.file("info.json", JSON.stringify(jsoninfo));
