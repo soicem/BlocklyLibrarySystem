@@ -397,7 +397,6 @@
                       tmpJS[jsName] = data;
                     }
                   } else {
-                    console.log(data);
                     myCanvas.setLibCode(data);
                     myCanvas.getSpriteByName(jsName).setJsCode(data);
                   }
@@ -414,7 +413,6 @@
               if (isEmpty > 0) {
                 matching = Object.keys(tmpJS);
                 matching.forEach(function (data) {
-                  console.log(tmpJS[data])
                   myCanvas.setLibCode(tmpJS[data]);
                   myCanvas.getSpriteByName(data).setJsCode(tmpJS[data]);
                 })
@@ -430,6 +428,7 @@
         };
       })(files);
       reader.readAsArrayBuffer(files);
+      console.log(myCanvas.getSpritesOrder());
     }
 
     function addSprite(name, Source) {
@@ -605,20 +604,16 @@
       interpreter.setProperty(scope, 'isTouchingColorHex',
               interpreter.createNativeFunction(function(hexValue) {
                 hexValue = hexValue ? hexValue.toString() : '';
-                //console.log(myCanvas.getSpritesOrder()[0].isTouchingColorHex("#000000"));
-                //console.log(myCanvas.getSpritesOrder()[0].isTouchingColorHex(hexValue));
                 return myCanvas.getSpecificSprite().isTouchingColorHex(hexValue);
               }));
 
       interpreter.setProperty(scope, 'sprite_getX',
               interpreter.createNativeFunction(function() {
-                console.log(myCanvas.getSpecificSprite().getX());
                 return myCanvas.getSpecificSprite().getX();
               }));
 
       interpreter.setProperty(scope, 'sprite_getY',
               interpreter.createNativeFunction(function() {
-                console.log(myCanvas.getSpecificSprite().getY());
                 return myCanvas.getSpecificSprite().getY();
               }));
 
@@ -685,11 +680,14 @@
       if(libCode){
         libCode = libCode.replace("null", "")
         libCode = libCode.replace("null", "")
+        libCode = libCode.replace("nullnull", "")
+
         //console.log(libCode);
         latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode]  ;
-        console.log(latestCodes[keyOfLatestCode]);
       }
-
+      latestCodes[keyOfLatestCode] = latestCodes[keyOfLatestCode].replace("nullnull", "");
+      //var n = latestCodes[keyOfLatestCode].search("W3Schools");
+      //console.log("is nullnull : ", n);
       // step execution 용 코드
       if(!myInterpreters[myCanvas.getCurrentSpriteName()])
         //console.log("soicem");
@@ -703,7 +701,8 @@
         // First statement of this code.
         // Clear the program output.
         resetStepUi(true);
-        //console.log("soicem", keyOfCode, latestCodes[keyOfCode]);
+        latestCodes[keyOfCode] = latestCodes[keyOfCode].replace("nullnull", "");
+        console.log(keyOfCode, latestCodes[keyOfCode]);
         myInterpreters[keyOfCode] = new Interpreter(latestCodes[keyOfCode], initApi);
         return;
       }
