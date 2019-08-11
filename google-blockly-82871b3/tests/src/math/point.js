@@ -29,11 +29,16 @@ class Point {
   }
 
   setRandomX(max, min = 0) {
-    this.setX(Math.random() * (max - min) + min);
+    this.setX(Math.round(Math.random() * (max - min) + min));
   }
 
   setRandomY(max, min = 0) {
-    this.setY(Math.random() * (max - min) + min);
+    this.setY(Math.round(Math.random() * (max - min) + min));
+  }
+
+  setRandomXY(max, min = 0) {
+    this.setRandomX(max, min);
+    this.setRandomY(max, min);
   }
 
   getAbsoluteOffsetTo(point) {
@@ -56,6 +61,20 @@ class Point {
 
   clone() {
     return new Point(this.getX(), this.getY());
+  }
+
+  equals(other) {
+    return this.getX() === other.getX() && this.getY() === other.getY();
+  }
+
+  greaterThan(other) {
+    return (this.getY() === other.getY() && this.getX() > other.getX())
+        || this.getY() > other.getY();
+  }
+
+  lessThan(other) {
+    return (this.getY() === other.getY() && this.getX() < other.getX())
+        || this.getY() < other.getY();
   }
 
   offset(other) {

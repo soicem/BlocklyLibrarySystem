@@ -46,8 +46,7 @@ class Sprite {
     this._position = position.clone();
   }
 
-  getSize() {
-    return this._size;
+  getSize() {    return this._size;
   }
 
   setSize(size) {
@@ -116,7 +115,7 @@ class Sprite {
     return this.getSize().getHeight();
   }
 
-  getPixelsOfRgb(rgb) {
+  getPixelsOfRgb(rgb, withGap = false) {
     let foundPixels = [];
 
     const canvas = document.createElement('canvas');
@@ -141,7 +140,11 @@ class Sprite {
 
         if ((rgb === null || rgb.a === 0) ||
             (r === rgb.r && g === rgb.g && b === rgb.b)) {
-          foundPixels.push(new Point(x, y));
+          if (withGap) {
+            foundPixels.push(new Point(x + this.getX(), y + this.getY()));
+          } else {
+            foundPixels.push(new Point(x, y));
+          }
         }
       }
     }
@@ -149,8 +152,8 @@ class Sprite {
     return foundPixels;
   }
 
-  getPixelsOfAnyColor() {
-    return this.getPixelsOfRgb(null);
+  getPixelsOfAnyColor(withGap = false) {
+    return this.getPixelsOfRgb(null, withGap);
   }
 
   ////////// Class Methods //////////
@@ -178,7 +181,8 @@ class Sprite {
   }
 
   moveSteps(step) {
-    this.getPosition().offsetByAngle(this.getAngle(), step);
+    let point = this.getPosition();
+    this.setPosition(point.offsetByAngle(this.getAngle(), step));
   }
 
   turnRight(degree) {
@@ -193,15 +197,30 @@ class Sprite {
     this.setAngle(new Degree(degree));
   }
 
-  positionRandomly() {
-    this.getPosition().setRandomX(
-        this.getCanvas().width - this.getSize().getWidth());
-    this.getPosition().setRandomY(
-        this.getCanvas().height - this.getSize().getHeight());
+  goToPoint(x, y) {
+    this.setPosition(new Point(x, y));
   }
 
-  goToPoint(x, y) {
-    this.getPosition().setXY(x, y);
+  goToRandomPosition() {
+    const max = {
+      width: this.getCanvas().getWidth() - this.getWidth(),
+      height: this.getCanvas().getHeight() - this.getHeight()
+    };
+
+    let point = new Point();
+    point.setRandomX(max.width);
+    point.setRandomY(max.height);
+    this.setPosition(point);
+  }
+
+  goToMousePosition() {
+    let mousePosition = this.getCanvas().getHandler().getMousePosition();
+    let newPosition = mousePosition.offset(new Point(-this.getWidth()/2, -this.getHeight()/2));
+    this.setPosition(newPosition);
+  }
+
+  glideToMousePosition(second) {
+    setTimeout(this.goToMousePosition.bind(this), second * 1000);
   }
 
   say(text) {
@@ -246,13 +265,8 @@ class Sprite {
     }
   }
 
-  goToMousePosition() {
-    let mousePosition = this.getCanvas().getHandler().getMousePosition();
-    let newPosition = mousePosition.offset(new Point(-this.getWidth()/2, -this.getHeight()/2));
-    this.setPosition(newPosition);
-  }
-
-  glideToMousePosition(second) {
-    setTimeout(this.goToMousePosition.bind(this), second * 1000);
+  isTouchingSprite(spriteName) {
+    const sprite = this.getCanvas().getSpriteByName(spriteName);
+    return CanvasUtil.isSpriteTouchingSprite(this.getCanvas(), this, sprite);
   }
 }
