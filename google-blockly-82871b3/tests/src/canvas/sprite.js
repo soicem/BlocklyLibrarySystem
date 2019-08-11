@@ -12,12 +12,6 @@ class Sprite {
     this.resetXml();
   }
 
-  initImage() {
-    this.getImage().addEventListener("load", () => {
-      //this.draw();
-    }, false);
-  }
-
   ////////// Getter & Setter //////////
 
   getCanvas() {
@@ -45,11 +39,11 @@ class Sprite {
   }
 
   getPosition() {
-    return this._position;
+    return this._position.clone();
   }
 
   setPosition(position) {
-    this._position = position;
+    this._position = position.clone();
   }
 
   getSize() {
@@ -250,5 +244,15 @@ class Sprite {
     } else {
       return false;
     }
+  }
+
+  goToMousePosition() {
+    let mousePosition = this.getCanvas().getHandler().getMousePosition();
+    let newPosition = mousePosition.offset(new Point(-this.getWidth()/2, -this.getHeight()/2));
+    this.setPosition(newPosition);
+  }
+
+  glideToMousePosition(second) {
+    setTimeout(this.goToMousePosition.bind(this), second * 1000);
   }
 }
