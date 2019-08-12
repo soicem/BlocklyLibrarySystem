@@ -35,6 +35,12 @@ class Angle {
     throw new AbstractMethodCallException("Cannot call abstract method directly");
   }
 
+  /////////// Class Methods ///////////
+
+  clone() {
+    throw new AbstractMethodCallException("Cannot call abstract method directly");
+  }
+
   toRadian() {
     throw new AbstractMethodCallException("Cannot call abstract method directly");
   }
@@ -43,13 +49,12 @@ class Angle {
     throw new AbstractMethodCallException("Cannot call abstract method directly");
   }
 
-  /////////// Class Methods ///////////
-
-  plus(value) {
-    this.setAngle(this.getAngle() + value);
+  plus(angle) {
+    throw new AbstractMethodCallException("Cannot call abstract method directly");
   }
 
-  minus(value) {
-    this.setAngle(this.getAngle() - value);
+  minus(angle) {
+    throw new AbstractMethodCallException("Cannot call abstract method directly");
   }
+
 }

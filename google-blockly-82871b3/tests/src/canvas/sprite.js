@@ -46,19 +46,20 @@ class Sprite {
     this._position = position.clone();
   }
 
-  getSize() {    return this._size;
+  getSize() {
+    return this._size.clone();
   }
 
   setSize(size) {
-    this._size = size;
+    this._size = size.clone();
   }
 
   getAngle() {
-    return this._direction;
+    return this._direction.clone();
   }
 
   setAngle(direction) {
-    this._direction = direction;
+    this._direction = direction.clone();
   }
 
   getSpeechBubble() {
@@ -86,7 +87,8 @@ class Sprite {
   }
 
   getImageFilename() {
-    return decodeURI(this.getImageSource().substring(this.getImageSource().lastIndexOf('/') + 1));
+    return decodeURI(this.getImageSource().substring(
+        this.getImageSource().lastIndexOf('/') + 1));
   }
 
   // --- More ---
@@ -162,6 +164,10 @@ class Sprite {
     this.setXml("<xml xmlns='http://www.w3.org/1999/xhtml'></xml>");
   }
 
+  clearSpeechBubble() {
+    this.setSpeechBubble(null);
+  }
+
   printProperties() {
     console.log("x : ", this.getPosition().getX());
     console.log("y : ", this.getPosition().getY());
@@ -181,20 +187,22 @@ class Sprite {
   }
 
   moveSteps(step) {
-    let point = this.getPosition();
-    this.setPosition(point.offsetByAngle(this.getAngle(), step));
+    let newPosition = this.getPosition().offsetByAngle(this.getAngle(), step);
+    this.setPosition(newPosition);
   }
 
-  turnRight(degree) {
-    this.getAngle().plus(degree);
+  turnRight(angle) {
+    const newAngle = this.getAngle().plus(angle);
+    this.setAngle(newAngle);
   }
 
-  turnLeft(degree) {
-    this.getAngle().minus(degree);
+  turnLeft(angle) {
+    const newAngle = this.getAngle().minus(angle);
+    this.setAngle(newAngle);
   }
 
-  changeDirection(degree) {
-    this.setAngle(new Degree(degree));
+  changeDirection(angle) {
+    this.setAngle(angle);
   }
 
   goToPoint(x, y) {
@@ -215,7 +223,8 @@ class Sprite {
 
   goToMousePosition() {
     let mousePosition = this.getCanvas().getHandler().getMousePosition();
-    let newPosition = mousePosition.offset(new Point(-this.getWidth()/2, -this.getHeight()/2));
+    let newPosition = mousePosition.offset(
+        new Point(-this.getWidth() / 2, -this.getHeight() / 2));
     this.setPosition(newPosition);
   }
 
