@@ -926,7 +926,7 @@
     function myStart() {
       animationUpdater = new AnimationUpdater();
       myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400), blockWorkspace);
-      myCanvas.addSpriteAndSelect("penguin.png");
+      myCanvas.addSpriteAndSelect("penguin", null, "penguin.png");
       animationUpdater.addCallFunction({caller: myCanvas, method: myCanvas.render});
       animationUpdater.start();
       return myCanvas;
@@ -996,11 +996,23 @@
       let animationUpdater;
       let myCanvas;
 
+      // Sprite Name 중복 제거 ex) penguin -> penguin1
+      function getNoDuplicationName(name){
+        var noDuplicated = 1;
+        var spriteName = name.split('.')[0];
+        var originalName = spriteName;
+        var ext = name.split('.')[1];
+        while(myCanvas._sprites.hasOwnProperty(spriteName)){
+          spriteName = originalName + noDuplicated;
+          noDuplicated += 1;
+        }
+        return spriteName;
+      }
+
       function spriteChooser() {
         var name;
         var x = document.getElementById("spriteChooser");
         var txt = "";
-
         var imageFile = x.files[0];
         var reader = new FileReader();
 
@@ -1031,24 +1043,26 @@
             txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
           }
         }
-        var a = '<div class="spriteImg\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\''
-            + name + '\')">'
+        var spriteName = getNoDuplicationName(name); // Sprite name 중복 제거
+        var a = '<div class="spriteImg\" id="' + spriteName + '" onclick="myCanvas.setCurrentSprite(\''
+            + spriteName + '\')">'
             + '<img src="' + name + '" alt="">'
-            + '<div class="desc">' + name.split('.')[0] + '</div>'
+            + '<div class="desc">' + spriteName + '</div>'
             + '</div>';
         //alert(a);
         document.getElementById("spriteGallery").innerHTML += a;
 
         reader.addEventListener('load', function () {
           // sprite에 대한 canvas 용 objects를 저장한다.
-          myCanvas.addSpriteAndSelect(name, reader.result);
+          myCanvas.addSpriteAndSelect(spriteName, reader.result, name); // spriteName : penguin, name : penguin.png
           // myCanvas.getSpriteByName(name).draw();
-          myCanvas.getSpriteByName(name).printProperties();
+          myCanvas.getSpriteByName(spriteName).printProperties();
         });
 
         if (imageFile) {
           reader.readAsArrayBuffer(imageFile);
         }
+        document.getElementById("spriteChooser").value = ""; // 같은 이미지 추가 시 onchange 반영을 위해 value 초기화
       }
 
       function stageChooser() {
@@ -1120,9 +1134,9 @@
         </ul1>
       </div>
       <div id="spriteGallery">
-        <div class="spriteImg" id="penguin.png" onclick="myCanvas.setCurrentSprite('penguin.png')">
+        <div class="spriteImg" id="penguin" onclick="myCanvas.setCurrentSprite('penguin')">
           <img src="penguin.png" alt="">
-          <div class="desc">cat</div>
+          <div class="desc">penguin</div>
         </div>
       </div>
       <div class="plusButtonContainer">
