@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blockly Playground</title>
   <script src="../blockly_uncompressed.js"></script>
   <script src="../generators/javascript.js"></script>
@@ -921,13 +922,13 @@
         var ctx = document.getElementById('spriteCanvas').getContext("2d");
         ctx.drawImage( imgClo , 250, 250);
       },false);
-      imgClo.src="aww-cat.png";
+      imgClo.src="penguin.png";
     }
 
     function myStart() {
       animationUpdater = new AnimationUpdater();
       myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400), blockWorkspace);
-      myCanvas.addSpriteAndSelect("aww-cat.png");
+      myCanvas.addSpriteAndSelect("penguin.png");
       animationUpdater.addCallFunction({caller: myCanvas, method: myCanvas.render});
       animationUpdater.start();
       return myCanvas;
@@ -937,13 +938,12 @@
 
 </head>
 <body onload="start(); myStart();">
-<ul>
+<ul id="topMenu">
   <h1>Blockly Playground</h1>
   <li><a id="main_tab" onclick="changeTab('main_tab')">Main</a></li>
   <li><a id="library_tab" onclick="changeTab('library_tab')">Library</a></li>
   <li><a id="sprite_tab" onclick="changeTab('sprite_tab')">Sprite</a></li>
 </ul>
-<br>
 <!---- Main Tab ----->
 <div id="blocklyDiv"></div>
 <!--- Library Tab --->
@@ -974,7 +974,7 @@
 </div>
 <!----- Content ----->
 <div id="content">
-  <div id="canvasArea" class="rounded">
+  <div id="canvasArea" class="rounded gap_at_end">
   <div id="canvasBlock">
     <div id="canvases">
       <canvas id="canvas"></canvas>
@@ -1033,10 +1033,11 @@
             txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
           }
         }
-        var a = '<div class="spriteImg\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\'' + name + '\')">'
-                + '<img src="' + name + '" alt="">'
-                + '<div class="desc">' + name.split('.')[0] + '</div>'
-                + '</div>';
+        var a = '<div class="spriteImg\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\''
+            + name + '\')">'
+            + '<img src="' + name + '" alt="">'
+            + '<div class="desc">' + name.split('.')[0] + '</div>'
+            + '</div>';
         //alert(a);
         document.getElementById("spriteGallery").innerHTML += a;
 
@@ -1087,13 +1088,14 @@
             txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
           }
         }
-        var a = '<div class="stage\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\'' + name + '\')">'
-                + '<img src="' + name + '" alt="">'
-                + '<div class="desc">' + name.split(".")[0] + '</div>'
-                + '</div>';
+        var a = '<div class="stage\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\''
+            + name + '\')">'
+            + '<img src="' + name + '" alt="">'
+            + '<div class="desc">' + name.split(".")[0] + '</div>'
+            + '</div>';
         document.getElementById("stageGallery").innerHTML += a;
 
-        reader.addEventListener('load', function() {
+        reader.addEventListener('load', function () {
           myCanvas.addStage(name, reader.result);
           // myCanvas.getSprite(name).draw();
           myCanvas.getSpriteByName(name).printProperties();
@@ -1103,11 +1105,11 @@
           reader.readAsArrayBuffer(imageFile);
         }
       }
-      </script>
-    </div>
+    </script>
   </div>
+</div>
 
-  <div id="gallery_owner">
+  <div id="gallery_owner" class="gap_at_end">
     <div id="sprite_owner" class="rounded">
       <div id="spriteAttributes">
         <ul1>
@@ -1120,8 +1122,8 @@
         </ul1>
       </div>
       <div id="spriteGallery">
-        <div class="spriteImg" id="aww-cat.png" onclick="myCanvas.setCurrentSprite('aww-cat.png')">
-          <img src="aww-cat.png" alt="">
+        <div class="spriteImg" id="penguin.png" onclick="myCanvas.setCurrentSprite('penguin.png')">
+          <img src="penguin.png" alt="">
           <div class="desc">cat</div>
         </div>
       </div>

@@ -1,11 +1,20 @@
+:root {
+  --top-menu-height: 48px;
+  --side-menu-width: 504px;
+}
+
 html, body {
   height: 100%;
+  margin: 0;
 }
 
 body {
   background-color: #fff;
   font-family: sans-serif;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: scroll;
+  min-width: 1200px;
+  min-height: calc(930px);
 }
 
 h1 {
@@ -101,7 +110,11 @@ canvas {
   -moz-border-radius: 0.5em;
   -webkit-border-radius: 0.5em;
   padding: 11px;
-  margin-block-end: 0.67em;
+  /*margin-block-end: 0.67em;*/
+}
+
+#topMenu {
+  height: var(--top-menu-height);
 }
 
 #spriteCanvas_container {
@@ -146,8 +159,8 @@ canvas {
 
 #blocklyDiv {
   float: left;
-  height: calc(100% - 80px);
-  width: calc(100% - 540px);
+  height: calc(100% - var(--top-menu-height));
+  width: calc(100% - var(--side-menu-width));
 
 }
 
@@ -188,14 +201,16 @@ canvas {
 
 #content {
   float: right;
-  height: calc(100% - 80px);
-  width: 520px;
+  height: calc(100% - var(--top-menu-height));
+  width: var(--side-menu-width);
   background-color: white;
-  overflow: auto;
 }
 
 #gallery_owner {
   height: 240px;
+}
+
+.gap_at_end {
   margin-block-end: 0.67em;
 }
 
