@@ -28,4 +28,16 @@ goog.provide('Blockly.JavaScript.events');
 
 goog.require('Blockly.JavaScript');
 
+Blockly.JavaScript['sprite_flagClicked'] = function (block) {
+    let value_content = Blockly.JavaScript.valueToCode(block, 'CONTENT',
+        Blockly.JavaScript.ORDER_ATOMIC);
 
+    return "#flagClicked;\n";
+};
+
+Blockly.JavaScript['sprite_cloning'] = function (block) {
+    let value_content = Blockly.JavaScript.valueToCode(block, 'CONTENT',
+        Blockly.JavaScript.ORDER_ATOMIC);
+
+    return "#cloning;\n";
+};
