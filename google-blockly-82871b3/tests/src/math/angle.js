@@ -5,7 +5,8 @@
 class Angle {
   constructor(angle) {
     if (new.target === Angle) {
-      throw new AbstractClassConstructException("Cannot construct abstract instances directly");
+      throw new AbstractClassConstructException(
+          "Cannot construct abstract instances directly");
     }
 
     this.setAngle(angle);
@@ -24,32 +25,45 @@ class Angle {
   // --- More ---
 
   getFullAngle() {
-    throw new AbstractMethodCallException("Cannot call abstract method directly");
+    throw new AbstractMethodCallException(
+        "Cannot call abstract method directly");
   }
 
   getRadian() {
-    throw new AbstractMethodCallException("Cannot call abstract method directly");
+    throw new AbstractMethodCallException(
+        "Cannot call abstract method directly");
   }
 
   getDegree() {
-    throw new AbstractMethodCallException("Cannot call abstract method directly");
-  }
-
-  toRadian() {
-    throw new AbstractMethodCallException("Cannot call abstract method directly");
-  }
-
-  toDegree() {
-    throw new AbstractMethodCallException("Cannot call abstract method directly");
+    throw new AbstractMethodCallException(
+        "Cannot call abstract method directly");
   }
 
   /////////// Class Methods ///////////
 
-  plus(value) {
-    this.setAngle(this.getAngle() + value);
+  clone() {
+    throw new AbstractMethodCallException(
+        "Cannot call abstract method directly");
   }
 
-  minus(value) {
-    this.setAngle(this.getAngle() - value);
+  toRadian() {
+    throw new AbstractMethodCallException(
+        "Cannot call abstract method directly");
   }
+
+  toDegree() {
+    throw new AbstractMethodCallException(
+        "Cannot call abstract method directly");
+  }
+
+  plus(angle) {
+    throw new AbstractMethodCallException(
+        "Cannot call abstract method directly");
+  }
+
+  minus(angle) {
+    throw new AbstractMethodCallException(
+        "Cannot call abstract method directly");
+  }
+
 }

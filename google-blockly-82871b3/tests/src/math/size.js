@@ -34,4 +34,8 @@ class Size {
 
   ////////// Class Methods //////////
 
+  clone() {
+    return new Size(this.getWidth(), this.getHeight());
+  }
+
 }

@@ -12,12 +12,6 @@ class Sprite {
     this.resetXml();
   }
 
-  initImage() {
-    this.getImage().addEventListener("load", () => {
-      //this.draw();
-    }, false);
-  }
-
   ////////// Getter & Setter //////////
 
   getCanvas() {
@@ -45,27 +39,27 @@ class Sprite {
   }
 
   getPosition() {
-    return this._position;
+    return this._position.clone();
   }
 
   setPosition(position) {
-    this._position = position;
+    this._position = position.clone();
   }
 
   getSize() {
-    return this._size;
+    return this._size.clone();
   }
 
   setSize(size) {
-    this._size = size;
+    this._size = size.clone();
   }
 
   getAngle() {
-    return this._direction;
+    return this._direction.clone();
   }
 
   setAngle(direction) {
-    this._direction = direction;
+    this._direction = direction.clone();
   }
 
   getSpeechBubble() {
@@ -93,7 +87,8 @@ class Sprite {
   }
 
   getImageFilename() {
-    return decodeURI(this.getImageSource().substring(this.getImageSource().lastIndexOf('/') + 1));
+    return decodeURI(this.getImageSource().substring(
+        this.getImageSource().lastIndexOf('/') + 1));
   }
 
   // --- More ---
@@ -122,7 +117,7 @@ class Sprite {
     return this.getSize().getHeight();
   }
 
-  getPixelsOfRgb(rgb) {
+  getPixelsOfRgb(rgb, withGap = false) {
     let foundPixels = [];
 
     const canvas = document.createElement('canvas');
@@ -147,7 +142,11 @@ class Sprite {
 
         if ((rgb === null || rgb.a === 0) ||
             (r === rgb.r && g === rgb.g && b === rgb.b)) {
-          foundPixels.push(new Point(x, y));
+          if (withGap) {
+            foundPixels.push(new Point(x + this.getX(), y + this.getY()));
+          } else {
+            foundPixels.push(new Point(x, y));
+          }
         }
       }
     }
@@ -155,14 +154,18 @@ class Sprite {
     return foundPixels;
   }
 
-  getPixelsOfAnyColor() {
-    return this.getPixelsOfRgb(null);
+  getPixelsOfAnyColor(withGap = false) {
+    return this.getPixelsOfRgb(null, withGap);
   }
 
   ////////// Class Methods //////////
 
   resetXml() {
     this.setXml("<xml xmlns='http://www.w3.org/1999/xhtml'></xml>");
+  }
+
+  clearSpeechBubble() {
+    this.setSpeechBubble(null);
   }
 
   printProperties() {
@@ -184,30 +187,49 @@ class Sprite {
   }
 
   moveSteps(step) {
-    this.getPosition().offsetByAngle(this.getAngle(), step);
+    let newPosition = this.getPosition().offsetByAngle(this.getAngle(), step);
+    this.setPosition(newPosition);
   }
 
-  turnRight(degree) {
-    this.getAngle().plus(degree);
+  turnRight(angle) {
+    const newAngle = this.getAngle().plus(angle);
+    this.setAngle(newAngle);
   }
 
-  turnLeft(degree) {
-    this.getAngle().minus(degree);
+  turnLeft(angle) {
+    const newAngle = this.getAngle().minus(angle);
+    this.setAngle(newAngle);
   }
 
-  changeDirection(degree) {
-    this.setAngle(new Degree(degree));
-  }
-
-  positionRandomly() {
-    this.getPosition().setRandomX(
-        this.getCanvas().width - this.getSize().getWidth());
-    this.getPosition().setRandomY(
-        this.getCanvas().height - this.getSize().getHeight());
+  changeDirection(angle) {
+    this.setAngle(angle);
   }
 
   goToPoint(x, y) {
-    this.getPosition().setXY(x, y);
+    this.setPosition(new Point(x, y));
+  }
+
+  goToRandomPosition() {
+    const max = {
+      width: this.getCanvas().getWidth() - this.getWidth(),
+      height: this.getCanvas().getHeight() - this.getHeight()
+    };
+
+    let point = new Point();
+    point.setRandomX(max.width);
+    point.setRandomY(max.height);
+    this.setPosition(point);
+  }
+
+  goToMousePosition() {
+    let mousePosition = this.getCanvas().getHandler().getMousePosition();
+    let newPosition = mousePosition.offset(
+        new Point(-this.getWidth() / 2, -this.getHeight() / 2));
+    this.setPosition(newPosition);
+  }
+
+  glideToMousePosition(second) {
+    setTimeout(this.goToMousePosition.bind(this), second * 1000);
   }
 
   say(text) {
@@ -226,7 +248,8 @@ class Sprite {
     }
 
     if (hexToRgb(lookupHex)) {
-      return this.getCanvas().isOverlayingColor(this, hexToRgb(lookupHex));
+      return CanvasUtil.isOverlayingColor(this.getCanvas(), this,
+          hexToRgb(lookupHex));
     } else {
       return false;
     }
@@ -245,10 +268,16 @@ class Sprite {
     }
 
     if (hexToRgba(baseHex) && hexToRgba(lookupHex)) {
-      return this.getCanvas().isColorOverlayingColor(this, hexToRgba(baseHex),
+      return CanvasUtil.isColorOverlayingColor(this.getCanvas(), this,
+          hexToRgba(baseHex),
           hexToRgba(lookupHex));
     } else {
       return false;
     }
+  }
+
+  isTouchingSprite(spriteName) {
+    const sprite = this.getCanvas().getSpriteByName(spriteName);
+    return CanvasUtil.isSpriteTouchingSprite(this.getCanvas(), this, sprite);
   }
 }

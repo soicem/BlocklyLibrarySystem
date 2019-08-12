@@ -125,7 +125,7 @@ class Canvas {
     return actualSpriteObject;
   }
 
-  getSpecificSprite(){
+  getSpecificSprite() {
     return this.getSpriteByName(this.getSpecificSpriteName());
   }
 
@@ -144,7 +144,8 @@ class Canvas {
       }
 
       if (this.getSpriteByName(nameOfSprite).getXml() !== "") {
-        var nextXml = Blockly.Xml.textToDom(this.getSpriteByName(nameOfSprite).getXml());
+        var nextXml = Blockly.Xml.textToDom(
+            this.getSpriteByName(nameOfSprite).getXml());
         Blockly.Xml.domToWorkspace(nextXml, this.getWorkspace());
       }
 
@@ -153,14 +154,17 @@ class Canvas {
     // Highlight the selected sprite
     var l = document.getElementsByClassName('spriteImg');
 
-    for(var i = 0; i < l.length; i++){
+    for (var i = 0; i < l.length; i++) {
       l[i].style.border = 'solid 1px #ccc';
     }
-    document.getElementById(this.getCurrentSpriteName()).style.border = "solid 2px #415DCC";
+    document.getElementById(
+        this.getCurrentSpriteName()).style.border = "solid 2px #415DCC";
     document.getElementById('sprite_X').value = this.getCurrentSprite().getX();
     document.getElementById('sprite_Y').value = this.getCurrentSprite().getY();
-    document.getElementById('sprite_H').value = this.getCurrentSprite().getHeight();
-    document.getElementById('sprite_W').value = this.getCurrentSprite().getWidth();
+    document.getElementById(
+        'sprite_H').value = this.getCurrentSprite().getHeight();
+    document.getElementById(
+        'sprite_W').value = this.getCurrentSprite().getWidth();
   }
 
   getLayerNumber(sprite) {
@@ -218,7 +222,8 @@ class Canvas {
 
   addSprite(spriteName, imageData = null) {
     const defaultSize = new Size(40, 40);
-    let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName, imageData);
+    let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName,
+        imageData);
 
     this._sprites[spriteName] = sprite;
     this._spritesOrder.push(sprite);
@@ -233,7 +238,8 @@ class Canvas {
 
   addStage(stageName, imageData = null) {
     const defaultSize = new Size(this.getWidth(), this.getHeight());
-    let stage = SpriteFactory.getSprite(this, defaultSize, stageName, imageData);
+    let stage = SpriteFactory.getSprite(this, defaultSize, stageName,
+        imageData);
 
     this._sprites[stageName] = stage;
     this._spritesOrder[0] = stage;
@@ -269,78 +275,6 @@ class Canvas {
 
   moveSpriteToTop(sprite) {
     this.changeSpriteOrder(sprite, this.getSpritesOrder().length - 1)
-  }
-
-  isColorOverlayingColor(baseSprite, baseRgb, lookupRgb) {
-    let isOverlaying = false;
-
-    const baseWidth = baseSprite.getWidth();
-    const baseHeight = baseSprite.getHeight();
-    let canvas = document.createElement('canvas');
-    let context = canvas.getContext('2d');
-    canvas.width = baseWidth;
-    canvas.height = baseHeight;
-    const pixels = baseSprite.getPixelsOfRgb(baseRgb);
-
-    for (let layer = 0; layer < this.getSpritesOrder().length && !isOverlaying; layer++) {
-      const currentSprite = this.getSpritesOrder()[layer];
-
-      if (currentSprite === null) {
-        continue;
-      }
-
-      const currentX = currentSprite.getX();
-      const currentY = currentSprite.getY();
-      const currentWidth = currentSprite.getWidth();
-      const currentHeight = currentSprite.getHeight();
-
-      if (currentSprite === baseSprite) {
-        if (layer !== 0 && layer !== this.getSpritesOrder().length - 1) {
-          let data = context.getImageData(0, 0, baseWidth, baseHeight).data;
-          isOverlaying = this._isPixelsOverlayingRgb(data, baseSprite.getSize(), pixels, lookupRgb);
-        }
-      } else {
-        const baseX = baseSprite.getX();
-        const baseY = baseSprite.getY();
-
-        context.drawImage(currentSprite.getImage(), currentX - baseX,
-            currentY - baseY, currentWidth, currentHeight);
-      }
-    }
-
-    let data = context.getImageData(0, 0, baseWidth, baseHeight).data;
-    if (!isOverlaying) {
-      isOverlaying = this._isPixelsOverlayingRgb(data, baseSprite.getSize(), pixels, lookupRgb);
-    }
-
-    return isOverlaying;
-  }
-
-  isOverlayingColor(baseSprite, lookupRgb) {
-    return this.isColorOverlayingColor(baseSprite, null, lookupRgb);
-  }
-
-  _isPixelsOverlayingRgb(data, size, pixels, rgb) {
-    let isOverlaying = false;
-
-    for (let i = 0; i < pixels.length; i++) {
-      const index = (pixels[i].getY() * size.getWidth() + pixels[i].getX()) * 4;
-      const r = data[index];
-      const g = data[index + 1];
-      const b = data[index + 2];
-      const a = data[index + 3];
-
-      if (a === 0) {
-        continue;
-      }
-
-      if (r === rgb.r && g === rgb.g && b === rgb.b) {
-        isOverlaying = true;
-        break;
-      }
-    }
-
-    return isOverlaying;
   }
 
 }
