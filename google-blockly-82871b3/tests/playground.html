@@ -677,6 +677,7 @@
       let keyOfLatestCode = myCanvas.getCurrentSpriteName()
       latestCodes[keyOfLatestCode] = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
       //latestCode = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
+      console.log(latestCodes[keyOfLatestCode]);
       var libCode = myCanvas.getLibCode();
       if(libCode){
         libCode = libCode.replace("null", "")
