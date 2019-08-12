@@ -683,12 +683,10 @@
         libCode = libCode.replace("null", "")
         libCode = libCode.replace("nullnull", "")
 
-        //console.log(libCode);
         latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode]  ;
       }
       latestCodes[keyOfLatestCode] = latestCodes[keyOfLatestCode].replace("nullnull", "");
-      //var n = latestCodes[keyOfLatestCode].search("W3Schools");
-      //console.log("is nullnull : ", n);
+
       // step execution 용 코드
       if(!myInterpreters[myCanvas.getCurrentSpriteName()])
         //console.log("soicem");

@@ -7,9 +7,32 @@ class Sprite {
     this.setSize(size);
     this.setAngle(angle);
     this.setSpeechBubble(null);
-
     this.setJsCode("");
     this.resetXml();
+
+
+    // Event Stacks
+    /* 특정 이벤트를 여러번 스크립트에 지정할 수 있으므로 Stack으로 구현*/
+    this.whenClicked = [];
+    this.whenCloning = [];
+  }
+
+  /* Event 별 코드 저장을 위함 (ex : whenFlagClicked)*/
+
+  getWhenClickedCode(){
+    return this.whenClicked; // It is a stack
+  }
+
+  setWhenClicked(code){
+    this.whenClicked.push(code);
+  }
+
+  getWhenCloning(){
+    return this.whenCloning; // It is a stack
+  }
+
+  setWhenCloning(code){
+    this.whenCloning.push(code);
   }
 
   ////////// Getter & Setter //////////
