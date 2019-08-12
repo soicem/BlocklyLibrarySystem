@@ -248,7 +248,8 @@ class Sprite {
     }
 
     if (hexToRgb(lookupHex)) {
-      return this.getCanvas().isOverlayingColor(this, hexToRgb(lookupHex));
+      return CanvasUtil.isOverlayingColor(this.getCanvas(), this,
+          hexToRgb(lookupHex));
     } else {
       return false;
     }
@@ -267,7 +268,8 @@ class Sprite {
     }
 
     if (hexToRgba(baseHex) && hexToRgba(lookupHex)) {
-      return this.getCanvas().isColorOverlayingColor(this, hexToRgba(baseHex),
+      return CanvasUtil.isColorOverlayingColor(this.getCanvas(), this,
+          hexToRgba(baseHex),
           hexToRgba(lookupHex));
     } else {
       return false;
