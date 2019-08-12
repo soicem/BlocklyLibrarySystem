@@ -1,5 +1,7 @@
 class Sprite {
   constructor(canvas, image, imageData, position, size, angle) {
+    this.identifier = 0; // 일반 스프라이트(Default) : 0, 클론 : 1
+
     this.setCanvas(canvas);
     this.setImage(image);
     this.setImageData(imageData);
@@ -36,6 +38,14 @@ class Sprite {
   }
 
   ////////// Getter & Setter //////////
+
+  getIdentifier(){
+    return this.identifier;
+  }
+
+  setIdentifier(id){
+    this.identifier = id;
+  }
 
   getCanvas() {
     return this._canvas;
