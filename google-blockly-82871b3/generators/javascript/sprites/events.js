@@ -32,5 +32,5 @@ Blockly.JavaScript['sprite_flagClicked'] = function (block) {
     let value_content = Blockly.JavaScript.valueToCode(block, 'CONTENT',
         Blockly.JavaScript.ORDER_ATOMIC);
 
-    return "#flagClicked;\n";
+    return "flagClicked;\n";
 };

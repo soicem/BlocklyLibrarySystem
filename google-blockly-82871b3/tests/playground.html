@@ -633,6 +633,14 @@
                 var output = document.getElementById('importExport');
                 output.value += '\n' + text;
               }));
+    interpreter.setProperty(scope, 'flagClicked',
+        interpreter.createNativeFunction(function(text) {
+            //do nothing
+        }));
+        interpreter.setProperty(scope, 'cloning',
+            interpreter.createNativeFunction(function(text) {
+                //do nothing
+            }));
 
       // Add an API function for the prompt() block.
       var wrapper = function(text) {
@@ -717,6 +725,17 @@
         //console.log(myCanvas.getSpritesOrder()[i].getImageFilename());
       }
     }
+
+    // event block을 참조하여 Interpreter에 들어가는 target code생성
+    function createTargetCode(keyOfSprite){
+        var tmp = myCanvas.getSpriteByName(keyOfSprite)._whenClicked;
+        var ret = latestCodes[keyOfSprite];
+        for(var a in tmp){
+            ret += tmp[a] + "\n\n";
+        }
+        return ret;
+    }
+
     function stepCode(keyOfSprite) {
       var keyOfCode = keyOfSprite;
       if (!myInterpreters[keyOfCode]) {
@@ -725,7 +744,8 @@
         resetStepUi(true);
         latestCodes[keyOfCode] = latestCodes[keyOfCode].replace("nullnull", "");
         console.log(keyOfCode, latestCodes[keyOfCode]);
-        myInterpreters[keyOfCode] = new Interpreter(latestCodes[keyOfCode], initApi);
+        var targetCode = createTargetCode(keyOfSprite);
+        myInterpreters[keyOfCode] = new Interpreter(targetCode, initApi);
         return;
       }
       highlightPause = false;
