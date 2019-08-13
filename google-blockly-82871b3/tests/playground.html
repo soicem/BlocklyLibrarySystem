@@ -568,7 +568,7 @@
     }
     function goStep(){
       for(var i = 1; i < myCanvas.getSpritesOrder().length; i++){
-        _goStep(myCanvas.getSpritesOrder()[i].getImageFilename())
+        _goStep(myCanvas.getSpritesOrder()[i].name)
       }
     }
 
@@ -674,7 +674,8 @@
       // Generate JavaScript code and parse it.
       Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
       Blockly.JavaScript.addReservedWords('highlightBlock');
-      let keyOfLatestCode = myCanvas.getCurrentSpriteName()
+      let keyOfLatestCode = myCanvas.getCurrentSpriteName();
+      console.log(keyOfLatestCode);
       latestCodes[keyOfLatestCode] = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
       //latestCode = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
       console.log(latestCodes[keyOfLatestCode]);
