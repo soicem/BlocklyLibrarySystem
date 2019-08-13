@@ -133,7 +133,7 @@
       if (sessionStorage) {
         var text = sessionStorage.getItem('textarea');
         if (text) {
-          document.getElementById('importExport').value = text;
+          document.getElementsById('importExport').value = text;
         }
         // Restore event logging state.
         var state = sessionStorage.getItem('logEvents');
@@ -2682,6 +2682,5 @@
 </body>
 <script src="../../jszip/dist/jszip.js"></script>
 <script src="../../FileSaver/dist/FileSaver.js"></script>
-<script src="../../exportTest.js"></script>
 <script src="../../blkImport.js"></script>
 </html>
