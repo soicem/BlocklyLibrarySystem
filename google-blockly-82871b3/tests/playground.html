@@ -670,15 +670,36 @@
     var highlightPause = false;
     var latestCodes = {};
 
+    /* event block 코드를 최신 코드에서 가져와 현재 Sprite 객체에 배치한다. */
+    function eventCodeHandling(code){
+        var tmp = code.split("\n\n"); // event parser;
+        var ret = ""
+        // 각 이벤트 클리어
+        myCanvas.getCurrentSprite()._whenClicked = [];
+        myCanvas.getCurrentSprite()._whenCloning = [];
+        for(var a in tmp){
+            if(tmp[a].search("#flagClicked") != -1){
+                myCanvas.getCurrentSprite()._whenClicked.push(tmp[a]);
+            } else if(tmp[a].search("#cloning") != -1) {
+                myCanvas.getCurrentSprite()._whenCloning.push(tmp[a]);
+            }else {
+                ret += tmp[a] + "\n\n"
+            }
+        }
+        return ret;
+    }
+
     function generateCodeAndLoadIntoInterpreter() {
       // Generate JavaScript code and parse it.
       Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
       Blockly.JavaScript.addReservedWords('highlightBlock');
       let keyOfLatestCode = myCanvas.getCurrentSpriteName();
-      console.log(keyOfLatestCode);
+      //console.log(keyOfLatestCode);
       latestCodes[keyOfLatestCode] = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
-      //latestCode = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
-      console.log(latestCodes[keyOfLatestCode]);
+
+      // eventCode 현재 Sprite 객체에 배치, 이벤트 코드를 제외한 최신 코드 초기화
+      latestCodes[keyOfLatestCode] = eventCodeHandling(latestCodes[keyOfLatestCode]);
+
       var libCode = myCanvas.getLibCode();
       if(libCode){
         libCode = libCode.replace("null", "")

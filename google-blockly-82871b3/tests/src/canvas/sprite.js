@@ -1,4 +1,5 @@
 class Sprite {
+
   constructor(canvas, image, imageData, position, size, angle, name) {
     this.identifier = 0; // 일반 스프라이트(Default) : 0, 클론 : 1
     this._name = name; // 이름
@@ -14,27 +15,26 @@ class Sprite {
 
 
     // Event Stacks
-    /* 특정 이벤트를 여러번 스크립트에 지정할 수 있으므로 Stack으로 구현*/
-    this.whenClicked = [];
-    this.whenCloning = [];
+    /* 특정 이벤트를 여러번 사용*/
+    this._whenClicked = [];
+    this._whenCloning = [];
   }
 
   /* Event 별 코드 저장을 위함 (ex : whenFlagClicked)*/
 
-  getWhenClickedCode(){
-    return this.whenClicked; // It is a stack
+  get whenCloning() {
+    return this._whenCloning;
   }
 
-  setWhenClicked(code){
-    this.whenClicked.push(code);
+  set whenCloning(value) {
+    this._whenCloning = value;
+  }
+  get whenClicked() {
+    return this._whenClicked;
   }
 
-  getWhenCloning(){
-    return this.whenCloning; // It is a stack
-  }
-
-  setWhenCloning(code){
-    this.whenCloning.push(code);
+  set whenClicked(value) {
+    this._whenClicked = value;
   }
 
   ////////// Getter & Setter //////////
