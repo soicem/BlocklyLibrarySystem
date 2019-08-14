@@ -35,3 +35,10 @@ Blockly.JavaScript['sprite_cloneStarted'] = function (block) {
 
     return "cloning;\n";
 };
+
+Blockly.JavaScript['sprite_createClone'] = function (block) {
+    let value_content = Blockly.JavaScript.valueToCode(block, 'CONTENT',
+        Blockly.JavaScript.ORDER_ATOMIC);
+
+    return "createClone();\n";
+};

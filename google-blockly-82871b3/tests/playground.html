@@ -641,8 +641,14 @@
             interpreter.createNativeFunction(function(text) {
                 //do nothing
             }));
+        interpreter.setProperty(scope, 'createClone',
+            interpreter.createNativeFunction(function() {
+                //myCanvas.getSpecificSprite();
 
-      // Add an API function for the prompt() block.
+            }));
+
+
+        // Add an API function for the prompt() block.
       var wrapper = function(text) {
         text = text ? text.toString() : '';
         return interpreter.createPrimitive(prompt(text));
