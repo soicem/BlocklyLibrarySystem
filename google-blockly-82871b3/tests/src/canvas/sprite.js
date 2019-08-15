@@ -105,16 +105,32 @@ class Sprite {
     return this.getPosition().getX();
   }
 
+  setX(x) {
+    this._position.setX(x);
+  }
+
   getY() {
     return this.getPosition().getY();
+  }
+
+  setY(y) {
+    this._position.setY(y);
   }
 
   getWidth() {
     return this.getSize().getWidth();
   }
 
+  setWidth(width) {
+    this._size.setWidth(width);
+  }
+
   getHeight() {
     return this.getSize().getHeight();
+  }
+
+  setHeight(height) {
+    this._size.setHeight(height);
   }
 
   getPixelsOfRgb(rgb, withGap = false) {
