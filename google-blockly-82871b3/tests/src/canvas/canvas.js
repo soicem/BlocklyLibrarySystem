@@ -142,7 +142,6 @@ class Canvas {
         this.getCurrentSprite().setXml(prettyXMLText);
         this.getWorkspace().clear();
       }
-
       if (this.getSpriteByName(nameOfSprite).getXml() !== "") {
         var nextXml = Blockly.Xml.textToDom(
             this.getSpriteByName(nameOfSprite).getXml());
@@ -220,19 +219,18 @@ class Canvas {
     }
   }
 
-  addSprite(spriteName, imageData = null) {
+  addSprite(spriteName, imageData = null, imageSrc) {
     const defaultSize = new Size(40, 40);
     let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName,
-        imageData);
-
+        imageData, imageSrc);
     this._sprites[spriteName] = sprite;
     this._spritesOrder.push(sprite);
 
     return sprite;
   }
 
-  addSpriteAndSelect(spriteName, imageData = null) {
-    this.addSprite(spriteName, imageData);
+  addSpriteAndSelect(spriteName, imageData = null, imageSrc) {
+    this.addSprite(spriteName, imageData, imageSrc);
     this.setCurrentSprite(spriteName);
   }
 

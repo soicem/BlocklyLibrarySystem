@@ -568,7 +568,7 @@
     }
     function goStep(){
       for(var i = 1; i < myCanvas.getSpritesOrder().length; i++){
-        _goStep(myCanvas.getSpritesOrder()[i].getImageFilename())
+        _goStep(myCanvas.getSpritesOrder()[i].name)
       }
     }
 
@@ -633,8 +633,22 @@
                 var output = document.getElementById('importExport');
                 output.value += '\n' + text;
               }));
+    interpreter.setProperty(scope, 'flagClicked',
+        interpreter.createNativeFunction(function(text) {
+            //do nothing
+        }));
+        interpreter.setProperty(scope, 'cloning',
+            interpreter.createNativeFunction(function(text) {
+                //do nothing
+            }));
+        interpreter.setProperty(scope, 'createClone',
+            interpreter.createNativeFunction(function() {
+                //myCanvas.getSpecificSprite();
 
-      // Add an API function for the prompt() block.
+            }));
+
+
+        // Add an API function for the prompt() block.
       var wrapper = function(text) {
         text = text ? text.toString() : '';
         return interpreter.createPrimitive(prompt(text));
@@ -670,25 +684,46 @@
     var highlightPause = false;
     var latestCodes = {};
 
+    /* event block 코드를 최신 코드에서 가져와 현재 Sprite 객체에 배치한다. */
+    function eventCodeHandling(code){
+        var tmp = code.split("\n\n"); // event parser;
+        var ret = ""
+        // 각 이벤트 클리어
+        myCanvas.getCurrentSprite()._whenClicked = [];
+        myCanvas.getCurrentSprite()._whenCloning = [];
+        for(var a in tmp){
+            if(tmp[a].search("#flagClicked") != -1){
+                myCanvas.getCurrentSprite()._whenClicked.push(tmp[a]);
+            } else if(tmp[a].search("#cloning") != -1) {
+                myCanvas.getCurrentSprite()._whenCloning.push(tmp[a]);
+            }else {
+                ret += tmp[a] + "\n\n"
+            }
+        }
+        return ret;
+    }
+
     function generateCodeAndLoadIntoInterpreter() {
       // Generate JavaScript code and parse it.
       Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
       Blockly.JavaScript.addReservedWords('highlightBlock');
-      let keyOfLatestCode = myCanvas.getCurrentSpriteName()
+      let keyOfLatestCode = myCanvas.getCurrentSpriteName();
+      //console.log(keyOfLatestCode);
       latestCodes[keyOfLatestCode] = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
-      //latestCode = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
+
+      // eventCode 현재 Sprite 객체에 배치, 이벤트 코드를 제외한 최신 코드 초기화
+      latestCodes[keyOfLatestCode] = eventCodeHandling(latestCodes[keyOfLatestCode]);
+
       var libCode = myCanvas.getLibCode();
       if(libCode){
         libCode = libCode.replace("null", "")
         libCode = libCode.replace("null", "")
         libCode = libCode.replace("nullnull", "")
 
-        //console.log(libCode);
         latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode]  ;
       }
       latestCodes[keyOfLatestCode] = latestCodes[keyOfLatestCode].replace("nullnull", "");
-      //var n = latestCodes[keyOfLatestCode].search("W3Schools");
-      //console.log("is nullnull : ", n);
+
       // step execution 용 코드
       if(!myInterpreters[myCanvas.getCurrentSpriteName()])
         //console.log("soicem");
@@ -696,6 +731,17 @@
         //console.log(myCanvas.getSpritesOrder()[i].getImageFilename());
       }
     }
+
+    // event block을 참조하여 Interpreter에 들어가는 target code생성
+    function createTargetCode(keyOfSprite){
+        var tmp = myCanvas.getSpriteByName(keyOfSprite)._whenClicked;
+        var ret = latestCodes[keyOfSprite];
+        for(var a in tmp){
+            ret += tmp[a] + "\n\n";
+        }
+        return ret;
+    }
+
     function stepCode(keyOfSprite) {
       var keyOfCode = keyOfSprite;
       if (!myInterpreters[keyOfCode]) {
@@ -704,7 +750,8 @@
         resetStepUi(true);
         latestCodes[keyOfCode] = latestCodes[keyOfCode].replace("nullnull", "");
         console.log(keyOfCode, latestCodes[keyOfCode]);
-        myInterpreters[keyOfCode] = new Interpreter(latestCodes[keyOfCode], initApi);
+        var targetCode = createTargetCode(keyOfSprite);
+        myInterpreters[keyOfCode] = new Interpreter(targetCode, initApi);
         return;
       }
       highlightPause = false;
@@ -930,7 +977,7 @@
     function myStart() {
       animationUpdater = new AnimationUpdater();
       myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400), blockWorkspace);
-      myCanvas.addSpriteAndSelect("penguin.png");
+      myCanvas.addSpriteAndSelect("penguin", null, "penguin.png");
       animationUpdater.addCallFunction({caller: myCanvas, method: myCanvas.render});
       animationUpdater.start();
       return myCanvas;
@@ -1004,11 +1051,23 @@
           let animationUpdater;
           let myCanvas;
 
+      // Sprite Name 중복 제거 ex) penguin -> penguin1
+      function getNoDuplicationName(name){
+        var noDuplicated = 1;
+        var spriteName = name.split('.')[0];
+        var originalName = spriteName;
+        var ext = name.split('.')[1];
+        while(myCanvas._sprites.hasOwnProperty(spriteName)){
+          spriteName = originalName + noDuplicated;
+          noDuplicated += 1;
+        }
+        return spriteName;
+      }
+
           function spriteChooser() {
             var name;
             var x = document.getElementById("spriteChooser");
             var txt = "";
-
             var imageFile = x.files[0];
             var reader = new FileReader();
 
@@ -1039,25 +1098,26 @@
                 txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
               }
             }
-            var a = '<div class="spriteImg\" id="' + name
-                + '" onclick="myCanvas.setCurrentSprite(\''
-                + name + '\')">'
-                + '<img src="' + name + '" alt="">'
-                + '<div class="desc">' + name.split('.')[0] + '</div>'
-                + '</div>';
-            //alert(a);
-            document.getElementById("spriteGallery").innerHTML += a;
+        var spriteName = getNoDuplicationName(name); // Sprite name 중복 제거
+        var a = '<div class="spriteImg\" id="' + spriteName + '" onclick="myCanvas.setCurrentSprite(\''
+            + spriteName + '\')">'
+            + '<img src="' + name + '" alt="">'
+            + '<div class="desc">' + spriteName + '</div>'
+            + '</div>';
+        //alert(a);
+        document.getElementById("spriteGallery").innerHTML += a;
 
             reader.addEventListener('load', function () {
               // sprite에 대한 canvas 용 objects를 저장한다.
-              myCanvas.addSpriteAndSelect(name, reader.result);
+          myCanvas.addSpriteAndSelect(spriteName, reader.result, name); // spriteName : penguin, name : penguin.png
               // myCanvas.getSpriteByName(name).draw();
-              myCanvas.getSpriteByName(name).printProperties();
+          myCanvas.getSpriteByName(spriteName).printProperties();
             });
 
             if (imageFile) {
               reader.readAsArrayBuffer(imageFile);
             }
+        document.getElementById("spriteChooser").value = ""; // 같은 이미지 추가 시 onchange 반영을 위해 value 초기화
           }
 
           function stageChooser() {
@@ -1143,10 +1203,10 @@
                    onchange="spriteChooser()">
           </span>
           </div>
-          <div class="spriteImg" id="penguin.png"
-               onclick="myCanvas.setCurrentSprite('penguin.png')">
+          <div class="spriteImg" id="penguin"
+               onclick="myCanvas.setCurrentSprite('penguin')">
             <img src="penguin.png" alt="">
-            <div class="desc">cat</div>
+            <div class="desc">penguin</div>
           </div>
         </div>
 
@@ -2647,6 +2707,5 @@
 </body>
 <script src="../../jszip/dist/jszip.js"></script>
 <script src="../../FileSaver/dist/FileSaver.js"></script>
-<script src="../../exportTest.js"></script>
 <script src="../../blkImport.js"></script>
 </html>

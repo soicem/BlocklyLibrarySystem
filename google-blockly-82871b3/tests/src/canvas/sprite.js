@@ -1,5 +1,8 @@
 class Sprite {
-  constructor(canvas, image, imageData, position, size, angle) {
+
+  constructor(canvas, image, imageData, position, size, angle, name) {
+    this.identifier = 0; // 일반 스프라이트(Default) : 0, 클론 : 1
+    this._name = name; // 이름
     this.setCanvas(canvas);
     this.setImage(image);
     this.setImageData(imageData);
@@ -7,12 +10,51 @@ class Sprite {
     this.setSize(size);
     this.setAngle(angle);
     this.setSpeechBubble(null);
-
     this.setJsCode("");
     this.resetXml();
+
+
+    // Event Stacks
+    /* 특정 이벤트를 여러번 사용*/
+    this._whenClicked = [];
+    this._whenCloning = [];
+  }
+
+  /* Event 별 코드 저장을 위함 (ex : whenFlagClicked)*/
+
+  get whenCloning() {
+    return this._whenCloning;
+  }
+
+  set whenCloning(value) {
+    this._whenCloning = value;
+  }
+  get whenClicked() {
+    return this._whenClicked;
+  }
+
+  set whenClicked(value) {
+    this._whenClicked = value;
   }
 
   ////////// Getter & Setter //////////
+
+  get name() {
+    return this._name;
+  }
+
+  set name(value) {
+    this._name = value;
+  }
+
+
+  getIdentifier(){
+    return this.identifier;
+  }
+
+  setIdentifier(id){
+    this.identifier = id;
+  }
 
   getCanvas() {
     return this._canvas;

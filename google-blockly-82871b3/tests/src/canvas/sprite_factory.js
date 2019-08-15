@@ -1,5 +1,6 @@
 class SpriteFactory {
-  static getSprite(canvas, spriteSize, imageSrc, imageData) {
+  // imageName을 key값으로 사용, imageSrc와 분리 _ 08_12 김남규
+  static getSprite(canvas, spriteSize, imageName, imageData, imageSrc) {
     let image = new Image();
     image.src = imageSrc;
 
@@ -8,6 +9,6 @@ class SpriteFactory {
     let position = new Point(width, height);
     let degree = new Degree(0);
 
-    return new Sprite(canvas, image, imageData, position, spriteSize, degree);
+    return new Sprite(canvas, image, imageData, position, spriteSize, degree, imageName);
   }
 }

@@ -107,3 +107,4 @@ Blockly.JavaScript['sprite_getXY'] = function (block) {
 
   return [code, Blockly.JavaScript.ORDER_NONE];
 };
+
