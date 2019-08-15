@@ -12,7 +12,7 @@ class Canvas {
     this._sprites = {};
     this._spritesOrder = [null]; // Index 0 is reserved for a stage
     this._currentSpriteName = null;
-    this._specificSpriteName = null;
+    this._specificSpriteName = null; // 코드 실행 시 사용
     this.getHandler().startTrackMousePosition();
     this.getHandler().startSelectSprite();
     this.setSpecificSpriteName("aww-cat.png")
