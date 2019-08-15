@@ -1,7 +1,14 @@
 class Sprite {
+  get isClone() {
+    return this._isClone;
+  }
 
-  constructor(canvas, image, imageData, position, size, angle, name) {
-    this.identifier = 0; // 일반 스프라이트(Default) : 0, 클론 : 1
+  set isClone(value) {
+    this._isClone = value;
+  }
+
+  constructor(canvas, image, imageData, position, size, angle, name, isClone=[false,]) {
+    this._isClone = isClone;
     this._name = name; // 이름
     this.setCanvas(canvas);
     this.setImage(image);
@@ -147,16 +154,32 @@ class Sprite {
     return this.getPosition().getX();
   }
 
+  setX(x) {
+    this._position.setX(x);
+  }
+
   getY() {
     return this.getPosition().getY();
+  }
+
+  setY(y) {
+    this._position.setY(y);
   }
 
   getWidth() {
     return this.getSize().getWidth();
   }
 
+  setWidth(width) {
+    this._size.setWidth(width);
+  }
+
   getHeight() {
     return this.getSize().getHeight();
+  }
+
+  setHeight(height) {
+    this._size.setHeight(height);
   }
 
   getPixelsOfRgb(rgb, withGap = false) {
