@@ -43,7 +43,12 @@ class CanvasHandler {
         });
 
         // Make selected sprite a selected sprite all over the project
-        this.getCanvasObj().setCurrentSprite(sprite.name); // 이름을 가져오는걸로 변경
+        if(sprite.isClone[0]){
+          this.getCanvasObj().setCurrentSprite(sprite.isClone[1]);
+        } else {
+          this.getCanvasObj().setCurrentSprite(sprite.name); // 이름을 가져오는걸로 변경
+
+        }
 
         // Move selected sprite to the top
         if (sprite !== this.getCanvasObj().getSpritesOrder()[0]) {

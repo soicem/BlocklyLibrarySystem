@@ -568,7 +568,8 @@
     }
     function goStep(){
       for(var i = 1; i < myCanvas.getSpritesOrder().length; i++){
-        _goStep(myCanvas.getSpritesOrder()[i].name)
+        if(!myCanvas.getSpritesOrder()[i].isClone[0])
+          _goStep(myCanvas.getSpritesOrder()[i].name)
       }
     }
 
@@ -644,6 +645,7 @@
         interpreter.setProperty(scope, 'createClone',
             interpreter.createNativeFunction(function() {
                 //myCanvas.getSpecificSprite();
+                createClone();
 
             }));
 
@@ -1046,9 +1048,9 @@
       let myCanvas;
 
       // Sprite Name 중복 제거 ex) penguin -> penguin1
-      function getNoDuplicationName(name){
+      function getNoDuplicationName(name, isClone=""){
         var noDuplicated = 1;
-        var spriteName = name.split('.')[0];
+        var spriteName = name.split('.')[0] + isClone;
         var originalName = spriteName;
         var ext = name.split('.')[1];
         while(myCanvas._sprites.hasOwnProperty(spriteName)){
@@ -1056,6 +1058,16 @@
           noDuplicated += 1;
         }
         return spriteName;
+      }
+
+      function createClone(){
+
+        var parentName = myCanvas.getCurrentSpriteName();
+        var cloneName = getNoDuplicationName(parentName, "_clone");
+        var imageData = myCanvas.getCurrentSprite().getImageData();
+        var imageSrc = myCanvas.getCurrentSprite().getImageSource();
+        myCanvas.addSpriteAndSelect(cloneName, imageData, imageSrc, [true, parentName]); // idx4 : isClone or not
+        myCanvas.getSpriteByName(cloneName).printProperties();
       }
 
       function spriteChooser() {
@@ -1104,7 +1116,6 @@
         reader.addEventListener('load', function () {
           // sprite에 대한 canvas 용 objects를 저장한다.
           myCanvas.addSpriteAndSelect(spriteName, reader.result, name); // spriteName : penguin, name : penguin.png
-          // myCanvas.getSpriteByName(name).draw();
           myCanvas.getSpriteByName(spriteName).printProperties();
         });
 

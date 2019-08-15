@@ -219,19 +219,23 @@ class Canvas {
     }
   }
 
-  addSprite(spriteName, imageData = null, imageSrc) {
+  addSprite(spriteName, imageData = null, imageSrc, isClone=[false,]) {
     const defaultSize = new Size(40, 40);
+
     let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName,
-        imageData, imageSrc);
+        imageData, imageSrc, isClone);
     this._sprites[spriteName] = sprite;
     this._spritesOrder.push(sprite);
 
     return sprite;
   }
 
-  addSpriteAndSelect(spriteName, imageData = null, imageSrc) {
-    this.addSprite(spriteName, imageData, imageSrc);
-    this.setCurrentSprite(spriteName);
+  addSpriteAndSelect(spriteName, imageData = null, imageSrc, isClone = [false, ]) {
+    console.log(spriteName);
+    this.addSprite(spriteName, imageData, imageSrc, isClone);
+    if(!isClone[0]){
+      this.setCurrentSprite(spriteName);
+    }
   }
 
   addStage(stageName, imageData = null) {
