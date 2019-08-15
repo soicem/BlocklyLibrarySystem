@@ -1,5 +1,5 @@
 :root {
-  --top-menu-height: 48px;
+  --top-menu-height: 60px;
   --side-menu-width: 504px;
 }
 
@@ -14,7 +14,7 @@ body {
   overflow-x: auto;
   overflow-y: scroll;
   min-width: 1200px;
-  min-height: calc(930px);
+  min-height: calc(878px + var(--top-menu-height));
 }
 
 h1 {
@@ -37,9 +37,11 @@ ul {
 
 li {
   float: left;
+  height: var(--top-menu-height);
 }
 
 li a {
+  height: 100%;
   display: inline-block;
   color: white;
   text-align: center;
@@ -115,6 +117,16 @@ canvas {
 
 #topMenu {
   height: var(--top-menu-height);
+  background-color: #ffffff;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  box-shadow: 0 1px 10px gray;
+}
+
+#bodyContent {
+   height: calc(100% - var(--top-menu-height));
 }
 
 #spriteCanvas_container {
@@ -159,7 +171,7 @@ canvas {
 
 #blocklyDiv {
   float: left;
-  height: calc(100% - var(--top-menu-height));
+  height: 100%;
   width: calc(100% - var(--side-menu-width));
 
 }
@@ -207,7 +219,7 @@ canvas {
 }
 
 #gallery_owner {
-  height: 240px;
+  height: 220px;
 }
 
 .gap_at_end {
@@ -215,9 +227,10 @@ canvas {
 }
 
 #sprite_owner {
-  height: 220px;
+  height: 200px;
   width: 65%;
   float: left;
+  position: sticky;
 }
 
 #spriteAttributes {
@@ -225,29 +238,37 @@ canvas {
 }
 
 #stage_owner {
-  height: 220px;
+  height: 200px;
   width: 25%;
   float: right;
+  position: sticky;
 }
 
 #spriteGallery {
   width: 100%;
-  height: calc(100% - 120px);
+  height: calc(100% - 70px);
   background-color: white;
   margin-block-start: 0.67em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#spriteGallery:hover {
+  overflow-x: auto;
 }
 
 #stageGallery {
   width: 100%;
-  height: calc(100% - 50px);
+  height: 100%;
   background-color: white;
 }
 
 div.spriteImg {
   margin: 4px;
   border: 1px solid #ccc;
-  float: left;
+  /*float: left;*/
   width: 70px;
+  display: inline-block;
 }
 
 div.spriteImg:hover {
@@ -277,7 +298,10 @@ div.stage img {
 
 div.desc {
   text-align: center;
+  text-overflow: ellipsis;
+  width: 70px;
   font-size: 80%;
+  overflow: hidden;
 }
 
 .plusButtonContainer{
@@ -286,9 +310,21 @@ div.desc {
   height: 50px;
   background-color: white;
 }
+
 .plusButton {
   float: right;
-  padding: 5px;
+  padding: 3px;
+  position: absolute;
+}
+
+.spritePlus {
+  right: 10px;
+  bottom: 20px;
+}
+
+.stagePlus {
+  right: 10px;
+  bottom: 10px;
 }
 
 .plus{
