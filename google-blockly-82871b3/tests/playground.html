@@ -582,6 +582,18 @@
                       }
               );
     }
+    
+    // initApi 'createClone' statement wrapper
+    function createClone(){
+        var spriteObject = myCanvas.getSpecificSprite();
+        var parentName = myCanvas.getSpecificSpriteName();
+        var cloneName = getNoDuplicationName(parentName, "_clone");
+        var imageData = spriteObject.getImageData();
+        var imageSrc = spriteObject.getImageSource();
+        var position = spriteObject.getPosition(); // x, y 좌표
+        myCanvas.addSpriteAndSelect(cloneName, imageData, imageSrc, [true, parentName, position]); // idx4 : isClone or not
+        myCanvas.getSpriteByName(cloneName).printProperties();
+    }
 
     function initApi(interpreter, scope) {
       interpreter.setProperty(scope, 'moveSteps',
@@ -1066,16 +1078,7 @@
         return spriteName;
       }
 
-      // clone demonstration : stepCode를 위해 getSpecficSprite로 바꿔야함
-      function createClone(){
-        var parentName = myCanvas.getCurrentSpriteName();
-        var cloneName = getNoDuplicationName(parentName, "_clone");
-        var imageData = myCanvas.getCurrentSprite().getImageData();
-        var imageSrc = myCanvas.getCurrentSprite().getImageSource();
-        var position = myCanvas.getCurrentSprite().getPosition();
-        myCanvas.addSpriteAndSelect(cloneName, imageData, imageSrc, [true, parentName, position]); // idx4 : isClone or not
-        myCanvas.getSpriteByName(cloneName).printProperties();
-      }
+
 
       function spriteChooser() {
         var name;
