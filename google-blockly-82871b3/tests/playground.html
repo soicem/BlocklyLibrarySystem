@@ -582,12 +582,13 @@
                       }
               );
     }
-    
+
     // initApi 'createClone' statement wrapper
     function createClone(){
         var spriteObject = myCanvas.getSpecificSprite();
         var parentName = myCanvas.getSpecificSpriteName();
         var cloneName = getNoDuplicationName(parentName, "_clone");
+        spriteObject.cloneChilds = cloneName; // clone 이름을 parent sprite에 저장
         var imageData = spriteObject.getImageData();
         var imageSrc = spriteObject.getImageSource();
         var position = spriteObject.getPosition(); // x, y 좌표
@@ -705,6 +706,7 @@
         // 각 이벤트 클리어
         myCanvas.getCurrentSprite()._whenClicked = [];
         myCanvas.getCurrentSprite()._whenCloning = [];
+        console.log("clone childs : ", myCanvas.getCurrentSprite().cloneChilds);
         for(var a in tmp){
             if(tmp[a].search("#flagClicked") != -1){
                 myCanvas.getCurrentSprite()._whenClicked.push(tmp[a]);

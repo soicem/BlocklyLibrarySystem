@@ -1,5 +1,12 @@
 class Sprite {
-  get isClone() {
+  get cloneChilds() {
+    return this._cloneChilds;
+  }
+
+  set cloneChilds(value) {
+    this._cloneChilds.push(value);
+  }
+    get isClone() {
     return this._isClone;
   }
 
@@ -9,6 +16,7 @@ class Sprite {
 
   constructor(canvas, image, imageData, position, size, angle, name, isClone=[false,]) {
     this._isClone = isClone;
+    this._cloneChilds = [];
     this._name = name; // 이름
     this.setCanvas(canvas);
     this.setImage(image);
