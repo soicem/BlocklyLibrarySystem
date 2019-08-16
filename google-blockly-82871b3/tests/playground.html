@@ -288,11 +288,11 @@
       console.log(myCanvas.getSpriteAtPosition(new Point(250, 250)).getImageSource());
     }
 
-    function myImport() {
-      console.log("myImport");
-      let input = document.getElementById("importExport");
+    function myImport(xmlString) {
+    //   console.log("myImport");
+    //   let input = document.getElementById("importExport");
       // convert function xml to library xml
-      let convertedXml = libFuncToMutationCode(input.value);
+      let convertedXml = libFuncToMutationCode(xmlString);
       console.log(convertedXml);
       let xml = Blockly.Xml.textToDom(convertedXml);
 
@@ -325,15 +325,15 @@
     }
 
     function toXml(ext) {
-      var xml = Blockly.Xml.workspaceToDom(blockWorkspace);
-      var output = document.getElementById('importExport');
+      // var xml = Blockly.Xml.workspaceToDom(blockWorkspace);
+      // var output = document.getElementById('importExport');
+      //
+      // output.value = Blockly.Xml.domToPrettyText(xml);
+      // output.focus();
+      // output.select();
+      // taChange();
 
-      output.value = Blockly.Xml.domToPrettyText(xml);
-      output.focus();
-      output.select();
-      taChange();
-
-      CurrentSpritesXML();
+      CurrentSpritesXML();  // save current ws's xml text to sprite object
       ImgToFile();          // for img
       SpriteXMLtoBLK();     //for xml
       jsFile();           // for JS
@@ -345,86 +345,110 @@
     //----check
     //import
     function ExtractFiles(id) {
-      var BLK = document.getElementById(id);
-      var tmpJS = {};
+      var fileInputElement = document.getElementById(id);
 
-      var files = BLK.files[0]; // FileList object
+      var files = fileInputElement.files[0]; // FileList object
       var reader = new FileReader();
 
       reader.onload = (function () {
         return function (evt) {
           JSZip.loadAsync(evt.target.result)
           .then(function (blk) {
+            const promises = [];
+            var tmpJs = {};
+            var tmpXml = {};
+
             blk.forEach(function (relativePath, file) {
               if ((file.name).indexOf("backImage/") !== -1) { // for images;
                 var strArray = (file.name).split('/');
                 var picture = strArray[1];
+                var pictureName = picture.split('.')[0];
 
+                promises.push(
                 file.async('base64')
                 .then(function (data) {
                   if ((picture !== "") && (picture !== null) && (picture !== undefined)) {
-                    myCanvas.addStage(picture, data);
-                    // myCanvas.getSpriteByName(picture).draw();
-                    addStage(picture, data);
-                    myCanvas.setCurrentSpriteName(picture);
+                    addStage(pictureName, data);
+                    myCanvas.addStage(pictureName, data, picture);
+                    //myCanvas.setCurrentSpriteName(pictureName);
                   }
-                });
+                }).catch(console.log.bind(console)));
               } else if ((file.name).indexOf("images/") !== -1) { // for images;
                 var strArray = (file.name).split('/');
                 var picture = strArray[1];
+                var pictureName = picture.split('.')[0];
 
+                promises.push(
                 file.async('base64')
                 .then(function (data) {
                   if ((picture !== "") && (picture !== null) && (picture !== undefined)) {
-                    myCanvas.addSprite(picture, data);
-                    // myCanvas.getSpriteByName(picture).draw();
-                    addSprite(picture, data);
-                    myCanvas.setCurrentSpriteName(picture);
+                    addSprite(pictureName, data);
+                    myCanvas.addSprite(pictureName, data, picture);
+                    //myCanvas.setCurrentSpriteName(pictureName);
                   }
-                });
+                }).catch(console.log.bind(console)));
               } else if ((file.name).indexOf(".xml") !== -1) { //xml
                 var xmlName = file.name.substring(0, (file.name).indexOf(".xml"));
+                var pictureName = xmlName.split('.')[0];
+
+                promises.push(
                 file.async('text')
                 .then(function (data) {
-                  myCanvas.getSpriteByName(xmlName).setXml(data);
-                  setSpriteXML();
-                })
+                  if (myCanvas.getSpriteByName(pictureName) === undefined) {
+                    if (pictureName !== "") {
+                      tmpXml[pictureName] = data;
+                    }
+                  } else {
+                    myCanvas.getSpriteByName(pictureName).setXml(data);
+                  }
+                  //setSpriteXML();
+                }).catch(console.log.bind(console)));
               } else if ((file.name.indexOf('.js') !== -1) && (file.name.indexOf('.json') === -1)) {
                 var jsName = file.name.substring(0, (file.name).indexOf(".js"));
+                var pictureName = jsName.split('.')[0];
+
+                promises.push(
                 file.async('text')
                 .then(function (data) {
-                  if (myCanvas.getSpriteByName(jsName) === undefined) {
-                    if (jsName !== "") {
-                      tmpJS[jsName] = data;
+                  if (myCanvas.getSpriteByName(pictureName) === undefined) {
+                    if (pictureName !== "") {
+                      tmpJs[pictureName] = data;
                     }
                   } else {
                     myCanvas.setLibCode(data);
-                    myCanvas.getSpriteByName(jsName).setJsCode(data);
+                    myCanvas.getSpriteByName(pictureName).setJsCode(data);
                   }
-                  //console.log(jsName);
-                  //console.log(data)
-                })
+                }).catch(console.log.bind(console)));
               }
-            })
-          }).then(function () {
-            setTimeout(function () {
-              var isEmpty = Object.keys(tmpJS).length;
-              var matching;
+            });
 
-              if (isEmpty > 0) {
-                matching = Object.keys(tmpJS);
-                matching.forEach(function (data) {
-                  myCanvas.setLibCode(tmpJS[data]);
-                  myCanvas.getSpriteByName(data).setJsCode(tmpJS[data]);
-                })
-              }
+            Promise.all(promises).then(function () {
+              // setTimeout(function () {
+                var isEmpty = Object.keys(tmpJs).length;
+                var matching;
 
-              let xml = Blockly.Xml.textToDom(myCanvas.getCurrentSprite().getXml());
-              if(id === "getLib"){
-                myImport()
-              } else
-                Blockly.Xml.domToWorkspace(xml, blockWorkspace);
-            }, 100);
+                if (isEmpty > 0) {
+                  matching = Object.keys(tmpJs);
+                  matching.forEach(function (data) {
+                    myCanvas.setLibCode(tmpJs[data]);
+                    myCanvas.getSpriteByName(data).setJsCode(tmpJs[data]);
+                  });
+                }
+
+                if (Object.keys(tmpXml).length > 0) {
+                  var match = Object.keys(tmpXml);
+                  match.forEach(function (data) {
+                    myCanvas.getSpriteByName(data).setXml(tmpXml[data]);
+                  })
+                }
+
+                let xml = Blockly.Xml.textToDom(myCanvas.getCurrentSprite().getXml());
+                if(id === "getLib"){
+                  myImport(myCanvas.getCurrentSprite().getXml());
+                } else
+                  Blockly.Xml.domToWorkspace(xml, blockWorkspace);
+              // }, 100);
+            }).catch(console.log.bind(console));
           });
         };
       })(files);
@@ -540,23 +564,22 @@
       var result, DOM;
 
       arraySprite.forEach(function (name) {
-        // myCanvas.getSpriteByName(name).draw();
-
-        DOM = Blockly.Xml.textToDom(myCanvas.getSpriteByName(name).getXml());
-        blockWorkspace.clear();
-        Blockly.Xml.domToWorkspace(DOM, blockWorkspace);
-        result = Blockly['JavaScript'].workspaceToCode(blockWorkspace);
-        console.log(result);
-        myCanvas.setLibCode(result);
-        myCanvas.getSpriteByName(name).setJsCode(result);
+        // DOM = Blockly.Xml.textToDom(myCanvas.getSpriteByName(name).getXml());
+        // blockWorkspace.clear();
+        // Blockly.Xml.domToWorkspace(DOM, blockWorkspace);
+        // result = Blockly['JavaScript'].workspaceToCode(blockWorkspace);
+        // myCanvas.setLibCode(result);
+        //myCanvas.getSpriteByName(name).setJsCode(result);
         // canvas.clear();
+
+        result = myCanvas.getSpriteByName(name).getJsCode();
 
         console.log(name + ' : ' + result);
         FileToBLK(name + '.js', result, true);
       })
     }
 
-    function delayWraper(keyOfSprite) {
+    function delayWrapper(keyOfSprite) {
       return new Promise(function (resolve, reject) {
         setTimeout(function () {
           console.log("keyOfSprite : " , keyOfSprite)
@@ -573,7 +596,7 @@
     }
 
     function _goStep(keyOfSprite){
-      delayWraper(keyOfSprite)
+      delayWrapper(keyOfSprite)
               .then(
                       function (result) {
                         if(result != false)
@@ -1155,17 +1178,18 @@
                 txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
               }
             }
-            var a = '<div class="stage\" id="' + name + '" onclick="myCanvas.setCurrentSprite(\''
-                + name + '\')">'
+            var stageName = getNoDuplicationName(name); // Sprite name 중복 제거
+            var a = '<div class="stage\" id="' + stageName + '" onclick="myCanvas.setCurrentSprite(\''
+                + stageName + '\')">'
                 + '<img src="' + name + '" alt="">'
-                + '<div class="desc">' + name.split(".")[0] + '</div>'
+                + '<div class="desc">' + stageName + '</div>'
                 + '</div>';
             document.getElementById("stageGallery").innerHTML += a;
 
             reader.addEventListener('load', function () {
-              myCanvas.addStage(name, reader.result);
+              myCanvas.addStage(stageName, reader.result, name);
               // myCanvas.getSprite(name).draw();
-              myCanvas.getSpriteByName(name).printProperties();
+              myCanvas.getSpriteByName(stageName).printProperties();
             });
 
             if (imageFile) {
