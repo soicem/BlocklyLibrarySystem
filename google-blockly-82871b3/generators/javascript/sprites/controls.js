@@ -42,3 +42,8 @@ Blockly.JavaScript['sprite_createClone'] = function (block) {
 
     return "createClone();\n";
 };
+
+Blockly.JavaScript['sprite_forever'] = function(block) {
+    let statements_statement = Blockly.JavaScript.statementToCode(block, 'STATEMENT');
+    return "while(1) {" + statements_statement + "};\n";
+};
