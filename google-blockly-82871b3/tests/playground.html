@@ -556,12 +556,12 @@
       })
     }
 
-    function delayWraper(keyOfSprite) {
+    function delayWraper(keyOfSprite, isClone=false) {
       return new Promise(function (resolve, reject) {
         setTimeout(function () {
-          console.log("keyOfSprite : " , keyOfSprite)
+          //console.log("keyOfSprite : " , keyOfSprite)
           myCanvas.setSpecificSpriteName(keyOfSprite);
-          var isFalse = stepCode(keyOfSprite);
+          var isFalse = stepCode(keyOfSprite, isClone);
           resolve(isFalse);
         }, 2);
       });
@@ -573,12 +573,12 @@
       }
     }
 
-    function _goStep(keyOfSprite){
-      delayWraper(keyOfSprite)
+    function _goStep(keyOfSprite, isClone=false){
+      delayWraper(keyOfSprite, isClone)
               .then(
                       function (result) {
                         if(result != false)
-                          _goStep(keyOfSprite);
+                          _goStep(keyOfSprite, isClone);
                       }
               );
     }
@@ -593,7 +593,7 @@
         var imageSrc = spriteObject.getImageSource();
         var position = spriteObject.getPosition(); // x, y 좌표
         myCanvas.addSpriteAndSelect(cloneName, imageData, imageSrc, [true, parentName, position]); // idx4 : isClone or not
-        myCanvas.getSpriteByName(cloneName).printProperties();
+        return cloneName;
     }
 
     function initApi(interpreter, scope) {
@@ -658,7 +658,9 @@
         interpreter.setProperty(scope, 'createClone',
             interpreter.createNativeFunction(function() {
                 //myCanvas.getSpecificSprite();
-                createClone();
+                var cloneName = createClone();
+                latestCodes[cloneName] = "";
+                _goStep(cloneName, true);
 
             }));
 
@@ -706,11 +708,10 @@
         // 각 이벤트 클리어
         myCanvas.getCurrentSprite()._whenClicked = [];
         myCanvas.getCurrentSprite()._whenCloning = [];
-        console.log("clone childs : ", myCanvas.getCurrentSprite().cloneChilds);
         for(var a in tmp){
-            if(tmp[a].search("#flagClicked") != -1){
+            if(tmp[a].search("flagClicked") != -1){
                 myCanvas.getCurrentSprite()._whenClicked.push(tmp[a]);
-            } else if(tmp[a].search("#cloning") != -1) {
+            } else if(tmp[a].search("cloning") != -1) {
                 myCanvas.getCurrentSprite()._whenCloning.push(tmp[a]);
             }else {
                 ret += tmp[a] + "\n\n"
@@ -724,7 +725,6 @@
       Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
       Blockly.JavaScript.addReservedWords('highlightBlock');
       let keyOfLatestCode = myCanvas.getCurrentSpriteName();
-      //console.log(keyOfLatestCode);
       latestCodes[keyOfLatestCode] = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
 
       // eventCode 현재 Sprite 객체에 배치, 이벤트 코드를 제외한 최신 코드 초기화
@@ -749,8 +749,14 @@
     }
 
     // event block을 참조하여 Interpreter에 들어가는 target code생성
-    function createTargetCode(keyOfSprite){
-        var tmp = myCanvas.getSpriteByName(keyOfSprite)._whenClicked;
+    function createTargetCode(keyOfSprite, isClone){
+        var tmp = "";
+        if(isClone){
+            var parentName = myCanvas.getSpriteByName(keyOfSprite).isClone[1];
+            tmp = myCanvas.getSpriteByName(parentName)._whenCloning;
+        } else {
+            tmp = myCanvas.getSpriteByName(keyOfSprite)._whenClicked;
+        }
         var ret = latestCodes[keyOfSprite];
         for(var a in tmp){
             ret += tmp[a] + "\n\n";
@@ -758,15 +764,18 @@
         return ret;
     }
 
-    function stepCode(keyOfSprite) {
+    function stepCode(keyOfSprite, isClone=false) {
       var keyOfCode = keyOfSprite;
+
       if (!myInterpreters[keyOfCode]) {
         // First statement of this code.
         // Clear the program output.
         resetStepUi(true);
+          // latestcodes에는 event Code를 제외한 메인 코드가 초기화되어있음
         latestCodes[keyOfCode] = latestCodes[keyOfCode].replace("nullnull", "");
-        console.log(keyOfCode, latestCodes[keyOfCode]);
-        var targetCode = createTargetCode(keyOfSprite);
+        var targetCode = "";
+        targetCode = createTargetCode(keyOfCode, isClone);
+        console.log("stepCode", keyOfCode, targetCode);
         myInterpreters[keyOfCode] = new Interpreter(targetCode, initApi);
         return;
       }
