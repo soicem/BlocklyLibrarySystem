@@ -663,6 +663,10 @@
                 _goStep(cloneName, true);
 
             }));
+        interpreter.setProperty(scope, 'glideToMousePosition',
+            interpreter.createNativeFunction(function(second) {
+                myCanvas.getCurrentSprite().glideToMousePosition(second);
+            }));
 
 
         // Add an API function for the prompt() block.

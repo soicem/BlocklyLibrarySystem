@@ -77,7 +77,7 @@ Blockly.JavaScript['sprite_goto'] = function(block) {
   let dropdown_where = block.getFieldValue('WHERE');
   let funcName = OPTIONS[dropdown_where];
 
-  return funcName + "()";
+  return funcName + "();\n";
 };
 
 Blockly.JavaScript['sprite_pointTo'] = function (block) {
@@ -108,3 +108,15 @@ Blockly.JavaScript['sprite_getXY'] = function (block) {
   return [code, Blockly.JavaScript.ORDER_NONE];
 };
 
+
+Blockly.JavaScript['sprite_glideTo'] = function(block) {
+  const OPTIONS = {
+    RANDOM: "goToMousePosition",
+    MOUSE: "glideToMousePosition"
+  };
+  let value_sec = Blockly.JavaScript.valueToCode(block, 'SEC', Blockly.JavaScript.ORDER_ATOMIC);
+  let dropdown_where = block.getFieldValue('WHERE');
+  let funcName = OPTIONS[dropdown_where];
+
+  return funcName + "(" + value_sec + ");\n";
+};
