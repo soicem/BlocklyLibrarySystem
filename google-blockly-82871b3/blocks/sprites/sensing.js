@@ -34,7 +34,7 @@ Blockly.Blocks['sprite_touching'] = {
   init: function() {
     this.appendDummyInput()
     .appendField("touching")
-    .appendField(new Blockly.FieldDropdown([["mouse pointer","MOUSE"], ["edge","EDGE"]]), "OPTION");
+    .appendField(new Blockly.FieldDropdown([["touching_mouse","MOUSE"], ["touching_edge","EDGE"]]), "OPTION");
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(190);

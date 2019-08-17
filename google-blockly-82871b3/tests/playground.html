@@ -597,6 +597,20 @@
     }
 
     function initApi(interpreter, scope) {
+      interpreter.setProperty(scope, 'touching_edge',
+              interpreter.createNativeFunction(function() {
+
+              }));
+
+      interpreter.setProperty(scope, 'touching_mouse',
+              interpreter.createNativeFunction(function() {
+
+              }));
+
+      interpreter.setProperty(scope, 'edgeBounce',
+              interpreter.createNativeFunction(function() {
+
+              }));
       interpreter.setProperty(scope, 'turnRight',
               interpreter.createNativeFunction(function(text) {
                 text = text ? text.toString() : '';
