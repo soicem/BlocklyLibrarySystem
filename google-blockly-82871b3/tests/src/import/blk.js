@@ -151,26 +151,26 @@ function importProjFile(fileInputElement, workspace) {
   let reader = new FileReader();
 
   reader.onload = (function () {
-    return function (evt) {
-      JSZip.loadAsync(evt.target.result).then(function (proj) {
-        const promises = [];
-        let tmpJs = {};
-        let tmpXml = {};
+    return async function (evt) {
+      let proj = await JSZip.loadAsync(evt.target.result);
 
-        // 1. make Promise of each operation for each files in proj (not actually executing)
-        // 2. and then push it to promises array
-        proj.forEach((relativePath, file) => {
-          promises.push(getPromiseAccordingToFile(file, promises, tmpXml, tmpJs))
-        });
+      const promises = [];
+      let tmpJs = {};
+      let tmpXml = {};
 
-        // 1. run all pre-processed promises
-        // 2. if there's any post-process steps, proceed them
-        Promise.all(promises).then(() => {
-          lazyEvaluate(tmpJs, tmpXml, workspace)
-        }).catch(
-            console.log.bind(console)
-        );
+      // 1. make Promise of each operation for each files in proj (not actually executing)
+      // 2. and then push it to promises array
+      proj.forEach((relativePath, file) => {
+        promises.push(getPromiseAccordingToFile(file, promises, tmpXml, tmpJs));
       });
+
+      // 1. run all pre-processed promises
+      // 2. if there's any post-process steps, proceed them
+      Promise.all(promises).then(() => {
+        lazyEvaluate(tmpJs, tmpXml, workspace)
+      }).catch(
+          console.log.bind(console)
+      );
     };
   })(files);
 
@@ -191,11 +191,11 @@ function importBlkFile(fileInputElement, workspace) {
   let reader = new FileReader();
 
   reader.onload = (function () {
-    return function (evt) {
-      JSZip.loadAsync(evt.target.result).then((blk) => {
-        blk.forEach((relativePath, file) => {
-          extractAccordingToFile(file, workspace);
-        });
+    return async function (evt) {
+      const blk = await JSZip.loadAsync(evt.target.result);
+
+      blk.forEach((relativePath, file) => {
+        extractAccordingToFile(file, workspace);
       });
     };
   })(files);
