@@ -265,9 +265,8 @@ class Sprite {
   }
 
   turnRight(angle) {
-    console.log(this.getAngle());
     const newAngle = this.getAngle().plus(angle);
-    console.log(newAngle, angle)
+    //console.log(newAngle, angle)
     this.setAngle(newAngle);
   }
 

@@ -599,7 +599,18 @@
     function initApi(interpreter, scope) {
       interpreter.setProperty(scope, 'touching_edge',
               interpreter.createNativeFunction(function() {
-
+                // 480, 400 : canvas size (hardcoding)
+                var pos = myCanvas.getSpecificSprite().getPosition();
+                var size = myCanvas.getSpecificSprite().getSize();
+                //console.log(pos.getX(), pos.getY());
+                //console.log(size.getWidth(), size.getHeight());
+                if(pos.getX() <= 0 || pos.getY() <= 0){
+                  return true;
+                }
+                if(pos.getX()  >= 480 - size.getWidth() || pos.getY() >= 400 - size.getHeight()){
+                  return true;
+                }
+                return false;
               }));
 
       interpreter.setProperty(scope, 'touching_mouse',

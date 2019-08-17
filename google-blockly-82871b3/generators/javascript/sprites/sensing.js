@@ -43,6 +43,6 @@ Blockly.JavaScript['sprite_touching'] = function(block) {
   };
   let dropdown_where = block.getFieldValue('OPTION');
   let funcName = OPTIONS[dropdown_where];
-  return funcName + "()";
+  return [funcName + "()", Blockly.JavaScript.ORDER_NONE];
 
 };
