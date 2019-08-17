@@ -1,3 +1,4 @@
 .idea/
 google-blockly-82871b3/package-lock.json
 *.blk
+*.proj
