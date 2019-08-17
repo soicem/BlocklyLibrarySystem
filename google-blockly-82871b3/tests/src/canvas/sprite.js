@@ -6,7 +6,7 @@ class Sprite {
   set cloneChilds(value) {
     this._cloneChilds.push(value);
   }
-    get isClone() {
+  get isClone() {
     return this._isClone;
   }
 
@@ -265,7 +265,9 @@ class Sprite {
   }
 
   turnRight(angle) {
+    console.log(this.getAngle());
     const newAngle = this.getAngle().plus(angle);
+    console.log(newAngle, angle)
     this.setAngle(newAngle);
   }
 
@@ -274,6 +276,7 @@ class Sprite {
     this.setAngle(newAngle);
   }
 
+  // ex : new Degree(180);
   changeDirection(angle) {
     this.setAngle(angle);
   }

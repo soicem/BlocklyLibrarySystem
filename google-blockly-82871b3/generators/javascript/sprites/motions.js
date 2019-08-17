@@ -46,7 +46,7 @@ Blockly.JavaScript['sprite_turnAngle'] = function (block) {
   let value_degree = Blockly.JavaScript.valueToCode(block, 'DEGREE',
       Blockly.JavaScript.ORDER_ATOMIC);
 
-  return funcName + "(new Degree(" + value_degree + "));\n";
+  return funcName + "(" + value_degree + ");\n";
 };
 
 Blockly.JavaScript['sprite_goTo'] = function (block) {

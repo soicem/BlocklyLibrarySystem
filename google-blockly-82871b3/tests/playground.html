@@ -597,6 +597,18 @@
     }
 
     function initApi(interpreter, scope) {
+      interpreter.setProperty(scope, 'turnRight',
+              interpreter.createNativeFunction(function(text) {
+                text = text ? text.toString() : '';
+                myCanvas.getSpecificSprite().turnRight(new Degree(text));
+
+              }));
+      interpreter.setProperty(scope, 'turnLeft',
+              interpreter.createNativeFunction(function(text) {
+                text = text ? text.toString() : '';
+                myCanvas.getSpecificSprite().turnLeft(new Degree(text));
+
+              }));
       interpreter.setProperty(scope, 'moveSteps',
               interpreter.createNativeFunction(function(text) {
                 text = text ? text.toString() : '';

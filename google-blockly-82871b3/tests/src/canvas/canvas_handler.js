@@ -20,7 +20,7 @@ class CanvasHandler {
       const canvasBound = this.getCanvasObj().getCanvas().getBoundingClientRect();
       const canvasX = canvasBound.left;
       const canvasY = canvasBound.top;
-      console.log("mouse : ", mouseX, mouseY, "canvas", canvasX, canvasY);
+      //console.log("mouse : ", mouseX, mouseY, "canvas", canvasX, canvasY);
 
       this.setMousePosition(new Point(mouseX - canvasX, mouseY - canvasY));
     }
