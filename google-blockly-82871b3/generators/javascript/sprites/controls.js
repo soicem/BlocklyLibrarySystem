@@ -47,3 +47,11 @@ Blockly.JavaScript['sprite_forever'] = function(block) {
     let statements_statement = Blockly.JavaScript.statementToCode(block, 'STATEMENT');
     return "while(1) {" + statements_statement + "};\n";
 };
+
+
+Blockly.JavaScript['sprite_wait'] = function(block) {
+    let value_x = Blockly.JavaScript.valueToCode(block, 'SEC',
+        Blockly.JavaScript.ORDER_ATOMIC);
+
+    return "wait(" + value_x + ");\n";
+};

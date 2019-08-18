@@ -559,10 +559,13 @@
     function delayWraper(keyOfSprite, isClone=false) {
       return new Promise(function (resolve, reject) {
         setTimeout(function () {
-          //console.log("keyOfSprite : " , keyOfSprite)
           myCanvas.setSpecificSpriteName(keyOfSprite);
-          var isFalse = stepCode(keyOfSprite, isClone);
-          resolve(isFalse);
+          if(!myCanvas.getSpecificSprite().isContinue){
+            resolve(true);
+          } else {
+            var isFalse = stepCode(keyOfSprite, isClone);
+            resolve(isFalse);
+          }
         }, 2);
       });
     }
@@ -698,11 +701,17 @@
                 var cloneName = createClone();
                 latestCodes[cloneName] = "";
                 _goStep(cloneName, true);
-
             }));
         interpreter.setProperty(scope, 'glideToMousePosition',
             interpreter.createNativeFunction(function(second) {
-                myCanvas.getCurrentSprite().glideToMousePosition(second);
+                myCanvas.getSpecificSprite().glideToMousePosition(second);
+            }));
+        interpreter.setProperty(scope, 'wait',
+            interpreter.createNativeFunction(function(second) {
+              myCanvas.getSpecificSprite().isContinue = false;
+              myCanvas.getSpecificSprite().wait(second).then(value=>{
+                myCanvas.getSpecificSprite().isContinue = true;
+              });
             }));
 
 

@@ -1,4 +1,11 @@
 class Sprite {
+  get isContinue() {
+    return this._isContinue;
+  }
+
+  set isContinue(value) {
+    this._isContinue = value;
+  }
   get cloneChilds() {
     return this._cloneChilds;
   }
@@ -18,6 +25,7 @@ class Sprite {
     this._isClone = isClone;
     this._cloneChilds = [];
     this._name = name; // 이름
+    this._isContinue = true;
     this.setCanvas(canvas);
     this.setImage(image);
     this.setImageData(imageData);
@@ -278,6 +286,14 @@ class Sprite {
   // ex : new Degree(180);
   changeDirection(angle) {
     this.setAngle(angle);
+  }
+
+  wait(sec) {
+    return new Promise(function (resolve, reject) {
+      setTimeout(function () {
+        resolve(true);
+      }, sec * 1000);
+    });
   }
 
   goToPoint(x, y) {
