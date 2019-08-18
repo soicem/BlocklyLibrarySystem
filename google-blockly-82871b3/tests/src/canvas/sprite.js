@@ -1,4 +1,11 @@
 class Sprite {
+  get isHalting() {
+    return this._isHalting;
+  }
+
+  set isHalting(value) {
+    this._isHalting = value;
+  }
   get isContinue() {
     return this._isContinue;
   }
@@ -26,6 +33,7 @@ class Sprite {
     this._cloneChilds = [];
     this._name = name; // 이름
     this._isContinue = true;
+    this._isHalting = false;
     this.setCanvas(canvas);
     this.setImage(image);
     this.setImageData(imageData);

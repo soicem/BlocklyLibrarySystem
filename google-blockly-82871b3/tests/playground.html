@@ -580,6 +580,8 @@
       delayWraper(keyOfSprite, isClone)
               .then(
                       function (result) {
+                        if(myCanvas.getSpriteByName(keyOfSprite).isHalting)
+                          return 0;
                         if(result != false)
                           _goStep(keyOfSprite, isClone);
                       }
@@ -615,6 +617,12 @@
                 }
                 return false;
               }));
+
+      interpreter.setProperty(scope, 'allStop',
+              interpreter.createNativeFunction(function() {
+                myCanvas.allStop();
+              }));
+
 
       interpreter.setProperty(scope, 'touching_mouse',
               interpreter.createNativeFunction(function() {
@@ -708,6 +716,7 @@
             }));
         interpreter.setProperty(scope, 'wait',
             interpreter.createNativeFunction(function(second) {
+              var nameOfSprite = myCanvas.getSpecificSpriteName();
               myCanvas.getSpecificSprite().isContinue = false;
               myCanvas.getSpecificSprite().wait(second).then(value=>{
                 myCanvas.getSpecificSprite().isContinue = true;

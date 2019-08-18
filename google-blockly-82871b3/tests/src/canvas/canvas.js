@@ -6,6 +6,8 @@ class Canvas {
     this.setWorkspace(workspace);
     this.setHandler(new CanvasHandler(this));
     this.initialize();
+
+
   }
 
   initialize() {
@@ -200,6 +202,15 @@ class Canvas {
     }
 
     return foundSprite;
+  }
+
+  // access time 2019-08-18
+
+  allStop(){
+    for(let a in this._spritesOrder){
+      if(this._spritesOrder[a] == null) continue;
+      this._spritesOrder[a].isHalting = true
+    }
   }
 
   ////////// Class Methods //////////
