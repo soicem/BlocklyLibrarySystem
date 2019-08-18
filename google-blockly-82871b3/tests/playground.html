@@ -558,14 +558,14 @@
 
     function delayWraper(keyOfSprite, isClone=false) {
       return new Promise(function (resolve, reject) {
-        setTimeout(function () {
+        setTimeout(function (){
           myCanvas.setSpecificSpriteName(keyOfSprite);
-          if(!myCanvas.getSpecificSprite().isContinue){
-            resolve(true);
-          } else {
-            var isFalse = stepCode(keyOfSprite, isClone);
-            resolve(isFalse);
+          var isFalse = stepCode(keyOfSprite, isClone);
+          if(keyOfSprite == "penguin"){
+            console.log("get in", isFalse, keyOfSprite)
           }
+          resolve(isFalse);
+
         }, 2);
       });
     }
@@ -577,19 +577,32 @@
     }
 
     function _goStep(keyOfSprite, isClone=false){
+      if(keyOfSprite == "penguin"){
+        console.log("recursion");
+
+      }
       delayWraper(keyOfSprite, isClone)
               .then(
                       function (result) {
                         if(myCanvas.getSpriteByName(keyOfSprite).isHalting)
                           return 0;
+
+                        if(!myCanvas.getSpriteByName(keyOfSprite).isContinue){
+                          console.log("soicem");
+                          return 0;
+                        }
+
                         if(result != false)
                           _goStep(keyOfSprite, isClone);
+
+
                       }
               );
     }
 
     // initApi 'createClone' statement wrapper
     function createClone(){
+        console.log("create sprite")
         var spriteObject = myCanvas.getSpecificSprite();
         var parentName = myCanvas.getSpecificSpriteName();
         var cloneName = getNoDuplicationName(parentName, "_clone");
@@ -717,9 +730,12 @@
         interpreter.setProperty(scope, 'wait',
             interpreter.createNativeFunction(function(second) {
               var nameOfSprite = myCanvas.getSpecificSpriteName();
-              myCanvas.getSpecificSprite().isContinue = false;
-              myCanvas.getSpecificSprite().wait(second).then(value=>{
-                myCanvas.getSpecificSprite().isContinue = true;
+              myCanvas.getSpriteByName(nameOfSprite).isContinue = false;
+              myCanvas.getSpriteByName(nameOfSprite).wait(second).then(value=>{
+                console.log("wait end");
+                console.log(myCanvas.getSpecificSpriteName())
+                myCanvas.getSpriteByName(nameOfSprite).isContinue = true;
+                _goStep(nameOfSprite);
               });
             }));
 
