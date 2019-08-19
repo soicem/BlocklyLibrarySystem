@@ -69,7 +69,8 @@ Blockly.Extensions.register('testingExtension', function () {
           let sprite = myCanvas.getSpritesOrder()[i];
           let spriteName = sprite.name;
 
-          //if (spriteName === myCanvas.getCurrentSpriteName()) continue;
+          console.log(spriteName, "->", sprite.isClone[0]);
+          if (sprite.isClone[0]) continue;
 
           options.push([spriteName, spriteName]);
         }
