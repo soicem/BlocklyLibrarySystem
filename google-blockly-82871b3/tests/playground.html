@@ -284,6 +284,11 @@
 
               }));
 
+      interpreter.setProperty(scope, 'isTouchingSprite',
+              interpreter.createNativeFunction(function(text) {
+                console.log(myCanvas.getCurrentSprite().isTouchingSprite(text));
+              }));
+
       interpreter.setProperty(scope, 'edgeBounce',
               interpreter.createNativeFunction(function() {
 
