@@ -1,0 +1,363 @@
+:root {
+  --side-menu-width: 504px;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background-color: #fff;
+  font-family: sans-serif;
+  overflow-x: auto;
+  overflow-y: scroll;
+  min-width: 1200px;
+  min-height: calc(878px + var(--top-menu-height));
+}
+
+h1 {
+  float: left;
+  font-weight: bold;
+  font-size: 140%;
+  color: white;
+  background-color: #333;
+  padding: 3px;
+  margin: 8px;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li a {
+  height: 100%;
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+li a:hover {
+  background-color: green;
+}
+
+div ul{
+  width:100%;
+}
+
+ul1 {
+  display: block;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+li1 {
+  width: 50%;
+  display: block;
+  float: left;
+}
+
+li1 input {
+  width: 50px;
+}
+
+li2 {
+  float: left;
+  width: 50%;
+}
+
+li2 a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 7px 0px;
+  text-decoration: none;
+  border: 1px solid white;
+  width:100%;
+  cursor: pointer;
+}
+
+li2 a:hover {
+  background-color: green;
+}
+
+#buttonCollection {
+  width:auto;
+}
+
+canvas {
+  position: absolute;
+}
+
+.rounded{
+  width: auto;
+  background-color: #e9f1fc;
+  border-radius:0.5em;
+  -moz-border-radius: 0.5em;
+  -webkit-border-radius: 0.5em;
+  padding: 11px;
+  /*margin-block-end: 0.67em;*/
+}
+
+
+
+#bodyContent {
+   height: calc(100% - var(--top-menu-height));
+}
+
+#spriteCanvas_container {
+  float: left;
+  width: 500px;
+  height: 500px;
+}
+
+#spriteCanvas {
+  border: 1px solid black;
+}
+
+#canvasBlock {
+  height: 400px;
+}
+
+#canvases {
+  position: relative;
+  height: 402px;
+  width: 482px;
+  background-color: white;
+}
+
+/* 리소스 핸들링용 CSS */
+#myContainer {
+  width: 450px;
+  height: 450px;
+  float: left;
+  border-style: solid;
+  border-bottom-color: #92a8d1;
+  border-top-color: #92a8d1;
+  border-left-color: #92a8d1;
+  border-right-color: #92a8d1;
+  background: white;
+}
+
+#myAnimation {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+}
+
+#blocklyDiv {
+  float: left;
+  height: 100%;
+  width: calc(100% - var(--side-menu-width));
+
+}
+
+#library {
+  float: left;
+  height: calc(100% - 80px);
+  width: calc(100% - 560px);
+}
+
+#sprite {
+  float: left;
+  height: calc(100% - 80px);
+  width: calc(100% - 560px);
+}
+
+#importExport {
+  width: 100%;
+  font-family: monospace;
+}
+
+.ioLabel > .blocklyFlyoutLabelText {
+  font-style: italic;
+}
+
+#importedFunctions {
+  clear: both;
+  display: none;
+  height: 90%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+#librarySpace {
+  float: left;
+  height: 100px;
+  width: 40%
+}
+
+#content {
+  float: right;
+  height: calc(100% - var(--top-menu-height));
+  width: var(--side-menu-width);
+  background-color: white;
+}
+
+#gallery_owner {
+  height: 220px;
+}
+
+.gap_at_end {
+  margin-block-end: 0.67em;
+}
+
+#sprite_owner {
+  height: 200px;
+  width: 65%;
+  float: left;
+  position: sticky;
+}
+
+#spriteAttributes {
+  padding: 5px;
+}
+
+#stage_owner {
+  height: 200px;
+  width: 25%;
+  float: right;
+  position: sticky;
+}
+
+#spriteGallery {
+  width: 100%;
+  height: calc(100% - 70px);
+  background-color: white;
+  margin-block-start: 0.67em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#spriteGallery:hover {
+  overflow-x: auto;
+}
+
+#stageGallery {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+}
+
+div.spriteImg {
+  margin: 4px;
+  border: 1px solid #ccc;
+  /*float: left;*/
+  width: 70px;
+  display: inline-block;
+}
+
+div.spriteImg:hover {
+  border: 1px solid #777;
+}
+
+div.spriteImg img {
+  width: 70px;
+  height: 70px;
+}
+
+div.stage {
+  margin: 5px;
+  border: 1px solid #ccc;
+  float: left;
+  width: 100px;
+}
+
+div.stage:hover {
+  border: 1px solid #777;
+}
+
+div.stage img {
+  width: 100%;
+  height: auto;
+}
+
+div.desc {
+  text-align: center;
+  text-overflow: ellipsis;
+  width: 70px;
+  font-size: 80%;
+  overflow: hidden;
+}
+
+.plusButtonContainer{
+  display: block;
+  width: 100%;
+  height: 50px;
+  background-color: white;
+}
+
+.plusButton {
+  float: right;
+  padding: 3px;
+  position: absolute;
+}
+
+.spritePlus {
+  right: 10px;
+  bottom: 20px;
+}
+
+.stagePlus {
+  right: 10px;
+  bottom: 10px;
+}
+
+.plus{
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  overflow: hidden;
+  cursor: pointer;
+  background: url("../../plus_button.png") center center no-repeat;
+  background-size: 75% 75%;
+}
+
+.plus > input{
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.plus:hover {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  overflow: hidden;
+  cursor: pointer;
+  background: url("../../plus_button_hover.png") center center no-repeat;
+  background-size: 75% 75%;
+}
+
+.fileBox label {
+  display: inline-block;
+  width: 100%;
+  cursor: pointer;
+}
+
+.fileBox label:hover {
+  background-color: green;
+}
+
+.fileBox input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip(0, 0, 0, 0);
+  border: 0;
+  opacity: 0;
+}
