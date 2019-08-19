@@ -73,7 +73,7 @@ Blockly.Blocks['import_return'] = {
         .appendField("", "FUNC_FIELD");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour("#ffe426");
+    this.setColour("#e3ac00");
     this.setTooltip("");
     this.setHelpUrl("");
     this.setMutator(new Blockly.Mutator([null]));
@@ -170,7 +170,7 @@ Blockly.Blocks['import_statement'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour("#ffe426");
+    this.setColour("#e3ac00");
     this.setTooltip("");
     this.setHelpUrl("");
     this.setMutator(new Blockly.Mutator([null]));
