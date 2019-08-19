@@ -250,10 +250,10 @@ class Canvas {
     }
   }
 
-  addStage(stageName, imageData = null) {
+  addStage(stageName, imageData = null, imageSrc) {
     const defaultSize = new Size(this.getWidth(), this.getHeight());
     let stage = SpriteFactory.getSprite(this, defaultSize, stageName,
-        imageData);
+        imageData, imageSrc);
 
     this._sprites[stageName] = stage;
     this._spritesOrder[0] = stage;
