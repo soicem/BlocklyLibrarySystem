@@ -73,7 +73,8 @@ function generateLibraryCode(workspace) {
 
     if (sprite) {
       switchWorkspaceTo(myCanvas.getSpriteByName(sprite.name), workspace);
-      libraryCode += Blockly['JavaScript'].workspaceToCode(workspace);
+      const workspaceCode = Blockly['JavaScript'].workspaceToCode(workspace);
+      if (workspaceCode) libraryCode += workspaceCode;
     }
   }
   switchWorkspaceTo(myCanvas.getCurrentSprite(), workspace);

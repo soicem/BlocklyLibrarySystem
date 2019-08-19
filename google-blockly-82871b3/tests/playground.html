@@ -254,9 +254,9 @@
 
       var libCode = myCanvas.getLibCode();
       if(libCode){
-        libCode = libCode.replace("null", "")
-        libCode = libCode.replace("null", "")
-        libCode = libCode.replace("nullnull", "")
+        // libCode = libCode.replace("null", "")
+        // libCode = libCode.replace("null", "")
+        // libCode = libCode.replace("nullnull", "")
 
         // latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode]  ;
         let codeWithLib = libCode + myCanvas.getSpriteByName(cloneName).getJsCode();
@@ -476,9 +476,9 @@
 
       var libCode = myCanvas.getLibCode();
       if(libCode){
-        libCode = libCode.replace("null", "")
-        libCode = libCode.replace("null", "")
-        libCode = libCode.replace("nullnull", "")
+        // libCode = libCode.replace("null", "")
+        // libCode = libCode.replace("null", "")
+        // libCode = libCode.replace("nullnull", "")
 
         // latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode]  ;
         let codeWithLib = libCode + myCanvas.getSpriteByName(keyOfLatestCode).getJsCode();
@@ -726,7 +726,7 @@
   </div>
   <div id="topMenuControl" class="topMenu_right">
     <span class="verticalMidPointBase"></span>
-    <img class="verticallyMiddle" onclick="goStep()" src="src/resources/images/Play-Button.png" style="padding: 10px; height: 60%; vertical-align: middle">
+    <img class="verticallyMiddle cursorPointer" onclick="goStep()" src="src/resources/images/Play-Button.png" style="padding: 10px; height: 60%; vertical-align: middle">
   </div>
 </div>
 
