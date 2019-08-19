@@ -251,6 +251,18 @@
         var imageSrc = spriteObject.getImageSource();
         var position = spriteObject.getPosition(); // x, y 좌표
         myCanvas.addSpriteAndSelect(cloneName, imageData, imageSrc, [true, parentName, position]); // idx4 : isClone or not
+
+      var libCode = myCanvas.getLibCode();
+      if(libCode){
+        libCode = libCode.replace("null", "")
+        libCode = libCode.replace("null", "")
+        libCode = libCode.replace("nullnull", "")
+
+        // latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode]  ;
+        let codeWithLib = libCode + myCanvas.getSpriteByName(cloneName).getJsCode();
+        myCanvas.getSpriteByName(cloneName).setJsCode(codeWithLib);
+      }
+
         return cloneName;
     }
 
@@ -374,7 +386,7 @@
                 //myCanvas.getSpecificSprite();
                 var cloneName = createClone();
                 // latestCodes[cloneName] = "";
-                myCanvas.getSpriteByName(cloneName).setJsCode("");
+                // myCanvas.getSpriteByName(cloneName).setJsCode("");
                 _goStep(cloneName, true);
             }));
         interpreter.setProperty(scope, 'glideToMousePosition',
