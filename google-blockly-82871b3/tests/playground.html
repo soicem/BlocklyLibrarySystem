@@ -373,7 +373,8 @@
             interpreter.createNativeFunction(function() {
                 //myCanvas.getSpecificSprite();
                 var cloneName = createClone();
-                latestCodes[cloneName] = "";
+                // latestCodes[cloneName] = "";
+                myCanvas.getSpriteByName(cloneName).setJsCode("");
                 _goStep(cloneName, true);
             }));
         interpreter.setProperty(scope, 'glideToMousePosition',
@@ -427,7 +428,7 @@
 
     var myInterpreters = {};
     var highlightPause = false;
-    var latestCodes = {};
+    // var latestCodes = {};
 
     /* event block 코드를 최신 코드에서 가져와 현재 Sprite 객체에 배치한다. */
     function eventCodeHandling(code){
@@ -453,10 +454,13 @@
       Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
       Blockly.JavaScript.addReservedWords('highlightBlock');
       let keyOfLatestCode = myCanvas.getCurrentSpriteName();
-      latestCodes[keyOfLatestCode] = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
+      // latestCodes[keyOfLatestCode] = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
+      myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(Blockly["JavaScript"].workspaceToCode(blockWorkspace));
 
       // eventCode 현재 Sprite 객체에 배치, 이벤트 코드를 제외한 최신 코드 초기화
-      latestCodes[keyOfLatestCode] = eventCodeHandling(latestCodes[keyOfLatestCode]);
+      // latestCodes[keyOfLatestCode] = eventCodeHandling(latestCodes[keyOfLatestCode]);
+      let eventCode = eventCodeHandling(myCanvas.getSpriteByName(keyOfLatestCode).getJsCode());
+      myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(eventCode);
 
       var libCode = myCanvas.getLibCode();
       if(libCode){
@@ -464,9 +468,13 @@
         libCode = libCode.replace("null", "")
         libCode = libCode.replace("nullnull", "")
 
-        latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode]  ;
+        // latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode]  ;
+        let codeWithLib = libCode + myCanvas.getSpriteByName(keyOfLatestCode).getJsCode();
+        myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(codeWithLib);
       }
-      latestCodes[keyOfLatestCode] = latestCodes[keyOfLatestCode].replace("nullnull", "");
+      // latestCodes[keyOfLatestCode] = latestCodes[keyOfLatestCode].replace("nullnull", "");
+      let codeWithoutNull = myCanvas.getSpriteByName(keyOfLatestCode).getJsCode().replace("nullnull", "");
+      myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(codeWithoutNull);
 
       // step execution 용 코드
       if(!myInterpreters[myCanvas.getCurrentSpriteName()])
@@ -485,7 +493,8 @@
         } else {
             tmp = myCanvas.getSpriteByName(keyOfSprite)._whenClicked;
         }
-        var ret = latestCodes[keyOfSprite];
+        // var ret = latestCodes[keyOfSprite];
+        var ret = myCanvas.getSpriteByName(keyOfSprite).getJsCode();
         for(var a in tmp){
             ret += tmp[a] + "\n\n";
         }
@@ -499,7 +508,9 @@
         // Clear the program output.
         resetStepUi(true);
           // latestcodes에는 event Code를 제외한 메인 코드가 초기화되어있음
-        latestCodes[keyOfCode] = latestCodes[keyOfCode].replace("nullnull", "");
+        // latestCodes[keyOfCode] = latestCodes[keyOfCode].replace("nullnull", "");
+        let codeWithoutNull = myCanvas.getSpriteByName(keyOfCode).getJsCode().replace("nullnull", "");
+        myCanvas.getSpriteByName(keyOfCode).setJsCode(codeWithoutNull);
         var targetCode = "";
         targetCode = createTargetCode(keyOfCode, isClone);
         console.log("stepCode", keyOfCode, targetCode);

@@ -49,7 +49,9 @@ function exportProjFile(filename, ext, workspace) {
 
   exportStage(myCanvas.getSpritesOrder()[0]);
   for (let i = 1; i < myCanvas.getSpritesOrder().length; i++) {
-    exportSprite(myCanvas.getSpritesOrder()[i]);
+    const sprite = myCanvas.getSpritesOrder()[i];
+    if (sprite.isClone[0]) continue;
+    exportSprite(sprite);
   }
   exportLib(myCanvas.getLibCode());
 
@@ -83,7 +85,9 @@ function exportBlkFile(filename, ext, workspace) {
   updateCurrentSpriteXml(workspace);
 
   for (let i = 1; i < myCanvas.getSpritesOrder().length; i++) {
-    exportXml(myCanvas.getSpritesOrder()[i]);
+    const sprite = myCanvas.getSpritesOrder()[i];
+    if (sprite.isClone[0]) continue;
+    exportXml(sprite);
   }
   exportLib(generateLibraryCode(workspace));
 
