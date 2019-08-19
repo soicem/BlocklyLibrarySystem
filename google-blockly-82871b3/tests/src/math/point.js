@@ -78,8 +78,7 @@ class Point {
   }
 
   offset(other) {
-    this.setXY(this.getX() + other.getX(), this.getY() + other.getY());
-    return this;
+    return new Point(this.getX() + other.getX(), this.getY() + other.getY());
   }
 
   offsetByAngle(angle, distance) {

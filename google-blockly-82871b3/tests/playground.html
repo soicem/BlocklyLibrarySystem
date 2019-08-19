@@ -196,34 +196,110 @@
       taChange();
     }
 
-    function delayWrapper(keyOfSprite) {
+    
+    function delayWrapper(keyOfSprite, isClone=false) {
       return new Promise(function (resolve, reject) {
-        setTimeout(function () {
-          console.log("keyOfSprite : " , keyOfSprite)
+        setTimeout(function (){
           myCanvas.setSpecificSpriteName(keyOfSprite);
-          var isFalse = stepCode(keyOfSprite);
+          var isFalse = stepCode(keyOfSprite, isClone);
+          if(keyOfSprite == "penguin"){
+            console.log("get in", isFalse, keyOfSprite)
+          }
           resolve(isFalse);
+
         }, 2);
       });
     }
 
     function goStep(){
       for(var i = 1; i < myCanvas.getSpritesOrder().length; i++){
-        _goStep(myCanvas.getSpritesOrder()[i].name)
+        if(!myCanvas.getSpritesOrder()[i].isClone[0])
+          _goStep(myCanvas.getSpritesOrder()[i].name)
       }
     }
 
-    function _goStep(keyOfSprite){
-      delayWrapper(keyOfSprite)
+    function _goStep(keyOfSprite, isClone=false){
+      if(keyOfSprite == "penguin"){
+        console.log("recursion");
+
+      }
+      delayWrapper(keyOfSprite, isClone)
               .then(
                       function (result) {
+                        if(myCanvas.getSpriteByName(keyOfSprite).isHalting)
+                          return 0;
+
+                        if(!myCanvas.getSpriteByName(keyOfSprite).isContinue){
+                          console.log("soicem");
+                          return 0;
+                        }
+
                         if(result != false)
-                          _goStep(keyOfSprite);
+                          _goStep(keyOfSprite, isClone);
+
+
                       }
               );
     }
 
+    // initApi 'createClone' statement wrapper
+    function createClone(){
+        console.log("create sprite")
+        var spriteObject = myCanvas.getSpecificSprite();
+        var parentName = myCanvas.getSpecificSpriteName();
+        var cloneName = getNoDuplicationName(parentName, "_clone");
+        spriteObject.cloneChilds = cloneName; // clone 이름을 parent sprite에 저장
+        var imageData = spriteObject.getImageData();
+        var imageSrc = spriteObject.getImageSource();
+        var position = spriteObject.getPosition(); // x, y 좌표
+        myCanvas.addSpriteAndSelect(cloneName, imageData, imageSrc, [true, parentName, position]); // idx4 : isClone or not
+        return cloneName;
+    }
+
     function initApi(interpreter, scope) {
+      interpreter.setProperty(scope, 'touching_edge',
+              interpreter.createNativeFunction(function() {
+                // 480, 400 : canvas size (hardcoding)
+                var pos = myCanvas.getSpecificSprite().getPosition();
+                var size = myCanvas.getSpecificSprite().getSize();
+                //console.log(pos.getX(), pos.getY());
+                //console.log(size.getWidth(), size.getHeight());
+                if(pos.getX() <= 0 || pos.getY() <= 0){
+                  return true;
+                }
+                if(pos.getX()  >= 480 - size.getWidth() || pos.getY() >= 400 - size.getHeight()){
+                  return true;
+                }
+                return false;
+              }));
+
+      interpreter.setProperty(scope, 'allStop',
+              interpreter.createNativeFunction(function() {
+                myCanvas.allStop();
+              }));
+
+
+      interpreter.setProperty(scope, 'touching_mouse',
+              interpreter.createNativeFunction(function() {
+
+              }));
+
+      interpreter.setProperty(scope, 'edgeBounce',
+              interpreter.createNativeFunction(function() {
+
+              }));
+      interpreter.setProperty(scope, 'turnRight',
+              interpreter.createNativeFunction(function(text) {
+                text = text ? text.toString() : '';
+                myCanvas.getSpecificSprite().turnRight(new Degree(text));
+
+              }));
+      interpreter.setProperty(scope, 'turnLeft',
+              interpreter.createNativeFunction(function(text) {
+                text = text ? text.toString() : '';
+                myCanvas.getSpecificSprite().turnLeft(new Degree(text));
+
+              }));
       interpreter.setProperty(scope, 'moveSteps',
               interpreter.createNativeFunction(function(text) {
                 text = text ? text.toString() : '';
@@ -285,7 +361,24 @@
         interpreter.setProperty(scope, 'createClone',
             interpreter.createNativeFunction(function() {
                 //myCanvas.getSpecificSprite();
-
+                var cloneName = createClone();
+                latestCodes[cloneName] = "";
+                _goStep(cloneName, true);
+            }));
+        interpreter.setProperty(scope, 'glideToMousePosition',
+            interpreter.createNativeFunction(function(second) {
+                myCanvas.getSpecificSprite().glideToMousePosition(second);
+            }));
+        interpreter.setProperty(scope, 'wait',
+            interpreter.createNativeFunction(function(second) {
+              var nameOfSprite = myCanvas.getSpecificSpriteName();
+              myCanvas.getSpriteByName(nameOfSprite).isContinue = false;
+              myCanvas.getSpriteByName(nameOfSprite).wait(second).then(value=>{
+                console.log("wait end");
+                console.log(myCanvas.getSpecificSpriteName())
+                myCanvas.getSpriteByName(nameOfSprite).isContinue = true;
+                _goStep(nameOfSprite);
+              });
             }));
 
 
@@ -333,9 +426,9 @@
         myCanvas.getCurrentSprite()._whenClicked = [];
         myCanvas.getCurrentSprite()._whenCloning = [];
         for(var a in tmp){
-            if(tmp[a].search("#flagClicked") != -1){
+            if(tmp[a].search("flagClicked") != -1){
                 myCanvas.getCurrentSprite()._whenClicked.push(tmp[a]);
-            } else if(tmp[a].search("#cloning") != -1) {
+            } else if(tmp[a].search("cloning") != -1) {
                 myCanvas.getCurrentSprite()._whenCloning.push(tmp[a]);
             }else {
                 ret += tmp[a] + "\n\n"
@@ -349,7 +442,6 @@
       Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
       Blockly.JavaScript.addReservedWords('highlightBlock');
       let keyOfLatestCode = myCanvas.getCurrentSpriteName();
-      //console.log(keyOfLatestCode);
       latestCodes[keyOfLatestCode] = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
 
       // eventCode 현재 Sprite 객체에 배치, 이벤트 코드를 제외한 최신 코드 초기화
@@ -374,8 +466,14 @@
     }
 
     // event block을 참조하여 Interpreter에 들어가는 target code생성
-    function createTargetCode(keyOfSprite){
-        var tmp = myCanvas.getSpriteByName(keyOfSprite)._whenClicked;
+    function createTargetCode(keyOfSprite, isClone){
+        var tmp = "";
+        if(isClone){
+            var parentName = myCanvas.getSpriteByName(keyOfSprite).isClone[1];
+            tmp = myCanvas.getSpriteByName(parentName)._whenCloning;
+        } else {
+            tmp = myCanvas.getSpriteByName(keyOfSprite)._whenClicked;
+        }
         var ret = latestCodes[keyOfSprite];
         for(var a in tmp){
             ret += tmp[a] + "\n\n";
@@ -383,15 +481,18 @@
         return ret;
     }
 
-    function stepCode(keyOfSprite) {
+    function stepCode(keyOfSprite, isClone=false) {
       var keyOfCode = keyOfSprite;
+
       if (!myInterpreters[keyOfCode]) {
         // First statement of this code.
         // Clear the program output.
         resetStepUi(true);
+          // latestcodes에는 event Code를 제외한 메인 코드가 초기화되어있음
         latestCodes[keyOfCode] = latestCodes[keyOfCode].replace("nullnull", "");
-        console.log(keyOfCode, latestCodes[keyOfCode]);
-        var targetCode = createTargetCode(keyOfSprite);
+        var targetCode = "";
+        targetCode = createTargetCode(keyOfCode, isClone);
+        console.log("stepCode", keyOfCode, targetCode);
         myInterpreters[keyOfCode] = new Interpreter(targetCode, initApi);
         return;
       }
@@ -634,9 +735,9 @@
           let myCanvas;
 
       // Sprite Name 중복 제거 ex) penguin -> penguin1
-      function getNoDuplicationName(name){
+      function getNoDuplicationName(name, isClone=""){
         var noDuplicated = 1;
-        var spriteName = name.split('.')[0];
+        var spriteName = name.split('.')[0] + isClone;
         var originalName = spriteName;
         var ext = name.split('.')[1];
         while(myCanvas._sprites.hasOwnProperty(spriteName)){
@@ -646,40 +747,42 @@
         return spriteName;
       }
 
-          function spriteChooser() {
-            var name;
-            var x = document.getElementById("spriteChooser");
-            var txt = "";
-            var imageFile = x.files[0];
-            var reader = new FileReader();
 
-            if ('files' in x) {
-              if (x.files.length === 0) {
-                txt = "Select one or more files.";
-              } else {
-                for (var i = 0; i < x.files.length; i++) {
-                  txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
-                  var file = x.files[i];
-                  if ('name' in file) {
-                    txt += "name: " + file.name + "<br>";
-                    name = file.name;
-                  }
-                  if ('size' in file) {
-                    txt += "size: " + file.size + " bytes <br>";
-                  }
-                  if ('value' in file) {
-                    txt += "value: " + file.value + " bytes <br>";
-                  }
-                }
+
+      function spriteChooser() {
+        var name;
+        var x = document.getElementById("spriteChooser");
+        var txt = "";
+        var imageFile = x.files[0];
+        var reader = new FileReader();
+
+        if ('files' in x) {
+          if (x.files.length === 0) {
+            txt = "Select one or more files.";
+          } else {
+            for (var i = 0; i < x.files.length; i++) {
+              txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
+              var file = x.files[i];
+              if ('name' in file) {
+                txt += "name: " + file.name + "<br>";
+                name = file.name;
               }
-            } else {
-              if (x.value === "") {
-                txt += "Select one or more files.";
-              } else {
-                txt += "The files property is not supported by your browser!";
-                txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
+              if ('size' in file) {
+                txt += "size: " + file.size + " bytes <br>";
+              }
+              if ('value' in file) {
+                txt += "value: " + file.value + " bytes <br>";
               }
             }
+          }
+        } else {
+          if (x.value === "") {
+            txt += "Select one or more files.";
+          } else {
+            txt += "The files property is not supported by your browser!";
+            txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
+          }
+        }
         var spriteName = getNoDuplicationName(name); // Sprite name 중복 제거
         var a = '<div class="spriteImg\" id="' + spriteName + '" onclick="myCanvas.setCurrentSprite(\''
             + spriteName + '\')">'
@@ -692,7 +795,6 @@
             reader.addEventListener('load', function () {
               // sprite에 대한 canvas 용 objects를 저장한다.
           myCanvas.addSpriteAndSelect(spriteName, reader.result, name); // spriteName : penguin, name : penguin.png
-              // myCanvas.getSpriteByName(name).draw();
           myCanvas.getSpriteByName(spriteName).printProperties();
             });
 

@@ -46,7 +46,7 @@ Blockly.JavaScript['sprite_turnAngle'] = function (block) {
   let value_degree = Blockly.JavaScript.valueToCode(block, 'DEGREE',
       Blockly.JavaScript.ORDER_ATOMIC);
 
-  return funcName + "(new Degree(" + value_degree + "));\n";
+  return funcName + "(" + value_degree + ");\n";
 };
 
 Blockly.JavaScript['sprite_goTo'] = function(block) {
@@ -95,5 +95,18 @@ Blockly.JavaScript['sprite_getXY'] = function (block) {
   let code = funcName + "()";
 
   return [code, Blockly.JavaScript.ORDER_NONE];
+};
+
+
+Blockly.JavaScript['sprite_glideTo'] = function(block) {
+  const OPTIONS = {
+    RANDOM: "goToMousePosition",
+    MOUSE: "glideToMousePosition"
+  };
+  let value_sec = Blockly.JavaScript.valueToCode(block, 'SEC', Blockly.JavaScript.ORDER_ATOMIC);
+  let dropdown_where = block.getFieldValue('WHERE');
+  let funcName = OPTIONS[dropdown_where];
+
+  return funcName + "(" + value_sec + ");\n";
 };
 

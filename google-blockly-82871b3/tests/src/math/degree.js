@@ -52,12 +52,15 @@ class Degree extends Angle {
   //@Override
   plus(angle) {
     const newAngle = this.getAngle() + angle.getDegree();
-    return this.setAngle(newAngle);
+    // 기존 코드 return this.setAngle(newAngle); : 반환값이 없음
+    this.setAngle(newAngle);
+    return this; // 수정 (2019-08-17) by soicem
   }
 
   //@Override
   minus(angle) {
     const newAngle = this.getAngle() - angle.getDegree();
-    return this.setAngle(newAngle);
+    this.setAngle(newAngle); // 반환값이 없음
+    return this;
   }
 }

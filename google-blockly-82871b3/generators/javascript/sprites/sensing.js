@@ -35,3 +35,18 @@ Blockly.JavaScript['sprite_touchingColor'] = function(block) {
 
   return [code, Blockly.JavaScript.ORDER_NONE];
 };
+
+Blockly.JavaScript['sprite_touching'] = function(block) {
+  const OPTIONS = {
+    MOUSE: "touching_mouse",
+    EDGE: "touching_edge"
+  };
+  let dropdown_option = block.getFieldValue('OPTION');
+  let funcName = OPTIONS[dropdown_option];
+
+  if (funcName === undefined) {
+    return ["isTouchingSprite(" + dropdown_option + ")", Blockly.JavaScript.ORDER_NONE];
+  } else {
+    return [funcName + "()", Blockly.JavaScript.ORDER_NONE];
+  }
+};

@@ -1,8 +1,39 @@
 class Sprite {
+  get isHalting() {
+    return this._isHalting;
+  }
 
-  constructor(canvas, image, imageData, position, size, angle, name) {
-    this.identifier = 0; // 일반 스프라이트(Default) : 0, 클론 : 1
+  set isHalting(value) {
+    this._isHalting = value;
+  }
+  get isContinue() {
+    return this._isContinue;
+  }
+
+  set isContinue(value) {
+    this._isContinue = value;
+  }
+  get cloneChilds() {
+    return this._cloneChilds;
+  }
+
+  set cloneChilds(value) {
+    this._cloneChilds.push(value);
+  }
+  get isClone() {
+    return this._isClone;
+  }
+
+  set isClone(value) {
+    this._isClone = value;
+  }
+
+  constructor(canvas, image, imageData, position, size, angle, name, isClone=[false,]) {
+    this._isClone = isClone;
+    this._cloneChilds = [];
     this._name = name; // 이름
+    this._isContinue = true;
+    this._isHalting = false;
     this.setCanvas(canvas);
     this.setImage(image);
     this.setImageData(imageData);
@@ -251,6 +282,7 @@ class Sprite {
 
   turnRight(angle) {
     const newAngle = this.getAngle().plus(angle);
+    //console.log(newAngle, angle)
     this.setAngle(newAngle);
   }
 
@@ -259,8 +291,17 @@ class Sprite {
     this.setAngle(newAngle);
   }
 
+  // ex : new Degree(180);
   changeDirection(angle) {
     this.setAngle(angle);
+  }
+
+  wait(sec) {
+    return new Promise(function (resolve, reject) {
+      setTimeout(function () {
+        resolve(true);
+      }, sec * 1000);
+    });
   }
 
   goToPoint(x, y) {
@@ -283,10 +324,12 @@ class Sprite {
     let mousePosition = this.getCanvas().getHandler().getMousePosition();
     let newPosition = mousePosition.offset(
         new Point(-this.getWidth() / 2, -this.getHeight() / 2));
+    console.log(mousePosition, -this.getWidth() / 2, -this.getHeight() / 2)
     this.setPosition(newPosition);
   }
 
   glideToMousePosition(second) {
+    //this.goToMousePosition();
     setTimeout(this.goToMousePosition.bind(this), second * 1000);
   }
 

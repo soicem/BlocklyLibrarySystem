@@ -6,13 +6,16 @@ class Canvas {
     this.setWorkspace(workspace);
     this.setHandler(new CanvasHandler(this));
     this.initialize();
+
+
   }
 
   initialize() {
     this._sprites = {};
     this._spritesOrder = [null]; // Index 0 is reserved for a stage
     this._currentSpriteName = null;
-    this._specificSpriteName = null;
+    this._specificSpriteName = null; // 코드 실행 시 사용
+    this._waitName = null;
     this.getHandler().startTrackMousePosition();
     this.getHandler().startSelectSprite();
     this.setSpecificSpriteName("aww-cat.png")
@@ -202,6 +205,15 @@ class Canvas {
     return foundSprite;
   }
 
+  // access time 2019-08-18
+
+  allStop(){
+    for(let a in this._spritesOrder){
+      if(this._spritesOrder[a] == null) continue;
+      this._spritesOrder[a].isHalting = true
+    }
+  }
+
   ////////// Class Methods //////////
 
   clear() {
@@ -219,19 +231,23 @@ class Canvas {
     }
   }
 
-  addSprite(spriteName, imageData = null, imageSrc) {
+  addSprite(spriteName, imageData = null, imageSrc, isClone=[false,]) {
     const defaultSize = new Size(40, 40);
+
     let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName,
-        imageData, imageSrc);
+        imageData, imageSrc, isClone);
     this._sprites[spriteName] = sprite;
     this._spritesOrder.push(sprite);
 
     return sprite;
   }
 
-  addSpriteAndSelect(spriteName, imageData = null, imageSrc) {
-    this.addSprite(spriteName, imageData, imageSrc);
-    this.setCurrentSprite(spriteName);
+  addSpriteAndSelect(spriteName, imageData = null, imageSrc, isClone = [false, ]) {
+    console.log(spriteName);
+    this.addSprite(spriteName, imageData, imageSrc, isClone);
+    if(!isClone[0]){
+      this.setCurrentSprite(spriteName);
+    }
   }
 
   addStage(stageName, imageData = null, imageSrc) {
