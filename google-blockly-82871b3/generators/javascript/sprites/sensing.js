@@ -41,8 +41,12 @@ Blockly.JavaScript['sprite_touching'] = function(block) {
     MOUSE: "touching_mouse",
     EDGE: "touching_edge"
   };
-  let dropdown_where = block.getFieldValue('OPTION');
-  let funcName = OPTIONS[dropdown_where];
-  return [funcName + "()", Blockly.JavaScript.ORDER_NONE];
+  let dropdown_option = block.getFieldValue('OPTION');
+  let funcName = OPTIONS[dropdown_option];
 
+  if (funcName === undefined) {
+    return ["isTouchingSprite(" + dropdown_option + ")", Blockly.JavaScript.ORDER_NONE];
+  } else {
+    return [funcName + "()", Blockly.JavaScript.ORDER_NONE];
+  }
 };
