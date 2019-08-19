@@ -29,19 +29,58 @@ goog.provide('Blockly.Blocks.sensing');
 goog.require('Blockly.Blocks');
 goog.require('Blockly');
 
-
-Blockly.Blocks['sprite_touching'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("touching")
-    .appendField(new Blockly.FieldDropdown([["touching_mouse","MOUSE"], ["touching_edge","EDGE"]]), "OPTION");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(190);
-    this.setTooltip("");
-    this.setHelpUrl("");
+Blockly.defineBlocksWithJsonArray([
+  {
+    "type": "sprite_touching",
+    "message0": "touching %1",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "OPTION",
+        "options": [
+          [
+            "mouse pointer",
+            "MOUSE"
+          ],
+          [
+            "edge",
+            "EDGE"
+          ]
+        ]
+      }
+    ],
+    "extensions": ["testingExtension"],
+    "inputsInline": true,
+    "output": null,
+    "colour": 190,
+    "tooltip": "",
+    "helpUrl": ""
   }
-};
+  ]);
+
+Blockly.Extensions.register('testingExtension', function () {
+      let options = [
+        ["mouse pointer", "MOUSE"],
+        ["edge", "EDGE"]
+      ];
+
+      if (myCanvas !== undefined && myCanvas !== null) {
+        for (let i = 1; i < myCanvas.getSpritesOrder().length; i++) {
+          let sprite = myCanvas.getSpritesOrder()[i];
+          let spriteName = sprite.name;
+
+          //if (spriteName === myCanvas.getCurrentSpriteName()) continue;
+
+          options.push([spriteName, spriteName]);
+        }
+      }
+
+      let dropdown = new Blockly.FieldDropdown(options);
+
+      this.inputList[0].removeField("OPTION");
+      this.inputList[0].appendField(dropdown, 'OPTION')
+    }
+);
 
 Blockly.Blocks['sprite_touchingColor'] = {
   init: function() {
