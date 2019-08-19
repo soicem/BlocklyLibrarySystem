@@ -56,7 +56,10 @@
   <script src="../generators/javascript/sprites/sounds.js"></script>
   <script src="blocks/test_blocks.js"></script>
   <script src="src/paint_editor.js"></script>
-  <link rel="stylesheet" href="playground_css.css">
+  <link rel="stylesheet" href="src/css/playground_css.css">
+  <link rel="stylesheet" href="src/css/fonts.css">
+  <link rel="stylesheet" href="src/css/blockly_override.css">
+  <link rel="stylesheet" href="src/css/top_menu.css">
 
   <script src="../JSInterpreter/acorn.js"></script>
   <script src="../JSInterpreter/interpreter.js"></script>
@@ -196,7 +199,7 @@
       taChange();
     }
 
-    
+
     function delayWrapper(keyOfSprite, isClone=false) {
       return new Promise(function (resolve, reject) {
         setTimeout(function (){
@@ -618,15 +621,15 @@
     }
 
     function changeTab(tab) {
-      if (tab === "main_tab") {
+      if (tab.id === "main_tab") {
         showTab('blocklyDiv', 'main_tab');
         hideTab('library', 'library_tab');
         hideTab('sprite', 'sprite_tab');
-      } else if (tab === "library_tab") {
+      } else if (tab.id === "library_tab") {
         showTab('library', 'library_tab');
         hideTab('blocklyDiv', 'main_tab');
         hideTab('sprite', 'sprite_tab')
-      } else if (tab === "sprite_tab") {
+      } else if (tab.id === "sprite_tab") {
         showTab('sprite', 'sprite_tab');
         hideTab('library', 'library_tab');
         hideTab('blocklyDiv', 'main_tab');
@@ -635,14 +638,14 @@
 
     function hideTab(page, tab) {
       document.getElementById(page).style.display = 'none';
-      document.getElementById(tab).style.backgroundColor = 'white';
-      document.getElementById(tab).style.color = 'black';
+      document.getElementById(tab).parentNode.style.backgroundColor = 'white';
+      document.getElementById(tab).parentNode.style.color = 'black';
     }
 
     function showTab(page, tab) {
       document.getElementById(page).style.display = 'block';
-      document.getElementById(tab).style.backgroundColor = '#4996ff';
-      document.getElementById(tab).style.color = 'white';
+      document.getElementById(tab).parentNode.style.backgroundColor = '#4996ff';
+      document.getElementById(tab).parentNode.style.color = 'white';
     }
 
     function loadImage(){
@@ -671,12 +674,31 @@
 </head>
 <body onload="start(); myStart();">
 
-<ul id="topMenu">
-  <li><img src="Flippers-Animation.gif" style="height: 100%"></li>
-  <li><a id="main_tab" onclick="changeTab('main_tab')">Main</a></li>
-  <li><a id="library_tab" onclick="changeTab('library_tab')">Library</a></li>
-  <li><a id="sprite_tab" onclick="changeTab('sprite_tab')">Sprite</a></li>
-</ul>
+<div id="topMenu">
+  <div id="topMenuLogo" class="topMenu_left">
+    <img id="topMenuLogo_image" class="topMenu_left" src="src/resources/images/Flippers-Animation.gif">
+  </div>
+  <div id="topMenuList" class="topMenu_left">
+    <ul class="topMenu_left cursorPointer hoverTextShadow">
+      <li class="topMenu_left">
+        <span class="verticalMidPointBase"></span>
+        <span id="main_tab" class="verticallyMiddle horizontalGap" onclick="changeTab(this)">Main</span>
+      </li>
+      <li class="topMenu_left">
+        <span class="verticalMidPointBase"></span>
+        <span id="library_tab" class="verticallyMiddle horizontalGap" onclick="changeTab(this)">Library</span>
+      </li>
+      <li class="topMenu_left">
+        <span class="verticalMidPointBase"></span>
+        <span id="sprite_tab" class="verticallyMiddle horizontalGap" onclick="changeTab(this)">Sprite</span>
+      </li>
+    </ul>
+  </div>
+  <div id="topMenuControl" class="topMenu_right">
+    <span class="verticalMidPointBase"></span>
+    <img class="verticallyMiddle" onclick="goStep()" src="src/resources/images/Play-Button.png" style="padding: 10px; height: 60%; vertical-align: middle">
+  </div>
+</div>
 
 <div id="bodyContent">
 

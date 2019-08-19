@@ -1,0 +1,50 @@
+:root {
+  --top-menu-height: 60px;
+}
+
+#topMenu {
+  height: var(--top-menu-height);
+  background-color: #ffffff;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  box-shadow: 0 1px 10px gray;
+}
+
+#topMenuList ul {
+  background-color: white;
+}
+
+.topMenu_left {
+  height: 100%;
+  float: left;
+}
+
+.topMenu_right {
+  height: 100%;
+  float: right;
+}
+
+.verticalMidPointBase {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.verticallyMiddle {
+  vertical-align: middle
+}
+
+.horizontalGap {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.cursorPointer {
+  cursor: pointer;
+}
+
+.hoverTextShadow :hover {
+  text-shadow: 0 0 5px gray;
+}

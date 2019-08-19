@@ -1,0 +1,20 @@
+@font-face {
+  font-family: "Dokdo";
+  font-style: normal;
+  font-weight: bold;
+  src: url("../resources/fonts/Dokdo-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "CuteFont";
+  font-style: normal;
+  font-weight: bold;
+  src: url("../resources/fonts/CuteFont-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "HiMelody";
+  font-style: normal;
+  font-weight: bold;
+  src: url("../resources/fonts/HiMelody-Regular.ttf") format("truetype");
+}
