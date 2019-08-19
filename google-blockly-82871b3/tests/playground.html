@@ -286,7 +286,15 @@
 
       interpreter.setProperty(scope, 'isTouchingSprite',
               interpreter.createNativeFunction(function(text) {
-                console.log(myCanvas.getCurrentSprite().isTouchingSprite(text));
+                let ret = myCanvas.getCurrentSprite().isTouchingSprite(text);
+                let childs = myCanvas.getSpriteByName(text).cloneChilds
+                for(let i in childs){
+                  if(ret) return ret;
+                  ret = myCanvas.getCurrentSprite().isTouchingSprite(childs[i]);
+                }
+                return ret;
+                //console.log(myCanvas.getSpriteByName(text).cloneChilds);
+                //console.log(myCanvas.getCurrentSprite().isTouchingSprite(text));
               }));
 
       interpreter.setProperty(scope, 'edgeBounce',
