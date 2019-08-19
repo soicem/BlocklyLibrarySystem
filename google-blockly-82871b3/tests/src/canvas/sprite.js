@@ -323,7 +323,7 @@ class Sprite {
     let mousePosition = this.getCanvas().getHandler().getMousePosition();
     let newPosition = mousePosition.offset(
         new Point(-this.getWidth() / 2, -this.getHeight() / 2));
-    console.log(mousePosition, -this.getWidth() / 2, -this.getHeight() / 2)
+    //console.log(mousePosition, -this.getWidth() / 2, -this.getHeight() / 2)
     this.setPosition(newPosition);
   }
 

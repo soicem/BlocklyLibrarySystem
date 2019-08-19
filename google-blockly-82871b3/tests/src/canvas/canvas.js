@@ -1,4 +1,11 @@
 class Canvas {
+  get isHalting() {
+    return this._isHalting;
+  }
+
+  set isHalting(value) {
+    this._isHalting = value;
+  }
   constructor(canvas, size, workspace) {
     this.setCanvas(canvas);
     this.setContext(canvas.getContext("2d"));
@@ -6,6 +13,8 @@ class Canvas {
     this.setWorkspace(workspace);
     this.setHandler(new CanvasHandler(this));
     this.initialize();
+    this._isHalting = false;
+
 
 
   }
@@ -208,6 +217,7 @@ class Canvas {
   // access time 2019-08-18
 
   allStop(){
+    this._isHalting = true;
     for(let a in this._spritesOrder){
       if(this._spritesOrder[a] == null) continue;
       this._spritesOrder[a].isHalting = true
@@ -243,7 +253,7 @@ class Canvas {
   }
 
   addSpriteAndSelect(spriteName, imageData = null, imageSrc, isClone = [false, ]) {
-    console.log(spriteName);
+    //console.log(spriteName);
     this.addSprite(spriteName, imageData, imageSrc, isClone);
     if(!isClone[0]){
       this.setCurrentSprite(spriteName);

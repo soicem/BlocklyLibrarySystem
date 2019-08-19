@@ -202,9 +202,6 @@
         setTimeout(function (){
           myCanvas.setSpecificSpriteName(keyOfSprite);
           var isFalse = stepCode(keyOfSprite, isClone);
-          if(keyOfSprite == "penguin"){
-            console.log("get in", isFalse, keyOfSprite)
-          }
           resolve(isFalse);
 
         }, 2);
@@ -219,9 +216,8 @@
     }
 
     function _goStep(keyOfSprite, isClone=false){
-      if(keyOfSprite == "penguin"){
-        console.log("recursion");
-
+      if(myCanvas.isHalting){
+        return 0;
       }
       delayWrapper(keyOfSprite, isClone)
               .then(
@@ -230,7 +226,6 @@
                           return 0;
 
                         if(!myCanvas.getSpriteByName(keyOfSprite).isContinue){
-                          console.log("soicem");
                           return 0;
                         }
 
@@ -387,10 +382,10 @@
               var nameOfSprite = myCanvas.getSpecificSpriteName();
               myCanvas.getSpriteByName(nameOfSprite).isContinue = false;
               myCanvas.getSpriteByName(nameOfSprite).wait(second).then(value=>{
-                console.log("wait end");
                 console.log(myCanvas.getSpecificSpriteName())
                 myCanvas.getSpriteByName(nameOfSprite).isContinue = true;
-                _goStep(nameOfSprite);
+                if(!myCanvas.getSpriteByName(nameOfSprite).isHalting);
+                  _goStep(nameOfSprite);
               });
             }));
 
@@ -496,7 +491,6 @@
 
     function stepCode(keyOfSprite, isClone=false) {
       var keyOfCode = keyOfSprite;
-
       if (!myInterpreters[keyOfCode]) {
         // First statement of this code.
         // Clear the program output.
