@@ -113,16 +113,6 @@ canvas {
    height: calc(100% - var(--top-menu-height));
 }
 
-#spriteCanvas_container {
-  float: left;
-  width: 500px;
-  height: 500px;
-}
-
-#spriteCanvas {
-  border: 1px solid black;
-}
-
 #canvasBlock {
   height: 400px;
 }
@@ -168,7 +158,7 @@ canvas {
 #sprite {
   float: left;
   height: calc(100% - 80px);
-  width: calc(100% - 560px);
+  width: calc(100% - var(--side-menu-width));
 }
 
 #importExport {
@@ -195,6 +185,27 @@ canvas {
 }
 
 /* ---------------------------------sprite tab */
+#spriteCanvas {
+  border: 1px solid black;
+}
+
+#spriteCanvas_wrapper{
+  float: left;
+  width: 500px;
+  height: 71%;
+  margin-left: 10px;
+}
+
+#spriteCanvas_container {
+  background-color: white;
+  width: 500px;
+  height: 500px;
+}
+
+#palette{
+  margin-left: 10px;
+  display: table;
+}
 
 .jb_table {
   display: table;
@@ -214,7 +225,7 @@ canvas {
 #spriteImageGallery_container {
   float: left;
   width: 100px;
-  height: 70%;
+  height: 71%;
   position: sticky;
 }
 
@@ -227,6 +238,12 @@ canvas {
   overflow: hidden;
 }
 
+#CanvasAndPainter_container {
+  float: right;
+  overflow: auto;
+  width: calc(100% - 122px);
+  height: 100%;
+}
 /* content ------------------------*/
 #content {
   float: right;
