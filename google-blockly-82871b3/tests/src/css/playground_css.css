@@ -249,7 +249,9 @@ canvas {
   background-color: white;
 }
 
+
 div.spriteImg {
+  position: relative;
   margin: 4px;
   border: 1px solid #ccc;
   /*float: left;*/
@@ -264,7 +266,17 @@ div.spriteImg:hover {
 div.spriteImg img {
   width: 70px;
   height: 70px;
+  position: relative;
 }
+
+div.spriteImg img.trash {
+  position : absolute;
+  top : 0;
+  right : 0;
+  width: 20px;
+  height: 20px;
+}
+
 
 div.stage {
   margin: 5px;
@@ -361,3 +373,4 @@ div.desc {
   border: 0;
   opacity: 0;
 }
+

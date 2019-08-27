@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blockly Playground</title>
+
   <script src="../blockly_uncompressed.js"></script>
   <script src="../generators/javascript.js"></script>
   <script src="../generators/javascript/logic.js"></script>
@@ -38,6 +39,8 @@
   <script src="../blocks/variables_dynamic.js"></script>
   <script src="../blocks/procedures.js"></script>
   <script src="../blocks/import.js"></script>
+  <script src="src/js/canvas/canvas.js"></script>
+
 
   <script src="../blocks/sprites/motions.js"></script>
   <script src="../blocks/sprites/looks.js"></script>
@@ -199,7 +202,6 @@
       taChange();
     }
 
-
     function delayWrapper(keyOfSprite, isClone=false) {
       return new Promise(function (resolve, reject) {
         setTimeout(function (){
@@ -211,10 +213,17 @@
       });
     }
 
+    function re_start(){
+        myCanvas.Re_Start();
+    }
+
     function goStep(){
+        if(myCanvas.isHalting)
+            re_start();
+
       for(var i = 1; i < myCanvas.getSpritesOrder().length; i++){
-        if(!myCanvas.getSpritesOrder()[i].isClone[0])
-          _goStep(myCanvas.getSpritesOrder()[i].name)
+          if(myCanvas.getSpritesOrder()[i] !== null && !myCanvas.getSpritesOrder()[i].isClone[0])
+              _goStep(myCanvas.getSpritesOrder()[i].name) // myCanvas.getSpritesOrder()[i] === Sprite in order
       }
     }
 
@@ -227,22 +236,21 @@
                       function (result) {
                         if(myCanvas.getSpriteByName(keyOfSprite).isHalting)
                           return 0;
-
-                        if(!myCanvas.getSpriteByName(keyOfSprite).isContinue){
+                        if(!myCanvas.getSpriteByName(keyOfSprite).isContinue)
                           return 0;
-                        }
-
-                        if(result != false)
+                        if(result !== false)
                           _goStep(keyOfSprite, isClone);
-
-
                       }
               );
     }
 
+    function ObjSuspend() {
+        myCanvas.AllPause();
+    }
+
     // initApi 'createClone' statement wrapper
     function createClone(){
-        console.log("create sprite")
+        console.log("create sprite ___ clone")
         var spriteObject = myCanvas.getSpecificSprite();
         var parentName = myCanvas.getSpecificSpriteName();
         var cloneName = getNoDuplicationName(parentName, "_clone");
@@ -258,11 +266,10 @@
         // libCode = libCode.replace("null", "")
         // libCode = libCode.replace("nullnull", "")
 
-        // latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode]  ;
+        // latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode];
         let codeWithLib = libCode + myCanvas.getSpriteByName(cloneName).getJsCode();
         myCanvas.getSpriteByName(cloneName).setJsCode(codeWithLib);
       }
-
         return cloneName;
     }
 
@@ -525,7 +532,7 @@
         myCanvas.getSpriteByName(keyOfCode).setJsCode(codeWithoutNull);
         var targetCode = "";
         targetCode = createTargetCode(keyOfCode, isClone);
-        console.log("stepCode", keyOfCode, targetCode);
+        //console.log("stepCode", keyOfCode, targetCode);
         myInterpreters[keyOfCode] = new Interpreter(targetCode, initApi);
         return;
       }
@@ -691,6 +698,7 @@
       animationUpdater = new AnimationUpdater();
       myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400), blockWorkspace);
       myCanvas.addSpriteAndSelect("penguin", null, "penguin.png");
+      TrashToImg("penguin");
       animationUpdater.addCallFunction({caller: myCanvas, method: myCanvas.render});
       animationUpdater.start();
       return myCanvas;
@@ -725,10 +733,16 @@
       </li>
     </ul>
   </div>
+  <div class="topMenu_right">
+    <span class="verticalMidPointBase"></span>
+    <img class="verticallyMiddle cursorPointer" onclick="ObjSuspend()" src="src/resources/images/Stop-Button.PNG" style="padding: 10px; height: 60%; vertical-align: middle">
+  </div>
+
   <div id="topMenuControl" class="topMenu_right">
     <span class="verticalMidPointBase"></span>
     <img class="verticallyMiddle cursorPointer" onclick="goStep()" src="src/resources/images/Play-Button.png" style="padding: 10px; height: 60%; vertical-align: middle">
   </div>
+
 </div>
 
 <div id="bodyContent">
@@ -769,7 +783,6 @@
           <canvas id="canvas"></canvas>
         </div>
         <script src="src/js/animation/animation_updater.js"></script>
-        <script src="src/js/canvas/canvas.js"></script>
         <script src="src/js/canvas/canvas_handler.js"></script>
         <script src="src/js/canvas/canvas_util.js"></script>
         <script src="src/js/canvas/sprite.js"></script>
@@ -799,8 +812,6 @@
         }
         return spriteName;
       }
-
-
 
       function spriteChooser() {
         var name;
@@ -843,9 +854,10 @@
             + '<div class="desc">' + spriteName + '</div>'
             + '</div>';
         //alert(a);
-        document.getElementById("spriteGallery").innerHTML += a;
+          document.getElementById("spriteGallery").innerHTML += a;
+          TrashToImg(spriteName);
 
-            reader.addEventListener('load', function () {
+          reader.addEventListener('load', function () {
               // sprite에 대한 canvas 용 objects를 저장한다.
           myCanvas.addSpriteAndSelect(spriteName, reader.result, name); // spriteName : penguin, name : penguin.png
           myCanvas.getSpriteByName(spriteName).printProperties();
@@ -856,6 +868,22 @@
             }
         document.getElementById("spriteChooser").value = ""; // 같은 이미지 추가 시 onchange 반영을 위해 value 초기화
           }
+
+
+          function TrashToImg(name){ // name == parent name. == sprite name
+          console.log(name);
+              var ImgTrash = document.createElement('img');
+
+              ImgTrash.src = './src/resources/images/trash.png';
+
+              ImgTrash.setAttribute('class', 'trash');
+              ImgTrash.setAttribute('onClick', 'myCanvas.RemoveFromCanvas("'+name+'")');
+
+              var parent = document.getElementById(name);
+              parent.appendChild(ImgTrash);
+          }
+
+
 
           function stageChooser() {
             var name;
