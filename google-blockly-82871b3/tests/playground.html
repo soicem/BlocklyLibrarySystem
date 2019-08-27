@@ -55,7 +55,10 @@
   <script src="../generators/javascript/sprites/sensing.js"></script>
   <script src="../generators/javascript/sprites/sounds.js"></script>
   <script src="blocks/test_blocks.js"></script>
-  <script src="src/js/sprite_editor/paint_editor.js"></script>
+
+  <script src="src/js/sprite_editor/drawengine.js"></script>
+  <script src="src/js/sprite_editor/painter.js"></script>
+
   <link rel="stylesheet" href="src/css/playground_css.css">
   <link rel="stylesheet" href="src/css/fonts.css">
   <link rel="stylesheet" href="src/css/blockly_override.css">
@@ -146,6 +149,7 @@
         logEvents(false);
       }
       tabInit();
+      onLoadPage();
     }
 
     function addToolboxButtonCallbacks() {
@@ -887,11 +891,8 @@
         document.getElementById('history').value = history;
         reDrawCanvas();
       }
-
     </script>
-    </head>
 
-    <body>
     <div class="jb_table">
       <div class="row">
         <span class="cell" width="82">
@@ -978,11 +979,8 @@
             </div>
           </div>
         </span>
-        <span class="cell">
-          <div>
-            <canvas id="canvas" width="720" height="720"></canvas>
-          </div>
-        </span>
+      </div>
+    </div>
         <span class="cell">
           <INPUT type="file" id="load_filename" value="Load" onChange="loadFile()" />
           <div>Title <input id="title" size="15" /></div>
@@ -1002,11 +1000,7 @@
           <div id="command">
           </div>
               <INPUT type="button" value="Redraw" onClick="reDrawCanvas()" />
-          <div>
-          </div>
         </span>
-      </div>
-    </div>
     <script src="painter.js"></script>
     <script src="drawengine.js"></script>
     <input type="button" value="파일 불러오기" onclick="loadImage()">

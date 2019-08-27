@@ -84,7 +84,7 @@ var paintMouseMoveAction = {
 
 var pos = {
   isDraw: false,
-  color: "red",
+  color: "black",
   colorIdx: 0,
   drawMode: 0,
   filled: false,
@@ -108,7 +108,7 @@ function point() {
   };
 }
 
-function drwaCommand() {
+function drawCommand() {
   return {
     mode: paintMode[0],
     color: "white",
@@ -237,7 +237,7 @@ function selectColor(choosedColor) {
   pos.color = choosedColor;
   pos.colorIdx = colorTableIdx[choosedColor];
 
-  var newColor = drwaCommand();
+  var newColor = drawCommand();
   newColor.mode = "color";
   newColor.color = choosedColor;
   commandHistory.push(newColor.toCommand());
@@ -267,7 +267,7 @@ function pointMouseDown(event) {
   pos.X = startPos.X;
   pos.Y = startPos.Y;
 
-  var newPoint = drwaCommand();
+  var newPoint = drawCommand();
   newPoint.mode = "pencil_begin";
   commandHistory.push(newPoint.toCommand());
   addHistory(newPoint.toCommand());
@@ -279,7 +279,7 @@ function pointMouseMove(event) {
   cvs.lineTo(currentPos.X, currentPos.Y);
   cvs.stroke();
 
-  var newPoint = drwaCommand();
+  var newPoint = drawCommand();
   newPoint.mode = "line";
   newPoint.X1 = { X: pos.X, Y: pos.Y };
   newPoint.X2 = { X: currentPos.X, Y: currentPos.Y };
@@ -298,7 +298,7 @@ function pointMouseUp(event) {
   pos.isDraw = false;
   cvs.closePath();
 
-  var newPoint = drwaCommand();
+  var newPoint = drawCommand();
   newPoint.mode = "pencil_end";
   commandHistory.push(newPoint.toCommand());
   addHistory(newPoint.toCommand());
@@ -345,7 +345,7 @@ function lineMouseUp(event) {
   bufCtx.stroke();
   cvs.drawImage(bufCanvas, 0, 0);
 
-  var newLine = drwaCommand();
+  var newLine = drawCommand();
   newLine.mode = "line";
   newLine.X1 = { X: pos.X, Y: pos.Y };
   newLine.X2 = { X: currentPos.X, Y: currentPos.Y };
@@ -419,7 +419,7 @@ function circleMouseUp(event) {
     cvs.clearRect(0, 0, canvas.width, canvas.height);
     cvs.drawImage(bufCanvas, 0, 0);
 
-    var newCircle = drwaCommand();
+    var newCircle = drawCommand();
     newCircle.mode = "circle";
     newCircle.filled = pos.filled;
     newCircle.X1 = { X: circle.X, Y: circle.Y };
@@ -490,7 +490,7 @@ function squareMouseUp(event) {
     cvs.clearRect(0, 0, canvas.width, canvas.height);
     cvs.drawImage(bufCanvas, 0, 0);
 
-    var newSqure = drwaCommand();
+    var newSqure = drawCommand();
     newSqure.mode = "square";
     newSqure.filled = pos.filled;
     newSqure.X1 = { X: pos.X, Y: pos.Y };
@@ -562,7 +562,7 @@ function rectMouseUp(event) {
     cvs.clearRect(0, 0, canvas.width, canvas.height);
     cvs.drawImage(bufCanvas, 0, 0);
 
-    var newRect = drwaCommand();
+    var newRect = drawCommand();
     newRect.mode = "rect";
     newRect.filled = pos.filled;
     newRect.X1 = { X: pos.X, Y: pos.Y };
@@ -653,7 +653,7 @@ function triMouseUp(event) {
     cvs.clearRect(0, 0, canvas.width, canvas.height);
     cvs.drawImage(bufCanvas, 0, 0);
 
-    var newTriangle = drwaCommand();
+    var newTriangle = drawCommand();
     newTriangle.mode = "tri";
     newTriangle.filled = pos.filled;
     newTriangle.X1 = { X: pos.X, Y: pos.Y };
@@ -675,7 +675,7 @@ function saveImage() {
   imageName += ".png";
   var saveedImage = document.getElementById("saveImage");
   var image = document
-    .getElementById("canvas")
+    .getElementById("spriteCanvas")
     .toDataURL("image/png")
     .replace("image/png", "image/octet-stream");
   saveedImage.setAttribute("download", imageName);
@@ -701,9 +701,9 @@ function initHistory() {
 
   document.getElementById("history").value = "";
 
-  var newColor = drwaCommand();
+  var newColor = drawCommand();
   newColor.mode = "color";
-  newColor.color = "red";
+  newColor.color = "black";
   commandHistory.push(newColor.toCommand());
   addHistory(newColor.toCommand());
 }
@@ -798,4 +798,22 @@ function reDrawCanvas() {
   // console.log(commandHistory)
 
   drawengine(canvas, cvs, bufCanvas, bufCtx, commandHistory);
+}
+
+function onLoadPage() {
+  canvas = document.getElementById("spriteCanvas");
+  cvs = canvas.getContext("2d");
+  canvas.width = 500;
+  canvas.height = 500;
+  bufCanvas = document.createElement("canvas");
+  bufCanvas.width = canvas.width;
+  bufCanvas.height = canvas.height;
+  bufCtx = bufCanvas.getContext("2d");
+
+  canvas.addEventListener("mousedown", mouseListener);
+  canvas.addEventListener("mousemove", mouseListener);
+  canvas.addEventListener("mouseout", mouseListener);
+  canvas.addEventListener("mouseup", mouseListener);
+
+  initPage();
 }
