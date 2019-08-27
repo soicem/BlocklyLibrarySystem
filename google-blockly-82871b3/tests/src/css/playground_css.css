@@ -109,8 +109,6 @@ canvas {
   /*margin-block-end: 0.67em;*/
 }
 
-
-
 #bodyContent {
    height: calc(100% - var(--top-menu-height));
 }
@@ -159,7 +157,6 @@ canvas {
   float: left;
   height: 100%;
   width: calc(100% - var(--side-menu-width));
-
 }
 
 #library {
@@ -197,6 +194,40 @@ canvas {
   width: 40%
 }
 
+/* ---------------------------------sprite tab */
+
+.jb_table {
+  display: table;
+  float: right;
+}
+
+.row {
+  border-radius: 10px;
+  display: table-row;
+}
+
+.cell {
+  display: table-cell;
+  vertical-align: top;
+}
+
+#spriteImageGallery_container {
+  float: left;
+  width: 100px;
+  height: 70%;
+  position: sticky;
+}
+
+#spriteImageGallery {
+  width: 100%;
+  height: calc(100% - 20px);
+  background-color: white;
+  margin-block-start: 0.67em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* content ------------------------*/
 #content {
   float: right;
   height: calc(100% - var(--top-menu-height));

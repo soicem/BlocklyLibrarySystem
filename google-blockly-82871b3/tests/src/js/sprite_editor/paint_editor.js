@@ -9,7 +9,8 @@ var canvas, ctx;
 window.addEventListener("load", function () {
   canvas = document.getElementById("spriteCanvas");
   ctx = canvas.getContext("2d");
-
+  canvas.width = 500;
+  canvas.height = 500;
   canvas.addEventListener("mousedown", listener);
   canvas.addEventListener("mousemove", listener);
   canvas.addEventListener("mouseup", listener);
