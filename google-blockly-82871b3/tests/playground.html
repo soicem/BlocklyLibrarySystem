@@ -192,10 +192,40 @@
       taChange();
     }
 
-    function fromXml() {
+    function toXml() {
+      let input = document.getElementById("importExport");
+      let xml = Blockly.Xml.workspaceToDom(blockWorkspace);
+      let xmlText = Blockly.Xml.domToPrettyText(xml);
+
+      input.value = xmlText;
+
+      let functionBlocks = blockWorkspace.getBlocksByType("procedures_defnoreturn");
+      functionBlocks = functionBlocks.concat(blockWorkspace.getBlocksByType("procedures_defreturn"));
+      console.log(functionBlocks);
+
+      functionBlocks.forEach(functionBlock => {
+        let blockXml = Blockly.Xml.blockToDom(functionBlock);
+        let blockXmlText = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
+            Blockly.Xml.domToPrettyText(blockXml) + "" +
+            "\n</xml>";
+        console.log(blockXmlText);
+
+        Blockly.JavaScript.init(blockWorkspace);
+        delete Blockly.JavaScript.definitions_["variables"];
+        Blockly["JavaScript"].blockToCode(functionBlock, true);
+        const blockJsText = Blockly.JavaScript.finish("");
+        console.log(blockJsText);
+      });
+    }
+
+    async function fromXml() {
+      let lib = await libraryManager.addLibrary("test.json");
+      console.log(lib.info.name);
+
       var input = document.getElementById('importExport');
-      var xml = Blockly.Xml.textToDom(input.value);
+      var xml = Blockly.Xml.textToDom(libraryManager.libraries["testLibrary"].functions["aFunction"].xml);
       Blockly.Xml.domToWorkspace(xml, blockWorkspace);
+
       taChange();
     }
 
@@ -688,6 +718,7 @@
     }
 
     function myStart() {
+      libraryManager = new LibraryManager();
       animationUpdater = new AnimationUpdater();
       myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400), blockWorkspace);
       myCanvas.addSpriteAndSelect("penguin", null, "penguin.png");
@@ -775,6 +806,9 @@
         <script src="src/js/canvas/sprite.js"></script>
         <script src="src/js/canvas/sprite_factory.js"></script>
         <script src="src/js/canvas/speech_bubble.js"></script>
+        <script src="src/js/library/LibraryManager.js"></script>
+        <script src="src/js/library/LibraryBuilder.js"></script>
+        <script src="src/js/library/JsObjectTemplate.js"></script>
         <script src="src/js/math/point.js"></script>
         <script src="src/js/math/size.js"></script>
         <script src="src/js/math/angle.js"></script>
@@ -784,6 +818,7 @@
         <script src="src/js/exception/sprite_exception.js"></script>
 
         <script>
+          let libraryManager;
           let animationUpdater;
           let myCanvas;
 
@@ -1020,7 +1055,8 @@
         </ul>
 
         <ul>
-          <li2 style="width:100%;"><a id="insertXML" onclick="fromXml()">insert from XML</a></li2>
+          <li2><a id="exportXML" onclick="toXml()">Export to XML</a></li2>
+          <li2><a id="importXML" onclick="fromXml()">Import from XML</a></li2>
         </ul>
         <textarea id="importExport" style="width: calc(100% - 5px); height: 60%"
                   onchange="taChange();" onkeyup="taChange()"></textarea>

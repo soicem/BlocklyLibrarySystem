@@ -1,0 +1,21 @@
+{
+  "info": {
+    "name": "testLibrary",
+    "version": "1.0",
+    "author": "CSK",
+    "url": "test.json",
+    "created": "",
+    "modified": "",
+    "imported": []
+  },
+  "functions": {
+    "aFunction": {
+      "xml": "<xml xmlns=\"http://www.w3.org/1999/xhtml\">\n<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"procedures_defreturn\" id=\"fN1k*HH840Wa@[M|V{d4\">\n  <mutation>\n    <arg name=\"x\" varid=\"6Y]4+/}0QSIT2}N7g9$Q\"></arg>\n  </mutation>\n  <field name=\"NAME\">aFunction</field>\n  <comment pinned=\"false\" h=\"80\" w=\"160\">이 함수를 설명하세요...</comment>\n  <statement name=\"STACK\">\n    <block type=\"sprite_moveSteps\" id=\"QwJf{NB@olI12yVggR#$\">\n      <value name=\"STEPS\">\n        <shadow type=\"math_number\" id=\"y*8vP|xqte]}:]=F/:|+\">\n          <field name=\"NUM\">10</field>\n        </shadow>\n        <block type=\"variables_get\" id=\"D`{B}|wEgL*HL/}[L|*Q\">\n          <field name=\"VAR\" id=\"6Y]4+/}0QSIT2}N7g9$Q\" variabletype=\"\">x</field>\n        </block>\n      </value>\n    </block>\n  </statement>\n  <value name=\"RETURN\">\n    <block type=\"variables_get\" id=\"IT.{Rpea9f,@]FwA8J=,\">\n      <field name=\"VAR\" id=\"6Y]4+/}0QSIT2}N7g9$Q\" variabletype=\"\">x</field>\n    </block>\n  </value>\n</block>\n</xml>",
+      "js": "/**\n * 이 함수를 설명하세요...\n */\nfunction aFunction(x) {\n  highlightBlock('fN1k*HH840Wa@[M|V{d4');\n  highlightBlock('QwJf{NB@olI12yVggR#$');\n  moveSteps(x);\n  return x;\n}"
+    },
+    "aProcedure": {
+      "xml": "<xml xmlns=\"http://www.w3.org/1999/xhtml\">\n<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"procedures_defnoreturn\" id=\"lO$w_-Q:njnL6vl*Jf*)\">\n  <field name=\"NAME\">aPrecedure</field>\n  <comment pinned=\"false\" h=\"80\" w=\"160\">이 함수를 설명하세요...</comment>\n  <statement name=\"STACK\">\n    <block type=\"text_print\" id=\"gjOlnDp6]~{*G4ID=-]N\">\n      <value name=\"TEXT\">\n        <shadow type=\"text\" id=\"fRA:wY/+HDr7Ar;7$Yze\">\n          <field name=\"TEXT\">abc</field>\n        </shadow>\n        <block type=\"variables_get\" id=\"_e(kf4np3t.t,WZPw+9Z\">\n          <field name=\"VAR\" id=\"6Y]4+/}0QSIT2}N7g9$Q\" variabletype=\"\">x</field>\n        </block>\n      </value>\n    </block>\n  </statement>\n</block>\n</xml>",
+      "js": "/**\n * 이 함수를 설명하세요...\n */\nfunction aPrecedure() {\n  highlightBlock('lO$w_-Q:njnL6vl*Jf*)');\n  highlightBlock('gjOlnDp6]~{*G4ID=-]N');\n  window.alert(x);\n}"
+    }
+  }
+}
