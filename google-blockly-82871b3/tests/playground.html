@@ -217,6 +217,38 @@
         myCanvas.Re_Start();
     }
 
+    // key press event
+    document.onkeydown = function(event) {
+      switch (event.keyCode) {
+        case 37:
+          myCanvas.getCurrentSprite().changeDirection(new Degree(180));
+          myCanvas.getCurrentSprite().moveSteps(3);
+
+          //alert('Left key pressed');
+          break;
+        case 38:
+          myCanvas.getCurrentSprite().changeDirection(new Degree(270));
+          myCanvas.getCurrentSprite().moveSteps(3);
+
+          //alert('Up key pressed');
+          break;
+        case 39:
+          //alert('Right key pressed');
+          myCanvas.getCurrentSprite().changeDirection(new Degree(0));
+          myCanvas.getCurrentSprite().moveSteps(3);
+
+          break;
+        case 40:
+          //alert('Down key pressed');
+          myCanvas.getCurrentSprite().changeDirection(new Degree(90));
+          myCanvas.getCurrentSprite().moveSteps(3);
+
+          break;
+      }
+    };
+
+
+
     function goStep(){
         if(myCanvas.isHalting)
             re_start();
@@ -400,7 +432,33 @@
             interpreter.createNativeFunction(function(second) {
                 myCanvas.getSpecificSprite().glideToMousePosition(second);
             }));
-        interpreter.setProperty(scope, 'wait',
+      interpreter.setProperty(scope, 'down_arrow',
+              interpreter.createNativeFunction(function(second) {
+                console.log(event.key);
+                if(event.key == "ArrowUp"){
+                  return true;
+                } else {
+                  return false;
+                }
+              }));
+
+      interpreter.setProperty(scope, 'up_arrow',
+              interpreter.createNativeFunction(function(second) {
+
+              }));
+
+      interpreter.setProperty(scope, 'left_arrow',
+              interpreter.createNativeFunction(function(second) {
+
+              }));
+
+      interpreter.setProperty(scope, 'right_arrow',
+              interpreter.createNativeFunction(function(second) {
+
+              }));
+
+
+      interpreter.setProperty(scope, 'wait',
             interpreter.createNativeFunction(function(second) {
               var nameOfSprite = myCanvas.getSpecificSpriteName();
               myCanvas.getSpriteByName(nameOfSprite).isContinue = false;
@@ -451,6 +509,7 @@
 
     /* event block 코드를 최신 코드에서 가져와 현재 Sprite 객체에 배치한다. */
     function eventCodeHandling(code){
+      console.log(code);
         var tmp = code.split("\n\n"); // event parser;
         var ret = ""
         // 각 이벤트 클리어
