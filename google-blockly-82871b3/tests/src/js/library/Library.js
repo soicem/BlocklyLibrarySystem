@@ -316,4 +316,11 @@ class Library {
     this.isHashCodeUpToDate = false;
   }
 
+  /**
+   * @param {Library} other
+   * @returns {boolean}
+   */
+  isNewerVersionThan(other) {
+    return this.info.isNewerVersionThan(other.info);
+  }
 }

@@ -156,7 +156,7 @@ class LibraryInfo {
       `${this.modified}`,
     ];
 
-    return tmp.join('()').hashCode();
+    return tmp.join('').hashCode();
   }
 
   /**
@@ -199,6 +199,16 @@ class LibraryInfo {
   updateModifiedDatetime() {
     this._modified = new Date().toISOString();
     this.isHashCodeUpToDate = false;
+  }
+
+  /**
+   * @param {LibraryInfo} other
+   * @returns {boolean}
+   */
+  isNewerVersionThan(other) {
+    const thisVersion = parseFloat(this.version);
+    const otherVersion = parseFloat(other.version);
+    return thisVersion > otherVersion;
   }
 
 }
