@@ -219,7 +219,7 @@
     }
 
     async function fromXml() {
-      let lib = await libraryManager.addLibrary("test.json");
+      let lib = await libraryManager.addLibraryFromUrl("test.json");
       console.log(lib.info.name);
 
       var input = document.getElementById('importExport');
@@ -799,6 +799,7 @@
         <div id="canvases">
           <canvas id="canvas"></canvas>
         </div>
+        <script src="src/js/util/String.js"></script>
         <script src="src/js/animation/animation_updater.js"></script>
         <script src="src/js/canvas/canvas.js"></script>
         <script src="src/js/canvas/canvas_handler.js"></script>
@@ -806,8 +807,9 @@
         <script src="src/js/canvas/sprite.js"></script>
         <script src="src/js/canvas/sprite_factory.js"></script>
         <script src="src/js/canvas/speech_bubble.js"></script>
+        <script src="src/js/library/Library.js"></script>
+        <script src="src/js/library/LibraryInfo.js"></script>
         <script src="src/js/library/LibraryManager.js"></script>
-        <script src="src/js/library/LibraryBuilder.js"></script>
         <script src="src/js/library/JsObjectTemplate.js"></script>
         <script src="src/js/math/point.js"></script>
         <script src="src/js/math/size.js"></script>

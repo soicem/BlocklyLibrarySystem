@@ -1,4 +1,7 @@
 class JsObjectTemplate {
+  /**
+   * @param {string} objectName Name of the object
+   */
   constructor(objectName) {
     this._functions = [];
     this._objectName = objectName;
@@ -9,7 +12,7 @@ class JsObjectTemplate {
    * @returns {string}
    */
   getHeader() {
-    return `let ${this._objectName} = {\n`;
+    return `${this._objectName} = {`;
   }
 
   /**
@@ -19,7 +22,7 @@ class JsObjectTemplate {
   getContent() {
     return this._functions.reduce((previousValue, currentValue) => {
       return `${previousValue},\n${currentValue}`;
-    });
+    }, "");
   }
 
   /**
@@ -30,10 +33,16 @@ class JsObjectTemplate {
     return `};`;
   }
 
+  /**
+   * @returns {string}
+   */
   toString() {
-    return this.getHeader() + this.getContent() + this.getFooter();
+    return this.getHeader() + '\n' + this.getContent() + '\n' + this.getFooter();
   }
 
+  /**
+   * @returns {string}
+   */
   print() {
     return this.toString();
   }
