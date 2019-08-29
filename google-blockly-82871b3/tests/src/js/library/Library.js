@@ -98,7 +98,7 @@ class Library {
   }
 
   /**
-   * @returns {number}
+   * @returns {string}
    */
   get hashCode() {
     this.updateHashCode();

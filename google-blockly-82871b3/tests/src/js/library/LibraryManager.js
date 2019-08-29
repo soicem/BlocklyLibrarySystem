@@ -68,7 +68,7 @@ class LibraryManager {
     let libraryJson = await LibraryUtils.getLibraryJsonFromUrl(url);
     const library = Library.createFromJson(libraryJson);
     if (!library) {
-      this.addLibrary(library);
+      await this.addLibrary(library);
     } else {
       console.log("library did not created successfully!");
     }
@@ -77,7 +77,7 @@ class LibraryManager {
   /**
    * @param {Library} library
    */
-  addLibrary(library) {
+  async addLibrary(library) {
     console.log(library);
     if (this.hasSameNameAuthorLibrary(library.info)) {
       this._updateExistingLibrary(library);
@@ -86,6 +86,13 @@ class LibraryManager {
     } else {
       this.libraries[library.info.name] = library;
     }
+
+    //@TODO: need reference counter for imports
+    // for (let libraryKey in library.imports) {
+    //   if (library.imports.hasOwnProperty(libraryKey)) {
+    //     await this.addLibraryFromUrl(library.imports[libraryKey].url);
+    //   }
+    // }
   }
 
   /**

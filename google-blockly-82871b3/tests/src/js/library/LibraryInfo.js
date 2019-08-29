@@ -120,7 +120,7 @@ class LibraryInfo {
   }
 
   /**
-   * @returns {number}
+   * @returns {string}
    */
   get hashCode() {
     this.updateHashCode();
