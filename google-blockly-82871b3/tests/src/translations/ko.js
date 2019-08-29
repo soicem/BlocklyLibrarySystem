@@ -1,6 +1,8 @@
 // Constants
-Blockly.Msg.SPRITE_RANDOM_POSITION = "무작위 위치";
-Blockly.Msg.SPRITE_MOUSE_POSITION = "마우스 위치";
+Blockly.Msg.SPRITE_RANDOM = "무작위";
+Blockly.Msg.SPRITE_MOUSE = "마우스";
+Blockly.Msg.SPRITE_EDGE = "테두리";
+Blockly.Msg.SPRITE_POSITION = "위치";
 Blockly.Msg.SPRITE_SHOW = "보이기";
 Blockly.Msg.SPRITE_HIDE = "숨기기";
 Blockly.Msg.SPRITE_FRONT = "맨앞";
@@ -10,6 +12,13 @@ Blockly.Msg.SPRITE_BACKWARD = "뒤로";
 Blockly.Msg.SPRITE_NUMBER = "숫자";
 Blockly.Msg.SPRITE_NAME = "이름";
 Blockly.Msg.SPRITE_SIZE = "사이즈";
+Blockly.Msg.SPRITE_MYSELF = "나";
+Blockly.Msg.SPRITE_ANY = "어떠한";
+Blockly.Msg.SPRITE_SPACE = "스페이스";
+Blockly.Msg.SPRITE_UP_ARROW = "윗 방향";
+Blockly.Msg.SPRITE_DOWN_ARROW = "아랫 방향";
+Blockly.Msg.SPRITE_RIGHT_ARROW = "오른쪽 방향";
+Blockly.Msg.SPRITE_LEFT_ARROW = "왼쪽 방향";
 
 // Sprite's motion blocks
 Blockly.Msg.SPRITE_MOVESTEPS_MSG = "%1만큼 움직이기";
@@ -51,3 +60,16 @@ Blockly.Msg.SPRITE_SETLAYER_MSG = "%1 레이어로 가기";
 Blockly.Msg.SPRITE_CHANGELAYER_MSG = "%1 %2번째에 위치한 레이어로 가기";
 Blockly.Msg.SPRITE_GETCOSTUME_MSG = "%1번째 커스튬";
 Blockly.Msg.SPRITE_GETBACKDROP_MSG = "%1번째 백드롭";
+
+// Sprite's sensing blocks
+Blockly.Msg.SPRITE_TOUCHING_MSG = "%1에 접촉할 경우";
+Blockly.Msg.SPRITE_KEYPRESSED_MSG = "%1 키 클릭시";
+
+// Sprite's events blocks
+Blockly.Msg.SPRITE_FLAGCLICKED_MSG = "%1 클릭 시";
+
+// Sprite's control blocks
+Blockly.Msg.SPRITE_WAIT_MSG = "%1초 기다리기";
+Blockly.Msg.SPRITE_FOREVER_MSG = "%1 무한반복하기";
+Blockly.Msg.SPRITE_CLONESTARTED_MSG = "클론 생성 시";
+Blockly.Msg.SPRITE_CREATECLONE_MSG = "%1의 클론 생성하기";
