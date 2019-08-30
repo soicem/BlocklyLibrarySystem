@@ -185,9 +185,6 @@ canvas {
 }
 
 /* ---------------------------------sprite tab */
-#spriteCanvas {
-  border: 1px solid black;
-}
 
 #spriteCanvas_wrapper{
   float: left;
@@ -231,11 +228,18 @@ canvas {
 
 #spriteImageGallery {
   width: 100%;
-  height: calc(100% - 20px);
+  height: 100%;
   background-color: white;
-  margin-block-start: 0.67em;
   white-space: nowrap;
   overflow: hidden;
+}
+
+div.spriteImg {
+    margin: 4px;
+    border: 1px solid #ccc;
+    /*float: left;*/
+    width: 70px;
+    display: inline-block;
 }
 
 #CanvasAndPainter_container {
@@ -353,7 +357,7 @@ div.desc {
 
 .spritePlus {
   right: 10px;
-  bottom: 20px;
+  bottom: 10px;
 }
 
 .stagePlus {

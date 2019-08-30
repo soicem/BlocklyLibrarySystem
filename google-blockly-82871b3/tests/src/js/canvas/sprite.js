@@ -44,6 +44,11 @@ class Sprite {
     this.setJsCode("");
     this.resetXml();
 
+    /*image객체의 리스트인 imageCostume 생성*/
+    this._imageCostume = [];
+    this._imageCostumeData = [];
+    this.setImageCostume(null)
+    this.setImageCostumeData(null);
 
     /* Event 별 코드 저장을 위함 (ex : whenFlagClicked)*/
     /* 특정 이벤트를 여러번 작성 가능*/
@@ -51,7 +56,9 @@ class Sprite {
     this._whenCloning = [];
   }
 
-
+  createFolder(){
+    makeDir
+  }
   get whenCloning() {
     return this._whenCloning;
   }
@@ -102,12 +109,28 @@ class Sprite {
     this._image = image;
   }
 
+  getImageCostume(num){
+    return this._imageCostume[num];
+  }
+
+  setImageCostume(image) {
+    this._imageCostume.push(image);
+  }
+
   getImageData() {
     return this._imageData;
   }
 
   setImageData(imageData) {
     this._imageData = imageData;
+  }
+
+  getImageCostumeData() {
+    return this._imageCostumeData;
+  }
+
+  setImageCostumeData(imageData) {
+    this._imageCostumeData.push(imageData);
   }
 
   getPosition() {
@@ -163,6 +186,10 @@ class Sprite {
         this.getImageSource().lastIndexOf('/') + 1));
   }
 
+  getImageCostumeFilename(num) {
+    return decodeURI(this.getImageCostumeSource(num).substring(
+        this.getImageCostumeSource(num).lastIndexOf('/') + 1));
+  }
   // --- More ---
 
   getContext() {
@@ -171,6 +198,10 @@ class Sprite {
 
   getImageSource() {
     return this.getImage().src;
+  }
+
+  getImageCostumeSource(num) {
+    return this.getImageCostume(num).src;
   }
 
   getX() {
