@@ -1,8 +1,8 @@
-step 1. 1¹ø function import
-step 2. library functionÀ» ÀÌ¿ëÇÏ¿© program ÀÛ¼º(´Ü¼ø Ãâ·Â ÄÚµå-> º¹ÀâÇÑ ÇÁ·Î±×·¥Àº Å×½ºÆ® ÇÊ¿ä)
-step 3. "To Python" buttonÀ¸·Î ½ÇÇà
+step 1. 1ï¿½ï¿½ function import
+step 2. library functionï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½Ï¿ï¿½ program ï¿½Û¼ï¿½(ï¿½Ü¼ï¿½ ï¿½ï¿½ï¿½ ï¿½Úµï¿½-> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ® ï¿½Ê¿ï¿½)
+step 3. "To Python" buttonï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-1. 
+1.
 <xml xmlns="http://www.w3.org/1999/xhtml">
   <variables>
     <variable type="" id="0!CFy7c.vOgq=c|{eXZU">argA</variable>
@@ -44,7 +44,7 @@ step 3. "To Python" buttonÀ¸·Î ½ÇÇà
   </block>
 </xml>
 
-2. 
+2.
 <xml xmlns="http://www.w3.org/1999/xhtml">
   <block type="controls_if" id="sh!@qvU6u{pEC=TLpWVs" x="113" y="38">
     <value name="IF0">
@@ -61,7 +61,7 @@ step 3. "To Python" buttonÀ¸·Î ½ÇÇà
       </block>
     </value>
     <statement name="DO0">
-      <block type="import_statement" id="zxl|WF]jo1k{QU6QPp!W">
+      <block type="import_noReturn" id="zxl|WF]jo1k{QU6QPp!W">
         <mutation func="doSomething2" args="2">
           <arg name="argA"></arg>
           <arg name="argB"></arg>

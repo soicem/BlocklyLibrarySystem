@@ -73,3 +73,7 @@ Blockly.Msg.SPRITE_WAIT_MSG = "%1초 기다리기";
 Blockly.Msg.SPRITE_FOREVER_MSG = "%1 무한반복하기";
 Blockly.Msg.SPRITE_CLONESTARTED_MSG = "클론 생성 시";
 Blockly.Msg.SPRITE_CREATECLONE_MSG = "%1의 클론 생성하기";
+
+// Import
+Blockly.Msg.IMPORT_HEADER_MSG = "라이브러리 사용하기";
+Blockly.Msg.IMPORT_STATEMENT_MSG = "%1";

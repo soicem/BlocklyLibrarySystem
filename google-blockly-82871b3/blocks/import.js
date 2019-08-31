@@ -41,7 +41,7 @@ goog.require('Blockly');
 //     "mutator": "import_return_mutator"
 //   },
 //   {
-//     "type": "import_statement",
+//     "type": "import_noReturn",
 //     "message0": "library function",
 //     "inputsInline": true,
 //     "previousStatement": null,
@@ -52,6 +52,33 @@ goog.require('Blockly');
 //   }
 // ]);  // END JSON EXTRACT (Do not delete this comment.)
 
+
+Blockly.defineBlocksWithJsonArray([
+  {
+    "type": "import_header",
+    "message0": "%{BKY_IMPORT_HEADER_MSG}",
+    "nextStatement": "LibraryImport",
+    "colour": "#e3ac00",
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "import_statement",
+    "message0": "%{BKY_IMPORT_STATEMENT_MSG}",
+    "args0": [
+      {
+        "type": "field_label_serializable",
+        "name": "LIB_FIELD",
+        "text": "library"
+      }
+    ],
+    "previousStatement": "LibraryImport",
+    "nextStatement": "LibraryImport",
+    "colour": "#e3ac00",
+    "tooltip": "",
+    "helpUrl": ""
+  }
+]);
 
 Blockly.Blocks['inline_configure'] = {
   init: function() {
@@ -147,7 +174,7 @@ Blockly.Blocks['import_return'] = {
   },
 
   resetShape_: function() {
-    this.getField("FUNC_FIELD").setText("library.function");
+    this.getField("FUNC_FIELD").setText("basic.function");
 
     if (this.getField("WITH_FIELD")) {
       this.removeField("WITH_FIELD");
@@ -161,7 +188,7 @@ Blockly.Blocks['import_return'] = {
   }
 };
 
-Blockly.Blocks['import_statement'] = {
+Blockly.Blocks['import_noReturn'] = {
   argsCount_: 0,
   argsName_: [],
   libraryName_: '',

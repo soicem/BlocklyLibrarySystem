@@ -32,7 +32,7 @@ Blockly.JavaScript['import_return'] = function (block) {
   return [getFunctionCall(block), Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
-Blockly.JavaScript['import_statement'] = function (block) {
+Blockly.JavaScript['import_noReturn'] = function (block) {
   return getFunctionCall(block) + ";\n";
 };
 
