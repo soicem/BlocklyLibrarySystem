@@ -58,7 +58,7 @@ Blockly.defineBlocksWithJsonArray([
     "type": "import_header",
     "message0": "%{BKY_IMPORT_HEADER_MSG}",
     "nextStatement": "LibraryImport",
-    "colour": "#e3ac00",
+    "colour": "#b38600",
     "tooltip": "",
     "helpUrl": ""
   },
