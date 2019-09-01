@@ -791,34 +791,32 @@
             txt += "Select one or more files.";
           } else {
             txt += "The files property is not supported by your browser!";
-            txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
+            txt += "<br>The path of the selected file: " + x.value;
           }
         }
         var spriteName = getNoDuplicationName(name); // Sprite name 중복 제거
-        var a = '<div class="spriteImg\" id="' + spriteName + '" onclick="myCanvas.setCurrentSprite(\''
+        var a = '<div class="costumeImg\" id="' + spriteName + '" onclick="myCanvas.setCurrentCostume(\''
                 + spriteName + '\')">'
                 + '<img src="' + name + '" alt="">'
                 + '<div class="desc">' + spriteName + '</div>'
                 + '</div>';
-        //alert(a);
         document.getElementById("spriteImageGallery").innerHTML += a;
         reader.addEventListener('load', function () {
           // sprite에 대한 canvas 용 objects를 저장한다.
-          myCanvas.addSpriteAndSelect(spriteName, reader.result, name); // spriteName : penguin, name : penguin.png
-          myCanvas.getSpriteByName(spriteName).printProperties();
+          myCanvas.addSpriteAndSelect(spriteName, reader.result, name);
         });
 
         if (imageFile) {
           reader.readAsArrayBuffer(imageFile);
         }
-        document.getElementById("costumeChooser").value = ""; // 같은 이미지 추가 시 onchange 반영을 위해 value 초기화
+        document.getElementById("costumeChooser").value = "";
       }
     </script>
     <div id="spriteImageGallery_container" class="rounded">
       <div id="spriteImageGallery">
         <div class="plusButton spritePlus">
           <span class="plus">
-            <input type="file" id="spriteImagePlus" accept="image/*" multiple size="50"
+            <input type="file" id="costumeChooser" accept="image/*" multiple size="50"
                    onchange="costumeChooser()">
           </span>
         </div>
