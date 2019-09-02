@@ -12,11 +12,12 @@ class LibraryInfo {
     libraryInfo._modified = json.modified;
     libraryInfo._hashCode = json.hashCode;
 
-    if (json.hashCode !== `${libraryInfo._generateHashCode()}`) {
-      //@TODO: throw exception rather than null + change let to const for libraryInfo
-      console.error(`Defected JSON of LibraryInfo: ${json.name}`);
-      libraryInfo = null;
-    }
+    //@TODO: remove this part when hash implementation gets removed
+    // if (json.hashCode !== `${libraryInfo._generateHashCode()}`) {
+    //   //@TODO: throw exception rather than null + change let to const for libraryInfo
+    //   console.error(`Defected JSON of LibraryInfo: ${json.name}`);
+    //   libraryInfo = null;
+    // }
 
     return libraryInfo;
   }
@@ -143,7 +144,7 @@ class LibraryInfo {
   }
 
   /**
-   * @returns {number}
+   * @returns {string}
    * @private
    */
   _generateHashCode() {
@@ -167,7 +168,7 @@ class LibraryInfo {
   }
 
   /**
-   * @returns {{author: string, created: string, name: string, modified: string, version: string, hash: string}}
+   * @returns {{name: string, author: string, version: string, url: string, created: string, modified: string, hashCode: string}}
    */
   toJson() {
     return {
@@ -185,10 +186,10 @@ class LibraryInfo {
    * Updates hashcode
    */
   updateHashCode() {
-    if (!this._isHashCodeUpToDate) {
+    if (!this.isHashCodeUpToDate) {
       this._hashCode = this._generateHashCode();
     }
-    this._isHashCodeUpToDate = true;
+    this.isHashCodeUpToDate = true;
 
     // fields that are not modified directly by the users will not modify the modified datetime
   }

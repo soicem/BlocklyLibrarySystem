@@ -17,11 +17,12 @@ class Library {
       library._jsObject = json.jsObject;
       library._hashCode = json.hashCode;
 
-      if (json.hashCode !== `${library._generateHashCode()}`) {
-        //@TODO: throw exception rather than null + change let to const for libraryInfo
-        console.error(`Defected JSON of Library: ${json.info.name}`);
-        library = null;
-      }
+      //@TODO: remove this part when hash implementation gets removed
+      // if (json.hashCode !== `${library._generateHashCode()}`) {
+      //   //@TODO: throw exception rather than null + change let to const for libraryInfo
+      //   console.error(`Defected JSON of Library: ${json.info.name}`);
+      //   library = null;
+      // }
     }
 
     return library;
@@ -50,6 +51,7 @@ class Library {
       if (json.functions.hasOwnProperty(functionKey)) {
         library._functions[functionKey] = {};
         library._functions[functionKey].xml = json.functions[functionKey].xml;
+        library._functions[functionKey].interfaceXml = json.functions[functionKey].interfaceXml;
         library._functions[functionKey].js = json.functions[functionKey].js;
       }
     }
@@ -83,7 +85,7 @@ class Library {
   }
 
   /**
-   * @returns {Object.<string, {xml: string, js: string}>}
+   * @returns {Object.<string, {xml: string, interfaceXml: string, js: string}>}
    */
   get functions() {
     return this._functions;
@@ -139,7 +141,7 @@ class Library {
   }
 
   /**
-   * @returns {number}
+   * @returns {string}
    * @private
    */
   _generateHashCode() {
@@ -149,16 +151,17 @@ class Library {
     ];
 
     for (let importsKey in this.imports) {
-      if (this.imports.hasOwnProperty(importsKey)) {
-        tmp.push(`${this.imports[importsKey].hashCode}`);
-      }
+      if (!this.imports.hasOwnProperty(importsKey)) continue;
+
+      tmp.push(`${this.imports[importsKey].hashCode}`);
     }
     for (let functionsKey in this.functions) {
-      if (this.functions.hasOwnProperty(functionsKey)) {
-        tmp.push(`${functionsKey.hashCode()}`);
-        tmp.push(`${this.functions[functionsKey].js.hashCode()}`);
-        tmp.push(`${this.functions[functionsKey].xml.hashCode()}`);
-      }
+      if (!this.functions.hasOwnProperty(functionsKey)) continue;
+
+      tmp.push(`${functionsKey.hashCode()}`);
+      tmp.push(`${this.functions[functionsKey].xml.hashCode()}`);
+      tmp.push(`${this.functions[functionsKey].interfaceXml.hashCode()}`);
+      tmp.push(`${this.functions[functionsKey].js.hashCode()}`);
     }
 
     return tmp.join('').hashCode();
@@ -172,7 +175,7 @@ class Library {
   }
 
   /**
-   * @returns {{imports: *, functions: Object<string, {xml: string, js: string}>, jsObject: string, hashCode: string, info: {author: string, created: string, name: string, modified: string, version: string, hash: string}}}
+   * @returns {{info: *, imports: Object<string, *>, functions: Object<string, {xml: string, interfaceXml: string, js: string}>, jsObject: string, hashCode: string}}
    */
   toJson() {
     let tmp = {};
@@ -245,6 +248,8 @@ class Library {
       this.functions[functionName] = {};
     }
     this.functions[functionName].xml = xml;
+    const interfaceXml = LibraryUtils.convertImplementToInterfaceString(this.info.name, xml);
+    this.functions[functionName].interfaceXml = Blockly.Xml.domToText(interfaceXml);
 
     this.info.updateModifiedDatetime();
     this.isHashCodeUpToDate = false;

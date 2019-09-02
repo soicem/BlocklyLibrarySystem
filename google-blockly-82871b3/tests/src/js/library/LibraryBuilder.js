@@ -32,6 +32,7 @@ class LibraryBuilder {
    */
   setName(name) {
     this._name = name;
+
     return this;
   }
 
@@ -41,6 +42,7 @@ class LibraryBuilder {
    */
   setAuthor(author) {
     this._author = author;
+
     return this;
   }
 
@@ -50,6 +52,7 @@ class LibraryBuilder {
    */
   setVersion(version) {
     this._version = version;
+
     return this;
   }
 
@@ -59,6 +62,7 @@ class LibraryBuilder {
    */
   setUrl(url) {
     this._url = url;
+
     return this;
   }
 
@@ -68,6 +72,21 @@ class LibraryBuilder {
    */
   addImport(libraryInfo) {
     this._imports[libraryInfo.name] = libraryInfo;
+
+    return this;
+  }
+
+  /**
+   * @param {Object<string, LibraryInfo>}libraryInfos
+   */
+  addImports(libraryInfos) {
+    for (let libraryInfoKey in libraryInfos) {
+      if (!libraryInfos.hasOwnProperty(libraryInfoKey)) continue;
+
+      const libraryInfo = libraryInfos[libraryInfoKey];
+      this.addImport(libraryInfo);
+    }
+
     return this;
   }
 
@@ -81,6 +100,8 @@ class LibraryBuilder {
       this._functions[functionName] = {};
     }
     this._functions[functionName].xml = xml;
+    this._functions[functionName].interfaceXml = LibraryUtils.convertImplementToInterfaceString(this._name, xml);
+
     return this;
   }
 
@@ -94,6 +115,7 @@ class LibraryBuilder {
       this._functions[functionName] = {};
     }
     this._functions[functionName].js = js;
+
     return this;
   }
 
@@ -106,6 +128,23 @@ class LibraryBuilder {
   addFunction(functionName, xml, js) {
     this.addFunctionXml(functionName, xml);
     this.addFunctionJs(functionName, js);
+
+    return this;
+  }
+
+  /**
+   * @param {Object<string, {xml:string, interfaceXml:string, js:string}>} functionInfos
+   */
+  addFunctions(functionInfos) {
+    for (let functionInfoKey in functionInfos) {
+      if (!functionInfos.hasOwnProperty(functionInfoKey)) continue;
+
+      const xml = functionInfos[functionInfoKey].xml;
+      const js = functionInfos[functionInfoKey].js;
+
+      this.addFunction(functionInfoKey, xml, js);
+    }
+
     return this;
   }
 }

@@ -1,8 +1,9 @@
 class LibraryManager {
   /**
    */
-  constructor() {
+  constructor(toolboxManager) {
     this._libraries = {};
+    this._toolboxManager = toolboxManager;
   }
 
   ////////// Getter & Setter //////////
@@ -20,6 +21,30 @@ class LibraryManager {
    */
   set libraries(value) {
     this._libraries = value;
+  }
+
+  get libraryInfos() {
+    let libraryInfos = {};
+    for (let libraryKey in this.libraries) {
+      if (!this.libraries.hasOwnProperty(libraryKey)) continue;
+
+      libraryInfos[libraryKey] = this.libraries[libraryKey].info;
+    }
+    return libraryInfos;
+  }
+
+  /**
+   * @returns {ToolboxManager}
+   */
+  get toolboxManager() {
+    return this._toolboxManager;
+  }
+
+  /**
+   * @param {ToolboxManager} toolboxManager
+   */
+  set toolboxManager(toolboxManager) {
+    this._toolboxManager = toolboxManager;
   }
 
 // --- More ---
@@ -40,7 +65,9 @@ class LibraryManager {
       const newerVersion = library.info.version;
 
       if (confirm(`Do you wish to override "v${currentVersion}" of "${libraryName}" with "v${newerVersion}"?`)) {
+        this.toolboxManager.removeCategory(library.info.name);
         this.libraries[libraryName] = library;
+        this.toolboxManager.appendLibrary(library);
       }
     }
   }
@@ -56,7 +83,9 @@ class LibraryManager {
     const currentAuthor = matchingLibrary.info.author;
     const newerAuthor = library.info.author;
     if (confirm(`Do you wish to override "${currentAuthor}" version of "${libraryName}" with "${newerAuthor}"version?`)) {
+      this.toolboxManager.removeCategory(library.info.name);
       this.libraries[libraryName] = library;
+      this.toolboxManager.appendLibrary(library);
     }
   }
 
@@ -65,10 +94,11 @@ class LibraryManager {
    * @returns {Promise<void>}
    */
   async addLibraryFromUrl(url) {
-    let libraryJson = await LibraryUtils.getLibraryJsonFromUrl(url);
+    const libraryJson = await LibraryUtils.getLibraryJsonFromUrl(url);
     const library = Library.createFromJson(libraryJson);
-    if (!library) {
-      await this.addLibrary(library);
+
+    if (library) {
+      this.addLibrary(library);
     } else {
       console.log("library did not created successfully!");
     }
@@ -77,22 +107,15 @@ class LibraryManager {
   /**
    * @param {Library} library
    */
-  async addLibrary(library) {
-    console.log(library);
+  addLibrary(library) {
     if (this.hasSameNameAuthorLibrary(library.info)) {
       this._updateExistingLibrary(library);
     } else if (this.hasSameNameLibrary(library.info)) {
       this._swapExistingLibrary(library);
     } else {
       this.libraries[library.info.name] = library;
+      this.toolboxManager.appendLibrary(library);
     }
-
-    //@TODO: need reference counter for imports
-    // for (let libraryKey in library.imports) {
-    //   if (library.imports.hasOwnProperty(libraryKey)) {
-    //     await this.addLibraryFromUrl(library.imports[libraryKey].url);
-    //   }
-    // }
   }
 
   /**
@@ -147,6 +170,7 @@ class LibraryManager {
 
   /**
    * @param {Library|LibraryInfo|string} source
+   * @returns {Promise<void>}
    */
   async updateLibraryFromUrl(source) {
     if (!this.hasSameNameLibrary(source)) return;
@@ -161,4 +185,14 @@ class LibraryManager {
     this._updateExistingLibrary(onlineLibrary);
   }
 
+  createLibraryFile(workspace, libraryName, author) {
+    let library = new LibraryBuilder(libraryName, author)
+        .setUrl(libraryName + ".blk")
+        .setVersion("1.0")
+        .addImports(this.libraryInfos)
+        .addFunctions(LibraryUtils.getImplementationBlocksInfo(workspace,libraryName))
+        .build();
+
+    saveAs(new Blob([library.toString()]), libraryName + ".blk");
+  }
 }

@@ -20,9 +20,15 @@ class JsObjectTemplate {
    * @returns {string}
    */
   getContent() {
-    return this._functions.reduce((previousValue, currentValue) => {
-      return `${previousValue},\n${currentValue}`;
-    }, "");
+    let content = "";
+
+    if (this._functions.length) {
+      content += this._functions.reduce((previousValue, currentValue) => {
+        return `${previousValue},\n${currentValue}`;
+      });
+    }
+
+    return content;
   }
 
   /**
