@@ -1324,10 +1324,13 @@
         </category>
 
         <category name="Import" colour="#e3ac00">
-          <block type="import_return"></block>
-          <block type="import_noReturn"></block>
+<!--          <block type="import_return"></block>-->
+<!--          <block type="import_noReturn"></block>-->
           <block type="import_header"></block>
-          <block type="import_statement"></block>
+<!--          <block type="import_statement"></block>-->
+          <block type="import_statement">
+            <mutation lib="TestLibrary" src="TestLibrary.blk" readOnly="true"></mutation>
+          </block>
           <!--<block type="import_noReturn" id="123">
             <mutation func="Statement Function" args="2">
               <arg name="argA"/>

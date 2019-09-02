@@ -28,6 +28,14 @@ goog.provide('Blockly.JavaScript.import');
 
 goog.require('Blockly.JavaScript');
 
+Blockly.JavaScript['import_header'] = function (block) {
+  return "";
+};
+
+Blockly.JavaScript['import_statement'] = function (block) {
+  return "";
+};
+
 Blockly.JavaScript['import_return'] = function (block) {
   return [getFunctionCall(block), Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };

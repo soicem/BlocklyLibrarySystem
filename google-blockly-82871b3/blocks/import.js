@@ -52,7 +52,6 @@ goog.require('Blockly');
 //   }
 // ]);  // END JSON EXTRACT (Do not delete this comment.)
 
-
 Blockly.defineBlocksWithJsonArray([
   {
     "type": "import_header",
@@ -61,24 +60,60 @@ Blockly.defineBlocksWithJsonArray([
     "colour": "#b38600",
     "tooltip": "",
     "helpUrl": ""
-  },
-  {
-    "type": "import_statement",
-    "message0": "%{BKY_IMPORT_STATEMENT_MSG}",
-    "args0": [
-      {
-        "type": "field_label_serializable",
-        "name": "LIB_FIELD",
-        "text": "library"
-      }
-    ],
-    "previousStatement": "LibraryImport",
-    "nextStatement": "LibraryImport",
-    "colour": "#e3ac00",
-    "tooltip": "",
-    "helpUrl": ""
   }
 ]);
+
+Blockly.Blocks['import_statement'] = {
+  libraryName_: '',
+  librarySrc_: '',
+  readOnly_: false,
+
+  init: function() {
+    this.appendDummyInput("LINE1")
+    .appendField("Library");
+    this.appendDummyInput("LINE2")
+    .appendField("from")
+    .appendField(new Blockly.FieldTextInput("url"), "URL");
+    this.setPreviousStatement(true, "LibraryImport");
+    this.setNextStatement(true, "LibraryImport");
+    this.setColour(230);
+    this.setTooltip("");
+    this.setHelpUrl("");
+  },
+
+  mutationToDom: function() {
+    let container = document.createElement("mutation");
+    container.setAttribute("lib", this.libraryName_);
+    container.setAttribute("src", this.librarySrc_);
+    container.setAttribute("readOnly", this._readOnly);
+
+    return container;
+  },
+
+  domToMutation: function(xmlElement) {
+    this.libraryName_ = xmlElement.getAttribute("lib");
+    this.librarySrc_ = xmlElement.getAttribute("src");
+    this.readOnly_ = xmlElement.getAttribute("readOnly");
+
+    this.updateShape_();
+  },
+
+  resetShape_: function() {
+    this.removeInput("LINE1");
+    this.removeInput("LINE2");
+  },
+
+  updateShape_: function() {
+    this.resetShape_();
+
+    this.appendDummyInput("LINE1")
+    .appendField(this.libraryName_);
+    this.appendDummyInput("LINE2")
+    .appendField("from")
+    .appendField(new Blockly.FieldTextInput(this.librarySrc_), "URL");
+    this.getField("URL").EDITABLE = !this.readOnly_;
+  }
+};
 
 Blockly.Blocks['inline_configure'] = {
   init: function() {
