@@ -238,10 +238,13 @@ div.costumeImg {
     margin: 4px;
     border: 1px solid #ccc;
     /*float: left;*/
-    width: 70px;
+    width: 90px;
     display: inline-block;
 }
-
+div.costumeImg img {
+  width: 90px;
+  height: 90px;
+}
 #CanvasAndPainter_container {
   float: right;
   overflow: auto;
@@ -337,7 +340,7 @@ div.stage img {
 div.desc {
   text-align: center;
   text-overflow: ellipsis;
-  width: 70px;
+  width: 100%;
   font-size: 80%;
   overflow: hidden;
 }

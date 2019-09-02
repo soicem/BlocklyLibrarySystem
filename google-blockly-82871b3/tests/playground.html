@@ -149,6 +149,7 @@
         logEvents(false);
       }
       tabInit();
+      loadImage('penguin.png');
       onLoadPage();
     }
 
@@ -682,13 +683,13 @@
       document.getElementById(tab).parentNode.style.color = 'white';
     }
 
-    function loadImage(){
+    function loadImage(src){
       var imgClo = new Image();
       imgClo.addEventListener('load', function(){
         var ctx = document.getElementById('spriteCanvas').getContext("2d");
         ctx.drawImage( imgClo , 200, 200, 100, 100);
       },false);
-      imgClo.src="penguin.png";
+      imgClo.src=src;
     }
 
     function myStart() {
@@ -761,11 +762,13 @@
   <div id="sprite">
     <script>
       function costumeChooser() {
+        var path = "";
         var name;
         var x = document.getElementById("costumeChooser");
         var txt = "";
         var imageFile = x.files[0];
         var reader = new FileReader();
+        var spriteObject = myCanvas.getCurrentSprite();
 
         if ('files' in x) {
           if (x.files.length === 0) {
@@ -794,18 +797,22 @@
             txt += "<br>The path of the selected file: " + x.value;
           }
         }
+        console.log(spriteObject.getImageCostumeLength() - 1);
+        myCanvas.setCurrentCostumeNum(spriteObject.getImageCostumeLength() - 1)
+        var costumeNum = myCanvas.getCurrentCostumeNum() + "";
         var spriteName = getNoDuplicationName(name); // Sprite name 중복 제거
-        var a = '<div class="costumeImg\" id="' + spriteName + '" onclick="myCanvas.setCurrentCostume(\''
-                + spriteName + '\')">'
-                + '<img src="' + name + '" alt="">'
-                + '<div class="desc">' + spriteName + '</div>'
+        var a = '<div class="costumeImg\" id="' + name.split('.')[0] + '_' + costumeNum + '" onclick="myCanvas.setCurrentCostume('
+                + costumeNum + ')">'
+                + '<img src="' + path + name + '" alt="">'
+                + '<div class="desc">' + name.split('.')[0] + '_' + costumeNum + '</div>'
                 + '</div>';
         document.getElementById("spriteImageGallery").innerHTML += a;
+        console.log(a);
         reader.addEventListener('load', function () {
-          // sprite에 대한 canvas 용 objects를 저장한다.
-          myCanvas.addSpriteAndSelect(spriteName, reader.result, name);
+          myCanvas.addCostumeAndSelect(spriteName + '_' + spriteObject.getCurrentCostumeNum(), reader.result, name);
         });
-
+        initPage();
+        loadImage(path + name);
         if (imageFile) {
           reader.readAsArrayBuffer(imageFile);
         }
@@ -814,6 +821,11 @@
     </script>
     <div id="spriteImageGallery_container" class="rounded">
       <div id="spriteImageGallery">
+        <div class="costumeImg" id="penguin_0"
+             onclick="myCanvas.setCurrentCostume(0)">
+          <img src="penguin.png" alt="">
+          <div class="desc">penguin_0</div>
+        </div>
         <div class="plusButton spritePlus">
           <span class="plus">
             <input type="file" id="costumeChooser" accept="image/*" multiple size="50"
@@ -851,7 +863,6 @@
                   <INPUT type="button" value="Redraw" onClick="reDrawCanvas()" />
                   -->
             </span>
-        <input type="button" value="파일 불러오기" onclick="loadImage()">
       </div>
       <script>
 
