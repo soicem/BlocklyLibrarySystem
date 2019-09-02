@@ -18,14 +18,14 @@ function ImgToBLK(name, Source){
         return;
 
     img.file(name, Source, {base64:true});
-};
+}
 
 function BackImgToBLK(name, Source){
     if(Source === undefined || Source === null)
         return;
 
     backimg.file(name, Source, {base64:true});
-};
+}
 
 var CreateBLK = function (blkName, ext){
     zip.file("info.json", JSON.stringify(jsoninfo));

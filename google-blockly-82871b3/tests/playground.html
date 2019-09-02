@@ -72,6 +72,7 @@
 
   <script>
     'use strict';
+
     var blockWorkspace = null;
     var toolbox = null;
 
@@ -195,10 +196,19 @@
       taChange();
     }
 
+    function toXml() {
+      let input = document.getElementById("importExport");
+      let xml = Blockly.Xml.workspaceToDom(blockWorkspace);
+      let xmlText = Blockly.Xml.domToPrettyText(xml);
+
+      input.value = xmlText;
+    }
+
     function fromXml() {
-      var input = document.getElementById('importExport');
-      var xml = Blockly.Xml.textToDom(input.value);
+      let input = document.getElementById('importExport');
+      let xml = Blockly.Xml.textToDom(libraryManager.libraries["testLibrary"].functions["aFunction"].xml);
       Blockly.Xml.domToWorkspace(xml, blockWorkspace);
+
       taChange();
     }
 
@@ -754,6 +764,7 @@
     }
 
     function myStart() {
+      libraryManager = new LibraryManager();
       animationUpdater = new AnimationUpdater();
       myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400), blockWorkspace);
       myCanvas.addSpriteAndSelect("penguin", null, "penguin.png");
@@ -841,12 +852,21 @@
         <div id="canvases">
           <canvas id="canvas"></canvas>
         </div>
+        <script src="src/js/utils/String.js"></script>
+        <script src="src/js/encryption/Encryption.js"></script>
         <script src="src/js/animation/animation_updater.js"></script>
         <script src="src/js/canvas/canvas_handler.js"></script>
         <script src="src/js/canvas/canvas_util.js"></script>
         <script src="src/js/canvas/sprite.js"></script>
         <script src="src/js/canvas/sprite_factory.js"></script>
         <script src="src/js/canvas/speech_bubble.js"></script>
+        <script src="src/js/toolbox/ToolboxManager.js"></script>
+        <script src="src/js/library/Library.js"></script>
+        <script src="src/js/library/LibraryBuilder.js"></script>
+        <script src="src/js/library/LibraryInfo.js"></script>
+        <script src="src/js/library/LibraryManager.js"></script>
+        <script src="src/js/library/LibraryUtils.js"></script>
+        <script src="src/js/library/JsObjectTemplate.js"></script>
         <script src="src/js/math/point.js"></script>
         <script src="src/js/math/size.js"></script>
         <script src="src/js/math/angle.js"></script>
@@ -856,6 +876,7 @@
         <script src="src/js/exception/sprite_exception.js"></script>
 
         <script>
+          let libraryManager;
           let animationUpdater;
           let myCanvas;
 
@@ -1107,7 +1128,8 @@
         </ul>
 
         <ul>
-          <li2 style="width:100%;"><a id="insertXML" onclick="fromXml()">insert from XML</a></li2>
+          <li2><a id="exportXML" onclick="toXml()">Export to XML</a></li2>
+          <li2><a id="importXML" onclick="fromXml()">Import from XML</a></li2>
         </ul>
         <textarea id="importExport" style="width: calc(100% - 5px); height: 60%"
                   onchange="taChange();" onkeyup="taChange()"></textarea>
@@ -2011,6 +2033,7 @@
         <sep></sep>
         <category name="Variables" style="variable_category" custom="VARIABLE"></category>
         <category name="Functions" style="procedure_category" custom="PROCEDURE"></category>
+        <sep></sep>
       </xml>
 
       <!-- toolbox-categories-typed-variables has a category menu and an

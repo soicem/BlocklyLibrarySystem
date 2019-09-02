@@ -1,7 +1,7 @@
 
 
-function collapseToolbox() {
-  let tree = blockWorkspace.getToolbox().tree_;
+function collapseToolbox(workspace) {
+  let tree = workspace.getToolbox().tree_;
 
   if (tree) {
     tree.setSelectedItem(null);
