@@ -764,14 +764,15 @@
     }
 
     function myStart() {
-      libraryManager = new LibraryManager();
+      toolboxManager = ToolboxManager.createWithDom(blockWorkspace, document.getElementById("toolbox-categories"));
+      libraryManager = new LibraryManager(toolboxManager);
       animationUpdater = new AnimationUpdater();
       myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400), blockWorkspace);
+
       myCanvas.addSpriteAndSelect("penguin", null, "penguin.png");
       TrashToImg("penguin");
       animationUpdater.addCallFunction({caller: myCanvas, method: myCanvas.render});
       animationUpdater.start();
-      return myCanvas;
     }
   </script>
 
@@ -876,6 +877,7 @@
         <script src="src/js/exception/sprite_exception.js"></script>
 
         <script>
+          let toolboxManager;
           let libraryManager;
           let animationUpdater;
           let myCanvas;
@@ -1110,14 +1112,14 @@
           </li2>
         </ul>
         <ul>
-          <li2><a id="blk" onclick="exportBlkFile('Test', this.id, blockWorkspace)">Export Library</a></li2>
+          <li2><a id="blk" onclick="libraryManager.createLibraryFile(blockWorkspace, 'MyLibrary', 'CSK')">Export Library</a></li2>
           <li2>
             <a>
               <div class="fileBox">
                 <label for="getLib">Import Library</label>
                 <input type="file" value="add File" name="files[]" id="getLib"
-                       onchange="importBlkFile(this, blockWorkspace)"
-                       accept=".blk, .zip">
+                       onchange="libraryManager.addLibraryFromUrl(this.files[0].name);"
+                       accept=".blk">
               </div>
             </a>
           </li2>

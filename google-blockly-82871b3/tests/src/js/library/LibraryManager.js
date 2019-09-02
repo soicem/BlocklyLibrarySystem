@@ -116,6 +116,9 @@ class LibraryManager {
       this.libraries[library.info.name] = library;
       this.toolboxManager.appendLibrary(library);
     }
+
+    //@TODO: must not use myCanvas here
+    myCanvas.setLibCode(library.jsObject);
   }
 
   /**

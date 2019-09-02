@@ -181,9 +181,7 @@ class ToolboxManager {
       if (!library.functions.hasOwnProperty(functionKey)) continue;
 
       const interfaceXml = library.functions[functionKey].interfaceXml;
-      console.log(Blockly.Xml.textToDom(interfaceXml));
       const blockDom = Blockly.Xml.textToDom(interfaceXml).children[0];
-
       this.appendBlockDom(library.info.name, blockDom);
     }
 

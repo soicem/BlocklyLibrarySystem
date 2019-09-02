@@ -46,6 +46,5 @@ function getFunctionCall(block) {
         Blockly.JavaScript.ORDER_ATOMIC) || noConnectionValue;
   }
 
-  const code = funcName + "(" + args.join(", ") + ")";
-  return code;
+  return funcName + "(" + args.join(", ") + ")";
 }
