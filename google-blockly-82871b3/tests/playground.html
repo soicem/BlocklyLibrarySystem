@@ -199,32 +199,11 @@
       let xmlText = Blockly.Xml.domToPrettyText(xml);
 
       input.value = xmlText;
-
-      let functionBlocks = blockWorkspace.getBlocksByType("procedures_defnoreturn");
-      functionBlocks = functionBlocks.concat(blockWorkspace.getBlocksByType("procedures_defreturn"));
-      console.log(functionBlocks);
-
-      functionBlocks.forEach(functionBlock => {
-        let blockXml = Blockly.Xml.blockToDom(functionBlock);
-        let blockXmlText = "<xml xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
-            Blockly.Xml.domToPrettyText(blockXml) + "" +
-            "\n</xml>";
-        console.log(blockXmlText);
-
-        Blockly.JavaScript.init(blockWorkspace);
-        delete Blockly.JavaScript.definitions_["variables"];
-        Blockly["JavaScript"].blockToCode(functionBlock, true);
-        const blockJsText = Blockly.JavaScript.finish("");
-        console.log(blockJsText);
-      });
     }
 
-    async function fromXml() {
-      let lib = await libraryManager.addLibraryFromUrl("test.json");
-      console.log(lib.info.name);
-
-      var input = document.getElementById('importExport');
-      var xml = Blockly.Xml.textToDom(libraryManager.libraries["testLibrary"].functions["aFunction"].xml);
+    function fromXml() {
+      let input = document.getElementById('importExport');
+      let xml = Blockly.Xml.textToDom(libraryManager.libraries["testLibrary"].functions["aFunction"].xml);
       Blockly.Xml.domToWorkspace(xml, blockWorkspace);
 
       taChange();
