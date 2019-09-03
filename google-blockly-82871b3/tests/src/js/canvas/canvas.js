@@ -95,7 +95,7 @@ class Canvas {
   }
 
   getCurrentSpriteName() {
-    return this._currentSpriteName;
+    return this._currentSpriteName
   }
 
   setCurrentSpriteName(spriteName) {
@@ -186,18 +186,18 @@ class Canvas {
     document.getElementById(
         'sprite_W').value = this.getCurrentSprite().getWidth();
 
+    clearCostumeGallery();
     this.loadCurrentSpriteCostumes();
   }
 
   loadCurrentSpriteCostumes(){
-    clearCostumeGallery();
     var currentSprite = this.getCurrentSprite();
-    for(var i = 0; currentSprite.getImageCostumeLength() > i; i++){
-      var a = '<div class="costumeImg\" id="' + myCanvas.getCurrentSpriteName() + '_' + i + '" onclick="myCanvas.setCurrentCostume(' + i + ')">'
-          + '<img src="' + currentSprite.getImageCostume()[i].src + '" alt="">'
+    for(var i = 0; currentSprite.getImageCostume()[i] =! null; i++){
+      var a = '<div class="costumeImg\" id="' + myCanvas.getCurrentSpriteName() + '_' + i + '" onclick="myCanvas.setCurrentCostume(0)">'
+          + '<img src="' + myCanvas.getCurrentSpriteName() + '_' + i + '" alt="">'
           + '<div class="desc">' + myCanvas.getCurrentSpriteName() + '_' + i + '</div>'
           + '</div>';
-      document.getElementById("costumeGallery").innerHTML += a;
+      document.getElementById("spriteImageGallery").innerHTML += a;
       this.setCurrentCostume(0);
     }
   }
@@ -208,9 +208,8 @@ class Canvas {
     for (var i = 0; i < l.length; i++) {
       l[i].style.border = 'solid 1px #ccc';
     }
-    initPage();
-    loadImage(this.getCurrentSprite().getImageCostumeSource(this.getCurrentCostumeNum()));
-    document.getElementById(this.getCurrentSpriteName() + '_' + num).style.border = "solid 2px #415DCC";
+    var costumeNum = this.getCurrentCostumeNum() + "";
+    document.getElementById(this.getCurrentSpriteName() + '_' + costumeNum).style.border = "solid 2px #415DCC";
   }
 
   getLayerNumber(sprite) {
@@ -295,16 +294,13 @@ class Canvas {
     }
   }
 
-  addCostumeAndSelect(imageSrc) {
+  addCostumeAndSelect(costumeNum, imageSrc, isClone = [false, ]) {
     //console.log(spriteName);
-    //this.setCurrentCostumeNum(this.getCurrentCostumeNum() + 1);
-    var a = this.getCurrentCostumeNum();
-    var image = new image();
-    image = a;
-    alert(a);
-    this.getCurrentSprite().setImageCostume(this.getCurrentCostumeNum());
-    this.getCurrentSprite().setImageCostumeSource(image, imageSrc);
-    this.setCurrentCostume(this.getCurrentSprite().getImageCostumeLength() - 1);
+
+
+    if(!isClone[0]){
+      this.setCurrentCostume(costumeNum);
+    }
   }
 
   addStage(stageName, imageData = null, imageSrc) {
