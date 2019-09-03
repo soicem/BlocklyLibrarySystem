@@ -687,9 +687,9 @@
       var imgClo = new Image();
       imgClo.addEventListener('load', function(){
         var ctx = document.getElementById('spriteCanvas').getContext("2d");
-        ctx.drawImage(imgClo , 200, 200, 100, 100);
+        ctx.drawImage( imgClo , 200, 200, 100, 100);
       },false);
-      imgClo.src = src;
+      imgClo.src=src;
     }
 
     function myStart() {
@@ -801,15 +801,15 @@
         myCanvas.setCurrentCostumeNum(spriteObject.getImageCostumeLength() - 1)
         var costumeNum = myCanvas.getCurrentCostumeNum() + "";
         var spriteName = getNoDuplicationName(name); // Sprite name 중복 제거
-        var a = '<div class="costumeImg\" id="' + myCanvas.getCurrentSpriteName() + '_' + costumeNum + '" onclick="myCanvas.setCurrentCostume('
+        var a = '<div class="costumeImg\" id="' + name.split('.')[0] + '_' + costumeNum + '" onclick="myCanvas.setCurrentCostume('
                 + costumeNum + ')">'
                 + '<img src="' + path + name + '" alt="">'
-                + '<div class="desc">' + myCanvas.getCurrentSpriteName() + '_' + costumeNum + '</div>'
+                + '<div class="desc">' + name.split('.')[0] + '_' + costumeNum + '</div>'
                 + '</div>';
         document.getElementById("spriteImageGallery").innerHTML += a;
         console.log(a);
         reader.addEventListener('load', function () {
-          myCanvas.addCostumeAndSelect(spriteName + '_' + spriteObject.ge tCurrentCostumeNum(), reader.result, name);
+          myCanvas.addCostumeAndSelect(spriteName + '_' + spriteObject.getCurrentCostumeNum(), reader.result, name);
         });
         initPage();
         loadImage(path + name);
@@ -841,9 +841,10 @@
         </div>
         <span class="cell">
               <INPUT type="file" id="load_filename" value="Load" onChange="loadFile()" />
+              <div>Title <input id="title" size="15" /></div>
               <div>
                 <a id="saveImage" download="image.png">
-                    <INPUT type="button" value="Save" onClick="saveImage(myCanvas.getCurrentSpriteName() + '_' + myCanvas.getCurrentCostumeNum())" />
+                    <INPUT type="button" value="Save" onClick="saveImage()" />
                 </a>
                 <INPUT type="button" value="Clear" onClick="initPage()" />
                 <!--

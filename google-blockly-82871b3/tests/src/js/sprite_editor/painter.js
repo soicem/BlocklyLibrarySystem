@@ -665,7 +665,10 @@ function triMouseUp(event) {
     pos.isDraw = false;
 }
 
-function saveImage(imageName) {
+function saveImage() {
+  console.log("saveImage()");
+  var imageName = document.getElementById("title").value;
+  console.log(imageName.lenght);
   if (imageName.length == 0) {
     imageName = "image";
   }

@@ -281,8 +281,6 @@ class Canvas {
 
   addCostumeAndSelect(costumeNum, imageSrc, isClone = [false, ]) {
     //console.log(spriteName);
-
-
     if(!isClone[0]){
       this.setCurrentCostume(costumeNum);
     }
