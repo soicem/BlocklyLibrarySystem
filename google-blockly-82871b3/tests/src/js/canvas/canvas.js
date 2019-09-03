@@ -101,14 +101,6 @@ class Canvas {
     this._currentSpriteName = spriteName;
   }
 
-  getCurrentCostumeNum() {
-    return this._currentCostume;
-  }
-
-  setCurrentCostumeNum(costumeNum) {
-    this._currentCostume = costumeNum;
-  }
-
   getSpecificSpriteName() {
     return this._specificSpriteName
   }
@@ -184,17 +176,6 @@ class Canvas {
         'sprite_H').value = this.getCurrentSprite().getHeight();
     document.getElementById(
         'sprite_W').value = this.getCurrentSprite().getWidth();
-  }
-
-  setCurrentCostume(numOfCostume) {
-    var l = document.getElementsByClassName('costumeImg');
-
-    for (var i = 0; i < l.length; i++) {
-      l[i].style.border = 'solid 1px #ccc';
-    }
-    this.setCurrentCostume(numOfCostume);
-    document.getElementById(this.getCurrentCostume()).style.border = "solid 2px #415DCC";
-    document.getElementById(this.getCurrentSpriteName()).style.border = "solid 2px #415DCC";
   }
 
   getLayerNumber(sprite) {
@@ -276,14 +257,6 @@ class Canvas {
     this.addSprite(spriteName, imageData, imageSrc, isClone);
     if(!isClone[0]){
       this.setCurrentSprite(spriteName);
-    }
-  }
-
-  addSpriteCostumeAndSelect(costumeNum, imageData = null, imageSrc, isClone = [false, ]) {
-    //console.log(spriteName);
-    this.addCoustume(spriteName, imageData, imageSrc, isClone);
-    if(!isClone[0]){
-      this.setCurrentCostume(costumeNum);
     }
   }
 
