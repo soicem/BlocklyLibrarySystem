@@ -73,3 +73,7 @@ Blockly.Msg.SPRITE_WAIT_MSG = "wait %1 seconds";
 Blockly.Msg.SPRITE_FOREVER_MSG = "forever %1";
 Blockly.Msg.SPRITE_CLONESTARTED_MSG = "when I start as a clone";
 Blockly.Msg.SPRITE_CREATECLONE_MSG = "create clone of %1";
+
+// Import
+Blockly.Msg.IMPORT_HEADER_MSG = "Import libraries";
+Blockly.Msg.IMPORT_STATEMENT_MSG = "%1";

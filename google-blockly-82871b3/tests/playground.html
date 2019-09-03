@@ -72,6 +72,7 @@
 
   <script>
     'use strict';
+
     var blockWorkspace = null;
     var toolbox = null;
 
@@ -195,10 +196,19 @@
       taChange();
     }
 
+    function toXml() {
+      let input = document.getElementById("importExport");
+      let xml = Blockly.Xml.workspaceToDom(blockWorkspace);
+      let xmlText = Blockly.Xml.domToPrettyText(xml);
+
+      input.value = xmlText;
+    }
+
     function fromXml() {
-      var input = document.getElementById('importExport');
-      var xml = Blockly.Xml.textToDom(input.value);
+      let input = document.getElementById('importExport');
+      let xml = Blockly.Xml.textToDom(libraryManager.libraries["testLibrary"].functions["aFunction"].xml);
       Blockly.Xml.domToWorkspace(xml, blockWorkspace);
+
       taChange();
     }
 
@@ -292,7 +302,8 @@
         var position = spriteObject.getPosition(); // x, y 좌표
         myCanvas.addSpriteAndSelect(cloneName, imageData, imageSrc, [true, parentName, position]); // idx4 : isClone or not
 
-      var libCode = myCanvas.getLibCode();
+      // var libCode = myCanvas.getLibCode();
+      var libCode = libraryManager.getLibraryJsCode();
       if(libCode){
         // libCode = libCode.replace("null", "")
         // libCode = libCode.replace("null", "")
@@ -301,6 +312,7 @@
         // latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode];
         let codeWithLib = libCode + myCanvas.getSpriteByName(cloneName).getJsCode();
         myCanvas.getSpriteByName(cloneName).setJsCode(codeWithLib);
+        console.log( myCanvas.getSpriteByName(cloneName).getJsCode());
       }
         return cloneName;
     }
@@ -540,7 +552,8 @@
       let eventCode = eventCodeHandling(myCanvas.getSpriteByName(keyOfLatestCode).getJsCode());
       myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(eventCode);
 
-      var libCode = myCanvas.getLibCode();
+      // var libCode = myCanvas.getLibCode();
+      var libCode = libraryManager.getLibraryJsCode();
       if(libCode){
         // libCode = libCode.replace("null", "")
         // libCode = libCode.replace("null", "")
@@ -553,6 +566,8 @@
       // latestCodes[keyOfLatestCode] = latestCodes[keyOfLatestCode].replace("nullnull", "");
       let codeWithoutNull = myCanvas.getSpriteByName(keyOfLatestCode).getJsCode().replace("nullnull", "");
       myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(codeWithoutNull);
+
+      console.log(myCanvas.getSpriteByName(keyOfLatestCode).getJsCode());
 
       // step execution 용 코드
       if(!myInterpreters[myCanvas.getCurrentSpriteName()])
@@ -754,13 +769,15 @@
     }
 
     function myStart() {
+      toolboxManager = ToolboxManager.createWithDom(blockWorkspace, document.getElementById("toolbox-categories"));
+      libraryManager = new LibraryManager(toolboxManager);
       animationUpdater = new AnimationUpdater();
       myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400), blockWorkspace);
+
       myCanvas.addSpriteAndSelect("penguin", null, "penguin.png");
       TrashToImg("penguin");
       animationUpdater.addCallFunction({caller: myCanvas, method: myCanvas.render});
       animationUpdater.start();
-      return myCanvas;
     }
   </script>
 
@@ -841,12 +858,21 @@
         <div id="canvases">
           <canvas id="canvas"></canvas>
         </div>
+        <script src="src/js/utils/String.js"></script>
+        <script src="src/js/encryption/Encryption.js"></script>
         <script src="src/js/animation/animation_updater.js"></script>
         <script src="src/js/canvas/canvas_handler.js"></script>
         <script src="src/js/canvas/canvas_util.js"></script>
         <script src="src/js/canvas/sprite.js"></script>
         <script src="src/js/canvas/sprite_factory.js"></script>
         <script src="src/js/canvas/speech_bubble.js"></script>
+        <script src="src/js/toolbox/ToolboxManager.js"></script>
+        <script src="src/js/library/Library.js"></script>
+        <script src="src/js/library/LibraryBuilder.js"></script>
+        <script src="src/js/library/LibraryInfo.js"></script>
+        <script src="src/js/library/LibraryManager.js"></script>
+        <script src="src/js/library/LibraryUtils.js"></script>
+        <script src="src/js/library/JsObjectTemplate.js"></script>
         <script src="src/js/math/point.js"></script>
         <script src="src/js/math/size.js"></script>
         <script src="src/js/math/angle.js"></script>
@@ -856,6 +882,8 @@
         <script src="src/js/exception/sprite_exception.js"></script>
 
         <script>
+          let toolboxManager;
+          let libraryManager;
           let animationUpdater;
           let myCanvas;
 
@@ -997,6 +1025,29 @@
               reader.readAsArrayBuffer(imageFile);
             }
           }
+
+
+
+
+          function readLibraryHeader() {
+            let importHeaders = blockWorkspace.getBlocksByType("import_header");
+
+            function addImportStatementLibrary(importStatement) {
+              const url = importStatement.getFieldValue("URL");
+              console.log(url);
+              libraryManager.addLibraryFromUrl(url);
+
+              if (importStatement.childBlocks_[0]) {
+                addImportStatementLibrary(importStatement.childBlocks_[0]);
+              }
+            }
+
+            for (let i = 0; i < importHeaders.length; i++) {
+              const importHeader = importHeaders[i];
+              const importStatement = importHeader.childBlocks_[0];
+              addImportStatementLibrary(importStatement);
+            }
+          }
         </script>
       </div>
     </div>
@@ -1089,14 +1140,14 @@
           </li2>
         </ul>
         <ul>
-          <li2><a id="blk" onclick="exportBlkFile('Test', this.id, blockWorkspace)">Export Library</a></li2>
+          <li2><a id="blk" onclick="libraryManager.createLibraryFile(blockWorkspace, 'MyLibrary', 'CSK')">Export Library</a></li2>
           <li2>
             <a>
               <div class="fileBox">
                 <label for="getLib">Import Library</label>
                 <input type="file" value="add File" name="files[]" id="getLib"
-                       onchange="importBlkFile(this, blockWorkspace)"
-                       accept=".blk, .zip">
+                       onchange="libraryManager.addLibraryFromUrl(this.files[0].name);"
+                       accept=".blk, .json">
               </div>
             </a>
           </li2>
@@ -1107,8 +1158,16 @@
         </ul>
 
         <ul>
-          <li2 style="width:100%;"><a id="insertXML" onclick="fromXml()">insert from XML</a></li2>
+          <li2><a id="exportXML" onclick="toXml()">Export to XML</a></li2>
+          <li2><a id="importXML" onclick="fromXml()">Import from XML</a></li2>
         </ul>
+
+        <ul>
+          <li2 style="width: 100%">
+            <a id="readLibraryHeader" onclick="readLibraryHeader()">Read library header</a>
+          </li2>
+        </ul>
+
         <textarea id="importExport" style="width: calc(100% - 5px); height: 60%"
                   onchange="taChange();" onkeyup="taChange()"></textarea>
       </div>
@@ -1300,9 +1359,13 @@
         </category>
 
         <category name="Import" colour="#e3ac00">
-          <block type="import_return"></block>
-          <block type="import_statement"></block>
-          <!--<block type="import_statement" id="123">
+<!--          <block type="import_return"></block>-->
+<!--          <block type="import_noReturn"></block>-->
+          <block type="import_header"></block>
+          <block type="import_statement">
+            <mutation lib="MyLibrary" src="MyLibrary.blk"></mutation>
+          </block>
+          <!--<block type="import_noReturn" id="123">
             <mutation func="Statement Function" args="2">
               <arg name="argA"/>
               <arg name="argB"/>
@@ -2009,6 +2072,7 @@
         <sep></sep>
         <category name="Variables" style="variable_category" custom="VARIABLE"></category>
         <category name="Functions" style="procedure_category" custom="PROCEDURE"></category>
+        <sep></sep>
       </xml>
 
       <!-- toolbox-categories-typed-variables has a category menu and an
