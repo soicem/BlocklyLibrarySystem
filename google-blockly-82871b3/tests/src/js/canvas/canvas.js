@@ -344,8 +344,6 @@ class Canvas {
       this._currentSpriteName = this.getSpritesOrder()[1];
   }
 
-
-
   changeSpriteOrder(sprite, newLayer) {
     sprite = this.getActualSpriteObject(sprite);
     let currentLayer = this.getLayerNumber(sprite);

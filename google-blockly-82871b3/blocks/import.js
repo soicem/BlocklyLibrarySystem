@@ -66,6 +66,7 @@ Blockly.defineBlocksWithJsonArray([
 Blockly.Blocks['import_statement'] = {
   libraryName_: '',
   librarySrc_: '',
+  readOnly_: false,
 
   init: function() {
     this.appendDummyInput("LINE1")
@@ -75,7 +76,7 @@ Blockly.Blocks['import_statement'] = {
     .appendField(new Blockly.FieldTextInput("url"), "URL");
     this.setPreviousStatement(true, "LibraryImport");
     this.setNextStatement(true, "LibraryImport");
-    this.setColour(230);
+    this.setColour("#e3ac00");
     this.setTooltip("");
     this.setHelpUrl("");
   },
@@ -84,6 +85,7 @@ Blockly.Blocks['import_statement'] = {
     let container = document.createElement("mutation");
     container.setAttribute("lib", this.libraryName_);
     container.setAttribute("src", this.librarySrc_);
+    container.setAttribute("readOnly", this.readOnly_);
 
     return container;
   },
@@ -91,6 +93,7 @@ Blockly.Blocks['import_statement'] = {
   domToMutation: function(xmlElement) {
     this.libraryName_ = xmlElement.getAttribute("lib");
     this.librarySrc_ = xmlElement.getAttribute("src");
+    this.readOnly_ = xmlElement.getAttribute("readOnly");
 
     this.updateShape_();
   },
@@ -105,9 +108,11 @@ Blockly.Blocks['import_statement'] = {
 
     this.appendDummyInput("LINE1")
     .appendField(this.libraryName_);
-    this.appendDummyInput("LINE2")
-    .appendField("from")
-    .appendField(new Blockly.FieldTextInput(this.librarySrc_), "URL");
+    if (this.readOnly_ !== "true") {
+      this.appendDummyInput("LINE2")
+      .appendField("from")
+      .appendField(new Blockly.FieldTextInput(this.librarySrc_), "URL");
+    }
   }
 };
 
