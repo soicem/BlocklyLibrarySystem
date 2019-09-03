@@ -46,7 +46,7 @@ class Sprite {
 
     /*image객체의 리스트인 imageCostume 생성*/
     this._imageCostume = [];
-    this.setImageCostume(image);
+    this.setImageCostume(image)
     /* Event 별 코드 저장을 위함 (ex : whenFlagClicked)*/
     /* 특정 이벤트를 여러번 작성 가능*/
     this._whenClicked = [];
@@ -110,8 +110,8 @@ class Sprite {
     return this._imageCostume.length;
   }
 
-  getImageCostume(){
-    return this._imageCostume;
+  getImageCostume(num){
+    return this._imageCostume[num];
   }
 
   setImageCostume(image) {
@@ -189,13 +189,8 @@ class Sprite {
     return this.getImage().src;
   }
 
-  setImageCostumeSource(image, num, src) {
-    this.setImageCostume()[num] = image;
-    this.getImageCostume()[num].src = src;
-  }
-
   getImageCostumeSource(num) {
-    return this.getImageCostume()[num].src;
+    return this.getImageCostume(num).src;
   }
 
   getX() {

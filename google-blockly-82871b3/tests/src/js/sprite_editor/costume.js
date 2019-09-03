@@ -28,9 +28,9 @@ class spriteCostume{
 
     getSpriteCostume
 
-    // getCurrentCostumeNum() {
-    //     return this._currentCostume;
-    // }
+    getCurrentCostumeNum() {
+        return this._currentCostume;
+    }
 
     setCurrentCostumeNum(costumeNum) {
         this._currentCostume = costumeNum;
@@ -46,12 +46,12 @@ class spriteCostume{
         document.getElementById(this.getCurrentSpriteName() + '_' + costumeNum).style.border = "solid 2px #415DCC";
     }
 
-    // addCostumeAndSelect(costumeNum, imageSrc, isClone = [false, ]) {
-    //     //console.log(spriteName);
-    //
-    //
-    //     if(!isClone[0]){
-    //         this.setCurrentCostume(costumeNum);
-    //     }
-    // }
+    addCostumeAndSelect(costumeNum, imageSrc, isClone = [false, ]) {
+        //console.log(spriteName);
+
+
+        if(!isClone[0]){
+            this.setCurrentCostume(costumeNum);
+        }
+    }
 }
