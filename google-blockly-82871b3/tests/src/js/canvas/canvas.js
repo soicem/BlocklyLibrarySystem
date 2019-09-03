@@ -185,6 +185,21 @@ class Canvas {
         'sprite_H').value = this.getCurrentSprite().getHeight();
     document.getElementById(
         'sprite_W').value = this.getCurrentSprite().getWidth();
+
+    clearCostumeGallery();
+    this.loadCurrentSpriteCostumes();
+  }
+
+  loadCurrentSpriteCostumes(){
+    var currentSprite = this.getCurrentSprite();
+    for(var i = 0; currentSprite.getImageCostume()[i] =! null; i++){
+      var a = '<div class="costumeImg\" id="' + myCanvas.getCurrentSpriteName() + '_' + i + '" onclick="myCanvas.setCurrentCostume(0)">'
+          + '<img src="' + myCanvas.getCurrentSpriteName() + '_' + i + '" alt="">'
+          + '<div class="desc">' + myCanvas.getCurrentSpriteName() + '_' + i + '</div>'
+          + '</div>';
+      document.getElementById("spriteImageGallery").innerHTML += a;
+      this.setCurrentCostume(0);
+    }
   }
 
   setCurrentCostume(num) {

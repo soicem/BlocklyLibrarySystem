@@ -1,5 +1,6 @@
 class spriteCostume{
-    constructor(){
+
+    constructor(spriteName){
         /*
         //Todo 현재는 local상에서 폴더를 생성함 서버에 올릴 땐 바꿔줘야 함
         var folderPath = "C:\\Users\\USER\\Desktop\\blocklylibrary\\BlocklyLibrarySystem\\google-blockly-82871b3\\tests\\src\\resources\\sprites";
@@ -10,8 +11,22 @@ class spriteCostume{
             fileHandler.CreateFolder(folderName)
         }
         this._imageList = {};*/
-        this._currentCostume = 0;
+        var spriteObject = spriteName.getCurrentSprite();
+        spriteObject._currentCostume = 0;
+        this._spriteCostume = [];
+
     }
+
+    getSpriteCostume(){
+        return this._spriteCostume;
+    }
+
+    setSpriteCostume(num, image, src){
+        spriteObject._spriteCostume[num] = image;
+        this._spriteCostume[num].src = src;
+    }
+
+    getSpriteCostume
 
     getCurrentCostumeNum() {
         return this._currentCostume;

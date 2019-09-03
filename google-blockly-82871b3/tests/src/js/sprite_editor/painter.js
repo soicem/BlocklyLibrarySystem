@@ -785,6 +785,11 @@ function initPage() {
   initHistory();
 }
 
+function clearCostumeGallery(){
+  a = document.getElementById("costumeGallery");
+  a.innerHTML = "";
+  initPage();
+}
 
 function reDrawCanvas() {
   console.log("reDrawCanvas");
