@@ -23,7 +23,6 @@ class Canvas {
     this._sprites = {};
     this._spritesOrder = [null]; // Index 0 is reserved for a stage
     this._currentSpriteName = null;
-    this._currentCostume = 0;
     this._specificSpriteName = null; // 코드 실행 시 사용
     this._waitName = null;
     this.getHandler().startTrackMousePosition();
@@ -187,14 +186,15 @@ class Canvas {
         'sprite_W').value = this.getCurrentSprite().getWidth();
   }
 
-  setCurrentCostume(num) {
-    this.setCurrentCostumeNum(num);
+  setCurrentCostume(numOfCostume) {
     var l = document.getElementsByClassName('costumeImg');
+
     for (var i = 0; i < l.length; i++) {
       l[i].style.border = 'solid 1px #ccc';
     }
-    var costumeNum = this.getCurrentCostumeNum() + "";
-    document.getElementById(this.getCurrentSpriteName() + '_' + costumeNum).style.border = "solid 2px #415DCC";
+    this.setCurrentCostume(numOfCostume);
+    document.getElementById(this.getCurrentCostume()).style.border = "solid 2px #415DCC";
+    document.getElementById(this.getCurrentSpriteName()).style.border = "solid 2px #415DCC";
   }
 
   getLayerNumber(sprite) {
@@ -279,8 +279,9 @@ class Canvas {
     }
   }
 
-  addCostumeAndSelect(costumeNum, imageSrc, isClone = [false, ]) {
+  addSpriteCostumeAndSelect(costumeNum, imageData = null, imageSrc, isClone = [false, ]) {
     //console.log(spriteName);
+    this.addCoustume(spriteName, imageData, imageSrc, isClone);
     if(!isClone[0]){
       this.setCurrentCostume(costumeNum);
     }
