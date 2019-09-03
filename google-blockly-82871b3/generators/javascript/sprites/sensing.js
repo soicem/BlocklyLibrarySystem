@@ -62,5 +62,14 @@ Blockly.JavaScript['sprite_keyPress'] = function(block) {
     let funcName = OPTIONS[dropdown_option];
 
     return [funcName + "()", Blockly.JavaScript.ORDER_NONE];
+};
 
+Blockly.JavaScript['sprite_getMouseXY'] = function(block) {
+  const OPTIONS = {
+    X: "getMouseX",
+    Y: "getMouseY",
+  };
+  const dropdown_xy = block.getFieldValue('XY');
+  const code = `${OPTIONS[dropdown_xy]}()`;
+  return [code, Blockly.JavaScript.ORDER_NONE];
 };
