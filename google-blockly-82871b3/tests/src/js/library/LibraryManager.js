@@ -116,9 +116,6 @@ class LibraryManager {
       this.libraries[library.info.name] = library;
       this.toolboxManager.appendLibrary(library);
     }
-
-    //@TODO: must not use myCanvas here
-    myCanvas.setLibCode(library.jsObject);
   }
 
   /**
@@ -197,5 +194,17 @@ class LibraryManager {
         .build();
 
     saveAs(new Blob([library.toString()]), libraryName + ".blk");
+  }
+
+  getLibraryJsCode() {
+    let jsCode = "";
+
+    for (let libraryKey in this.libraries) {
+      if (!this.libraries.hasOwnProperty(libraryKey)) continue;
+
+      jsCode += this.libraries[libraryKey].jsObject;
+    }
+
+    return jsCode;
   }
 }

@@ -83,7 +83,7 @@ class LibraryUtils {
    * @returns {HTMLElement}
    */
   static convertProcedureToInterfaceXml(procedureBlockXml, libraryName) {
-    return LibraryUtils.convertToInterfaceXml(procedureBlockXml, libraryName, "import_statement");
+    return LibraryUtils.convertToInterfaceXml(procedureBlockXml, libraryName, "import_noReturn");
   }
 
   /**
@@ -124,7 +124,7 @@ class LibraryUtils {
   }
 
   static convertImplementToInterfaceString(libraryName, implementation) {
-    return Blockly.Xml.domToText(this.convertImplementToInterface(libraryName,implementation));
+    return Blockly.Xml.domToText(this.convertImplementToInterface(libraryName, implementation));
   }
 
   /**

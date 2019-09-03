@@ -66,7 +66,6 @@ Blockly.defineBlocksWithJsonArray([
 Blockly.Blocks['import_statement'] = {
   libraryName_: '',
   librarySrc_: '',
-  readOnly_: false,
 
   init: function() {
     this.appendDummyInput("LINE1")
@@ -85,7 +84,6 @@ Blockly.Blocks['import_statement'] = {
     let container = document.createElement("mutation");
     container.setAttribute("lib", this.libraryName_);
     container.setAttribute("src", this.librarySrc_);
-    container.setAttribute("readOnly", this._readOnly);
 
     return container;
   },
@@ -93,7 +91,6 @@ Blockly.Blocks['import_statement'] = {
   domToMutation: function(xmlElement) {
     this.libraryName_ = xmlElement.getAttribute("lib");
     this.librarySrc_ = xmlElement.getAttribute("src");
-    this.readOnly_ = xmlElement.getAttribute("readOnly");
 
     this.updateShape_();
   },
@@ -111,7 +108,6 @@ Blockly.Blocks['import_statement'] = {
     this.appendDummyInput("LINE2")
     .appendField("from")
     .appendField(new Blockly.FieldTextInput(this.librarySrc_), "URL");
-    this.getField("URL").EDITABLE = !this.readOnly_;
   }
 };
 

@@ -302,7 +302,8 @@
         var position = spriteObject.getPosition(); // x, y 좌표
         myCanvas.addSpriteAndSelect(cloneName, imageData, imageSrc, [true, parentName, position]); // idx4 : isClone or not
 
-      var libCode = myCanvas.getLibCode();
+      // var libCode = myCanvas.getLibCode();
+      var libCode = libraryManager.getLibraryJsCode();
       if(libCode){
         // libCode = libCode.replace("null", "")
         // libCode = libCode.replace("null", "")
@@ -311,6 +312,7 @@
         // latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode];
         let codeWithLib = libCode + myCanvas.getSpriteByName(cloneName).getJsCode();
         myCanvas.getSpriteByName(cloneName).setJsCode(codeWithLib);
+        console.log( myCanvas.getSpriteByName(cloneName).getJsCode());
       }
         return cloneName;
     }
@@ -550,7 +552,8 @@
       let eventCode = eventCodeHandling(myCanvas.getSpriteByName(keyOfLatestCode).getJsCode());
       myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(eventCode);
 
-      var libCode = myCanvas.getLibCode();
+      // var libCode = myCanvas.getLibCode();
+      var libCode = libraryManager.getLibraryJsCode();
       if(libCode){
         // libCode = libCode.replace("null", "")
         // libCode = libCode.replace("null", "")
@@ -563,6 +566,8 @@
       // latestCodes[keyOfLatestCode] = latestCodes[keyOfLatestCode].replace("nullnull", "");
       let codeWithoutNull = myCanvas.getSpriteByName(keyOfLatestCode).getJsCode().replace("nullnull", "");
       myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(codeWithoutNull);
+
+      console.log(myCanvas.getSpriteByName(keyOfLatestCode).getJsCode());
 
       // step execution 용 코드
       if(!myInterpreters[myCanvas.getCurrentSpriteName()])
@@ -1020,6 +1025,29 @@
               reader.readAsArrayBuffer(imageFile);
             }
           }
+
+
+
+
+          function readLibraryHeader() {
+            let importHeaders = blockWorkspace.getBlocksByType("import_header");
+
+            function addImportStatementLibrary(importStatement) {
+              const url = importStatement.getFieldValue("URL");
+              console.log(url);
+              libraryManager.addLibraryFromUrl(url);
+
+              if (importStatement.childBlocks_[0]) {
+                addImportStatementLibrary(importStatement.childBlocks_[0]);
+              }
+            }
+
+            for (let i = 0; i < importHeaders.length; i++) {
+              const importHeader = importHeaders[i];
+              const importStatement = importHeader.childBlocks_[0];
+              addImportStatementLibrary(importStatement);
+            }
+          }
         </script>
       </div>
     </div>
@@ -1119,7 +1147,7 @@
                 <label for="getLib">Import Library</label>
                 <input type="file" value="add File" name="files[]" id="getLib"
                        onchange="libraryManager.addLibraryFromUrl(this.files[0].name);"
-                       accept=".blk">
+                       accept=".blk, .json">
               </div>
             </a>
           </li2>
@@ -1133,6 +1161,13 @@
           <li2><a id="exportXML" onclick="toXml()">Export to XML</a></li2>
           <li2><a id="importXML" onclick="fromXml()">Import from XML</a></li2>
         </ul>
+
+        <ul>
+          <li2 style="width: 100%">
+            <a id="readLibraryHeader" onclick="readLibraryHeader()">Read library header</a>
+          </li2>
+        </ul>
+
         <textarea id="importExport" style="width: calc(100% - 5px); height: 60%"
                   onchange="taChange();" onkeyup="taChange()"></textarea>
       </div>
@@ -1327,9 +1362,8 @@
 <!--          <block type="import_return"></block>-->
 <!--          <block type="import_noReturn"></block>-->
           <block type="import_header"></block>
-<!--          <block type="import_statement"></block>-->
           <block type="import_statement">
-            <mutation lib="TestLibrary" src="TestLibrary.blk" readOnly="true"></mutation>
+            <mutation lib="MyLibrary" src="MyLibrary.blk"></mutation>
           </block>
           <!--<block type="import_noReturn" id="123">
             <mutation func="Statement Function" args="2">
