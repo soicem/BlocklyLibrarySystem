@@ -409,6 +409,17 @@
                 return myCanvas.getSpecificSprite().getY();
               }));
 
+      interpreter.setProperty(scope, 'getMouseY',
+              interpreter.createNativeFunction(function() {
+                return myCanvas.getHandler().getMousePosition().getY();
+              }));
+
+      interpreter.setProperty(scope, 'getMouseX',
+              interpreter.createNativeFunction(function() {
+                return myCanvas.getHandler().getMousePosition().getX();
+              }));
+
+
       interpreter.setProperty(scope, 'setXY',
               interpreter.createNativeFunction(function(x, y) {
                 //text = text ? text.toString() : '';
