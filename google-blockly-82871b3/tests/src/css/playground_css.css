@@ -234,7 +234,7 @@ canvas {
   overflow: hidden;
 }
 
-div.costumeImg {
+div.spriteImg {
     margin: 4px;
     border: 1px solid #ccc;
     /*float: left;*/

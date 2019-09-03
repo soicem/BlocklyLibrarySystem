@@ -47,8 +47,8 @@ class Sprite {
     /*image객체의 리스트인 imageCostume 생성*/
     this._imageCostume = [];
     this._imageCostumeData = [];
-    this.setImageCostume(0)
-    this.setImageCostumeData(0);
+    this.setImageCostume(null)
+    this.setImageCostumeData(null);
 
     /* Event 별 코드 저장을 위함 (ex : whenFlagClicked)*/
     /* 특정 이벤트를 여러번 작성 가능*/
