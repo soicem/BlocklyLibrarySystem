@@ -809,7 +809,7 @@
         document.getElementById("spriteImageGallery").innerHTML += a;
         console.log(a);
         reader.addEventListener('load', function () {
-          myCanvas.addCostumeAndSelect(spriteName + '_' + spriteObject.getCurrentCostumeNum(), reader.result, name);
+          myCanvas.addCostumeAndSelect(spriteName + '_' + spriteObject.ge tCurrentCostumeNum(), reader.result, name);
         });
         initPage();
         loadImage(path + name);
@@ -818,16 +818,13 @@
         }
         document.getElementById("costumeChooser").value = "";
       }
-
     </script>
     <div id="spriteImageGallery_container" class="rounded">
       <div id="spriteImageGallery">
-        <div id="costumeGallery">
-          <div class="costumeImg" id="penguin_0"
-               onclick="myCanvas.setCurrentCostume(0)">
-            <img src="penguin.png" alt="">
-            <div class="desc">penguin_0</div>
-          </div>
+        <div class="costumeImg" id="penguin_0"
+             onclick="myCanvas.setCurrentCostume(0)">
+          <img src="penguin.png" alt="">
+          <div class="desc">penguin_0</div>
         </div>
         <div class="plusButton spritePlus">
           <span class="plus">
@@ -849,9 +846,9 @@
                     <INPUT type="button" value="Save" onClick="saveImage(myCanvas.getCurrentSpriteName() + '_' + myCanvas.getCurrentCostumeNum())" />
                 </a>
                 <INPUT type="button" value="Clear" onClick="initPage()" />
-              </div>
-              <div>
-                <INPUT type="button" value="Clear Gallery" onClick="clearCostumeGallery()" />
+                <!--
+                <INPUT type="button" value="History" onClick="showHistory()" />
+                -->
               </div>
               <div>
                 <input type="button" value="Save as Txt" onClick="SaveAsTxt()" />

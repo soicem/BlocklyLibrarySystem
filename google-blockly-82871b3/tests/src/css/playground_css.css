@@ -239,7 +239,7 @@ div.costumeImg {
     border: 1px solid #ccc;
     /*float: left;*/
     width: 90px;
-    display: block;
+    display: inline-block;
 }
 div.costumeImg img {
   width: 90px;
