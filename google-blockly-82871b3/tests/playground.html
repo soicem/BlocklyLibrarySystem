@@ -149,6 +149,7 @@
         logEvents(false);
       }
       tabInit();
+      loadImage('penguin.png');
       onLoadPage();
     }
 
@@ -796,7 +797,8 @@
             txt += "<br>The path of the selected file: " + x.value;
           }
         }
-        myCanvas.setCurrentCostumeNum(spriteObject.getImageCostumeLength())
+        console.log(spriteObject.getImageCostumeLength() - 1);
+        myCanvas.setCurrentCostumeNum(spriteObject.getImageCostumeLength() - 1)
         var costumeNum = myCanvas.getCurrentCostumeNum() + "";
         var spriteName = getNoDuplicationName(name); // Sprite name 중복 제거
         var a = '<div class="costumeImg\" id="' + myCanvas.getCurrentSpriteName() + '_' + costumeNum + '" onclick="myCanvas.setCurrentCostume('
@@ -804,10 +806,10 @@
                 + '<img src="' + path + name + '" alt="">'
                 + '<div class="desc">' + myCanvas.getCurrentSpriteName() + '_' + costumeNum + '</div>'
                 + '</div>';
-        document.getElementById("costumeGallery").innerHTML += a;
+        document.getElementById("spriteImageGallery").innerHTML += a;
         console.log(a);
         reader.addEventListener('load', function () {
-          myCanvas.addCostumeAndSelect(name);
+          myCanvas.addCostumeAndSelect(spriteName + '_' + spriteObject.getCurrentCostumeNum(), reader.result, name);
         });
         initPage();
         loadImage(path + name);
