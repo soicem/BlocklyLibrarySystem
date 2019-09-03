@@ -380,12 +380,4 @@ class Sprite {
     const sprite = this.getCanvas().getSpriteByName(spriteName);
     return CanvasUtil.isSpriteTouchingSprite(this.getCanvas(), this, sprite);
   }
-
-  getMouseX() {
-    return this.getCanvas().getMouseX();
-  }
-
-  getMouseY() {
-    return this.getCanvas().getMouseY();
-  }
 }

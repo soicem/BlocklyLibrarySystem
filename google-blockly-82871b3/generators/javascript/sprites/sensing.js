@@ -70,6 +70,7 @@ Blockly.JavaScript['sprite_getMouseXY'] = function(block) {
     Y: "getMouseY",
   };
   const dropdown_xy = block.getFieldValue('XY');
-  const code = `${OPTIONS[dropdown_xy]}()`;
+  let funcName = OPTIONS[dropdown_xy];
+  const code = funcName + "()";
   return [code, Blockly.JavaScript.ORDER_NONE];
 };

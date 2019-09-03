@@ -223,7 +223,7 @@ Blockly.Blocks['sprite_getMouseXY'] = {
   init: function () {
     this.appendDummyInput()
     .appendField("mouse")
-    .appendField(new Blockly.FieldDropdown([["x", "X"], ["y", "Y"]]), "XY");
+    .appendField(new Blockly.FieldDropdown([["getMouseX", "X"], ["getMouseY", "Y"]]), "XY");
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(190);
