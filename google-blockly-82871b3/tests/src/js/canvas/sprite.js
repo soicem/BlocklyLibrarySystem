@@ -412,11 +412,11 @@ class Sprite {
     return CanvasUtil.isSpriteTouchingSprite(this.getCanvas(), this, sprite);
   }
 
-  sprite_nextCostume(){
+  nextCostume(){
     this._imageSrc = this.getCostume(this.getCurrentCostumeSrc())
   }
 
-  sprite_switchCostume(spriteNum){
+  switchCostume(spriteNum){
     this._image.src = this.getCostume(spriteNum);
   }
 }

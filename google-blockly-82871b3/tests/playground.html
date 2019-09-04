@@ -322,6 +322,18 @@
     }
 
     function initApi(interpreter, scope) {
+      interpreter.setProperty(scope, 'nextCostume',
+          interpreter.createNativeFunction(function() {
+            myCanvas.getSpecificSprite().nextCostume();
+
+          }));
+
+      interpreter.setProperty(scope, 'switchCostume',
+          interpreter.createNativeFunction(function(spriteNum) {
+            myCanvas.getSpecificSprite().switchCostume(spriteNum);
+
+          }));
+
       interpreter.setProperty(scope, 'touching_edge',
               interpreter.createNativeFunction(function() {
                 // 480, 400 : canvas size (hardcoding)
