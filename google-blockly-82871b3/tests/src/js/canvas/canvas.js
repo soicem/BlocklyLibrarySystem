@@ -23,6 +23,7 @@ class Canvas {
     this._sprites = {};
     this._spritesOrder = [null]; // Index 0 is reserved for a stage
     this._currentSpriteName = null;
+    this._currentCostumeNum = 0;
     this._specificSpriteName = null; // 코드 실행 시 사용
     this._waitName = null;
     this.getHandler().startTrackMousePosition();
@@ -94,11 +95,19 @@ class Canvas {
   }
 
   getCurrentSpriteName() {
-    return this._currentSpriteName
+    return this._currentSpriteName;
   }
 
   setCurrentSpriteName(spriteName) {
     this._currentSpriteName = spriteName;
+  }
+
+  getCurrentCostumeNum() {
+    return this._currentCostumeNum;
+  }
+
+  setCurrentCostumeNum(costumeNum) {
+    this._currentCostumeNum = costumeNum;
   }
 
   getSpecificSpriteName() {
@@ -176,6 +185,44 @@ class Canvas {
         'sprite_H').value = this.getCurrentSprite().getHeight();
     document.getElementById(
         'sprite_W').value = this.getCurrentSprite().getWidth();
+
+    this.loadCurrentSpriteCostumes();
+  }
+
+  loadCurrentSpriteCostumes(){
+    clearCostumeGallery();
+    var currentSprite = this.getCurrentSprite();
+    var length = currentSprite.getCostume().length;
+    //alert("CostumeLength = " + length);
+    for(var i = 0; length > i; i++){
+      var a = '<div class="costumeImg\" id="' + myCanvas.getCurrentSpriteName() + '_' + i + '" onclick="myCanvas.setCurrentCostume(' + i + ')">'
+          + '<img src="' + currentSprite.getCostume()[i].src + '" alt="">'
+          + '<div class="desc">' + myCanvas.getCurrentSpriteName() + '_' + i + '</div>'
+          + '</div>';
+      document.getElementById("costumeGallery").innerHTML += a;
+    }
+    this.setCurrentCostume(0);
+  }
+
+  setCurrentCostume(num) {
+    this.setCurrentCostumeNum(num);
+    var l = document.getElementsByClassName('costumeImg');
+    for (var i = 0; i < l.length; i++) {
+      l[i].style.border = 'solid 1px #ccc';
+    }
+    initPage();
+    loadImage(this.getCurrentSprite().getCostumeSource(this.getCurrentCostumeNum()));
+    document.getElementById(this.getCurrentSpriteName() + '_' + num).style.border = "solid 2px #415DCC";
+  }
+
+  addCostumeAndSelect(imageSrc) {
+    //console.log(spriteName);
+    //this.setCurrentCostumeNum(this.getCurrentCostumeNum() + 1);
+    var a = this.getCurrentCostumeNum();
+    var image = new Image();
+    image.src = imageSrc;
+    this.getCurrentSprite().setCostume(image);
+    this.setCurrentCostume(this.getCurrentCostumeNum() + 1);
   }
 
   getLayerNumber(sprite) {

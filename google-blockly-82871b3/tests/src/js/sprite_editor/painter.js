@@ -665,10 +665,7 @@ function triMouseUp(event) {
     pos.isDraw = false;
 }
 
-function saveImage() {
-  console.log("saveImage()");
-  var imageName = document.getElementById("title").value;
-  console.log(imageName.lenght);
+function saveImage(imageName) {
   if (imageName.length == 0) {
     imageName = "image";
   }
@@ -788,6 +785,11 @@ function initPage() {
   initHistory();
 }
 
+function clearCostumeGallery(){
+  a = document.getElementById("costumeGallery");
+  a.innerHTML = "";
+  initPage();
+}
 
 function reDrawCanvas() {
   console.log("reDrawCanvas");

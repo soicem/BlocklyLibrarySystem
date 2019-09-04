@@ -185,9 +185,6 @@ canvas {
 }
 
 /* ---------------------------------sprite tab */
-#spriteCanvas {
-  border: 1px solid black;
-}
 
 #spriteCanvas_wrapper{
   float: left;
@@ -231,13 +228,23 @@ canvas {
 
 #spriteImageGallery {
   width: 100%;
-  height: calc(100% - 20px);
+  height: 100%;
   background-color: white;
-  margin-block-start: 0.67em;
   white-space: nowrap;
   overflow: hidden;
 }
 
+div.costumeImg {
+    margin: 4px;
+    border: 1px solid #ccc;
+    /*float: left;*/
+    width: 90px;
+    display: block;
+}
+div.costumeImg img {
+  width: 90px;
+  height: 90px;
+}
 #CanvasAndPainter_container {
   float: right;
   overflow: auto;
@@ -333,7 +340,7 @@ div.stage img {
 div.desc {
   text-align: center;
   text-overflow: ellipsis;
-  width: 70px;
+  width: 100%;
   font-size: 80%;
   overflow: hidden;
 }
@@ -353,7 +360,7 @@ div.desc {
 
 .spritePlus {
   right: 10px;
-  bottom: 20px;
+  bottom: 10px;
 }
 
 .stagePlus {

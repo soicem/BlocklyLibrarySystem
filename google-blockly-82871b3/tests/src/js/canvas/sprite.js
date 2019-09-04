@@ -34,6 +34,7 @@ class Sprite {
     this._name = name; // 이름
     this._isContinue = true;
     this._isHalting = false;
+    this._image = [];
     this.setCanvas(canvas);
     this.setImage(image);
     this.setImageData(imageData);
@@ -95,11 +96,19 @@ class Sprite {
   }
 
   getImage() {
-    return this._image;
+    return this._image[0];
   }
 
   setImage(image) {
-    this._image = image;
+    this._image[0] = image;
+  }
+
+  setCostume(image) {
+    this._image.push(image);
+  }
+
+  getCostume() {
+    return this._image;
   }
 
   getImageData() {
@@ -171,6 +180,14 @@ class Sprite {
 
   getImageSource() {
     return this.getImage().src;
+  }
+
+  getCostumeSource(num) {
+    return this.getCostume()[num].src;
+  }
+
+  setCostumeSource(num, src) {
+    this.getCostume()[num].src = src;
   }
 
   getX() {

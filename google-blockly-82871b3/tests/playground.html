@@ -682,13 +682,13 @@
       document.getElementById(tab).parentNode.style.color = 'white';
     }
 
-    function loadImage(){
+    function loadImage(src){
       var imgClo = new Image();
       imgClo.addEventListener('load', function(){
         var ctx = document.getElementById('spriteCanvas').getContext("2d");
-        ctx.drawImage( imgClo , 200, 200, 100, 100);
+        ctx.drawImage(imgClo , 200, 200, 100, 100);
       },false);
-      imgClo.src="penguin.png";
+      imgClo.src = src;
     }
 
     function myStart() {
@@ -759,12 +759,77 @@
   </div>
   <!--- Sprite Tab ---->
   <div id="sprite">
+    <script>
+      function costumeChooser() {
+        var path = "";
+        var name;
+        var x = document.getElementById("costumeChooser");
+        var txt = "";
+        var imageFile = x.files[0];
+        var reader = new FileReader();
+        var spriteObject = myCanvas.getCurrentSprite();
+
+        if ('files' in x) {
+          if (x.files.length === 0) {
+            txt = "Select one or more files.";
+          } else {
+            for (var i = 0; i < x.files.length; i++) {
+              txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
+              var file = x.files[i];
+              if ('name' in file) {
+                txt += "name: " + file.name + "<br>";
+                name = file.name;
+              }
+              if ('size' in file) {
+                txt += "size: " + file.size + " bytes <br>";
+              }
+              if ('value' in file) {
+                txt += "value: " + file.value + " bytes <br>";
+              }
+            }
+          }
+        } else {
+          if (x.value === "") {
+            txt += "Select one or more files.";
+          } else {
+            txt += "The files property is not supported by your browser!";
+            txt += "<br>The path of the selected file: " + x.value;
+          }
+        }
+
+        var costumeNum = myCanvas.getCurrentCostumeNum() + 1;
+        var spriteName = getNoDuplicationName(name); // Sprite name 중복 제거
+        var a = '<div class="costumeImg\" id="' + myCanvas.getCurrentSpriteName() + '_' + costumeNum + '" onclick="myCanvas.setCurrentCostume('
+                + costumeNum + ')">'
+                + '<img src="' + path + name + '" alt="">'
+                + '<div class="desc">' + myCanvas.getCurrentSpriteName() + '_' + costumeNum + '</div>'
+                + '</div>';
+        document.getElementById("costumeGallery").innerHTML += a;
+        reader.addEventListener('load', function () {
+          myCanvas.addCostumeAndSelect(name);
+        });
+        initPage();
+        loadImage(path + name);
+        if (imageFile) {
+          reader.readAsArrayBuffer(imageFile);
+        }
+        document.getElementById("costumeChooser").value = "";
+      }
+
+    </script>
     <div id="spriteImageGallery_container" class="rounded">
       <div id="spriteImageGallery">
+        <div id="costumeGallery">
+          <div class="costumeImg" id="penguin_0"
+               onclick="myCanvas.setCurrentCostume(0)">
+            <img src="penguin.png" alt="">
+            <div class="desc">penguin_0</div>
+          </div>
+        </div>
         <div class="plusButton spritePlus">
           <span class="plus">
-            <input type="file" id="spriteImagePlus" accept="image/*" multiple size="50"
-                   onchange="spriteChooser()">
+            <input type="file" id="costumeChooser" accept="image/*" multiple size="50"
+                   onchange="costumeChooser()">
           </span>
         </div>
       </div>
@@ -776,15 +841,14 @@
         </div>
         <span class="cell">
               <INPUT type="file" id="load_filename" value="Load" onChange="loadFile()" />
-              <div>Title <input id="title" size="15" /></div>
               <div>
                 <a id="saveImage" download="image.png">
-                    <INPUT type="button" value="Save" onClick="saveImage()" />
+                    <INPUT type="button" value="Save" onClick="saveImage(myCanvas.getCurrentSpriteName() + '_' + myCanvas.getCurrentCostumeNum())" />
                 </a>
                 <INPUT type="button" value="Clear" onClick="initPage()" />
-                <!--
-                <INPUT type="button" value="History" onClick="showHistory()" />
-                -->
+              </div>
+              <div>
+                <INPUT type="button" value="Clear Gallery" onClick="clearCostumeGallery()" />
               </div>
               <div>
                 <input type="button" value="Save as Txt" onClick="SaveAsTxt()" />
@@ -798,7 +862,6 @@
                   <INPUT type="button" value="Redraw" onClick="reDrawCanvas()" />
                   -->
             </span>
-        <input type="button" value="파일 불러오기" onclick="loadImage()">
       </div>
       <script>
 
@@ -1093,7 +1156,6 @@
             + '</div>';
         //alert(a);
         document.getElementById("spriteGallery").innerHTML += a;
-        document.getElementById("spriteImageGallery").innerHTML += a;
             reader.addEventListener('load', function () {
               // sprite에 대한 canvas 용 objects를 저장한다.
           myCanvas.addSpriteAndSelect(spriteName, reader.result, name); // spriteName : penguin, name : penguin.png
