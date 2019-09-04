@@ -32,58 +32,57 @@ goog.require('Blockly');
 Blockly.defineBlocksWithJsonArray([
   {
     "type": "sprite_touching",
-    "message0": "touching %1",
+    "message0": "%{BKY_SPRITE_TOUCHING_MSG}",
     "args0": [
       {
         "type": "field_dropdown",
         "name": "OPTION",
         "options": [
           [
-            "mouse pointer",
+            "%{BKY_SPRITE_MOUSE}",
             "MOUSE"
           ],
           [
-            "edge",
+            "%{BKY_SPRITE_EDGE}",
             "EDGE"
           ]
         ]
       }
     ],
-    "extensions": ["testingExtension"],
+    "extensions": ["spriteListUpdateExtension"],
     "inputsInline": true,
     "output": null,
     "colour": 190,
     "tooltip": "",
     "helpUrl": ""
   }
-  ]);
+]);
 
-Blockly.Extensions.register('testingExtension', function () {
-      let options = [
-        ["mouse pointer", "MOUSE"],
-        ["edge", "EDGE"]
-      ];
-
+Blockly.Extensions.register('spriteListUpdateExtension', function () {
       if (myCanvas !== undefined && myCanvas !== null) {
+
+        // Delete everything other than first two, which is static
+        let newList = this.getField("OPTION").menuGenerator_.slice(0, 2);
+
         for (let i = 1; i < myCanvas.getSpritesOrder().length; i++) {
           let sprite = myCanvas.getSpritesOrder()[i];
           let spriteName = sprite.name;
 
-          if (sprite.isClone[0]) continue;
+          if (sprite.isClone[0]) {
+            continue;
+          }
 
-          options.push([spriteName, spriteName]);
+          newList.push([spriteName, spriteName]);
         }
+
+        this.getField("OPTION").menuGenerator_ = newList;
+
       }
-
-      let dropdown = new Blockly.FieldDropdown(options);
-
-      this.inputList[0].removeField("OPTION");
-      this.inputList[0].appendField(dropdown, 'OPTION')
     }
 );
 
 Blockly.Blocks['sprite_touchingColor'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
     .appendField("touching color")
     .appendField(new Blockly.FieldColour("#0000ff"), "COLOR");
@@ -96,7 +95,7 @@ Blockly.Blocks['sprite_touchingColor'] = {
 };
 
 Blockly.Blocks['sprite_colorTouchingColor'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
     .appendField(new Blockly.FieldColour("#0000ff"), "COLOR1")
     .appendField("is touching")
@@ -110,10 +109,11 @@ Blockly.Blocks['sprite_colorTouchingColor'] = {
 };
 
 Blockly.Blocks['sprite_distanceTo'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
     .appendField("distance to")
-    .appendField(new Blockly.FieldDropdown([["mouse pointer","MOUSE"]]), "OPTION");
+    .appendField(new Blockly.FieldDropdown([["mouse pointer", "MOUSE"]]),
+        "OPTION");
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(190);
@@ -123,7 +123,7 @@ Blockly.Blocks['sprite_distanceTo'] = {
 };
 
 Blockly.Blocks['sprite_askWait'] = {
-  init: function() {
+  init: function () {
     this.appendValueInput("MESSAGE")
     .setCheck(null)
     .appendField("ask");
@@ -139,7 +139,7 @@ Blockly.Blocks['sprite_askWait'] = {
 };
 
 Blockly.Blocks['sprite_answer'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
     .appendField("answer");
     this.setInputsInline(true);
@@ -151,52 +151,52 @@ Blockly.Blocks['sprite_answer'] = {
 };
 
 Blockly.Blocks['sprite_keyPress'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
     .appendField("key")
     .appendField(new Blockly.FieldDropdown([
-      ["any","ANY"],
-      ["space","SPACE"],
-      ["up arrow","UP"],
-      ["down arrow","DOWN"],
-      ["right arrow","RIGHT"],
-      ["left arrow","LEFT"],
-      ["a","A"],
-      ["b","B"],
-      ["c","C"],
-      ["d","D"],
-      ["e","E"],
-      ["f","F"],
-      ["g","G"],
-      ["h","H"],
-      ["i","I"],
-      ["j","J"],
-      ["k","K"],
-      ["l","L"],
-      ["m","M"],
-      ["n","N"],
-      ["o","O"],
-      ["p","P"],
-      ["q","Q"],
-      ["r","R"],
-      ["s","S"],
-      ["t","T"],
-      ["u","U"],
-      ["v","V"],
-      ["w","W"],
-      ["x","X"],
-      ["y","Y"],
-      ["z","Z"],
-      ["0","ZERO"],
-      ["1","ONE"],
-      ["2","TWO"],
-      ["3","THREE"],
-      ["4","FOUR"],
-      ["5","FIVE"],
-      ["6","SIX"],
-      ["7","SEVEN"],
-      ["8","EIGHT"],
-      ["9","NINE"]
+      ["any", "ANY"],
+      ["space", "SPACE"],
+      ["up_arrow", "UP"],
+      ["down_arrow", "DOWN"],
+      ["right_arrow", "RIGHT"],
+      ["left_arrow", "LEFT"],
+      ["a", "A"],
+      ["b", "B"],
+      ["c", "C"],
+      ["d", "D"],
+      ["e", "E"],
+      ["f", "F"],
+      ["g", "G"],
+      ["h", "H"],
+      ["i", "I"],
+      ["j", "J"],
+      ["k", "K"],
+      ["l", "L"],
+      ["m", "M"],
+      ["n", "N"],
+      ["o", "O"],
+      ["p", "P"],
+      ["q", "Q"],
+      ["r", "R"],
+      ["s", "S"],
+      ["t", "T"],
+      ["u", "U"],
+      ["v", "V"],
+      ["w", "W"],
+      ["x", "X"],
+      ["y", "Y"],
+      ["z", "Z"],
+      ["0", "ZERO"],
+      ["1", "ONE"],
+      ["2", "TWO"],
+      ["3", "THREE"],
+      ["4", "FOUR"],
+      ["5", "FIVE"],
+      ["6", "SIX"],
+      ["7", "SEVEN"],
+      ["8", "EIGHT"],
+      ["9", "NINE"]
     ]), "KEY")
     .appendField("pressed?");
     this.setInputsInline(true);
@@ -208,7 +208,7 @@ Blockly.Blocks['sprite_keyPress'] = {
 };
 
 Blockly.Blocks['sprite_mouseDown'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
     .appendField("mouse down?");
     this.setInputsInline(true);
@@ -220,10 +220,10 @@ Blockly.Blocks['sprite_mouseDown'] = {
 };
 
 Blockly.Blocks['sprite_getMouseXY'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
     .appendField("mouse")
-    .appendField(new Blockly.FieldDropdown([["x","X"], ["y","Y"]]), "XY");
+    .appendField(new Blockly.FieldDropdown([["getMouseX", "X"], ["getMouseY", "Y"]]), "XY");
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(190);
@@ -233,10 +233,12 @@ Blockly.Blocks['sprite_getMouseXY'] = {
 };
 
 Blockly.Blocks['sprite_setDragMode'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
     .appendField("set drag mode:")
-    .appendField(new Blockly.FieldDropdown([["draggable","DRAGGABLE"], ["not draggable","NOT_DRAGGABLE"]]), "OPTION");
+    .appendField(new Blockly.FieldDropdown(
+        [["draggable", "DRAGGABLE"], ["not draggable", "NOT_DRAGGABLE"]]),
+        "OPTION");
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(190);
@@ -246,7 +248,7 @@ Blockly.Blocks['sprite_setDragMode'] = {
 };
 
 Blockly.Blocks['sprite_getLoudness'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
     .appendField("loudness");
     this.setInputsInline(true);
@@ -258,7 +260,7 @@ Blockly.Blocks['sprite_getLoudness'] = {
 };
 
 Blockly.Blocks['sprite_getTimer'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
     .appendField("timer");
     this.setInputsInline(true);
@@ -270,7 +272,7 @@ Blockly.Blocks['sprite_getTimer'] = {
 };
 
 Blockly.Blocks['sprite_resetTimer'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
     .appendField("reset timer");
     this.setInputsInline(true);
@@ -283,11 +285,13 @@ Blockly.Blocks['sprite_resetTimer'] = {
 };
 
 Blockly.Blocks['sprite_getStage'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
-    .appendField(new Blockly.FieldDropdown([["backdrop #","BACKDROP_NUM"], ["backdrop name","BACKDROP_NAME"], ["volume","VOLUME"], ["my variable","VARIABLE"]]), "SRC")
+    .appendField(new Blockly.FieldDropdown(
+        [["backdrop #", "BACKDROP_NUM"], ["backdrop name", "BACKDROP_NAME"],
+          ["volume", "VOLUME"], ["my variable", "VARIABLE"]]), "SRC")
     .appendField("of")
-    .appendField(new Blockly.FieldDropdown([["stage","STAGE"]]), "OPTION");
+    .appendField(new Blockly.FieldDropdown([["stage", "STAGE"]]), "OPTION");
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(190);
@@ -297,10 +301,13 @@ Blockly.Blocks['sprite_getStage'] = {
 };
 
 Blockly.Blocks['sprite_getDate'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
     .appendField("current")
-    .appendField(new Blockly.FieldDropdown([["date","DATE"], ["year","YEAR"], ["month","MONTH"], ["day of week","DAY"], ["hour","HOUR"], ["minute","MINUTE"], ["second","SECOND"]]), "OPTION");
+    .appendField(new Blockly.FieldDropdown(
+        [["date", "DATE"], ["year", "YEAR"], ["month", "MONTH"],
+          ["day of week", "DAY"], ["hour", "HOUR"], ["minute", "MINUTE"],
+          ["second", "SECOND"]]), "OPTION");
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(190);
@@ -310,9 +317,10 @@ Blockly.Blocks['sprite_getDate'] = {
 };
 
 Blockly.Blocks['sprite_getSince'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
-    .appendField(new Blockly.FieldDropdown([["years","YEAR"], ["months","MONTH"], ["days","DAY"]]), "OPTION")
+    .appendField(new Blockly.FieldDropdown(
+        [["years", "YEAR"], ["months", "MONTH"], ["days", "DAY"]]), "OPTION")
     .appendField("since 2000");
     this.setInputsInline(true);
     this.setOutput(true, null);
@@ -323,7 +331,7 @@ Blockly.Blocks['sprite_getSince'] = {
 };
 
 Blockly.Blocks['sprite_getUsername'] = {
-  init: function() {
+  init: function () {
     this.appendDummyInput()
     .appendField("username");
     this.setInputsInline(true);

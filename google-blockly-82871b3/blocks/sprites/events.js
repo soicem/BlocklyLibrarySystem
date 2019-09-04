@@ -29,77 +29,88 @@ goog.provide('Blockly.Blocks.events');
 goog.require('Blockly.Blocks');
 goog.require('Blockly');
 
+const keyList = [
+  ["%{BKY_SPRITE_ANY}","ANY"],
+  ["%{BKY_SPRITE_SPACE}","SPACE"],
+  ["%{BKY_SPRITE_UP_ARROW}","UP"],
+  ["%{BKY_SPRITE_DOWN_ARROW}","DOWN"],
+  ["%{BKY_SPRITE_RIGHT_ARROW}","RIGHT"],
+  ["%{BKY_SPRITE_LEFT_ARROW}","LEFT"],
+  ["a","A"],
+  ["b","B"],
+  ["c","C"],
+  ["d","D"],
+  ["e","E"],
+  ["f","F"],
+  ["g","G"],
+  ["h","H"],
+  ["i","I"],
+  ["j","J"],
+  ["k","K"],
+  ["l","L"],
+  ["m","M"],
+  ["n","N"],
+  ["o","O"],
+  ["p","P"],
+  ["q","Q"],
+  ["r","R"],
+  ["s","S"],
+  ["t","T"],
+  ["u","U"],
+  ["v","V"],
+  ["w","W"],
+  ["x","X"],
+  ["y","Y"],
+  ["z","Z"],
+  ["0","ZERO"],
+  ["1","ONE"],
+  ["2","TWO"],
+  ["3","THREE"],
+  ["4","FOUR"],
+  ["5","FIVE"],
+  ["6","SIX"],
+  ["7","SEVEN"],
+  ["8","EIGHT"],
+  ["9","NINE"]
+];
 
-Blockly.Blocks['sprite_flagClicked'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("when")
-    .appendField(new Blockly.FieldImage("https://scratch.mit.edu/static/assets/2e0c4790f8f9cf28e3c346b9cef0fcb6.svg", 15, 15, "*"))
-    .appendField("clicked");
-    this.setInputsInline(true);
-    this.setNextStatement(true, null);
-    this.setColour(60);
-    this.setTooltip("");
-    this.setHelpUrl("");
+Blockly.defineBlocksWithJsonArray([
+  {
+    "type": "sprite_flagClicked",
+    "message0": "%{BKY_SPRITE_FLAGCLICKED_MSG}",
+    "args0": [
+      {
+        "type": "field_image",
+        "src": "https://scratch.mit.edu/static/assets/2e0c4790f8f9cf28e3c346b9cef0fcb6.svg",
+        "width": 15,
+        "height": 15,
+        "alt": "*",
+        "flipRtl": false
+      }
+    ],
+    "inputsInline": true,
+    "nextStatement": null,
+    "colour": 60,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_keyPressed",
+    "message0": "%{BKY_SPRITE_KEYPRESSED_MSG}",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "KEY",
+        "options": keyList
+      }
+    ],
+    "inputsInline": true,
+    "nextStatement": null,
+    "colour": 60,
+    "tooltip": "",
+    "helpUrl": ""
   }
-};
-
-Blockly.Blocks['sprite_keyPressed'] = {
-  init: function() {
-    this.appendDummyInput()
-    .appendField("when")
-    .appendField(new Blockly.FieldDropdown([
-        ["any","ANY"],
-        ["space","SPACE"],
-        ["up arrow","UP"],
-        ["down arrow","DOWN"],
-        ["right arrow","RIGHT"],
-        ["left arrow","LEFT"],
-        ["a","A"],
-        ["b","B"],
-        ["c","C"],
-        ["d","D"],
-        ["e","E"],
-        ["f","F"],
-        ["g","G"],
-        ["h","H"],
-        ["i","I"],
-        ["j","J"],
-        ["k","K"],
-        ["l","L"],
-        ["m","M"],
-        ["n","N"],
-        ["o","O"],
-        ["p","P"],
-        ["q","Q"],
-        ["r","R"],
-        ["s","S"],
-        ["t","T"],
-        ["u","U"],
-        ["v","V"],
-        ["w","W"],
-        ["x","X"],
-        ["y","Y"],
-        ["z","Z"],
-        ["0","ZERO"],
-        ["1","ONE"],
-        ["2","TWO"],
-        ["3","THREE"],
-        ["4","FOUR"],
-        ["5","FIVE"],
-        ["6","SIX"],
-        ["7","SEVEN"],
-        ["8","EIGHT"],
-        ["9","NINE"]
-    ]), "KEY")
-    .appendField("key pressed");
-    this.setInputsInline(true);
-    this.setNextStatement(true, null);
-    this.setColour(60);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
+]);
 
 Blockly.Blocks['sprite_spriteClicked'] = {
   init: function() {

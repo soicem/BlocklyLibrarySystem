@@ -41,7 +41,7 @@ goog.require('Blockly');
 //     "mutator": "import_return_mutator"
 //   },
 //   {
-//     "type": "import_statement",
+//     "type": "import_noReturn",
 //     "message0": "library function",
 //     "inputsInline": true,
 //     "previousStatement": null,
@@ -52,6 +52,69 @@ goog.require('Blockly');
 //   }
 // ]);  // END JSON EXTRACT (Do not delete this comment.)
 
+Blockly.defineBlocksWithJsonArray([
+  {
+    "type": "import_header",
+    "message0": "%{BKY_IMPORT_HEADER_MSG}",
+    "nextStatement": "LibraryImport",
+    "colour": "#b38600",
+    "tooltip": "",
+    "helpUrl": ""
+  }
+]);
+
+Blockly.Blocks['import_statement'] = {
+  libraryName_: '',
+  librarySrc_: '',
+  readOnly_: false,
+
+  init: function() {
+    this.appendDummyInput("LINE1")
+    .appendField("Library");
+    this.appendDummyInput("LINE2")
+    .appendField("from")
+    .appendField(new Blockly.FieldTextInput("url"), "URL");
+    this.setPreviousStatement(true, "LibraryImport");
+    this.setNextStatement(true, "LibraryImport");
+    this.setColour("#e3ac00");
+    this.setTooltip("");
+    this.setHelpUrl("");
+  },
+
+  mutationToDom: function() {
+    let container = document.createElement("mutation");
+    container.setAttribute("lib", this.libraryName_);
+    container.setAttribute("src", this.librarySrc_);
+    container.setAttribute("readOnly", this.readOnly_);
+
+    return container;
+  },
+
+  domToMutation: function(xmlElement) {
+    this.libraryName_ = xmlElement.getAttribute("lib");
+    this.librarySrc_ = xmlElement.getAttribute("src");
+    this.readOnly_ = xmlElement.getAttribute("readOnly");
+
+    this.updateShape_();
+  },
+
+  resetShape_: function() {
+    this.removeInput("LINE1");
+    this.removeInput("LINE2");
+  },
+
+  updateShape_: function() {
+    this.resetShape_();
+
+    this.appendDummyInput("LINE1")
+    .appendField(this.libraryName_);
+    if (this.readOnly_ !== "true") {
+      this.appendDummyInput("LINE2")
+      .appendField("from")
+      .appendField(new Blockly.FieldTextInput(this.librarySrc_), "URL");
+    }
+  }
+};
 
 Blockly.Blocks['inline_configure'] = {
   init: function() {
@@ -66,12 +129,12 @@ Blockly.Blocks['inline_configure'] = {
 Blockly.Blocks['import_return'] = {
   argsCount_: 0,
   argsName_: [],
+  libraryName_: '',
   funcName_: '',
 
   init: function() {
     this.appendDummyInput("FUNC")
         .appendField("", "FUNC_FIELD");
-    this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour("#e3ac00");
     this.setTooltip("");
@@ -88,6 +151,7 @@ Blockly.Blocks['import_return'] = {
   mutationToDom: function() {
     let container = document.createElement("mutation");
 
+    container.setAttribute("lib", this.libraryName_);
     container.setAttribute("func", this.funcName_);
     if (this.argsCount_ > 0) {
       container.setAttribute("args", this.argsCount_);
@@ -103,6 +167,7 @@ Blockly.Blocks['import_return'] = {
   },
 
   domToMutation: function(xmlElement) {
+    this.libraryName_ = xmlElement.getAttribute("lib");
     this.funcName_ = xmlElement.getAttribute("func");
     this.argsCount_ = parseInt(xmlElement.getAttribute("args"), 10) || 0;
     this.argsName_ = [];
@@ -124,14 +189,14 @@ Blockly.Blocks['import_return'] = {
   },
 
   compose: function(containerBlock) {
-    let inline = containerBlock.getFieldValue("INLINE_FIELD").toLowerCase() == "true";
+    let inline = containerBlock.getFieldValue("INLINE_FIELD").toLowerCase() === "true";
     this.setInputsInline(inline);
   },
 
   updateShape_: function() {
     this.resetShape_();
 
-    this.getField("FUNC_FIELD").setText(this.funcName_);
+    this.getField("FUNC_FIELD").setText(`${this.libraryName_}.${this.funcName_}`);
 
     if (this.argsCount_ > 0) {
       this.getInput("FUNC").appendField("with", "WITH_FIELD");
@@ -145,7 +210,7 @@ Blockly.Blocks['import_return'] = {
   },
 
   resetShape_: function() {
-    this.getField("FUNC_FIELD").setText("function");
+    this.getField("FUNC_FIELD").setText("basic.function");
 
     if (this.getField("WITH_FIELD")) {
       this.removeField("WITH_FIELD");
@@ -159,15 +224,15 @@ Blockly.Blocks['import_return'] = {
   }
 };
 
-Blockly.Blocks['import_statement'] = {
+Blockly.Blocks['import_noReturn'] = {
   argsCount_: 0,
   argsName_: [],
+  libraryName_: '',
   funcName_: '',
 
   init: function() {
     this.appendDummyInput("FUNC")
         .appendField("", "FUNC_FIELD");
-    this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour("#e3ac00");

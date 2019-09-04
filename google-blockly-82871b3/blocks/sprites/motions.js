@@ -56,7 +56,7 @@ Blockly.defineBlocksWithJsonArray([
         "options": [
           [
             {
-              "src": "http://downloadicons.net/sites/default/files/rotate-clockwise-arrow-icon-63159.png",
+              "src": "https://image.flaticon.com/icons/svg/60/60546.svg",
               "width": 15,
               "height": 15,
               "alt": "*"
@@ -65,7 +65,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              "src": "http://downloadicons.net/sites/default/files/360-degree-counterclockwise-rotation-arrow-icon-63158.png",
+              "src": "https://image.flaticon.com/icons/svg/60/60577.svg",
               "width": 15,
               "height": 15,
               "alt": "*"
@@ -95,11 +95,11 @@ Blockly.defineBlocksWithJsonArray([
         "name": "WHERE",
         "options": [
           [
-            "%{BKY_SPRITE_RANDOM_POSITION}",
+            "%{BKY_SPRITE_RANDOM} %{BKY_SPRITE_POSITION}",
             "RANDOM"
           ],
           [
-            "%{BKY_SPRITE_MOUSE_POSITION}",
+            "%{BKY_SPRITE_MOUSE} %{BKY_SPRITE_POSITION}",
             "MOUSE"
           ]
         ]
@@ -146,11 +146,11 @@ Blockly.defineBlocksWithJsonArray([
         "name": "WHERE",
         "options": [
           [
-            "%{BKY_SPRITE_RANDOM_POSITION}",
+            "%{BKY_SPRITE_RANDOM} %{BKY_SPRITE_POSITION}",
             "RANDOM"
           ],
           [
-            "%{BKY_SPRITE_MOUSE_POSITION}",
+            "%{BKY_SPRITE_MOUSE} %{BKY_SPRITE_POSITION}",
             "MOUSE"
           ]
         ]
@@ -212,7 +212,7 @@ Blockly.defineBlocksWithJsonArray([
         "name": "DEST",
         "options": [
           [
-            "%{BKY_SPRITE_MOUSE_POSITION}",
+            "%{BKY_SPRITE_MOUSE} %{BKY_SPRITE_POSITION}",
             "MOUSE"
           ]
         ]

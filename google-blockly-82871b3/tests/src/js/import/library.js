@@ -1,7 +1,7 @@
 
 
-function collapseToolbox() {
-  let tree = blockWorkspace.getToolbox().tree_;
+function collapseToolbox(workspace) {
+  let tree = workspace.getToolbox().tree_;
 
   if (tree) {
     tree.setSelectedItem(null);
@@ -13,7 +13,7 @@ function generateLibFuncXML(arr) {
   var argument = 0;
 
   if (arr['type'] === "procedures_defnoreturn") {
-    arr['type'] = "import_statement"
+    arr['type'] = "import_noReturn"
   } else if (arr['type'] === "procedures_defreturn") {
     arr['type'] = "import_return"
   }
@@ -110,7 +110,7 @@ function myImport(workspace, xmlString) {
 
     let childIsBlock = (child.nodeName === "block");
     let childTypeIsImportReturn = (child.getAttribute("type") === "import_return");
-    let childTypeIsImportStatement = (child.getAttribute("type") === "import_statement");
+    let childTypeIsImportStatement = (child.getAttribute("type") === "import_noReturn");
 
     if (childIsBlock && (childTypeIsImportReturn || childTypeIsImportStatement)) {
       document.getElementById("toolbox-categories").querySelector("[name='Import']").append(

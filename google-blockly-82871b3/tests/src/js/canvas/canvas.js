@@ -1,4 +1,5 @@
 class Canvas {
+
   get isHalting() {
     return this._isHalting;
   }
@@ -14,9 +15,6 @@ class Canvas {
     this.setHandler(new CanvasHandler(this));
     this.initialize();
     this._isHalting = false;
-
-
-
   }
 
   initialize() {
@@ -30,9 +28,18 @@ class Canvas {
     this.getHandler().startSelectSprite();
     this.setSpecificSpriteName("aww-cat.png")
     this._libCode = "";
+    this.removeIndex = [];
   }
 
 ////////// Getter & Setter //////////
+
+  getRemoveIndex(){
+    return this.removeIndex;
+  }
+
+  setRemoveIndex(arr){
+    this.removeIndex = arr;
+  }
 
   getLibCode() {
     return this._libCode;
@@ -260,18 +267,8 @@ class Canvas {
     return foundSprite;
   }
 
-  // access time 2019-08-18
-
-  allStop(){
-    this._isHalting = true;
-    for(let a in this._spritesOrder){
-      if(this._spritesOrder[a] == null) continue;
-      this._spritesOrder[a].isHalting = true
-    }
-  }
 
   ////////// Class Methods //////////
-
   clear() {
     this.getContext().clearRect(0, 0, this.getSize().getWidth(),
         this.getSize().getHeight());
@@ -299,7 +296,6 @@ class Canvas {
   }
 
   addSpriteAndSelect(spriteName, imageData = null, imageSrc, isClone = [false, ]) {
-    //console.log(spriteName);
     this.addSprite(spriteName, imageData, imageSrc, isClone);
     if(!isClone[0]){
       this.setCurrentSprite(spriteName);
@@ -322,13 +318,76 @@ class Canvas {
     this.setCurrentSpriteName(stageName);
   }
 
-  removeSprite(spriteName) {
-    //@TODO: must remove canvas and sprite objects itself
 
-    delete this.getSprites()[spriteName];
+  //----------------------------- below for deleting Sprite
 
-    const foundAt = this.getSpritesOrder().indexOf(spriteName);
-    this.getSpritesOrder().splice(foundAt, 1);
+  Re_Start(){
+      this._isHalting = false;
+      this.removeIndex = [];
+      let name;
+
+      for(let i = 1; i < this.getSpritesOrder().length; i++){
+          name = myCanvas.getSpritesOrder()[i].name;
+          myCanvas.getSpriteByName(name).isHalting = false;
+      }
+  }
+
+    // when the pause btn clicked.
+    AllPause(){
+        this._isHalting = true;
+        let curSprite;
+
+        for(let idx=0; idx <this.getSpritesOrder().length; ++idx){
+            curSprite = this._spritesOrder[idx];
+
+            if(curSprite === null)  continue;
+            if(curSprite.isClone[0])// if it is a clone,
+                this.CloneRemoveFromParent(curSprite, idx);
+            else //it's not clone (== normal Sprite )
+                this._spritesOrder[idx].isHalting = true;
+        }
+        this.RemoveFromOrder(this.getSpritesOrder())
+    }
+
+    // the clone is removed from its parent.
+    CloneRemoveFromParent(curSprite){
+      let curName = curSprite._name;
+      let parent = this.getSpriteByName(curSprite.isClone[1]);
+
+      parent._cloneChilds = [];
+      this.RemoveFromCanvas(curName, true);
+    }
+
+  //@Todo: Some Edit is needed for Performance
+    RemoveFromOrder() {
+      for(let i=this.removeIndex.length-1; i>=0; i--)
+        this.getSpritesOrder().splice(this.removeIndex[i], 1);
+
+      console.log(this.getSpritesOrder());
+  }
+
+    static RemoveFromGallery(spriteName){
+        let removeTag = document.getElementById(spriteName);
+        let parentTag = document.getElementById('spriteGallery');
+        parentTag.removeChild(removeTag);
+    }
+
+    RemoveFromCanvas(spriteName, isClone = false) {
+      let Order = this.getSpritesOrder();
+
+      for(let i=0; i<Order.length; ++i)
+        if((Order[i] !== null) && (Order[i]._name === spriteName)){
+          this.removeIndex.push(i);
+          break;
+      }
+
+      if(!isClone){
+        this.RemoveFromOrder();
+        Canvas.RemoveFromGallery(spriteName);
+      }
+
+      delete this._sprites[spriteName];
+      this._currentSpriteName = this.getSpritesOrder()[1];
   }
 
   changeSpriteOrder(sprite, newLayer) {
@@ -346,6 +405,5 @@ class Canvas {
   moveSpriteToTop(sprite) {
     this.changeSpriteOrder(sprite, this.getSpritesOrder().length - 1)
   }
-
 }
 
