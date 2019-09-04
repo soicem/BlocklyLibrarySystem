@@ -218,7 +218,6 @@ class Canvas {
   addCostumeAndSelect(imageSrc) {
     //console.log(spriteName);
     //this.setCurrentCostumeNum(this.getCurrentCostumeNum() + 1);
-    var a = this.getCurrentCostumeNum();
     var image = new Image();
     image.src = imageSrc;
     this.getCurrentSprite().setCostume(image);
