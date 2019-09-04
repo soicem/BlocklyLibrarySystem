@@ -100,7 +100,8 @@ Blockly.JavaScript['sprite_getXY'] = function (block) {
 
 Blockly.JavaScript['sprite_glideTo'] = function(block) {
   const OPTIONS = {
-    RANDOM: "goToMousePosition",
+    //@TODO: fix this
+    RANDOM: "glideToMousePosition",
     MOUSE: "glideToMousePosition"
   };
   let value_sec = Blockly.JavaScript.valueToCode(block, 'SEC', Blockly.JavaScript.ORDER_ATOMIC);

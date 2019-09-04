@@ -50,3 +50,27 @@ Blockly.JavaScript['sprite_touching'] = function(block) {
     return [funcName + "()", Blockly.JavaScript.ORDER_NONE];
   }
 };
+
+Blockly.JavaScript['sprite_keyPress'] = function(block) {
+    const OPTIONS = {
+        UP: "up_arrow",
+        DOWN: "down_arrow",
+        LEFT : "left_arrow",
+        RIGHT : "right_arrow"
+    };
+    let dropdown_option = block.getFieldValue('KEY');
+    let funcName = OPTIONS[dropdown_option];
+
+    return [funcName + "()", Blockly.JavaScript.ORDER_NONE];
+};
+
+Blockly.JavaScript['sprite_getMouseXY'] = function(block) {
+  const OPTIONS = {
+    X: "getMouseX",
+    Y: "getMouseY",
+  };
+  const dropdown_xy = block.getFieldValue('XY');
+  let funcName = OPTIONS[dropdown_xy];
+  const code = funcName + "()";
+  return [code, Blockly.JavaScript.ORDER_NONE];
+};

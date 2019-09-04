@@ -12,7 +12,7 @@ Blockly.Python['import_return'] = function (block) {
   return [code, Blockly.Python.ORDER_FUNCTION_CALL];
 }
 
-Blockly.Python['import_statement'] = function (block) {
+Blockly.Python['import_noReturn'] = function (block) {
   let funcName = block.getFieldValue("FUNC_FIELD").replace(" ", "_");
   let args = [];
 

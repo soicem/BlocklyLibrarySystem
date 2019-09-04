@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blockly Playground</title>
+
   <script src="../blockly_uncompressed.js"></script>
   <script src="../generators/javascript.js"></script>
   <script src="../generators/javascript/logic.js"></script>
@@ -38,6 +39,8 @@
   <script src="../blocks/variables_dynamic.js"></script>
   <script src="../blocks/procedures.js"></script>
   <script src="../blocks/import.js"></script>
+  <script src="src/js/canvas/canvas.js"></script>
+
 
   <script src="../blocks/sprites/motions.js"></script>
   <script src="../blocks/sprites/looks.js"></script>
@@ -72,6 +75,7 @@
 
   <script>
     'use strict';
+
     var blockWorkspace = null;
     var toolbox = null;
 
@@ -196,13 +200,21 @@
       taChange();
     }
 
-    function fromXml() {
-      var input = document.getElementById('importExport');
-      var xml = Blockly.Xml.textToDom(input.value);
-      Blockly.Xml.domToWorkspace(xml, blockWorkspace);
-      taChange();
+    function toXml() {
+      let input = document.getElementById("importExport");
+      let xml = Blockly.Xml.workspaceToDom(blockWorkspace);
+      let xmlText = Blockly.Xml.domToPrettyText(xml);
+
+      input.value = xmlText;
     }
 
+    function fromXml() {
+      let input = document.getElementById('importExport');
+      let xml = Blockly.Xml.textToDom(libraryManager.libraries["testLibrary"].functions["aFunction"].xml);
+      Blockly.Xml.domToWorkspace(xml, blockWorkspace);
+
+      taChange();
+    }
 
     function delayWrapper(keyOfSprite, isClone=false) {
       return new Promise(function (resolve, reject) {
@@ -215,10 +227,49 @@
       });
     }
 
+    function re_start(){
+        myCanvas.Re_Start();
+    }
+
+    // key press event
+    document.onkeydown = function(event) {
+      switch (event.keyCode) {
+        case 37:
+          myCanvas.getCurrentSprite().changeDirection(new Degree(180));
+          myCanvas.getCurrentSprite().moveSteps(3);
+
+          //alert('Left key pressed');
+          break;
+        case 38:
+          myCanvas.getCurrentSprite().changeDirection(new Degree(270));
+          myCanvas.getCurrentSprite().moveSteps(3);
+
+          //alert('Up key pressed');
+          break;
+        case 39:
+          //alert('Right key pressed');
+          myCanvas.getCurrentSprite().changeDirection(new Degree(0));
+          myCanvas.getCurrentSprite().moveSteps(3);
+
+          break;
+        case 40:
+          //alert('Down key pressed');
+          myCanvas.getCurrentSprite().changeDirection(new Degree(90));
+          myCanvas.getCurrentSprite().moveSteps(3);
+
+          break;
+      }
+    };
+
+
+
     function goStep(){
+        if(myCanvas.isHalting)
+            re_start();
+
       for(var i = 1; i < myCanvas.getSpritesOrder().length; i++){
-        if(!myCanvas.getSpritesOrder()[i].isClone[0])
-          _goStep(myCanvas.getSpritesOrder()[i].name)
+          if(myCanvas.getSpritesOrder()[i] !== null && !myCanvas.getSpritesOrder()[i].isClone[0])
+              _goStep(myCanvas.getSpritesOrder()[i].name) // myCanvas.getSpritesOrder()[i] === Sprite in order
       }
     }
 
@@ -231,22 +282,21 @@
                       function (result) {
                         if(myCanvas.getSpriteByName(keyOfSprite).isHalting)
                           return 0;
-
-                        if(!myCanvas.getSpriteByName(keyOfSprite).isContinue){
+                        if(!myCanvas.getSpriteByName(keyOfSprite).isContinue)
                           return 0;
-                        }
-
-                        if(result != false)
+                        if(result !== false)
                           _goStep(keyOfSprite, isClone);
-
-
                       }
               );
     }
 
+    function ObjSuspend() {
+        myCanvas.AllPause();
+    }
+
     // initApi 'createClone' statement wrapper
     function createClone(){
-        console.log("create sprite")
+        console.log("create sprite ___ clone")
         var spriteObject = myCanvas.getSpecificSprite();
         var parentName = myCanvas.getSpecificSpriteName();
         var cloneName = getNoDuplicationName(parentName, "_clone");
@@ -256,17 +306,18 @@
         var position = spriteObject.getPosition(); // x, y 좌표
         myCanvas.addSpriteAndSelect(cloneName, imageData, imageSrc, [true, parentName, position]); // idx4 : isClone or not
 
-      var libCode = myCanvas.getLibCode();
+      // var libCode = myCanvas.getLibCode();
+      var libCode = libraryManager.getLibraryJsCode();
       if(libCode){
         // libCode = libCode.replace("null", "")
         // libCode = libCode.replace("null", "")
         // libCode = libCode.replace("nullnull", "")
 
-        // latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode]  ;
+        // latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode];
         let codeWithLib = libCode + myCanvas.getSpriteByName(cloneName).getJsCode();
         myCanvas.getSpriteByName(cloneName).setJsCode(codeWithLib);
+        console.log( myCanvas.getSpriteByName(cloneName).getJsCode());
       }
-
         return cloneName;
     }
 
@@ -289,7 +340,7 @@
 
       interpreter.setProperty(scope, 'allStop',
               interpreter.createNativeFunction(function() {
-                myCanvas.allStop();
+                myCanvas.AllPause();
               }));
 
 
@@ -362,6 +413,17 @@
                 return myCanvas.getSpecificSprite().getY();
               }));
 
+      interpreter.setProperty(scope, 'getMouseY',
+              interpreter.createNativeFunction(function() {
+                return myCanvas.getHandler().getMousePosition().getY();
+              }));
+
+      interpreter.setProperty(scope, 'getMouseX',
+              interpreter.createNativeFunction(function() {
+                return myCanvas.getHandler().getMousePosition().getX();
+              }));
+
+
       interpreter.setProperty(scope, 'setXY',
               interpreter.createNativeFunction(function(x, y) {
                 //text = text ? text.toString() : '';
@@ -397,7 +459,33 @@
             interpreter.createNativeFunction(function(second) {
                 myCanvas.getSpecificSprite().glideToMousePosition(second);
             }));
-        interpreter.setProperty(scope, 'wait',
+      interpreter.setProperty(scope, 'down_arrow',
+              interpreter.createNativeFunction(function(second) {
+                console.log(event.key);
+                if(event.key == "ArrowUp"){
+                  return true;
+                } else {
+                  return false;
+                }
+              }));
+
+      interpreter.setProperty(scope, 'up_arrow',
+              interpreter.createNativeFunction(function(second) {
+
+              }));
+
+      interpreter.setProperty(scope, 'left_arrow',
+              interpreter.createNativeFunction(function(second) {
+
+              }));
+
+      interpreter.setProperty(scope, 'right_arrow',
+              interpreter.createNativeFunction(function(second) {
+
+              }));
+
+
+      interpreter.setProperty(scope, 'wait',
             interpreter.createNativeFunction(function(second) {
               var nameOfSprite = myCanvas.getSpecificSpriteName();
               myCanvas.getSpriteByName(nameOfSprite).isContinue = false;
@@ -448,6 +536,7 @@
 
     /* event block 코드를 최신 코드에서 가져와 현재 Sprite 객체에 배치한다. */
     function eventCodeHandling(code){
+      console.log(code);
         var tmp = code.split("\n\n"); // event parser;
         var ret = ""
         // 각 이벤트 클리어
@@ -478,7 +567,8 @@
       let eventCode = eventCodeHandling(myCanvas.getSpriteByName(keyOfLatestCode).getJsCode());
       myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(eventCode);
 
-      var libCode = myCanvas.getLibCode();
+      // var libCode = myCanvas.getLibCode();
+      var libCode = libraryManager.getLibraryJsCode();
       if(libCode){
         // libCode = libCode.replace("null", "")
         // libCode = libCode.replace("null", "")
@@ -491,6 +581,8 @@
       // latestCodes[keyOfLatestCode] = latestCodes[keyOfLatestCode].replace("nullnull", "");
       let codeWithoutNull = myCanvas.getSpriteByName(keyOfLatestCode).getJsCode().replace("nullnull", "");
       myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(codeWithoutNull);
+
+      console.log(myCanvas.getSpriteByName(keyOfLatestCode).getJsCode());
 
       // step execution 용 코드
       if(!myInterpreters[myCanvas.getCurrentSpriteName()])
@@ -529,7 +621,7 @@
         myCanvas.getSpriteByName(keyOfCode).setJsCode(codeWithoutNull);
         var targetCode = "";
         targetCode = createTargetCode(keyOfCode, isClone);
-        console.log("stepCode", keyOfCode, targetCode);
+        //console.log("stepCode", keyOfCode, targetCode);
         myInterpreters[keyOfCode] = new Interpreter(targetCode, initApi);
         return;
       }
@@ -692,12 +784,15 @@
     }
 
     function myStart() {
+      toolboxManager = ToolboxManager.createWithDom(blockWorkspace, document.getElementById("toolbox-categories"));
+      libraryManager = new LibraryManager(toolboxManager);
       animationUpdater = new AnimationUpdater();
       myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400), blockWorkspace);
+
       myCanvas.addSpriteAndSelect("penguin", null, "penguin.png");
+      TrashToImg("penguin");
       animationUpdater.addCallFunction({caller: myCanvas, method: myCanvas.render});
       animationUpdater.start();
-      return myCanvas;
     }
   </script>
 
@@ -729,10 +824,16 @@
       </li>
     </ul>
   </div>
+  <div class="topMenu_right">
+    <span class="verticalMidPointBase"></span>
+    <img class="verticallyMiddle cursorPointer" onclick="ObjSuspend()" src="src/resources/images/Stop-Button.PNG" style="padding: 10px; height: 60%; vertical-align: middle">
+  </div>
+
   <div id="topMenuControl" class="topMenu_right">
     <span class="verticalMidPointBase"></span>
     <img class="verticallyMiddle cursorPointer" onclick="goStep()" src="src/resources/images/Play-Button.png" style="padding: 10px; height: 60%; vertical-align: middle">
   </div>
+
 </div>
 
 <div id="bodyContent">
@@ -1080,13 +1181,21 @@
         <div id="canvases">
           <canvas id="canvas"></canvas>
         </div>
+        <script src="src/js/utils/String.js"></script>
+        <script src="src/js/encryption/Encryption.js"></script>
         <script src="src/js/animation/animation_updater.js"></script>
-        <script src="src/js/canvas/canvas.js"></script>
         <script src="src/js/canvas/canvas_handler.js"></script>
         <script src="src/js/canvas/canvas_util.js"></script>
         <script src="src/js/canvas/sprite.js"></script>
         <script src="src/js/canvas/sprite_factory.js"></script>
         <script src="src/js/canvas/speech_bubble.js"></script>
+        <script src="src/js/toolbox/ToolboxManager.js"></script>
+        <script src="src/js/library/Library.js"></script>
+        <script src="src/js/library/LibraryBuilder.js"></script>
+        <script src="src/js/library/LibraryInfo.js"></script>
+        <script src="src/js/library/LibraryManager.js"></script>
+        <script src="src/js/library/LibraryUtils.js"></script>
+        <script src="src/js/library/JsObjectTemplate.js"></script>
         <script src="src/js/math/point.js"></script>
         <script src="src/js/math/size.js"></script>
         <script src="src/js/math/angle.js"></script>
@@ -1096,6 +1205,8 @@
         <script src="src/js/exception/sprite_exception.js"></script>
 
         <script>
+          let toolboxManager;
+          let libraryManager;
           let animationUpdater;
           let myCanvas;
 
@@ -1111,8 +1222,6 @@
         }
         return spriteName;
       }
-
-
 
       function spriteChooser() {
         var name;
@@ -1155,8 +1264,12 @@
             + '<div class="desc">' + spriteName + '</div>'
             + '</div>';
         //alert(a);
-        document.getElementById("spriteGallery").innerHTML += a;
-            reader.addEventListener('load', function () {
+
+          document.getElementById("spriteGallery").innerHTML += a;
+          TrashToImg(spriteName);
+
+          reader.addEventListener('load', function () {
+
               // sprite에 대한 canvas 용 objects를 저장한다.
           myCanvas.addSpriteAndSelect(spriteName, reader.result, name); // spriteName : penguin, name : penguin.png
           myCanvas.getSpriteByName(spriteName).printProperties();
@@ -1167,6 +1280,22 @@
             }
         document.getElementById("spriteChooser").value = ""; // 같은 이미지 추가 시 onchange 반영을 위해 value 초기화
           }
+
+
+          function TrashToImg(name){ // name == parent name. == sprite name
+          console.log(name);
+              var ImgTrash = document.createElement('img');
+
+              ImgTrash.src = './src/resources/images/trash.png';
+
+              ImgTrash.setAttribute('class', 'trash');
+              ImgTrash.setAttribute('onClick', 'myCanvas.RemoveFromCanvas("'+name+'")');
+
+              var parent = document.getElementById(name);
+              parent.appendChild(ImgTrash);
+          }
+
+
 
           function stageChooser() {
             var name;
@@ -1219,6 +1348,29 @@
 
             if (imageFile) {
               reader.readAsArrayBuffer(imageFile);
+            }
+          }
+
+
+
+
+          function readLibraryHeader() {
+            let importHeaders = blockWorkspace.getBlocksByType("import_header");
+
+            function addImportStatementLibrary(importStatement) {
+              const url = importStatement.getFieldValue("URL");
+              console.log(url);
+              libraryManager.addLibraryFromUrl(url);
+
+              if (importStatement.childBlocks_[0]) {
+                addImportStatementLibrary(importStatement.childBlocks_[0]);
+              }
+            }
+
+            for (let i = 0; i < importHeaders.length; i++) {
+              const importHeader = importHeaders[i];
+              const importStatement = importHeader.childBlocks_[0];
+              addImportStatementLibrary(importStatement);
             }
           }
         </script>
@@ -1313,14 +1465,14 @@
           </li2>
         </ul>
         <ul>
-          <li2><a id="blk" onclick="exportBlkFile('Test', this.id, blockWorkspace)">Export Library</a></li2>
+          <li2><a id="blk" onclick="libraryManager.createLibraryFile(blockWorkspace, 'MyLibrary', 'CSK')">Export Library</a></li2>
           <li2>
             <a>
               <div class="fileBox">
                 <label for="getLib">Import Library</label>
                 <input type="file" value="add File" name="files[]" id="getLib"
-                       onchange="importBlkFile(this, blockWorkspace)"
-                       accept=".blk, .zip">
+                       onchange="libraryManager.addLibraryFromUrl(this.files[0].name);"
+                       accept=".blk, .json">
               </div>
             </a>
           </li2>
@@ -1331,8 +1483,16 @@
         </ul>
 
         <ul>
-          <li2 style="width:100%;"><a id="insertXML" onclick="fromXml()">insert from XML</a></li2>
+          <li2><a id="exportXML" onclick="toXml()">Export to XML</a></li2>
+          <li2><a id="importXML" onclick="fromXml()">Import from XML</a></li2>
         </ul>
+
+        <ul>
+          <li2 style="width: 100%">
+            <a id="readLibraryHeader" onclick="readLibraryHeader()">Read library header</a>
+          </li2>
+        </ul>
+
         <textarea id="importExport" style="width: calc(100% - 5px); height: 60%"
                   onchange="taChange();" onkeyup="taChange()"></textarea>
       </div>
@@ -1524,9 +1684,13 @@
         </category>
 
         <category name="Import" colour="#e3ac00">
-          <block type="import_return"></block>
-          <block type="import_statement"></block>
-          <!--<block type="import_statement" id="123">
+<!--          <block type="import_return"></block>-->
+<!--          <block type="import_noReturn"></block>-->
+          <block type="import_header"></block>
+          <block type="import_statement">
+            <mutation lib="MyLibrary" src="MyLibrary.blk"></mutation>
+          </block>
+          <!--<block type="import_noReturn" id="123">
             <mutation func="Statement Function" args="2">
               <arg name="argA"/>
               <arg name="argB"/>
@@ -2233,6 +2397,7 @@
         <sep></sep>
         <category name="Variables" style="variable_category" custom="VARIABLE"></category>
         <category name="Functions" style="procedure_category" custom="PROCEDURE"></category>
+        <sep></sep>
       </xml>
 
       <!-- toolbox-categories-typed-variables has a category menu and an

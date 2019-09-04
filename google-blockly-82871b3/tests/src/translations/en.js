@@ -1,6 +1,8 @@
 // Constants
-Blockly.Msg.SPRITE_RANDOM_POSITION = "random position";
-Blockly.Msg.SPRITE_MOUSE_POSITION = "mouse position";
+Blockly.Msg.SPRITE_RANDOM = "random";
+Blockly.Msg.SPRITE_MOUSE = "mouse";
+Blockly.Msg.SPRITE_EDGE = "edge";
+Blockly.Msg.POSITION = "position";
 Blockly.Msg.SPRITE_SHOW = "show";
 Blockly.Msg.SPRITE_HIDE = "hide";
 Blockly.Msg.SPRITE_FRONT = "front";
@@ -10,6 +12,12 @@ Blockly.Msg.SPRITE_BACKWARD = "backward";
 Blockly.Msg.SPRITE_NUMBER = "number";
 Blockly.Msg.SPRITE_NAME = "name";
 Blockly.Msg.SPRITE_SIZE = "size";
+Blockly.Msg.SPRITE_ANY = "any";
+Blockly.Msg.SPRITE_SPACE = "space";
+Blockly.Msg.SPRITE_UP_ARROW = "up arrow";
+Blockly.Msg.SPRITE_DOWN_ARROW = "down arrow";
+Blockly.Msg.SPRITE_RIGHT_ARROW = "right arrow";
+Blockly.Msg.SPRITE_LEFT_ARROW = "left arrow";
 
 // Sprite's motion blocks
 Blockly.Msg.SPRITE_MOVESTEPS_MSG = "move %1 steps";
@@ -51,3 +59,21 @@ Blockly.Msg.SPRITE_SETLAYER_MSG = "go to %1 layer";
 Blockly.Msg.SPRITE_CHANGELAYER_MSG = "go %1 %2 layers";
 Blockly.Msg.SPRITE_GETCOSTUME_MSG = "costume %1";
 Blockly.Msg.SPRITE_GETBACKDROP_MSG = "backdrop %1";
+Blockly.Msg.SPRITE_MYSELF = "myself";
+
+// Sprite's sensing blocks
+Blockly.Msg.SPRITE_TOUCHING_MSG = "touching %1";
+
+// Sprite's events blocks
+Blockly.Msg.SPRITE_FLAGCLICKED_MSG = "when %1 clicked";
+Blockly.Msg.SPRITE_KEYPRESSED_MSG = "when %1 key pressed";
+
+// Sprite's control blocks
+Blockly.Msg.SPRITE_WAIT_MSG = "wait %1 seconds";
+Blockly.Msg.SPRITE_FOREVER_MSG = "forever %1";
+Blockly.Msg.SPRITE_CLONESTARTED_MSG = "when I start as a clone";
+Blockly.Msg.SPRITE_CREATECLONE_MSG = "create clone of %1";
+
+// Import
+Blockly.Msg.IMPORT_HEADER_MSG = "Import libraries";
+Blockly.Msg.IMPORT_STATEMENT_MSG = "%1";
