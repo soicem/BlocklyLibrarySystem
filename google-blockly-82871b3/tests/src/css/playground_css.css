@@ -109,20 +109,8 @@ canvas {
   /*margin-block-end: 0.67em;*/
 }
 
-
-
 #bodyContent {
    height: calc(100% - var(--top-menu-height));
-}
-
-#spriteCanvas_container {
-  float: left;
-  width: 500px;
-  height: 500px;
-}
-
-#spriteCanvas {
-  border: 1px solid black;
 }
 
 #canvasBlock {
@@ -159,7 +147,6 @@ canvas {
   float: left;
   height: 100%;
   width: calc(100% - var(--side-menu-width));
-
 }
 
 #library {
@@ -171,7 +158,7 @@ canvas {
 #sprite {
   float: left;
   height: calc(100% - 80px);
-  width: calc(100% - 560px);
+  width: calc(100% - var(--side-menu-width));
 }
 
 #importExport {
@@ -197,6 +184,74 @@ canvas {
   width: 40%
 }
 
+/* ---------------------------------sprite tab */
+
+#spriteCanvas_wrapper{
+  float: left;
+  width: 500px;
+  height: 71%;
+  margin-left: 10px;
+}
+
+#spriteCanvas_container {
+  background-color: white;
+  width: 500px;
+  height: 500px;
+}
+
+#palette{
+  margin-left: 10px;
+  display: table;
+}
+
+.jb_table {
+  display: table;
+  float: right;
+}
+
+.row {
+  border-radius: 10px;
+  display: table-row;
+}
+
+.cell {
+  display: table-cell;
+  vertical-align: top;
+}
+
+#spriteImageGallery_container {
+  float: left;
+  width: 100px;
+  height: 71%;
+  position: sticky;
+}
+
+#spriteImageGallery {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+div.costumeImg {
+    margin: 4px;
+    border: 1px solid #ccc;
+    /*float: left;*/
+    width: 90px;
+    display: block;
+}
+div.costumeImg img {
+  width: 90px;
+  height: 90px;
+}
+#CanvasAndPainter_container {
+  float: right;
+  overflow: auto;
+  width: calc(100% - 122px);
+  height: 100%;
+}
+/* content ------------------------*/
 #content {
   float: right;
   height: calc(100% - var(--top-menu-height));
@@ -297,7 +352,7 @@ div.stage img {
 div.desc {
   text-align: center;
   text-overflow: ellipsis;
-  width: 70px;
+  width: 100%;
   font-size: 80%;
   overflow: hidden;
 }
@@ -317,7 +372,7 @@ div.desc {
 
 .spritePlus {
   right: 10px;
-  bottom: 20px;
+  bottom: 10px;
 }
 
 .stagePlus {

@@ -58,7 +58,10 @@
   <script src="../generators/javascript/sprites/sensing.js"></script>
   <script src="../generators/javascript/sprites/sounds.js"></script>
   <script src="blocks/test_blocks.js"></script>
-  <script src="src/js/paint_editor.js"></script>
+
+  <script src="src/js/sprite_editor/drawengine.js"></script>
+  <script src="src/js/sprite_editor/painter.js"></script>
+
   <link rel="stylesheet" href="src/css/playground_css.css">
   <link rel="stylesheet" href="src/css/fonts.css">
   <link rel="stylesheet" href="src/css/blockly_override.css">
@@ -150,6 +153,7 @@
         logEvents(false);
       }
       tabInit();
+      onLoadPage();
     }
 
     function addToolboxButtonCallbacks() {
@@ -770,13 +774,13 @@
       document.getElementById(tab).parentNode.style.color = 'white';
     }
 
-    function loadImage(){
+    function loadImage(src){
       var imgClo = new Image();
       imgClo.addEventListener('load', function(){
         var ctx = document.getElementById('spriteCanvas').getContext("2d");
-        ctx.drawImage( imgClo , 250, 250);
+        ctx.drawImage(imgClo , 200, 200, 100, 100);
       },false);
-      imgClo.src="penguin.png";
+      imgClo.src = src;
     }
 
     function myStart() {
@@ -856,11 +860,317 @@
   </div>
   <!--- Sprite Tab ---->
   <div id="sprite">
+    <script>
+      function costumeChooser() {
+        var path = "";
+        var name;
+        var x = document.getElementById("costumeChooser");
+        var txt = "";
+        var imageFile = x.files[0];
+        var reader = new FileReader();
+        var spriteObject = myCanvas.getCurrentSprite();
 
-    <div id="spriteCanvas_container">
-      <canvas id="spriteCanvas"></canvas>
+        if ('files' in x) {
+          if (x.files.length === 0) {
+            txt = "Select one or more files.";
+          } else {
+            for (var i = 0; i < x.files.length; i++) {
+              txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
+              var file = x.files[i];
+              if ('name' in file) {
+                txt += "name: " + file.name + "<br>";
+                name = file.name;
+              }
+              if ('size' in file) {
+                txt += "size: " + file.size + " bytes <br>";
+              }
+              if ('value' in file) {
+                txt += "value: " + file.value + " bytes <br>";
+              }
+            }
+          }
+        } else {
+          if (x.value === "") {
+            txt += "Select one or more files.";
+          } else {
+            txt += "The files property is not supported by your browser!";
+            txt += "<br>The path of the selected file: " + x.value;
+          }
+        }
+
+        var costumeNum = myCanvas.getCurrentCostumeNum() + 1;
+        var spriteName = getNoDuplicationName(name); // Sprite name 중복 제거
+        var a = '<div class="costumeImg\" id="' + myCanvas.getCurrentSpriteName() + '_' + costumeNum + '" onclick="myCanvas.setCurrentCostume('
+                + costumeNum + ')">'
+                + '<img src="' + path + name + '" alt="">'
+                + '<div class="desc">' + myCanvas.getCurrentSpriteName() + '_' + costumeNum + '</div>'
+                + '</div>';
+        document.getElementById("costumeGallery").innerHTML += a;
+        reader.addEventListener('load', function () {
+          myCanvas.addCostumeAndSelect(name);
+        });
+        initPage();
+        loadImage(path + name);
+        if (imageFile) {
+          reader.readAsArrayBuffer(imageFile);
+        }
+        document.getElementById("costumeChooser").value = "";
+      }
+
+    </script>
+    <div id="spriteImageGallery_container" class="rounded">
+      <div id="spriteImageGallery">
+        <div id="costumeGallery">
+          <div class="costumeImg" id="penguin_0"
+               onclick="myCanvas.setCurrentCostume(0)">
+            <img src="penguin.png" alt="">
+            <div class="desc">penguin_0</div>
+          </div>
+        </div>
+        <div class="plusButton spritePlus">
+          <span class="plus">
+            <input type="file" id="costumeChooser" accept="image/*" multiple size="50"
+                   onchange="costumeChooser()">
+          </span>
+        </div>
+      </div>
     </div>
-    <input type="button" value="파일 불러오기" onclick="loadImage()">
+    <div id="CanvasAndPainter_container">
+      <div id="spriteCanvas_wrapper" class="rounded">
+        <div id="spriteCanvas_container">
+          <canvas id="spriteCanvas"></canvas>
+        </div>
+        <span class="cell">
+<!--              <INPUT type="file" id="load_filename" value="Load" onChange="loadFile()" />-->
+              <div>
+                <a id="saveImage" download="image.png">
+                    <INPUT type="button" value="Save" onClick="saveImage(myCanvas.getCurrentSpriteName() + '_' + myCanvas.getCurrentCostumeNum())" />
+                </a>
+                <INPUT type="button" value="Clear" onClick="initPage()" />
+              </div>
+<!--              <div>-->
+<!--                <INPUT type="button" value="Clear Gallery" onClick="clearCostumeGallery()" />-->
+<!--              </div>-->
+<!--              <div>-->
+<!--                <input type="button" value="Save as Txt" onClick="SaveAsTxt()" />-->
+<!--              </div>-->
+              <div>
+                <textarea id="history" cols="40" rows="37" style="display: none;"></textarea>
+              </div>
+              <div id="command">
+              </div>
+<!--              <INPUT type="button" value="Redraw" onClick="reDrawCanvas()" />-->
+            </span>
+      </div>
+      <script>
+
+        var textareaList = ["history"];
+
+        function clearText(idOfTextArea) {
+          document.getElementById(idOfTextArea).value = "";
+        }
+
+        function SaveAsTxt() {
+          var fileName = document.getElementById("title").value;
+          if (fileName.length == 0) {
+            fileName = "image";
+          }
+          fileName += ".txt";
+
+          var preData = 'version: V0.617a1\n';
+          var postData =  preData + document.getElementById("history").value;
+
+          var link = document.createElement("a");
+          link.setAttribute("download", fileName);
+          link.setAttribute(
+                  "href",
+                  "data:" +
+                  "application/[txt]" +
+                  ";charset=utf-8," +
+                  encodeURIComponent(postData)
+          );
+          link.click();
+        }
+
+        function isJsonFile(filename) {
+          var ridx = filename.lastIndexOf(".");
+          var extension = filename.substring(ridx + 1);
+
+          console.log(extension);
+
+          if (extension.length != 4 || extension.toLowerCase() != "json") {
+            return false;
+          }
+          return true;
+        }
+
+        function isTextFile(filename) {
+          var ridx = filename.lastIndexOf(".");
+          var extension = filename.substring(ridx + 1);
+
+          console.log(extension);
+
+          if (extension.length != 3 || extension.toLowerCase() != "txt") {
+            return false;
+          }
+          return true;
+        }
+
+
+        function loadFile() {
+          var loadFile = document.getElementById("load_filename");
+          var file = loadFile.files[0];
+
+          if (!file) {
+            return;
+          }
+
+          var fileName = document.getElementById("load_filename").value;
+          var ridx = fileName.lastIndexOf("\\");
+
+          fileName = fileName.substring(ridx + 1);
+
+          if (isJsonFile(fileName)) {
+            LoadJson(file, fileName);
+          } else if(isTextFile(fileName)) {
+            LoadText(file, fileName);
+          }
+        }
+
+        function LoadJson(file, fileName) {
+          document.getElementById("title").value = fileName;
+
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var contents = e.target.result;
+            displayLoadJsonData(contents);
+          };
+          reader.readAsText(file);
+        }
+
+        function displayLoadJsonData(contents) {
+          var noteData = JSON.parse(contents);
+
+          var version = noteData['version'];
+          console.log(version);
+          document.getElementById('history').value = noteData['history'];
+          reDrawCanvas();
+        }
+
+        function LoadText(file, fileName) {
+          document.getElementById("title").value = fileName;
+
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var contents = e.target.result;
+            displayLoadTextData(contents);
+          };
+          reader.readAsText(file);
+        }
+
+        function displayLoadTextData(contents) {
+          var noteData = contents.split('\n');
+          var history = "";
+
+          noteData.forEach(function (e){
+            if (e[0] != 'v') {
+              history += e + "\n";
+            }
+          });
+          document.getElementById('history').value = history;
+          reDrawCanvas();
+        }
+      </script>
+      <div id="palette" class="rounded">
+          <div class="row">
+            <span class="cell" width="82">
+              <div class="jb_table">
+                <div class="row">
+                  <span class="cell">
+                    <img src="src/resources/images/paint_editor/red.png" onclick="selectColor('red')" />
+                    <img src="src/resources/images/paint_editor/orange.png" onclick="selectColor('orange')"/>
+                  </span>
+                </div>
+                <div class="row">
+                  <span class="cell">
+                    <img src="src/resources/images/paint_editor/yellow.png" onclick="selectColor('yellow')" />
+                    <img src="src/resources/images/paint_editor/green.png" onclick="selectColor('green')"/>
+                  </span>
+                </div>
+                <div class="row">
+                  <span class="cell">
+                    <img src="src/resources/images/paint_editor//blue.png" onclick="selectColor('blue')" />
+                    <img src="src/resources/images/paint_editor/lightblue.png" onclick="selectColor('lightblue')" />
+                  </span>
+                </div>
+                <div class="row">
+                  <span class="cell">
+                    <img src="src/resources/images/paint_editor/lightgreen.png" onclick="selectColor('lightgreen')"/>
+                    <img src="src/resources/images/paint_editor/brown.png" onclick="selectColor('brown')"/>
+                  </span>
+                </div>
+                <div class="row">
+                  <span class="cell">
+                    <img src="src/resources/images/paint_editor/purple.png" onclick="selectColor('purple')" />
+                    <img src="src/resources/images/paint_editor/pink.png" onclick="selectColor('pink')"/>
+                  </span>
+                </div>
+                <div class="row">
+                  <span class="cell">
+                    <img src="src/resources/images/paint_editor/gray.png" onclick="selectColor('gray')" />
+                    <img src="src/resources/images/paint_editor/lightgray.png" onclick="selectColor('lightgray')"/>
+                  </span>
+                </div>
+                <div class="row">
+                  <span class="cell">
+                    <img src="src/resources/images/paint_editor/black.png" onclick="selectColor('black')"/>
+                    <img src="src/resources/images/paint_editor/white.png" onclick="selectColor('white')"/>
+                  </span>
+                </div>
+                <div class="row">
+                  <span class="cell">
+                    <img src="src/resources/images/paint_editor/pencil.png"  onclick="selectTool('pencil')" />
+                    <img src="src/resources/images/paint_editor/line.png"  onclick="selectTool('line')" />
+                  </span>
+                </div>
+                <div class="row">
+                  <span class="cell">
+                    <img src="src/resources/images/paint_editor/circle.png" onclick="selectTool('circle')"/>
+                    <img src="src/resources/images/paint_editor/filledcircle.png" onclick="selectTool('filledcircle')"/>
+                  </span>
+                </div>
+                <div class="row">
+                  <span class="cell">
+                    <img src="src/resources/images/paint_editor/square.png" onclick="selectTool('square')"/>
+                    <img src="src/resources/images/paint_editor/filledsquare.png" onclick="selectTool('filledsquare')"/>
+                  </span>
+                </div>
+                <div class="row">
+                  <span class="cell">
+                    <img src="src/resources/images/paint_editor/rect.png" onclick="selectTool('rect')" />
+                    <img src="src/resources/images/paint_editor/filledrect.png" onclick="selectTool('filledrect')" />
+                  </span>
+                </div>
+                <div class="row">
+                  <span class="cell">
+                    <img src="src/resources/images/paint_editor/triangle.png" onclick="selectTool('tri')" />
+                    <img src="src/resources/images/paint_editor/filledtriangle.png" onclick="selectTool('filledtri')" />
+                  </span>
+                </div>
+                <div class="row">
+                    <span class="cell">
+                      <img src="src/resources/images/paint_editor/undo.png" onclick="undo()"/>
+                      <img src="src/resources/images/paint_editor/redo.png" onclick="redo()"/>
+                    </span>
+                  </div>
+              </div>
+            </span>
+          </div>
+      </div>
+      <script src="painter.js"></script>
+      <script src="drawengine.js"></script>
+
+    </div>
   </div>
   <!----- Content ----->
   <div id="content">
@@ -952,10 +1262,12 @@
             + '<div class="desc">' + spriteName + '</div>'
             + '</div>';
         //alert(a);
+
           document.getElementById("spriteGallery").innerHTML += a;
           TrashToImg(spriteName);
 
           reader.addEventListener('load', function () {
+
               // sprite에 대한 canvas 용 objects를 저장한다.
           myCanvas.addSpriteAndSelect(spriteName, reader.result, name); // spriteName : penguin, name : penguin.png
           myCanvas.getSpriteByName(spriteName).printProperties();
