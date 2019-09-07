@@ -34,7 +34,9 @@ class Sprite {
     this._name = name; // 이름
     this._isContinue = true;
     this._isHalting = false;
-    this._image = [];
+    this._imageSrc = [];
+    this.setCostume(image.src);
+    this.setCurrentCostumeSrc(0);
     this.setCanvas(canvas);
     this.setImage(image);
     this.setImageData(imageData);
@@ -96,19 +98,31 @@ class Sprite {
   }
 
   getImage() {
-    return this._image[0];
+    return this._image;
   }
 
   setImage(image) {
-    this._image[0] = image;
+    this._image = image;
   }
 
-  setCostume(image) {
-    this._image.push(image);
+  getCostume(num) {
+    return this._imageSrc[num];
   }
 
-  getCostume() {
-    return this._image;
+  getCostumeLength(){
+    return this._imageSrc.length;
+  }
+
+  setCostume(imageSrc) {
+    this._imageSrc.push(imageSrc);
+  }
+
+  getCurrentCostumeSrc() {
+    return this._currentCostumeSrc;
+  }
+
+  setCurrentCostumeSrc(num) {
+    this._currentCostumeSrc = num;
   }
 
   getImageData() {
@@ -183,11 +197,11 @@ class Sprite {
   }
 
   getCostumeSource(num) {
-    return this.getCostume()[num].src;
+    return this.getCostume(num);
   }
 
   setCostumeSource(num, src) {
-    this.getCostume()[num].src = src;
+    this._imageSrc[num] = src;
   }
 
   getX() {
@@ -396,5 +410,21 @@ class Sprite {
   isTouchingSprite(spriteName) {
     const sprite = this.getCanvas().getSpriteByName(spriteName);
     return CanvasUtil.isSpriteTouchingSprite(this.getCanvas(), this, sprite);
+  }
+
+  nextCostume(){
+    alert("nextCostume() called");
+    this.setCurrentCostumeSrc(this.getCurrentCostumeSrc() + 1);
+    var nextCostumeNum = this.getCurrentCostumeSrc();
+    if((nextCostumeNum % this.getCostumeLength()) == 0){
+      nextCostumeNum %= this.getCostumeLength();
+      this.setCurrentCostumeSrc(0);
+    }
+    alert(this._name + "" + this.getCurrentCostumeSrc() + "and " + nextCostumeNum + " " + this.getCostume(nextCostumeNum));
+    this._image.src = this.getCostume(nextCostumeNum);
+  }
+
+  switchCostume(spriteNum){
+    this._image.src = this.getCostume(spriteNum);
   }
 }

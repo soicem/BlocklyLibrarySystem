@@ -119,7 +119,7 @@ function drawCommand() {
     R: 0,
     lines: [],
     toCommand: function () {
-      console.log("toCommand");
+      //console.log("toCommand");
       var newCommand = this.mode + " ";
       var isFilled = this.filled == true ? 'F' : 'E';
       switch (this.mode) {

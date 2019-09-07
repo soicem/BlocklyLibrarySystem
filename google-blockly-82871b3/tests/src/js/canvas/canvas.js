@@ -199,11 +199,11 @@ class Canvas {
   loadCurrentSpriteCostumes(){
     clearCostumeGallery();
     var currentSprite = this.getCurrentSprite();
-    var length = currentSprite.getCostume().length;
+    var length = currentSprite.getCostumeLength();
     //alert("CostumeLength = " + length);
     for(var i = 0; length > i; i++){
       var a = '<div class="costumeImg\" id="' + myCanvas.getCurrentSpriteName() + '_' + i + '" onclick="myCanvas.setCurrentCostume(' + i + ')">'
-          + '<img src="' + currentSprite.getCostume()[i].src + '" alt="">'
+          + '<img src="' + currentSprite.getCostume(i) + '" alt="">'
           + '<div class="desc">' + myCanvas.getCurrentSpriteName() + '_' + i + '</div>'
           + '</div>';
       document.getElementById("costumeGallery").innerHTML += a;
@@ -213,21 +213,20 @@ class Canvas {
 
   setCurrentCostume(num) {
     this.setCurrentCostumeNum(num);
+    this.getCurrentSprite().setCurrentCostumeSrc(num);
     var l = document.getElementsByClassName('costumeImg');
     for (var i = 0; i < l.length; i++) {
       l[i].style.border = 'solid 1px #ccc';
     }
     initPage();
-    loadImage(this.getCurrentSprite().getCostumeSource(this.getCurrentCostumeNum()));
+    loadImage(this.getCurrentSprite().getCostume(this.getCurrentCostumeNum()));
     document.getElementById(this.getCurrentSpriteName() + '_' + num).style.border = "solid 2px #415DCC";
   }
 
   addCostumeAndSelect(imageSrc) {
     //console.log(spriteName);
     //this.setCurrentCostumeNum(this.getCurrentCostumeNum() + 1);
-    var image = new Image();
-    image.src = imageSrc;
-    this.getCurrentSprite().setCostume(image);
+    this.getCurrentSprite().setCostume(imageSrc);
     this.setCurrentCostume(this.getCurrentCostumeNum() + 1);
   }
 

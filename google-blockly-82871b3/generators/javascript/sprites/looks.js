@@ -35,3 +35,12 @@ Blockly.JavaScript['sprite_say'] = function (block) {
 
   return "say(" + value_content + ");\n";
 };
+
+Blockly.JavaScript['sprite_nextCostume'] = function(block) {
+  return 'nextCostume();\n';
+};
+
+Blockly.JavaScript['sprite_switchCostume'] = function(block) {
+  var dropdown_costume = block.getFieldValue('COSTUME');
+  return 'switchCostume(' + dropdown_costume + ');\n';
+};
