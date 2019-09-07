@@ -274,6 +274,7 @@
     }
 
     function _goStep(keyOfSprite, isClone=false){
+      myCanvas.getSpriteByName(keyOfSprite).setCurrentCostumeSrc(0);
       if(myCanvas.isHalting){
         return 0;
       }

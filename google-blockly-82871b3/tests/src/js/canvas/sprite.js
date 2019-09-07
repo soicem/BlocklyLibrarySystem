@@ -413,7 +413,15 @@ class Sprite {
   }
 
   nextCostume(){
-    this._imageSrc = this.getCostume(this.getCurrentCostumeSrc())
+    alert("nextCostume() called");
+    this.setCurrentCostumeSrc(this.getCurrentCostumeSrc() + 1);
+    var nextCostumeNum = this.getCurrentCostumeSrc();
+    if((nextCostumeNum % this.getCostumeLength()) == 0){
+      nextCostumeNum %= this.getCostumeLength();
+      this.setCurrentCostumeSrc(0);
+    }
+    alert(this._name + "" + this.getCurrentCostumeSrc() + "and " + nextCostumeNum + " " + this.getCostume(nextCostumeNum));
+    this._image.src = this.getCostume(nextCostumeNum);
   }
 
   switchCostume(spriteNum){
