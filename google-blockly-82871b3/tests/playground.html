@@ -1293,6 +1293,12 @@
           }
 
 
+          function removeConfirmation(spriteName) {
+            if (confirm("'" + spriteName + "'를 삭제하길 원하십니까?")) {
+              myCanvas.RemoveFromCanvas(spriteName);
+            }
+          }
+
           function TrashToImg(name){ // name == parent name. == sprite name
           console.log(name);
               var ImgTrash = document.createElement('img');
@@ -1300,7 +1306,7 @@
               ImgTrash.src = './src/resources/images/trash.png';
 
               ImgTrash.setAttribute('class', 'trash');
-              ImgTrash.setAttribute('onClick', 'myCanvas.RemoveFromCanvas("'+name+'")');
+              ImgTrash.setAttribute('onClick', 'removeConfirmation("'+name+'")');
 
               var parent = document.getElementById(name);
               parent.appendChild(ImgTrash);
