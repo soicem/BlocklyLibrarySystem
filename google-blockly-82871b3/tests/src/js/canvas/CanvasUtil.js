@@ -1,5 +1,11 @@
 class CanvasUtil {
-
+  /**
+   * @param {Canvas} canvas
+   * @param {Sprite} baseSprite
+   * @param {{r:number,g:number,b:number}} baseRgb
+   * @param {{r:number,g:number,b:number}} lookupRgb
+   * @returns {boolean}
+   */
   static isColorOverlayingColor(canvas, baseSprite, baseRgb, lookupRgb) {
     let isOverlaying = false;
 
@@ -48,10 +54,24 @@ class CanvasUtil {
     return isOverlaying;
   }
 
+  /**
+   * @param {Canvas} canvas
+   * @param {Sprite} baseSprite
+   * @param {{r:number,g:number,b:number}} lookupRgb
+   * @returns {boolean}
+   */
   static isOverlayingColor(canvas, baseSprite, lookupRgb) {
     return this.isColorOverlayingColor(canvas, baseSprite, null, lookupRgb);
   }
 
+  /**
+   * @param {number[]} data
+   * @param {Size} size
+   * @param {Point[]} pixels
+   * @param {{r:number,g:number,b:number}} rgb
+   * @returns {boolean}
+   * @private
+   */
   static _isPixelsOverlayingRgb(data, size, pixels, rgb) {
     let isOverlaying = false;
 
@@ -75,6 +95,12 @@ class CanvasUtil {
     return isOverlaying;
   }
 
+  /**
+   * @param {Canvas} canvas
+   * @param {Sprite} sprite1
+   * @param {Sprite} sprite2
+   * @returns {boolean}
+   */
   static isSpriteTouchingSprite(canvas, sprite1, sprite2) {
     let isTouching = false;
     let points1 = sprite1.getPixelsOfAnyColor(true);
