@@ -1,19 +1,30 @@
 class AnimationUpdater {
+  /**
+   */
   constructor() {
     this._callFunctions = {};
   }
 
   ////////// Getter & Setter ///////////
 
-  isRunning() {
+  /**
+   * @returns {boolean}
+   */
+  get running() {
     return this._running;
   }
 
-  setRunning(state) {
-    this._running = state;
+  /**
+   * @param {boolean} running
+   */
+  set running(running) {
+    this._running = running;
   }
 
-  getCallFunctions() {
+  /**
+   * @returns {Object<string, {caller:string,method:*}>}
+   */
+  get callFunctions() {
     return this._callFunctions;
   }
 
@@ -21,33 +32,45 @@ class AnimationUpdater {
 
   ////////// Class Functions //////////
 
+  /**
+   * @param {{caller:string,method:*}} funcInfo
+   */
   addCallFunction(funcInfo) {
-    this.getCallFunctions()[funcInfo.method.name] = funcInfo;
+    this.callFunctions[funcInfo.method.name] = funcInfo;
   }
 
+  /**
+   * @param {*} func
+   */
   removeCallFunction(func) {
-    delete this.getCallFunctions()[func.name];
+    delete this.callFunctions[func.name];
   }
 
+  /**
+   */
   update() {
-    const callFunctions = this.getCallFunctions();
+    const callFunctions = this.callFunctions;
     for (let k in callFunctions) {
       if (callFunctions.hasOwnProperty(k)) {
         (callFunctions[k].method).bind(callFunctions[k].caller)();
       }
     }
 
-    if (this.isRunning()) {
+    if (this.running) {
       window.requestAnimationFrame((this.update).bind(this));
     }
   }
 
+  /**
+   */
   start() {
-    this.setRunning(true);
+    this.running = true;
     window.requestAnimationFrame((this.update).bind(this));
   }
 
+  /**
+   */
   stop() {
-    this.setRunning(false);
+    this.running = false;
   }
 }
