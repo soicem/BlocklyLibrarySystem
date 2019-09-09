@@ -84,7 +84,7 @@ class ToolboxManager {
    * @returns {HTMLElement}
    */
   getCategory(categoryName) {
-    return this.toolboxDom.querySelector(`category[name=${categoryName}]`);
+    return this.toolboxDom.querySelector(`category[name='${categoryName}']`);
   }
 
   /**
@@ -175,14 +175,15 @@ class ToolboxManager {
    * @param {Library} library
    */
   appendLibrary(library) {
-    this.appendCategory(library.info.name);
+    const functionFullName = `${library.info.author}.${library.info.name}`;
+    this.appendCategory(functionFullName);
 
     for (let functionKey in library.functions) {
       if (!library.functions.hasOwnProperty(functionKey)) continue;
 
       const interfaceXml = library.functions[functionKey].interfaceXml;
       const blockDom = Blockly.Xml.textToDom(interfaceXml).children[0];
-      this.appendBlockDom(library.info.name, blockDom);
+      this.appendBlockDom(functionFullName, blockDom);
     }
 
     // no need for auto-update (done inside appendCategory & appendBlockDom)

@@ -57,34 +57,31 @@ class LibraryManager {
    * @private
    */
   _updateExistingLibrary(library) {
-    const libraryName = library.info.name;
-    const matchingLibrary = this.getLibrary(libraryName);
+    const libraryFullName = `${library.info.author}.${library.info.name}`;
+    const matchingLibrary = this.getLibrary(libraryFullName);
 
     if (library.isNewerVersionThan(matchingLibrary)) {
       const currentVersion = matchingLibrary.info.version;
       const newerVersion = library.info.version;
 
-      if (confirm(`Do you wish to override "v${currentVersion}" of "${libraryName}" with "v${newerVersion}"?`)) {
-        this.toolboxManager.removeCategory(library.info.name);
-        this.libraries[libraryName] = library;
+      if (confirm(`Do you wish to override "v${currentVersion}" of "${libraryFullName}" with "v${newerVersion}"?`)) {
+        this.toolboxManager.removeCategory(libraryFullName);
+        this.libraries[libraryFullName] = library;
         this.toolboxManager.appendLibrary(library);
       }
     }
   }
 
   /**
-   * Swap existing library with different author
    * @param {Library} library
-   * @private
    */
-  _swapExistingLibrary(library) {
-    const libraryName = library.info.name;
-    const matchingLibrary = this.getLibrary(libraryName);
-    const currentAuthor = matchingLibrary.info.author;
-    const newerAuthor = library.info.author;
-    if (confirm(`Do you wish to override "${currentAuthor}" version of "${libraryName}" with "${newerAuthor}"version?`)) {
-      this.toolboxManager.removeCategory(library.info.name);
-      this.libraries[libraryName] = library;
+  addLibrary(library) {
+    let libraryFullName = `${library.info.author}.${library.info.name}`;
+
+    if (this.libraries.hasOwnProperty(libraryFullName)) { // Already assigned
+      this._updateExistingLibrary(library);
+    } else { // Not assigned
+      this.libraries[libraryFullName] = library;
       this.toolboxManager.appendLibrary(library);
     }
   }
@@ -102,40 +99,6 @@ class LibraryManager {
     } else {
       console.log("library did not created successfully!");
     }
-  }
-
-  /**
-   * @param {Library} library
-   */
-  addLibrary(library) {
-    if (this.hasSameNameAuthorLibrary(library.info)) {
-      this._updateExistingLibrary(library);
-    } else if (this.hasSameNameLibrary(library.info)) {
-      this._swapExistingLibrary(library);
-    } else {
-      this.libraries[library.info.name] = library;
-      this.toolboxManager.appendLibrary(library);
-    }
-  }
-
-  /**
-   * @param {Library|LibraryInfo} target
-   * @returns {boolean}
-   */
-  hasSameNameAuthorLibrary(target) {
-    let hasSameLibrary = false;
-    const libraryInfo = (target instanceof Library) ? (target.info) : (target);
-
-    if (this.hasSameNameLibrary(libraryInfo)) {
-      const libraryName = libraryInfo.name;
-      const matchingLibrary = this.libraries[libraryName];
-
-      if (matchingLibrary.info.author === libraryInfo.author) {
-        hasSameLibrary = true;
-      }
-    }
-
-    return hasSameLibrary;
   }
 
   /**
