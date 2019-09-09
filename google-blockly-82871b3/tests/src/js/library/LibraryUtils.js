@@ -75,8 +75,17 @@ class LibraryUtils {
       mutationXml.appendChild(aXml);
     }
 
+    let implement = this.domWrapper("implement", this.domWrapper("xml", functionBlockXml));
+
+    mutationXml.appendChild(implement);
     interfaceXml.appendChild(mutationXml);
     return interfaceXml;
+  }
+
+  static domWrapper(tag, xml) {
+    let implementXml = document.createElement(tag);
+    implementXml.appendChild(xml);
+    return implementXml;
   }
 
   /**
@@ -113,15 +122,15 @@ class LibraryUtils {
 
     const returnFunctionsXml = implementXml.querySelectorAll("block[type=procedures_defreturn]");
     for (let i = 0; i < returnFunctionsXml.length; i++) {
-      const returnFunctionXml = returnFunctionsXml[i];
-      const interfaceXml = LibraryUtils.convertFunctionToInterfaceXml(returnFunctionXml, namespaceName, libraryName);
+      const functionXml = returnFunctionsXml[i];
+      const interfaceXml = LibraryUtils.convertFunctionToInterfaceXml(functionXml, namespaceName, libraryName);
       xml.appendChild(interfaceXml);
     }
 
     const noReturnFunctionsXml = implementXml.querySelectorAll("block[type=procedures_defnoreturn]");
     for (let i = 0; i < noReturnFunctionsXml.length; i++) {
-      const noReturnFunctionXml = noReturnFunctionsXml[i];
-      const interfaceXml = LibraryUtils.convertProcedureToInterfaceXml(noReturnFunctionXml, namespaceName, libraryName);
+      const functionXml = noReturnFunctionsXml[i];
+      const interfaceXml = LibraryUtils.convertProcedureToInterfaceXml(functionXml, namespaceName, libraryName);
       xml.appendChild(interfaceXml);
     }
 
