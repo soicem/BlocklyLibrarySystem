@@ -1,16 +1,26 @@
 class Size {
+  /**
+   * @param {number} width
+   * @param {number} height
+   */
   constructor(width = 1, height = 1) {
-    this.setWidth(width);
-    this.setHeight(height);
+    this._width = width;
+    this._height = height;
   }
 
   ////////// Getter & Setter //////////
 
-  getWidth() {
+  /**
+   * @returns {number}
+   */
+  get width() {
     return this._width;
   }
 
-  setWidth(width) {
+  /**
+   * @param {number} width
+   */
+  set width(width) {
     if (width <= 0) {
       throw new IllegalArgumentException(
           "Width cannot be zero or negative");
@@ -19,11 +29,17 @@ class Size {
     this._width = width;
   }
 
-  getHeight() {
+  /**
+   * @returns {number}
+   */
+  get height() {
     return this._height;
   }
 
-  setHeight(height) {
+  /**
+   * @param {number} height
+   */
+  set height(height) {
     if (height <= 0) {
       throw new IllegalArgumentException(
           "Height cannot be zero or negative");
@@ -34,8 +50,11 @@ class Size {
 
   ////////// Class Methods //////////
 
+  /**
+   * @returns {Size}
+   */
   clone() {
-    return new Size(this.getWidth(), this.getHeight());
+    return new Size(this.width, this.height);
   }
 
 }

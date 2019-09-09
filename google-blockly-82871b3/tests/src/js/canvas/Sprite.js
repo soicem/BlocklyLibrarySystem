@@ -1,50 +1,21 @@
 class Sprite {
-  get isHalting() {
-    return this._isHalting;
-  }
-
-  set isHalting(value) {
-    this._isHalting = value;
-  }
-  get isContinue() {
-    return this._isContinue;
-  }
-
-  set isContinue(value) {
-    this._isContinue = value;
-  }
-  get cloneChilds() {
-    return this._cloneChilds;
-  }
-
-  set cloneChilds(value) {
-    this._cloneChilds.push(value);
-  }
-  get isClone() {
-    return this._isClone;
-  }
-
-  set isClone(value) {
-    this._isClone = value;
-  }
-
   constructor(canvas, image, imageData, position, size, angle, name, isClone=[false,]) {
     this._isClone = isClone;
     this._cloneChilds = [];
-    this._name = name; // 이름
     this._isContinue = true;
     this._isHalting = false;
+    this._name = name; // 이름
     this._imageSrc = [];
     this.setCostume(image.src);
     this.setCurrentCostumeSrc(0);
-    this.setCanvas(canvas);
-    this.setImage(image);
-    this.setImageData(imageData);
-    this.setPosition(position);
-    this.setSize(size);
-    this.setAngle(angle);
-    this.setSpeechBubble(null);
-    this.setJsCode("");
+    this.canvas = canvas;
+    this.image = image;
+    this.imageData = imageData;
+    this.position = position;
+    this.size = size;
+    this.angle = angle;
+    this.speechBubble = null;
+    this.jsCode = "";
     this.resetXml();
 
 
@@ -54,23 +25,39 @@ class Sprite {
     this._whenCloning = [];
   }
 
-
-  get whenCloning() {
-    return this._whenCloning;
-  }
-
-  set whenCloning(value) {
-    this._whenCloning = value;
-  }
-  get whenClicked() {
-    return this._whenClicked;
-  }
-
-  set whenClicked(value) {
-    this._whenClicked = value;
-  }
-
   ////////// Getter & Setter //////////
+
+  get isClone() {
+    return this._isClone;
+  }
+
+  set isClone(value) {
+    this._isClone = value;
+  }
+
+  get cloneChilds() {
+    return this._cloneChilds;
+  }
+
+  set cloneChilds(value) {
+    this._cloneChilds.push(value);
+  }
+
+  get isContinue() {
+    return this._isContinue;
+  }
+
+  set isContinue(value) {
+    this._isContinue = value;
+  }
+
+  get isHalting() {
+    return this._isHalting;
+  }
+
+  set isHalting(value) {
+    this._isHalting = value;
+  }
 
   get name() {
     return this._name;
@@ -80,6 +67,20 @@ class Sprite {
     this._name = value;
   }
 
+  get whenCloning() {
+    return this._whenCloning;
+  }
+  set whenCloning(value) {
+    this._whenCloning = value;
+  }
+
+  get whenClicked() {
+    return this._whenClicked;
+  }
+
+  set whenClicked(value) {
+    this._whenClicked = value;
+  }
 
   getIdentifier(){
     return this.identifier;
@@ -89,19 +90,19 @@ class Sprite {
     this.identifier = id;
   }
 
-  getCanvas() {
+  get canvas() {
     return this._canvas;
   }
 
-  setCanvas(canvas) {
+  set canvas(canvas) {
     this._canvas = canvas;
   }
 
-  getImage() {
+  get image() {
     return this._image;
   }
 
-  setImage(image) {
+  set image(image) {
     this._image = image;
   }
 
@@ -125,59 +126,59 @@ class Sprite {
     this._currentCostumeSrc = num;
   }
 
-  getImageData() {
+  get imageData() {
     return this._imageData;
   }
 
-  setImageData(imageData) {
+  set imageData(imageData) {
     this._imageData = imageData;
   }
 
-  getPosition() {
+  get position() {
     return this._position.clone();
   }
 
-  setPosition(position) {
+  set position(position) {
     this._position = position.clone();
   }
 
-  getSize() {
+  get size() {
     return this._size.clone();
   }
 
-  setSize(size) {
+  set size(size) {
     this._size = size.clone();
   }
 
-  getAngle() {
+  get angle() {
     return this._direction.clone();
   }
 
-  setAngle(direction) {
+  set angle(direction) {
     this._direction = direction.clone();
   }
 
-  getSpeechBubble() {
+  get speechBubble() {
     return this._speechBubble;
   }
 
-  setSpeechBubble(speechBubble) {
+  set speechBubble(speechBubble) {
     this._speechBubble = speechBubble;
   }
 
-  getJsCode() {
+  get jsCode() {
     return this._jsCode;
   }
 
-  setJsCode(jsCode) {
+  set jsCode(jsCode) {
     this._jsCode = jsCode;
   }
 
-  getXml() {
+  get xml() {
     return this._xml;
   }
 
-  setXml(xml) {
+  set xml(xml) {
     this._xml = xml.trim();
   }
 
@@ -189,11 +190,11 @@ class Sprite {
   // --- More ---
 
   getContext() {
-    return this.getCanvas().getContext();
+    return this.canvas.context;
   }
 
   getImageSource() {
-    return this.getImage().src;
+    return this.image.src;
   }
 
   getCostumeSource(num) {
@@ -204,36 +205,36 @@ class Sprite {
     this._imageSrc[num] = src;
   }
 
-  getX() {
-    return this.getPosition().getX();
+  get x() {
+    return this.position.x;
   }
 
-  setX(x) {
-    this._position.setX(x);
+  set x(x) {
+    this._position.x = x;
   }
 
-  getY() {
-    return this.getPosition().getY();
+  get y() {
+    return this.position.y;
   }
 
-  setY(y) {
-    this._position.setY(y);
+  set y(y) {
+    this._position.y = y;
   }
 
-  getWidth() {
-    return this.getSize().getWidth();
+  get width() {
+    return this.size.width;
   }
 
-  setWidth(width) {
-    this._size.setWidth(width);
+  set width(width) {
+    this._size.width = width;
   }
 
-  getHeight() {
-    return this.getSize().getHeight();
+  get height() {
+    return this.size.height;
   }
 
-  setHeight(height) {
-    this._size.setHeight(height);
+  set height(height) {
+    this._size.height = height;
   }
 
   getPixelsOfRgb(rgb, withGap = false) {
@@ -241,11 +242,11 @@ class Sprite {
 
     const canvas = document.createElement('canvas');
     const context = canvas.getContext("2d");
-    canvas.width = this.getWidth();
-    canvas.height = this.getHeight();
-    context.drawImage(this.getImage(), 0, 0, this.getWidth(), this.getHeight());
-    const data = context.getImageData(0, 0, this.getWidth(),
-        this.getHeight()).data;
+    canvas.width = this.width;
+    canvas.height = this.height;
+    context.drawImage(this.image, 0, 0, this.width, this.height);
+    const data = context.getImageData(0, 0, this.width,
+        this.height).data;
 
     let i = 0;
     for (let y = 0; y < canvas.height; y++) {
@@ -262,7 +263,7 @@ class Sprite {
         if ((rgb === null || rgb.a === 0) ||
             (r === rgb.r && g === rgb.g && b === rgb.b)) {
           if (withGap) {
-            foundPixels.push(new Point(x + this.getX(), y + this.getY()));
+            foundPixels.push(new Point(x + this.x, y + this.y));
           } else {
             foundPixels.push(new Point(x, y));
           }
@@ -280,50 +281,50 @@ class Sprite {
   ////////// Class Methods //////////
 
   resetXml() {
-    this.setXml("<xml xmlns='http://www.w3.org/1999/xhtml'></xml>");
+    this.xml = "<xml xmlns='http://www.w3.org/1999/xhtml'></xml>";
   }
 
   clearSpeechBubble() {
-    this.setSpeechBubble(null);
+    this.speechBubble = null;
   }
 
   printProperties() {
-    console.log("x : ", this.getPosition().getX());
-    console.log("y : ", this.getPosition().getY());
-    console.log("height : ", this.getSize().getHeight());
-    console.log("width : ", this.getSize().getWidth());
+    console.log("x : ", this.position.x);
+    console.log("y : ", this.position.y);
+    console.log("height : ", this.size.height);
+    console.log("width : ", this.size.width);
   }
 
   render() {
-    this.getCanvas().getContext().drawImage(
-        this.getImage(), this.getX(), this.getY(), this.getWidth(),
-        this.getHeight()
+    this.canvas.context.drawImage(
+        this.image, this.x, this.y, this.width,
+        this.height
     );
 
-    if (this.getSpeechBubble()) {
-      this.getSpeechBubble().render();
+    if (this.speechBubble) {
+      this.speechBubble.render();
     }
   }
 
   moveSteps(step) {
-    let newPosition = this.getPosition().offsetByAngle(this.getAngle(), step);
-    this.setPosition(newPosition);
+    let newPosition = this.position.offsetByAngle(this.angle, step);
+    this.position = newPosition;
   }
 
   turnRight(angle) {
-    const newAngle = this.getAngle().plus(angle);
+    const newAngle = this.angle.plus(angle);
     //console.log(newAngle, angle)
-    this.setAngle(newAngle);
+    this.angle = newAngle;
   }
 
   turnLeft(angle) {
-    const newAngle = this.getAngle().minus(angle);
-    this.setAngle(newAngle);
+    const newAngle = this.angle.minus(angle);
+    this.angle = newAngle;
   }
 
   // ex : new Degree(180);
   changeDirection(angle) {
-    this.setAngle(angle);
+    this.angle = angle;
   }
 
   wait(sec) {
@@ -335,27 +336,27 @@ class Sprite {
   }
 
   goToPoint(x, y) {
-    this.setPosition(new Point(x, y));
+    this.position = new Point(x, y);
   }
 
   goToRandomPosition() {
     const max = {
-      width: this.getCanvas().getWidth() - this.getWidth(),
-      height: this.getCanvas().getHeight() - this.getHeight()
+      width: this.canvas.width - this.width,
+      height: this.canvas.height - this.height
     };
 
     let point = new Point();
     point.setRandomX(max.width);
     point.setRandomY(max.height);
-    this.setPosition(point);
+    this.position = point;
   }
 
   goToMousePosition() {
-    let mousePosition = this.getCanvas().getHandler().getMousePosition();
+    let mousePosition = this.canvas.handler.mousePosition;
     let newPosition = mousePosition.offset(
-        new Point(-this.getWidth() / 2, -this.getHeight() / 2));
-    //console.log(mousePosition, -this.getWidth() / 2, -this.getHeight() / 2)
-    this.setPosition(newPosition);
+        new Point(-this.width / 2, -this.height / 2));
+    //console.log(mousePosition, -this.width / 2, -this.height / 2)
+    this.position = newPosition;
   }
 
   glideToMousePosition(second) {
@@ -364,7 +365,7 @@ class Sprite {
   }
 
   say(text) {
-    this.setSpeechBubble(new SpeechBubble(this, text));
+    this.speechBubble = new SpeechBubble(this, text);
   }
 
   isTouchingColorHex(lookupHex) {
@@ -379,7 +380,7 @@ class Sprite {
     }
 
     if (hexToRgb(lookupHex)) {
-      return CanvasUtil.isOverlayingColor(this.getCanvas(), this,
+      return CanvasUtil.isOverlayingColor(this.canvas, this,
           hexToRgb(lookupHex));
     } else {
       return false;
@@ -399,7 +400,7 @@ class Sprite {
     }
 
     if (hexToRgba(baseHex) && hexToRgba(lookupHex)) {
-      return CanvasUtil.isColorOverlayingColor(this.getCanvas(), this,
+      return CanvasUtil.isColorOverlayingColor(this.canvas, this,
           hexToRgba(baseHex),
           hexToRgba(lookupHex));
     } else {
@@ -408,8 +409,8 @@ class Sprite {
   }
 
   isTouchingSprite(spriteName) {
-    const sprite = this.getCanvas().getSpriteByName(spriteName);
-    return CanvasUtil.isSpriteTouchingSprite(this.getCanvas(), this, sprite);
+    const sprite = this.canvas.getSpriteByName(spriteName);
+    return CanvasUtil.isSpriteTouchingSprite(this.canvas, this, sprite);
   }
 
   nextCostume(){

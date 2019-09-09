@@ -68,7 +68,7 @@ function importXml(file, tmpXml) {
       tmpXml[xmlName] = fileData;
       // }
     } else {
-      myCanvas.getSpriteByName(xmlName).setXml(fileData);
+      myCanvas.getSpriteByName(xmlName).xml = fileData;
     }
   }).catch(
       console.log.bind(console)
@@ -92,7 +92,7 @@ function importJs(file, tmpJs) {
       tmpJs[jsName] = fileData;
       // }
     } else {
-      myCanvas.getSpriteByName(jsName).setJsCode(fileData);
+      myCanvas.getSpriteByName(jsName).jsCode = fileData;
     }
   }).catch(
       console.log.bind(console)
@@ -101,7 +101,7 @@ function importJs(file, tmpJs) {
 
 function importLib(file) {
   return file.async('text').then(fileData => {
-    myCanvas.setLibCode(fileData)
+    myCanvas.libCode = fileData
   }).catch(
       console.log.bind(console)
   );
@@ -128,7 +128,7 @@ function lazyEvaluateJs(tmpJs) {
   if (isEmpty > 0) {
     matching = Object.keys(tmpJs);
     matching.forEach(data => {
-      myCanvas.getSpriteByName(data).setJsCode(tmpJs[data]);
+      myCanvas.getSpriteByName(data).jsCode = tmpJs[data];
     });
   }
 }
@@ -136,7 +136,7 @@ function lazyEvaluateJs(tmpJs) {
 function lazyEvaluateXml(tmpXml) {
   if (Object.keys(tmpXml).length > 0) {
     let match = Object.keys(tmpXml);
-    match.forEach(data => myCanvas.getSpriteByName(data).setXml(tmpXml[data]));
+    match.forEach(data => myCanvas.getSpriteByName(data).xml = tmpXml[data]);
   }
 }
 
@@ -175,7 +175,7 @@ function importProjFile(fileInputElement, workspace) {
   })(files);
 
   reader.readAsArrayBuffer(files);
-  console.log(myCanvas.getSpritesOrder());
+  console.log(myCanvas.spritesOrder);
 }
 
 function extractAccordingToFile(file, workspace) {
@@ -201,5 +201,5 @@ function importBlkFile(fileInputElement, workspace) {
   })(files);
 
   reader.readAsArrayBuffer(files);
-  console.log(myCanvas.getSpritesOrder());
+  console.log(myCanvas.spritesOrder);
 }

@@ -1,24 +1,40 @@
 class SpeechBubble {
+  /**
+   * @param {Sprite} sprite
+   * @param {string} message
+   */
   constructor(sprite, message) {
-    this.setSprite(sprite);
-    this.setMessage(message);
+    this.sprite = sprite;
+    this.message = message;
   }
 
   /////////// Getter & Setter //////////
 
-  getSprite() {
+  /**
+   * @returns {Sprite}
+   */
+  get sprite() {
     return this._sprite
   }
 
-  setSprite(sprite) {
+  /**
+   * @param {Sprite} sprite
+   */
+  set sprite(sprite) {
     this._sprite = sprite;
   }
 
-  getMessage() {
+  /**
+   * @returns {string}
+   */
+  get message() {
     return this._message;
   }
 
-  setMessage(message) {
+  /**
+   * @param {string} message
+   */
+  set message(message) {
     this._message = message;
   }
 
@@ -26,15 +42,18 @@ class SpeechBubble {
 
   ////////// Class Methods //////////
 
+  /**
+   * Displays speech bubble according to it's sprite
+   */
   render() {
     const radius = 5;
-    const w = this.getMessage().length * 5 + 10;
+    const w = this.message.length * 5 + 10;
     const h = 10 + 5;
-    const x = this.getSprite().getX() + this.getSprite().getWidth();
-    const y = this.getSprite().getY() - h;
+    const x = this.sprite.x + this.sprite.width;
+    const y = this.sprite.y - h;
     const r = x + w;
     const b = y + h;
-    const context = this.getSprite().getContext();
+    const context = this.sprite.getContext();
 
     context.beginPath();
     context.fillStyle = "white";
@@ -53,6 +72,6 @@ class SpeechBubble {
     context.fill();
     context.stroke();
     context.fillStyle = "#000";
-    context.fillText(this.getMessage(), x + 5, y + 10);
+    context.fillText(this.message, x + 5, y + 10);
   }
 }
