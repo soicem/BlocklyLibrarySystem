@@ -47,13 +47,13 @@ function exportSprite(sprite) {
 function exportProjFile(filename, ext, workspace) {
   updateCurrentSpriteXml(workspace);
 
-  exportStage(myCanvas.getSpritesOrder()[0]);
-  for (let i = 1; i < myCanvas.getSpritesOrder().length; i++) {
-    const sprite = myCanvas.getSpritesOrder()[i];
+  exportStage(myCanvas.spritesOrder[0]);
+  for (let i = 1; i < myCanvas.spritesOrder.length; i++) {
+    const sprite = myCanvas.spritesOrder[i];
     if (sprite.isClone[0]) continue;
     exportSprite(sprite);
   }
-  exportLib(myCanvas.getLibCode());
+  exportLib(myCanvas.libCode);
 
   CreateBLK(filename, ext);
 }
@@ -68,8 +68,8 @@ function switchWorkspaceTo(sprite, workspace) {
 function generateLibraryCode(workspace) {
   let libraryCode = "";
 
-  for (let i = 1; i < myCanvas.getSpritesOrder().length; i++) {
-    const sprite = myCanvas.getSpritesOrder()[i];
+  for (let i = 1; i < myCanvas.spritesOrder.length; i++) {
+    const sprite = myCanvas.spritesOrder[i];
 
     if (sprite) {
       switchWorkspaceTo(myCanvas.getSpriteByName(sprite.name), workspace);
@@ -85,8 +85,8 @@ function generateLibraryCode(workspace) {
 function exportBlkFile(filename, ext, workspace) {
   updateCurrentSpriteXml(workspace);
 
-  for (let i = 1; i < myCanvas.getSpritesOrder().length; i++) {
-    const sprite = myCanvas.getSpritesOrder()[i];
+  for (let i = 1; i < myCanvas.spritesOrder.length; i++) {
+    const sprite = myCanvas.spritesOrder[i];
     if (sprite.isClone[0]) continue;
     exportXml(sprite);
   }

@@ -64,8 +64,8 @@ Blockly.Extensions.register('spriteListUpdateExtension', function () {
         // Delete everything other than first two, which is static
         let newList = this.getField("OPTION").menuGenerator_.slice(0, 2);
 
-        for (let i = 1; i < myCanvas.getSpritesOrder().length; i++) {
-          let sprite = myCanvas.getSpritesOrder()[i];
+        for (let i = 1; i < myCanvas.spritesOrder.length; i++) {
+          let sprite = myCanvas.spritesOrder[i];
           let spriteName = sprite.name;
 
           if (sprite.isClone[0]) {

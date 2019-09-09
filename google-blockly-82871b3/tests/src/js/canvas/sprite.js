@@ -189,7 +189,7 @@ class Sprite {
   // --- More ---
 
   getContext() {
-    return this.getCanvas().getContext();
+    return this.getCanvas().context;
   }
 
   getImageSource() {
@@ -295,7 +295,7 @@ class Sprite {
   }
 
   render() {
-    this.getCanvas().getContext().drawImage(
+    this.getCanvas().context.drawImage(
         this.getImage(), this.getX(), this.getY(), this.getWidth(),
         this.getHeight()
     );
@@ -351,7 +351,7 @@ class Sprite {
   }
 
   goToMousePosition() {
-    let mousePosition = this.getCanvas().getHandler().mousePosition;
+    let mousePosition = this.getCanvas().handler.mousePosition;
     let newPosition = mousePosition.offset(
         new Point(-this.getWidth() / 2, -this.getHeight() / 2));
     //console.log(mousePosition, -this.getWidth() / 2, -this.getHeight() / 2)

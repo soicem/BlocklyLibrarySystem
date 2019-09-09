@@ -39,7 +39,7 @@
   <script src="../blocks/variables_dynamic.js"></script>
   <script src="../blocks/procedures.js"></script>
   <script src="../blocks/import.js"></script>
-  <script src="src/js/canvas/canvas.js"></script>
+  <script src="src/js/canvas/Canvas.js"></script>
 
 
   <script src="../blocks/sprites/motions.js"></script>
@@ -193,7 +193,7 @@
     }
 
     function setSpriteXML() {
-      var first_value = Object.keys(myCanvas.getSprites())[0];
+      var first_value = Object.keys(myCanvas.sprites)[0];
 
       var output = document.getElementById('importExport');
       output.value = myCanvas.getSpriteByName(first_value).getXml();
@@ -219,7 +219,7 @@
     function delayWrapper(keyOfSprite, isClone=false) {
       return new Promise(function (resolve, reject) {
         setTimeout(function (){
-          myCanvas.setSpecificSpriteName(keyOfSprite);
+          myCanvas.specificSpriteName = keyOfSprite;
           var isFalse = stepCode(keyOfSprite, isClone);
           resolve(isFalse);
 
@@ -228,7 +228,7 @@
     }
 
     function re_start(){
-        myCanvas.Re_Start();
+        myCanvas.restart();
     }
 
     // key press event
@@ -267,9 +267,9 @@
         if(myCanvas.isHalting)
             re_start();
 
-      for(var i = 1; i < myCanvas.getSpritesOrder().length; i++){
-          if(myCanvas.getSpritesOrder()[i] !== null && !myCanvas.getSpritesOrder()[i].isClone[0])
-              _goStep(myCanvas.getSpritesOrder()[i].name) // myCanvas.getSpritesOrder()[i] === Sprite in order
+      for(var i = 1; i < myCanvas.spritesOrder.length; i++){
+          if(myCanvas.spritesOrder[i] !== null && !myCanvas.spritesOrder[i].isClone[0])
+              _goStep(myCanvas.spritesOrder[i].name) // myCanvas.spritesOrder[i] === Sprite in order
       }
     }
 
@@ -292,14 +292,14 @@
     }
 
     function ObjSuspend() {
-        myCanvas.AllPause();
+        myCanvas.allPause();
     }
 
     // initApi 'createClone' statement wrapper
     function createClone(){
         console.log("create sprite ___ clone")
         var spriteObject = myCanvas.getSpecificSprite();
-        var parentName = myCanvas.getSpecificSpriteName();
+        var parentName = myCanvas.specificSpriteName;
         var cloneName = getNoDuplicationName(parentName, "_clone");
         spriteObject.cloneChilds = cloneName; // clone 이름을 parent sprite에 저장
         var imageData = spriteObject.getImageData();
@@ -307,7 +307,7 @@
         var position = spriteObject.getPosition(); // x, y 좌표
         myCanvas.addSpriteAndSelect(cloneName, imageData, imageSrc, [true, parentName, position]); // idx4 : isClone or not
 
-      // var libCode = myCanvas.getLibCode();
+      // var libCode = myCanvas.libCode;
       var libCode = libraryManager.getLibraryJsCode();
       if(libCode){
         // libCode = libCode.replace("null", "")
@@ -353,7 +353,7 @@
 
       interpreter.setProperty(scope, 'allStop',
               interpreter.createNativeFunction(function() {
-                myCanvas.AllPause();
+                myCanvas.allPause();
               }));
 
 
@@ -428,12 +428,12 @@
 
       interpreter.setProperty(scope, 'getMouseY',
               interpreter.createNativeFunction(function() {
-                return myCanvas.getHandler().getMousePosition().y;
+                return myCanvas.handler.getMousePosition().y;
               }));
 
       interpreter.setProperty(scope, 'getMouseX',
               interpreter.createNativeFunction(function() {
-                return myCanvas.getHandler().getMousePosition().x;
+                return myCanvas.handler.getMousePosition().x;
               }));
 
 
@@ -500,10 +500,10 @@
 
       interpreter.setProperty(scope, 'wait',
             interpreter.createNativeFunction(function(second) {
-              var nameOfSprite = myCanvas.getSpecificSpriteName();
+              var nameOfSprite = myCanvas.specificSpriteName;
               myCanvas.getSpriteByName(nameOfSprite).isContinue = false;
               myCanvas.getSpriteByName(nameOfSprite).wait(second).then(value=>{
-                console.log(myCanvas.getSpecificSpriteName())
+                console.log(myCanvas.specificSpriteName)
                 myCanvas.getSpriteByName(nameOfSprite).isContinue = true;
                 if(!myCanvas.getSpriteByName(nameOfSprite).isHalting);
                   _goStep(nameOfSprite);
@@ -571,7 +571,7 @@
       // Generate JavaScript code and parse it.
       Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
       Blockly.JavaScript.addReservedWords('highlightBlock');
-      let keyOfLatestCode = myCanvas.getCurrentSpriteName();
+      let keyOfLatestCode = myCanvas.currentSpriteName;
       // latestCodes[keyOfLatestCode] = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
       myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(Blockly["JavaScript"].workspaceToCode(blockWorkspace));
 
@@ -580,7 +580,7 @@
       let eventCode = eventCodeHandling(myCanvas.getSpriteByName(keyOfLatestCode).getJsCode());
       myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(eventCode);
 
-      // var libCode = myCanvas.getLibCode();
+      // var libCode = myCanvas.libCode;
       var libCode = libraryManager.getLibraryJsCode();
       if(libCode){
         // libCode = libCode.replace("null", "")
@@ -598,10 +598,10 @@
       console.log(myCanvas.getSpriteByName(keyOfLatestCode).getJsCode());
 
       // step execution 용 코드
-      if(!myInterpreters[myCanvas.getCurrentSpriteName()])
+      if(!myInterpreters[myCanvas.currentSpriteName])
         //console.log("soicem");
-      for(var i = 1; i < myCanvas.getSpritesOrder().length; i++){
-        //console.log(myCanvas.getSpritesOrder()[i].getImageFilename());
+      for(var i = 1; i < myCanvas.spritesOrder.length; i++){
+        //console.log(myCanvas.spritesOrder[i].getImageFilename());
       }
     }
 
@@ -911,12 +911,12 @@
           }
         }
 
-        var costumeNum = myCanvas.getCurrentCostumeNum() + 1;
+        var costumeNum = myCanvas.currentCostumeNum + 1;
         var spriteName = getNoDuplicationName(name); // Sprite name 중복 제거
-        var a = '<div class="costumeImg\" id="' + myCanvas.getCurrentSpriteName() + '_' + costumeNum + '" onclick="myCanvas.setCurrentCostume('
+        var a = '<div class="costumeImg\" id="' + myCanvas.currentSpriteName + '_' + costumeNum + '" onclick="myCanvas.setCurrentCostume('
                 + costumeNum + ')">'
                 + '<img src="' + path + name + '" alt="">'
-                + '<div class="desc">' + myCanvas.getCurrentSpriteName() + '_' + costumeNum + '</div>'
+                + '<div class="desc">' + myCanvas.currentSpriteName + '_' + costumeNum + '</div>'
                 + '</div>';
         document.getElementById("costumeGallery").innerHTML += a;
         reader.addEventListener('load', function () {
@@ -957,7 +957,7 @@
 <!--              <INPUT type="file" id="load_filename" value="Load" onChange="loadFile()" />-->
               <div>
                 <a id="saveImage" download="image.png">
-                    <INPUT type="button" value="Save" onClick="saveImage(myCanvas.getCurrentSpriteName() + '_' + myCanvas.getCurrentCostumeNum())" />
+                    <INPUT type="button" value="Save" onClick="saveImage(myCanvas.currentSpriteName + '_' + myCanvas.currentCostumeNum)" />
                 </a>
                 <INPUT type="button" value="Clear" onClick="initPage()" />
               </div>
@@ -1295,7 +1295,7 @@
 
           function removeConfirmation(spriteName) {
             if (confirm("'" + spriteName + "'를 삭제하길 원하십니까?")) {
-              myCanvas.RemoveFromCanvas(spriteName);
+              myCanvas.removeFromCanvas(spriteName);
             }
           }
 

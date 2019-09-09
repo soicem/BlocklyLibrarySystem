@@ -101,7 +101,7 @@ function importJs(file, tmpJs) {
 
 function importLib(file) {
   return file.async('text').then(fileData => {
-    myCanvas.setLibCode(fileData)
+    myCanvas.libCode = fileData
   }).catch(
       console.log.bind(console)
   );
@@ -175,7 +175,7 @@ function importProjFile(fileInputElement, workspace) {
   })(files);
 
   reader.readAsArrayBuffer(files);
-  console.log(myCanvas.getSpritesOrder());
+  console.log(myCanvas.spritesOrder);
 }
 
 function extractAccordingToFile(file, workspace) {
@@ -201,5 +201,5 @@ function importBlkFile(fileInputElement, workspace) {
   })(files);
 
   reader.readAsArrayBuffer(files);
-  console.log(myCanvas.getSpritesOrder());
+  console.log(myCanvas.spritesOrder);
 }

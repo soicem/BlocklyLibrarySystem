@@ -18,8 +18,8 @@ class CanvasUtil {
     const pixels = baseSprite.getPixelsOfRgb(baseRgb);
 
     for (let layer = 0;
-        layer < canvas.getSpritesOrder().length && !isOverlaying; layer++) {
-      const currentSprite = canvas.getSpritesOrder()[layer];
+        layer < canvas.spritesOrder.length && !isOverlaying; layer++) {
+      const currentSprite = canvas.spritesOrder[layer];
 
       if (currentSprite === null) {
         continue;
@@ -31,7 +31,7 @@ class CanvasUtil {
       const currentHeight = currentSprite.getHeight();
 
       if (currentSprite === baseSprite) {
-        if (layer !== 0 && layer !== canvas.getSpritesOrder().length - 1) {
+        if (layer !== 0 && layer !== canvas.spritesOrder.length - 1) {
           let data = tempContext.getImageData(0, 0, baseWidth, baseHeight).data;
           isOverlaying = this._isPixelsOverlayingRgb(data, baseSprite.getSize(),
               pixels, lookupRgb);

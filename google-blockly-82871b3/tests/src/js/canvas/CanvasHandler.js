@@ -23,7 +23,7 @@ class CanvasHandler {
     this._callbackFunctions["trackMousePosition"] = (event) => {
       const mouseX = event.clientX;
       const mouseY = event.clientY;
-      const canvasBound = this.canvasObject.getCanvas().getBoundingClientRect();
+      const canvasBound = this.canvasObject.canvas.getBoundingClientRect();
       const canvasX = canvasBound.left;
       const canvasY = canvasBound.top;
       //console.log("mouse : ", mouseX, mouseY, "canvas", canvasX, canvasY);
@@ -59,7 +59,7 @@ class CanvasHandler {
         }
 
         // Move selected sprite to the top
-        if (sprite !== this.canvasObject.getSpritesOrder()[0]) {
+        if (sprite !== this.canvasObject.spritesOrder[0]) {
           this.canvasObject.moveSpriteToTop(sprite);
           this.startSelectedSpriteMove();
         }
@@ -150,36 +150,36 @@ class CanvasHandler {
   ////////// Class Methods ///////////
 
   startTrackMousePosition() {
-    this.canvasObject.getCanvas().addEventListener("mousemove",
+    this.canvasObject.canvas.addEventListener("mousemove",
         this.callbackFunctions.trackMousePosition);
   }
 
   stopTrackMousePosition() {
-    this.canvasObject.getCanvas().removeEventListener("mousemove",
+    this.canvasObject.canvas.removeEventListener("mousemove",
         this.callbackFunctions.trackMousePosition);
   }
 
   startSelectSprite() {
-    this.canvasObject.getCanvas().addEventListener("mousedown",
+    this.canvasObject.canvas.addEventListener("mousedown",
         this.callbackFunctions.selectSprite);
-    this.canvasObject.getCanvas().addEventListener("mouseup",
+    this.canvasObject.canvas.addEventListener("mouseup",
         this.callbackFunctions.deselectSprite);
   }
 
   stopSelectSprite() {
-    this.canvasObject.getCanvas().removeEventListener("mousedown",
+    this.canvasObject.canvas.removeEventListener("mousedown",
         this.callbackFunctions.selectSprite);
-    this.canvasObject.getCanvas().removeEventListener("mouseup",
+    this.canvasObject.canvas.removeEventListener("mouseup",
         this.callbackFunctions.deselectSprite);
   }
 
   startSelectedSpriteMove() {
-    this.canvasObject.getCanvas().addEventListener("mousemove",
+    this.canvasObject.canvas.addEventListener("mousemove",
         this.callbackFunctions.selectedSpriteMove);
   }
 
   stopSelectedSpriteMove() {
-    this.canvasObject.getCanvas().removeEventListener("mousemove",
+    this.canvasObject.canvas.removeEventListener("mousemove",
         this.callbackFunctions.selectedSpriteMove);
   }
 }
