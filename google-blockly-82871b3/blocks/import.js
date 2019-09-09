@@ -129,6 +129,7 @@ Blockly.Blocks['inline_configure'] = {
 Blockly.Blocks['import_return'] = {
   argsCount_: 0,
   argsName_: [],
+  namespaceName_: '',
   libraryName_: '',
   funcName_: '',
 
@@ -151,6 +152,7 @@ Blockly.Blocks['import_return'] = {
   mutationToDom: function() {
     let container = document.createElement("mutation");
 
+    container.setAttribute("ns", this.namespaceName_);
     container.setAttribute("lib", this.libraryName_);
     container.setAttribute("func", this.funcName_);
     if (this.argsCount_ > 0) {
@@ -167,6 +169,7 @@ Blockly.Blocks['import_return'] = {
   },
 
   domToMutation: function(xmlElement) {
+    this.namespaceName_ = xmlElement.getAttribute("ns");
     this.libraryName_ = xmlElement.getAttribute("lib");
     this.funcName_ = xmlElement.getAttribute("func");
     this.argsCount_ = parseInt(xmlElement.getAttribute("args"), 10) || 0;
@@ -196,7 +199,7 @@ Blockly.Blocks['import_return'] = {
   updateShape_: function() {
     this.resetShape_();
 
-    this.getField("FUNC_FIELD").setText(`${this.libraryName_}.${this.funcName_}`);
+    this.getField("FUNC_FIELD").setText(`${this.namespaceName_}.${this.libraryName_}.${this.funcName_}`);
 
     if (this.argsCount_ > 0) {
       this.getInput("FUNC").appendField("with", "WITH_FIELD");
@@ -210,7 +213,7 @@ Blockly.Blocks['import_return'] = {
   },
 
   resetShape_: function() {
-    this.getField("FUNC_FIELD").setText("basic.function");
+    this.getField("FUNC_FIELD").setText("NS.Lib.Func");
 
     if (this.getField("WITH_FIELD")) {
       this.removeField("WITH_FIELD");
@@ -227,6 +230,7 @@ Blockly.Blocks['import_return'] = {
 Blockly.Blocks['import_noReturn'] = {
   argsCount_: 0,
   argsName_: [],
+  namespaceName_: '',
   libraryName_: '',
   funcName_: '',
 

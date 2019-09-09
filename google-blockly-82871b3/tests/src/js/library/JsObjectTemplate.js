@@ -1,10 +1,47 @@
 class JsObjectTemplate {
   /**
+   * @param {string} namespaceName Name of the namespace
    * @param {string} objectName Name of the object
    */
-  constructor(objectName) {
+  constructor(namespaceName, objectName) {
+    this.namespaceName = namespaceName;
+    this.objectName = objectName;
     this._functions = [];
-    this._objectName = objectName;
+  }
+
+  /**
+   * @returns {string}
+   */
+  get namespaceName() {
+    return this._namespaceName;
+  }
+
+  /**
+   * @param {string} value
+   */
+  set namespaceName(value) {
+    this._namespaceName = value;
+  }
+
+  /**
+   * @returns {string}
+   */
+  get objectName() {
+    return this._objectName;
+  }
+
+  /**
+   * @param {string} value
+   */
+  set objectName(value) {
+    this._objectName = value;
+  }
+
+  /**
+   * @returns {string[]}
+   */
+  get functions() {
+    return this._functions;
   }
 
   /**
@@ -12,7 +49,9 @@ class JsObjectTemplate {
    * @returns {string}
    */
   getHeader() {
-    return `${this._objectName} = {`;
+    return `var ${this.namespaceName} = ${this.namespaceName} || {};
+    
+    ${this.namespaceName}.${this.objectName} = {`;
   }
 
   /**
@@ -22,8 +61,8 @@ class JsObjectTemplate {
   getContent() {
     let content = "";
 
-    if (this._functions.length) {
-      content += this._functions.reduce((previousValue, currentValue) => {
+    if (this.functions.length) {
+      content += this.functions.reduce((previousValue, currentValue) => {
         return `${previousValue},\n${currentValue}`;
       });
     }
@@ -55,10 +94,10 @@ class JsObjectTemplate {
 
   /**
    * Adds function definition
-   * @param functionName
-   * @param callback
+   * @param {string} functionName
+   * @param {string} callback
    */
   addFunctionDefinition(functionName, callback) {
-    this._functions.push(`${functionName}: ${callback}`);
+    this.functions.push(`${functionName}: ${callback}`);
   }
 }

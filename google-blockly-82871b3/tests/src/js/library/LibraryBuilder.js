@@ -100,7 +100,7 @@ class LibraryBuilder {
       this._functions[functionName] = {};
     }
     this._functions[functionName].xml = xml;
-    this._functions[functionName].interfaceXml = LibraryUtils.convertImplementToInterfaceString(this._name, xml);
+    this._functions[functionName].interfaceXml = LibraryUtils.convertImplementToInterfaceString(this._author, this._name, xml);
 
     return this;
   }
