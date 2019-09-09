@@ -269,12 +269,12 @@ class Canvas {
         const xml = Blockly.Xml.workspaceToDom(this.workspace);
         const prettyXMLText = Blockly.Xml.domToPrettyText(xml);
 
-        this.getCurrentSprite().setXml(prettyXMLText);
+        this.getCurrentSprite().xml = prettyXMLText;
         this.workspace.clear();
       }
-      if (this.getSpriteByName(nameOfSprite).getXml() !== "") {
+      if (this.getSpriteByName(nameOfSprite).xml !== "") {
         const nextXml = Blockly.Xml.textToDom(
-            this.getSpriteByName(nameOfSprite).getXml());
+            this.getSpriteByName(nameOfSprite).xml);
         Blockly.Xml.domToWorkspace(nextXml, this.workspace);
       }
 
@@ -288,12 +288,12 @@ class Canvas {
     }
     document.getElementById(
         this.currentSpriteName).style.border = "solid 2px #415DCC";
-    document.getElementById('sprite_X').value = this.getCurrentSprite().getX();
-    document.getElementById('sprite_Y').value = this.getCurrentSprite().getY();
+    document.getElementById('sprite_X').value = this.getCurrentSprite().x;
+    document.getElementById('sprite_Y').value = this.getCurrentSprite().y;
     document.getElementById(
-        'sprite_H').value = this.getCurrentSprite().getHeight();
+        'sprite_H').value = this.getCurrentSprite().height;
     document.getElementById(
-        'sprite_W').value = this.getCurrentSprite().getWidth();
+        'sprite_W').value = this.getCurrentSprite().width;
 
     this.loadCurrentSpriteCostumes();
   }
@@ -375,10 +375,10 @@ class Canvas {
         continue;
       }
 
-      if (sprite.getX() <= point.x &&
-          point.x <= (sprite.getX() + sprite.getWidth()) &&
-          sprite.getY() <= point.y &&
-          point.y <= (sprite.getY() + sprite.getHeight())) {
+      if (sprite.x <= point.x &&
+          point.x <= (sprite.x + sprite.width) &&
+          sprite.y <= point.y &&
+          point.y <= (sprite.y + sprite.height)) {
         foundSprite = sprite;
         break;
       }

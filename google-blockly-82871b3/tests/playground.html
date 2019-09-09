@@ -196,7 +196,7 @@
       var first_value = Object.keys(myCanvas.sprites)[0];
 
       var output = document.getElementById('importExport');
-      output.value = myCanvas.getSpriteByName(first_value).getXml();
+      output.value = myCanvas.getSpriteByName(first_value).xml;
       taChange();
     }
 
@@ -302,9 +302,9 @@
         var parentName = myCanvas.specificSpriteName;
         var cloneName = getNoDuplicationName(parentName, "_clone");
         spriteObject.cloneChilds = cloneName; // clone 이름을 parent sprite에 저장
-        var imageData = spriteObject.getImageData();
+        var imageData = spriteObject.imageData;
         var imageSrc = spriteObject.getImageSource();
-        var position = spriteObject.getPosition(); // x, y 좌표
+        var position = spriteObject.position; // x, y 좌표
         myCanvas.addSpriteAndSelect(cloneName, imageData, imageSrc, [true, parentName, position]); // idx4 : isClone or not
 
       // var libCode = myCanvas.libCode;
@@ -315,9 +315,9 @@
         // libCode = libCode.replace("nullnull", "")
 
         // latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode];
-        let codeWithLib = libCode + myCanvas.getSpriteByName(cloneName).getJsCode();
-        myCanvas.getSpriteByName(cloneName).setJsCode(codeWithLib);
-        console.log( myCanvas.getSpriteByName(cloneName).getJsCode());
+        let codeWithLib = libCode + myCanvas.getSpriteByName(cloneName).jsCode;
+        myCanvas.getSpriteByName(cloneName).jsCode = codeWithLib;
+        console.log( myCanvas.getSpriteByName(cloneName).jsCode);
       }
         return cloneName;
     }
@@ -338,8 +338,8 @@
       interpreter.setProperty(scope, 'touching_edge',
               interpreter.createNativeFunction(function() {
                 // 480, 400 : canvas size (hardcoding)
-                var pos = myCanvas.getSpecificSprite().getPosition();
-                var size = myCanvas.getSpecificSprite().getSize();
+                var pos = myCanvas.getSpecificSprite().position;
+                var size = myCanvas.getSpecificSprite().size;
                 //console.log(pos.x, pos.y);
                 //console.log(size.width, size.height);
                 if(pos.x <= 0 || pos.y <= 0){
@@ -418,12 +418,12 @@
 
       interpreter.setProperty(scope, 'sprite_getX',
               interpreter.createNativeFunction(function() {
-                return myCanvas.getSpecificSprite().getX();
+                return myCanvas.getSpecificSprite().x;
               }));
 
       interpreter.setProperty(scope, 'sprite_getY',
               interpreter.createNativeFunction(function() {
-                return myCanvas.getSpecificSprite().getY();
+                return myCanvas.getSpecificSprite().y;
               }));
 
       interpreter.setProperty(scope, 'getMouseY',
@@ -465,7 +465,7 @@
                 //myCanvas.getSpecificSprite();
                 var cloneName = createClone();
                 // latestCodes[cloneName] = "";
-                // myCanvas.getSpriteByName(cloneName).setJsCode("");
+                // myCanvas.getSpriteByName(cloneName).jsCode = "";
                 _goStep(cloneName, true);
             }));
         interpreter.setProperty(scope, 'glideToMousePosition',
@@ -573,12 +573,13 @@
       Blockly.JavaScript.addReservedWords('highlightBlock');
       let keyOfLatestCode = myCanvas.currentSpriteName;
       // latestCodes[keyOfLatestCode] = Blockly["JavaScript"].workspaceToCode(blockWorkspace);
-      myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(Blockly["JavaScript"].workspaceToCode(blockWorkspace));
+      myCanvas.getSpriteByName(keyOfLatestCode).jsCode = Blockly["JavaScript"].workspaceToCode(
+          blockWorkspace);
 
       // eventCode 현재 Sprite 객체에 배치, 이벤트 코드를 제외한 최신 코드 초기화
       // latestCodes[keyOfLatestCode] = eventCodeHandling(latestCodes[keyOfLatestCode]);
-      let eventCode = eventCodeHandling(myCanvas.getSpriteByName(keyOfLatestCode).getJsCode());
-      myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(eventCode);
+      let eventCode = eventCodeHandling(myCanvas.getSpriteByName(keyOfLatestCode).jsCode);
+      myCanvas.getSpriteByName(keyOfLatestCode).jsCode = eventCode;
 
       // var libCode = myCanvas.libCode;
       var libCode = libraryManager.getLibraryJsCode();
@@ -588,14 +589,14 @@
         // libCode = libCode.replace("nullnull", "")
 
         // latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode]  ;
-        let codeWithLib = libCode + myCanvas.getSpriteByName(keyOfLatestCode).getJsCode();
-        myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(codeWithLib);
+        let codeWithLib = libCode + myCanvas.getSpriteByName(keyOfLatestCode).jsCode;
+        myCanvas.getSpriteByName(keyOfLatestCode).jsCode = codeWithLib;
       }
       // latestCodes[keyOfLatestCode] = latestCodes[keyOfLatestCode].replace("nullnull", "");
-      let codeWithoutNull = myCanvas.getSpriteByName(keyOfLatestCode).getJsCode().replace("nullnull", "");
-      myCanvas.getSpriteByName(keyOfLatestCode).setJsCode(codeWithoutNull);
+      let codeWithoutNull = myCanvas.getSpriteByName(keyOfLatestCode).jsCode.replace("nullnull", "");
+      myCanvas.getSpriteByName(keyOfLatestCode).jsCode = codeWithoutNull;
 
-      console.log(myCanvas.getSpriteByName(keyOfLatestCode).getJsCode());
+      console.log(myCanvas.getSpriteByName(keyOfLatestCode).jsCode);
 
       // step execution 용 코드
       if(!myInterpreters[myCanvas.currentSpriteName])
@@ -615,7 +616,7 @@
             tmp = myCanvas.getSpriteByName(keyOfSprite)._whenClicked;
         }
         // var ret = latestCodes[keyOfSprite];
-        var ret = myCanvas.getSpriteByName(keyOfSprite).getJsCode();
+        var ret = myCanvas.getSpriteByName(keyOfSprite).jsCode;
         for(var a in tmp){
             ret += tmp[a] + "\n\n";
         }
@@ -630,8 +631,8 @@
         resetStepUi(true);
           // latestcodes에는 event Code를 제외한 메인 코드가 초기화되어있음
         // latestCodes[keyOfCode] = latestCodes[keyOfCode].replace("nullnull", "");
-        let codeWithoutNull = myCanvas.getSpriteByName(keyOfCode).getJsCode().replace("nullnull", "");
-        myCanvas.getSpriteByName(keyOfCode).setJsCode(codeWithoutNull);
+        let codeWithoutNull = myCanvas.getSpriteByName(keyOfCode).jsCode.replace("nullnull", "");
+        myCanvas.getSpriteByName(keyOfCode).jsCode = codeWithoutNull;
         var targetCode = "";
         targetCode = createTargetCode(keyOfCode, isClone);
         //console.log("stepCode", keyOfCode, targetCode);
@@ -1197,7 +1198,7 @@
         <script src="src/js/animation/AnimationUpdater.js"></script>
         <script src="src/js/canvas/CanvasHandler.js"></script>
         <script src="src/js/canvas/CanvasUtil.js"></script>
-        <script src="src/js/canvas/sprite.js"></script>
+        <script src="src/js/canvas/Sprite.js"></script>
         <script src="src/js/canvas/SpriteFactory.js"></script>
         <script src="src/js/canvas/SpeechBubble.js"></script>
         <script src="src/js/toolbox/ToolboxManager.js"></script>
@@ -1399,18 +1400,18 @@
         <div id="spriteAttributes">
           <ul1>
             <li1> X <input type="text" id="sprite_X"
-                           onchange="myCanvas.getCurrentSprite().setX(parseInt(document.getElementById('sprite_X').value, 10))">
+                           onchange="myCanvas.getCurrentSprite().x = parseInt(document.getElementById('sprite_X').value, 10)">
             </li1>
             <li1> Y <input type="text" id="sprite_Y"
-                           onchange="myCanvas.getCurrentSprite().setY(parseInt(document.getElementById('sprite_Y').value, 10))">
+                           onchange="myCanvas.getCurrentSprite().y = parseInt(document.getElementById('sprite_Y').value, 10)">
             </li1>
           </ul1>
           <ul1>
             <li1> Width <input type="text" id="sprite_W"
-                               onchange="myCanvas.getCurrentSprite().setWidth(parseInt(document.getElementById('sprite_W').value, 10))">
+                               onchange="myCanvas.getCurrentSprite().width = parseInt(document.getElementById('sprite_W').value, 10)">
             </li1>
             <li1> Height <input type="text" id="sprite_H"
-                                onchange="myCanvas.getCurrentSprite().setHeight(parseInt(document.getElementById('sprite_H').value, 10))">
+                                onchange="myCanvas.getCurrentSprite().height = parseInt(document.getElementById('sprite_H').value, 10)">
             </li1>
           </ul1>
         </div>

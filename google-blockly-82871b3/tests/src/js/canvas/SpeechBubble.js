@@ -49,8 +49,8 @@ class SpeechBubble {
     const radius = 5;
     const w = this.message.length * 5 + 10;
     const h = 10 + 5;
-    const x = this.sprite.getX() + this.sprite.width;
-    const y = this.sprite.getY() - h;
+    const x = this.sprite.x + this.sprite.width;
+    const y = this.sprite.y - h;
     const r = x + w;
     const b = y + h;
     const context = this.sprite.getContext();

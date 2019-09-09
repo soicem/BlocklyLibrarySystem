@@ -47,7 +47,7 @@ class CanvasHandler {
       } else {
         this.selectedSpriteInfo = {
           sprite: sprite,
-          mouseOffset: this.mousePosition.getOffsetTo(sprite.getPosition())
+          mouseOffset: this.mousePosition.getOffsetTo(sprite.position)
         };
 
         // Make selected sprite a selected sprite all over the project
@@ -73,16 +73,15 @@ class CanvasHandler {
         const selectedSprite = this.selectedSpriteInfo.sprite;
         const offset = this.selectedSpriteInfo.mouseOffset;
 
-        selectedSprite.setPosition(
-            this.mousePosition.offset(offset).clone());
+        selectedSprite.position = this.mousePosition.offset(offset).clone();
         document.getElementById(
-            'sprite_X').value = this.canvasObject.getCurrentSprite().getX();
+            'sprite_X').value = this.canvasObject.getCurrentSprite().x;
         document.getElementById(
-            'sprite_Y').value = this.canvasObject.getCurrentSprite().getY();
+            'sprite_Y').value = this.canvasObject.getCurrentSprite().y;
         document.getElementById(
-            'sprite_H').value = this.canvasObject.getCurrentSprite().getHeight();
+            'sprite_H').value = this.canvasObject.getCurrentSprite().height;
         document.getElementById(
-            'sprite_W').value = this.canvasObject.getCurrentSprite().getWidth();
+            'sprite_W').value = this.canvasObject.getCurrentSprite().width;
       }
     }
   }
