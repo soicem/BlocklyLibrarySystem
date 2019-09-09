@@ -221,19 +221,19 @@ class Sprite {
   }
 
   getWidth() {
-    return this.getSize().getWidth();
+    return this.getSize().width;
   }
 
   setWidth(width) {
-    this._size.setWidth(width);
+    this._size.width = width;
   }
 
   getHeight() {
-    return this.getSize().getHeight();
+    return this.getSize().height;
   }
 
   setHeight(height) {
-    this._size.setHeight(height);
+    this._size.height = height;
   }
 
   getPixelsOfRgb(rgb, withGap = false) {
@@ -290,8 +290,8 @@ class Sprite {
   printProperties() {
     console.log("x : ", this.getPosition().getX());
     console.log("y : ", this.getPosition().getY());
-    console.log("height : ", this.getSize().getHeight());
-    console.log("width : ", this.getSize().getWidth());
+    console.log("height : ", this.getSize().height);
+    console.log("width : ", this.getSize().width);
   }
 
   render() {

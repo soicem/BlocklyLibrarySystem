@@ -128,11 +128,11 @@ class Canvas {
   // --- More ---
 
   getWidth() {
-    return this.getSize().getWidth();
+    return this.getSize().width;
   }
 
   getHeight() {
-    return this.getSize().getHeight();
+    return this.getSize().height;
   }
 
   getSpriteByName(spriteName) {
@@ -269,8 +269,8 @@ class Canvas {
 
   ////////// Class Methods //////////
   clear() {
-    this.getContext().clearRect(0, 0, this.getSize().getWidth(),
-        this.getSize().getHeight());
+    this.getContext().clearRect(0, 0, this.getSize().width,
+        this.getSize().height);
   }
 
   render() {
