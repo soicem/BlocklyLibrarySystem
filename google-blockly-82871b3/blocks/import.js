@@ -144,13 +144,9 @@ Blockly.Blocks['import_return'] = {
       container.appendChild(argsContainer);
     }
 
-    if (this.implementXml_ !== "") {
-      container.setAttribute("implementXml", this.implementXml_);
-    }
-
     if (this.implementXml_) {
       let implementContainer = document.createElement("implement");
-      implementContainer.appendChild(this.implementXml_);
+      implementContainer.appendChild(this.implementXml_.cloneNode(true));
       container.appendChild(implementContainer);
     }
 
