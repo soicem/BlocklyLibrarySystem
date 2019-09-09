@@ -29,28 +29,6 @@ goog.provide('Blockly.Blocks.import');
 goog.require('Blockly.Blocks');
 goog.require('Blockly');
 
-// Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
-//   {
-//     "type": "import_return",
-//     "message0": "library function",
-//     "inputsInline": true,
-//     "output": null,
-//     "colour": 0,
-//     "tooltip": "",
-//     "helpUrl": "",
-//     "mutator": "import_return_mutator"
-//   },
-//   {
-//     "type": "import_noReturn",
-//     "message0": "library function",
-//     "inputsInline": true,
-//     "previousStatement": null,
-//     "nextStatement": null,
-//     "colour": 0,
-//     "tooltip": "",
-//     "helpUrl": ""
-//   }
-// ]);  // END JSON EXTRACT (Do not delete this comment.)
 
 Blockly.defineBlocksWithJsonArray([
   {
@@ -127,11 +105,12 @@ Blockly.Blocks['inline_configure'] = {
 };
 
 Blockly.Blocks['import_return'] = {
-  argsCount_: 0,
-  argsName_: [],
   namespaceName_: '',
   libraryName_: '',
   funcName_: '',
+  argsCount_: 0,
+  argsName_: [],
+  implementXml_: null,
 
   init: function() {
     this.appendDummyInput("FUNC")
@@ -165,6 +144,16 @@ Blockly.Blocks['import_return'] = {
       container.appendChild(argsContainer);
     }
 
+    if (this.implementXml_ !== "") {
+      container.setAttribute("implementXml", this.implementXml_);
+    }
+
+    if (this.implementXml_) {
+      let implementContainer = document.createElement("implement");
+      implementContainer.appendChild(this.implementXml_);
+      container.appendChild(implementContainer);
+    }
+
     return container;
   },
 
@@ -173,27 +162,33 @@ Blockly.Blocks['import_return'] = {
     this.libraryName_ = xmlElement.getAttribute("lib");
     this.funcName_ = xmlElement.getAttribute("func");
     this.argsCount_ = parseInt(xmlElement.getAttribute("args"), 10) || 0;
-    this.argsName_ = [];
 
+    this.argsName_ = [];
     for (let i = 0; i < this.argsCount_; i++) {
-      this.argsName_[i] = (xmlElement.getElementsByTagName("arg")[i].getAttribute("name"));
+      this.argsName_[i] = (xmlElement.getElementsByTagName(
+          "arg")[i].getAttribute("name"));
     }
+
+    this.implementXml_ = xmlElement.querySelector("implement > xml") || null;
 
     this.updateShape_();
   },
 
   decompose: function(workspace) {
-    let containerBlock = workspace.newBlock('inline_configure');
-    containerBlock.initSvg();
-
-    containerBlock.setFieldValue(this.getInputsInline(),"INLINE_FIELD");
-
-    return containerBlock;
+    if (this.implementXml_) {
+      Blockly.Xml.domToWorkspace(this.implementXml_, workspace);
+      this.setAllBlocksEditable_(workspace, false);
+      return workspace.getBlocksByType("procedures_defreturn")[0];
+    }
   },
 
-  compose: function(containerBlock) {
-    let inline = containerBlock.getFieldValue("INLINE_FIELD").toLowerCase() === "true";
-    this.setInputsInline(inline);
+  compose: function(containerBlock) {},
+
+  setAllBlocksEditable_: function (workspace, editable) {
+    let blocks = workspace.getAllBlocks();
+    blocks.forEach((block) => {
+      block.setEditable(editable);
+    });
   },
 
   updateShape_: function() {
@@ -228,11 +223,12 @@ Blockly.Blocks['import_return'] = {
 };
 
 Blockly.Blocks['import_noReturn'] = {
-  argsCount_: 0,
-  argsName_: [],
   namespaceName_: '',
   libraryName_: '',
   funcName_: '',
+  argsCount_: 0,
+  argsName_: [],
+  implementXml_: null,
 
   init: function() {
     this.appendDummyInput("FUNC")
@@ -255,7 +251,15 @@ Blockly.Blocks['import_noReturn'] = {
 
   domToMutation: Blockly.Blocks["import_return"].domToMutation,
 
-  decompose: Blockly.Blocks["import_return"].decompose,
+  decompose: function(workspace) {
+    if (this.implementXml_) {
+      Blockly.Xml.domToWorkspace(this.implementXml_, workspace);
+      this.setAllBlocksEditable_(workspace, false);
+      return workspace.getBlocksByType("procedures_defnoreturn")[0];
+    }
+  },
+
+  setAllBlocksEditable_: Blockly.Blocks["import_return"].setAllBlocksEditable_,
 
   compose: Blockly.Blocks["import_return"].compose,
 
@@ -263,139 +267,3 @@ Blockly.Blocks['import_noReturn'] = {
 
   resetShape_: Blockly.Blocks["import_return"].resetShape_
 };
-
-
-
-// Blockly.Constants.Text.IMPORT_RETURN_MUTATOR_MIXIN = {
-// /**
-//  * Create XML to represent number of text inputs.
-//  * @return {!Element} XML storage element.
-//  * @this Blockly.Block
-//  */
-// mutationToDom: function() {
-//   var container = document.createElement('mutation');
-//   container.setAttribute('args', this.argsCount_);
-//
-//   //var argsContainer = document.createElement('')
-//
-//   return container;
-// },
-// /**
-//  * Parse XML to restore the text inputs.
-//  * @param {!Element} xmlElement XML storage element.
-//  * @this Blockly.Block
-//  */
-// domToMutation: function(xmlElement) {
-//   this.argsCount_ = parseInt(xmlElement.getAttribute('args'), 10);
-//   //this.updateShape_();
-// },
-// /**
-//  * Populate the mutator's dialog with this block's components.
-//  * @param {!Blockly.Workspace} workspace Mutator's workspace.
-//  * @return {!Blockly.Block} Root block in mutator.
-//  * @this Blockly.Block
-//  */
-// decompose: function(workspace) {
-//   var containerBlock = workspace.newBlock('text_create_join_container');
-//   containerBlock.initSvg();
-//   var connection = containerBlock.getInput('STACK').connection;
-//   for (var i = 0; i < this.argsCount_; i++) {
-//     var itemBlock = workspace.newBlock('text_create_join_item');
-//     itemBlock.initSvg();
-//     connection.connect(itemBlock.previousConnection);
-//     connection = itemBlock.nextConnection;
-//   }
-//   return containerBlock;
-// },
-// /**
-//  * Reconfigure this block based on the mutator dialog's components.
-//  * @param {!Blockly.Block} containerBlock Root block in mutator.
-//  * @this Blockly.Block
-//  */
-// compose: function(containerBlock) {
-//   var itemBlock = containerBlock.getInputTargetBlock('STACK');
-//   // Count number of inputs.
-//   var connections = [];
-//   while (itemBlock) {
-//     connections.push(itemBlock.valueConnection_);
-//     itemBlock = itemBlock.nextConnection &&
-//         itemBlock.nextConnection.targetBlock();
-//   }
-//   // Disconnect any children that don't belong.
-//   for (var i = 0; i < this.argsCount_; i++) {
-//     var connection = this.getInput('ADD' + i).connection.targetConnection;
-//     if (connection && connections.indexOf(connection) == -1) {
-//       connection.disconnect();
-//     }
-//   }
-//   this.argsCount_ = connections.length;
-//   //this.updateShape_();
-//   // Reconnect any child blocks.
-//   for (var i = 0; i < this.argsCount_; i++) {
-//     Blockly.Mutator.reconnect(connections[i], this, 'ADD' + i);
-//   }
-// },
-// /**
-//  * Store pointers to any connected child blocks.
-//  * @param {!Blockly.Block} containerBlock Root block in mutator.
-//  * @this Blockly.Block
-//  */
-// saveConnections: function(containerBlock) {
-//   var itemBlock = containerBlock.getInputTargetBlock('STACK');
-//   var i = 0;
-//   while (itemBlock) {
-//     var input = this.getInput('ADD' + i);
-//     itemBlock.valueConnection_ = input && input.connection.targetConnection;
-//     i++;
-//     itemBlock = itemBlock.nextConnection &&
-//         itemBlock.nextConnection.targetBlock();
-//   }
-// },
-// /**
-//  * Modify this block to have the correct number of inputs.
-//  * @private
-//  * @this Blockly.Block
-//  */
-// updateShape_: function() {
-//   if (this.argsCount_ && this.getInput('EMPTY')) {
-//     this.removeInput('EMPTY');
-//   } else if (!this.argsCount_ && !this.getInput('EMPTY')) {
-//     this.appendDummyInput('EMPTY')
-//         .appendField(this.newQuote_(true))
-//         .appendField(this.newQuote_(false));
-//   }
-//   // Add new inputs.
-//   for (var i = 0; i < this.argsCount_; i++) {
-//     if (!this.getInput('ADD' + i)) {
-//       var input = this.appendValueInput('ADD' + i);
-//       if (i == 0) {
-//         input.appendField(Blockly.Msg['TEXT_JOIN_TITLE_CREATEWITH']);
-//       }
-//     }
-//   }
-//   // Remove deleted inputs.
-//   while (this.getInput('ADD' + i)) {
-//     this.removeInput('ADD' + i);
-//     i++;
-//   }
-// }
-// };
-
-// /**
-//  * Performs final setup of a text_join block.
-//  * @this Blockly.Block
-//  */
-// Blockly.Constants.Text.IMPORT_RETURN_EXTENSION = function() {
-//   // Add the quote mixin for the argsCount_ = 0 case.
-//   this.mixin(Blockly.Constants.Text.QUOTE_IMAGE_MIXIN);
-//   // Initialize the mutator values.
-//   this.argsCount_ = 2;
-//   this.updateShape_();
-//   // Configure the mutator UI.
-//   this.setMutator(new Blockly.Mutator(['text_create_join_item']));
-// };
-
-// Blockly.Extensions.registerMutator('import_return_mutator',
-//     Blockly.Constants.   .IMPORT_RETURN_MUTATOR_MIXIN,
-//     null, null);
-//Blockly.Constants.Text.IMPORT_RETURN_EXTENSION
