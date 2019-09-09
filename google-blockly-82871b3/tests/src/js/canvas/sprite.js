@@ -205,19 +205,19 @@ class Sprite {
   }
 
   getX() {
-    return this.getPosition().getX();
+    return this.getPosition().x;
   }
 
   setX(x) {
-    this._position.setX(x);
+    this._position.x = x;
   }
 
   getY() {
-    return this.getPosition().getY();
+    return this.getPosition().y;
   }
 
   setY(y) {
-    this._position.setY(y);
+    this._position.y = y;
   }
 
   getWidth() {
@@ -288,8 +288,8 @@ class Sprite {
   }
 
   printProperties() {
-    console.log("x : ", this.getPosition().getX());
-    console.log("y : ", this.getPosition().getY());
+    console.log("x : ", this.getPosition().x);
+    console.log("y : ", this.getPosition().y);
     console.log("height : ", this.getSize().height);
     console.log("width : ", this.getSize().width);
   }

@@ -56,7 +56,7 @@ class CanvasUtil {
     let isOverlaying = false;
 
     for (let i = 0; i < pixels.length; i++) {
-      const index = (pixels[i].getY() * size.width + pixels[i].getX()) * 4;
+      const index = (pixels[i].y * size.width + pixels[i].x) * 4;
       const r = data[index];
       const g = data[index + 1];
       const b = data[index + 2];

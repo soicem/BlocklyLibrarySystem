@@ -340,12 +340,12 @@
                 // 480, 400 : canvas size (hardcoding)
                 var pos = myCanvas.getSpecificSprite().getPosition();
                 var size = myCanvas.getSpecificSprite().getSize();
-                //console.log(pos.getX(), pos.getY());
-                //console.log(size.getWidth(), size.getHeight());
-                if(pos.getX() <= 0 || pos.getY() <= 0){
+                //console.log(pos.x, pos.y);
+                //console.log(size.width, size.height);
+                if(pos.x <= 0 || pos.y <= 0){
                   return true;
                 }
-                if(pos.getX()  >= 480 - size.getWidth() || pos.getY() >= 400 - size.getHeight()){
+                if(pos.x  >= 480 - size.width || pos.y >= 400 - size.height){
                   return true;
                 }
                 return false;
@@ -428,12 +428,12 @@
 
       interpreter.setProperty(scope, 'getMouseY',
               interpreter.createNativeFunction(function() {
-                return myCanvas.getHandler().getMousePosition().getY();
+                return myCanvas.getHandler().getMousePosition().y;
               }));
 
       interpreter.setProperty(scope, 'getMouseX',
               interpreter.createNativeFunction(function() {
-                return myCanvas.getHandler().getMousePosition().getX();
+                return myCanvas.getHandler().getMousePosition().x;
               }));
 
 
