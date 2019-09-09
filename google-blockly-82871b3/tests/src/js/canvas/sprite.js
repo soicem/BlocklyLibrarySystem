@@ -351,7 +351,7 @@ class Sprite {
   }
 
   goToMousePosition() {
-    let mousePosition = this.getCanvas().getHandler().getMousePosition();
+    let mousePosition = this.getCanvas().getHandler().mousePosition;
     let newPosition = mousePosition.offset(
         new Point(-this.getWidth() / 2, -this.getHeight() / 2));
     //console.log(mousePosition, -this.getWidth() / 2, -this.getHeight() / 2)
