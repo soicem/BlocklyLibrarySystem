@@ -332,6 +332,13 @@ div.spriteImg img.trash {
   height: 20px;
 }
 
+div.costumeImg img.trash {
+  position : absolute;
+  top : 3%;
+  right : 12%;
+  width: 25px;
+  height: 25px;
+}
 
 div.stage {
   margin: 5px;

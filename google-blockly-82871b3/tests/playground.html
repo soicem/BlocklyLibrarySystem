@@ -274,7 +274,6 @@
     }
 
     function _goStep(keyOfSprite, isClone=false){
-      myCanvas.getSpriteByName(keyOfSprite).setCurrentCostumeSrc(0);
       if(myCanvas.isHalting){
         return 0;
       }
@@ -918,6 +917,7 @@
                 + costumeNum + ')">'
                 + '<img src="' + path + name + '" alt="">'
                 + '<div class="desc">' + myCanvas.currentSpriteName + '_' + costumeNum + '</div>'
+                + '<img src="./src/resources/images/trash.png" class="trash" onclick="myCanvas.deleteCostumeAndSelect('+ i +')">'
                 + '</div>';
         document.getElementById("costumeGallery").innerHTML += a;
         reader.addEventListener('load', function () {

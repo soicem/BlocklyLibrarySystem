@@ -118,6 +118,10 @@ class Sprite {
     this._imageSrc.push(imageSrc);
   }
 
+  deleteCostume(num){
+    this._imageSrc.splice(num, 1);
+  }
+
   getCurrentCostumeSrc() {
     return this._currentCostumeSrc;
   }
@@ -414,14 +418,12 @@ class Sprite {
   }
 
   nextCostume(){
-    alert("nextCostume() called");
     this.setCurrentCostumeSrc(this.getCurrentCostumeSrc() + 1);
     var nextCostumeNum = this.getCurrentCostumeSrc();
     if((nextCostumeNum % this.getCostumeLength()) == 0){
       nextCostumeNum %= this.getCostumeLength();
       this.setCurrentCostumeSrc(0);
     }
-    alert(this._name + "" + this.getCurrentCostumeSrc() + "and " + nextCostumeNum + " " + this.getCostume(nextCostumeNum));
     this._image.src = this.getCostume(nextCostumeNum);
   }
 
