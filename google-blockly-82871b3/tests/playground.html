@@ -302,10 +302,9 @@
         var parentName = myCanvas.specificSpriteName;
         var cloneName = getNoDuplicationName(parentName, "_clone");
         spriteObject.cloneChilds = cloneName; // clone 이름을 parent sprite에 저장
-        var imageData = spriteObject.imageData;
         var imageSrc = spriteObject.getImageSource();
         var position = spriteObject.position; // x, y 좌표
-        myCanvas.addSpriteAndSelect(cloneName, imageData, imageSrc, [true, parentName, position]); // idx4 : isClone or not
+        myCanvas.addSpriteAndSelect(cloneName, imageSrc, [true, parentName, position]); // idx4 : isClone or not
 
       // var libCode = myCanvas.libCode;
       var libCode = libraryManager.getLibraryJsCode();
@@ -803,7 +802,7 @@
       animationUpdater = new AnimationUpdater();
       myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400), blockWorkspace);
 
-      myCanvas.addSpriteAndSelect("penguin", null, "penguin.png");
+      myCanvas.addSpriteAndSelect("penguin", "penguin.png");
       TrashToImg("penguin");
       animationUpdater.addCallFunction({caller: myCanvas, method: myCanvas.render});
       animationUpdater.start();
@@ -1218,9 +1217,21 @@
         <script src="src/js/exception/SpriteException.js"></script>
 
         <script>
+          /**
+           * @type {ToolboxManager}
+           */
           let toolboxManager;
+          /**
+           * @type {LibraryManager}
+           */
           let libraryManager;
+          /**
+           * @type {AnimationUpdater}
+           */
           let animationUpdater;
+          /**
+           * @type {Canvas}
+           */
           let myCanvas;
 
           // Sprite Name 중복 제거 ex) penguin -> penguin1

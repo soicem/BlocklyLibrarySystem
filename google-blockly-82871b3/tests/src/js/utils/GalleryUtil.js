@@ -29,7 +29,7 @@ class GalleryUtil {
       TrashToImg(spriteName);
 
       // Add sprite object to the canvas
-      myCanvas.addSpriteAndSelect(spriteName, reader.result, file.name);
+      myCanvas.addSpriteAndSelect(spriteName, reader.result);
       myCanvas.getSpriteByName(spriteName).printProperties();
     });
   }
@@ -72,7 +72,7 @@ class GalleryUtil {
           this.generateStageHtml(stageName, reader.result);
 
       // Add sprite object to the canvas
-      myCanvas.addStage(stageName, reader.result, file.name);
+      myCanvas.addStage(stageName, reader.result);
       myCanvas.getSpriteByName(stageName).printProperties();
     });
   }

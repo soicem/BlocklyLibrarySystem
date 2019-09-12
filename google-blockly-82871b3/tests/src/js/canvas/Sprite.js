@@ -1,26 +1,24 @@
 class Sprite {
   /**
+   * @param {string} name
    * @param {Canvas} canvas
-   * @param {HTMLImageElement} image
-   * @param {string} imageData
+   * @param {string} imageSrc
    * @param {Point} position
    * @param {Size} size
    * @param {Angle} angle
-   * @param {string} name
    * @param {[boolean,]} isClone
    */
-  constructor(canvas, image, imageData, position, size, angle, name, isClone=[false,]) {
+  constructor(name, canvas, imageSrc, position, size, angle, isClone = [false,]) {
     this._isClone = isClone;
     this._cloneChilds = [];
     this._isContinue = true;
     this._isHalting = false;
-    this._name = name; // 이름
     this._imageSrc = [];
-    this.setCostume(image.src);
-    this.setCurrentCostumeSrc(0);
+    this.name = name; // 이름
     this.canvas = canvas;
-    this.image = image;
-    this.imageData = imageData;
+    this.image = new Image();
+    this.setCostume(imageSrc);
+    this.setCurrentCostumeSrc(0);
     this.position = position;
     this.size = size;
     this.angle = angle;
@@ -205,20 +203,7 @@ class Sprite {
    */
   setCurrentCostumeSrc(num) {
     this._currentCostumeSrc = num;
-  }
-
-  /**
-   * @returns {string}
-   */
-  get imageData() {
-    return this._imageData;
-  }
-
-  /**
-   * @param {string} imageData
-   */
-  set imageData(imageData) {
-    this._imageData = imageData;
+    this.image.src = this._imageSrc[num];
   }
 
   /**
