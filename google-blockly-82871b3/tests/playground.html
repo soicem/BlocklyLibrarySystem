@@ -1193,6 +1193,7 @@
         <div id="canvases">
           <canvas id="canvas"></canvas>
         </div>
+        <script src="src/js/utils/GalleryUtil.js"></script>
         <script src="src/js/utils/String.js"></script>
         <script src="src/js/encryption/Encryption.js"></script>
         <script src="src/js/animation/AnimationUpdater.js"></script>
@@ -1222,77 +1223,18 @@
           let animationUpdater;
           let myCanvas;
 
-      // Sprite Name 중복 제거 ex) penguin -> penguin1
-      function getNoDuplicationName(name, isClone=""){
-        var noDuplicated = 1;
-        var spriteName = name.split('.')[0] + isClone;
-        var originalName = spriteName;
-        var ext = name.split('.')[1];
-        while(myCanvas._sprites.hasOwnProperty(spriteName)){
-          spriteName = originalName + noDuplicated;
-          noDuplicated += 1;
-        }
-        return spriteName;
-      }
-
-      function spriteChooser() {
-        var name;
-        var x = document.getElementById("spriteChooser");
-        var txt = "";
-        var imageFile = x.files[0];
-        var reader = new FileReader();
-
-        if ('files' in x) {
-          if (x.files.length === 0) {
-            txt = "Select one or more files.";
-          } else {
-            for (var i = 0; i < x.files.length; i++) {
-              txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
-              var file = x.files[i];
-              if ('name' in file) {
-                txt += "name: " + file.name + "<br>";
-                name = file.name;
-              }
-              if ('size' in file) {
-                txt += "size: " + file.size + " bytes <br>";
-              }
-              if ('value' in file) {
-                txt += "value: " + file.value + " bytes <br>";
-              }
+          // Sprite Name 중복 제거 ex) penguin -> penguin1
+          function getNoDuplicationName(name, isClone = "") {
+            var noDuplicated = 1;
+            var spriteName = name.split('.')[0] + isClone;
+            var originalName = spriteName;
+            var ext = name.split('.')[1];
+            while (myCanvas._sprites.hasOwnProperty(spriteName)) {
+              spriteName = originalName + noDuplicated;
+              noDuplicated += 1;
             }
+            return spriteName;
           }
-        } else {
-          if (x.value === "") {
-            txt += "Select one or more files.";
-          } else {
-            txt += "The files property is not supported by your browser!";
-            txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
-          }
-        }
-        var spriteName = getNoDuplicationName(name); // Sprite name 중복 제거
-        var a = '<div class="spriteImg\" id="' + spriteName + '" onclick="myCanvas.setCurrentSprite(\''
-            + spriteName + '\')">'
-            + '<img src="' + name + '" alt="">'
-            + '<div class="desc">' + spriteName + '</div>'
-            + '</div>';
-        //alert(a);
-
-          document.getElementById("spriteGallery").innerHTML += a;
-          TrashToImg(spriteName);
-
-          reader.addEventListener('load', function () {
-
-              // sprite에 대한 canvas 용 objects를 저장한다.
-          myCanvas.addSpriteAndSelect(spriteName, reader.result, name); // spriteName : penguin, name : penguin.png
-          myCanvas.getSpriteByName(spriteName).printProperties();
-            });
-
-            if (imageFile) {
-              reader.readAsArrayBuffer(imageFile);
-            }
-        document.getElementById("spriteChooser").value = ""; // 같은 이미지 추가 시 onchange 반영을 위해 value 초기화
-          }
-
 
           function removeConfirmation(spriteName) {
             if (confirm("'" + spriteName + "'를 삭제하길 원하십니까?")) {
@@ -1307,70 +1249,11 @@
               ImgTrash.src = './src/resources/images/trash.png';
 
               ImgTrash.setAttribute('class', 'trash');
-              ImgTrash.setAttribute('onClick', 'removeConfirmation("'+name+'")');
+              ImgTrash.setAttribute('onClick', `removeConfirmation("${name}")`);
 
               var parent = document.getElementById(name);
               parent.appendChild(ImgTrash);
           }
-
-
-
-          function stageChooser() {
-            var name;
-            var x = document.getElementById("stageChooser");
-            var txt = "";
-
-            var imageFile = x.files[0];
-            var reader = new FileReader();
-
-            if ('files' in x) {
-              if (x.files.length === 0) {
-                txt = "Select one or more files.";
-              } else {
-                for (var i = 0; i < x.files.length; i++) {
-                  txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
-                  var file = x.files[i];
-                  if ('name' in file) {
-                    txt += "name: " + file.name + "<br>";
-                    name = file.name;
-                  }
-                  if ('size' in file) {
-                    txt += "size: " + file.size + " bytes <br>";
-                  }
-                  if ('value' in file) {
-                    txt += "value: " + file.value + " bytes <br>";
-                  }
-                }
-              }
-            } else {
-              if (x.value === "") {
-                txt += "Select one or more files.";
-              } else {
-                txt += "The files property is not supported by your browser!";
-                txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
-              }
-            }
-            var stageName = getNoDuplicationName(name); // Sprite name 중복 제거
-            var a = '<div class="stage\" id="' + stageName + '" onclick="myCanvas.setCurrentSprite(\''
-                + stageName + '\')">'
-                + '<img src="' + name + '" alt="">'
-                + '<div class="desc">' + stageName + '</div>'
-                + '</div>';
-            document.getElementById("stageGallery").innerHTML += a;
-
-            reader.addEventListener('load', function () {
-              myCanvas.addStage(stageName, reader.result, name);
-              // myCanvas.getSprite(name).draw();
-              myCanvas.getSpriteByName(stageName).printProperties();
-            });
-
-            if (imageFile) {
-              reader.readAsArrayBuffer(imageFile);
-            }
-          }
-
-
-
 
           function readLibraryHeader() {
             let importHeaders = blockWorkspace.getBlocksByType("import_header");
@@ -1419,7 +1302,7 @@
           <div class="plusButton spritePlus">
           <span class="plus">
             <input type="file" id="spriteChooser" accept="image/*" multiple size="50"
-                   onchange="spriteChooser()">
+                   onchange="GalleryUtil.spriteChooser(this)">
           </span>
           </div>
           <div class="spriteImg" id="penguin"
@@ -1434,8 +1317,8 @@
         <div id="stageGallery">
           <div class="plusButton stagePlus">
           <span class="plus">
-            <input type="file" id="stageChooser" accept="image/*" multiple size="50"
-                   onchange="stageChooser()">
+            <input type="file" id="stageChooser" accept="image/*" size="50"
+                   onchange="GalleryUtil.stageChooser(this)">
           </span>
           </div>
         </div>

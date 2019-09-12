@@ -459,9 +459,10 @@ class Canvas {
   /**
    * @param {string} stageName
    * @param {null|string} imageData
+   * @param {string} imageSrc
    */
-  addStageAndSelect(stageName, imageData = null) {
-    this.addStage(stageName, imageData);
+  addStageAndSelect(stageName, imageData = null, imageSrc) {
+    this.addStage(stageName, imageData, imageSrc);
     this.currentSpriteName = stageName;
   }
 
