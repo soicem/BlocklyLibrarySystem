@@ -6,10 +6,12 @@ function updateCurrentSpriteXml(workspace) {
 }
 
 function exportImage(sprite) {
+  //@TODO: imageData is removed
   ImgToBLK(sprite.getImageFilename(), sprite.imageData);
 }
 
 function exportBackImage(sprite) {
+  //@TODO: imageData is removed
   BackImgToBLK(sprite.getImageFilename(), sprite.imageData);
 }
 

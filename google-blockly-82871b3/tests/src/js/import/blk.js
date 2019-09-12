@@ -37,7 +37,7 @@ function importImage(file) {
   return file.async('base64').then(fileData => {
     if (!isNullEmptyUndefined(fullName)) {
       addToSpriteGallery(pictureName, fileData);
-      myCanvas.addSprite(pictureName, fileData, fullName);
+      myCanvas.addSprite(pictureName, fullName);
     }
   }).catch(
       console.log.bind(console)
@@ -52,7 +52,7 @@ function importBackImage(file) {
   return file.async('base64').then(fileData => {
     if (!isNullEmptyUndefined(fullName)) {
       addToStageGallery(pictureName, fileData);
-      myCanvas.addStage(pictureName, fileData, fullName);
+      myCanvas.addStage(pictureName, fullName);
     }
   }).catch(
       console.log.bind(console)

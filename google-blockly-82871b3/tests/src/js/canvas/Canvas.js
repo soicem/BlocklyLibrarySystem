@@ -410,16 +410,14 @@ class Canvas {
 
   /**
    * @param {string} spriteName
-   * @param {null|string} imageData
    * @param {string} imageSrc
    * @param {[boolean,]} isClone
    * @returns {Sprite}
    */
-  addSprite(spriteName, imageData = null, imageSrc, isClone=[false,]) {
+  addSprite(spriteName, imageSrc, isClone = [false,]) {
     const defaultSize = new Size(40, 40);
 
-    let sprite = SpriteFactory.getSprite(this, defaultSize, spriteName,
-        imageData, imageSrc, isClone);
+    let sprite = SpriteFactory.getSprite(spriteName, this, imageSrc, defaultSize, isClone);
     this._sprites[spriteName] = sprite;
     this._spritesOrder.push(sprite);
 
@@ -428,12 +426,11 @@ class Canvas {
 
   /**
    * @param {string} spriteName
-   * @param {null|string} imageData
    * @param {string} imageSrc
    * @param {[boolean,]} isClone
    */
-  addSpriteAndSelect(spriteName, imageData = null, imageSrc, isClone = [false, ]) {
-    this.addSprite(spriteName, imageData, imageSrc, isClone);
+  addSpriteAndSelect(spriteName, imageSrc, isClone = [false,]) {
+    this.addSprite(spriteName, imageSrc, isClone);
     if(!isClone[0]){
       this.setCurrentSprite(spriteName);
     }
@@ -441,14 +438,12 @@ class Canvas {
 
   /**
    * @param {string} stageName
-   * @param {null|string} imageData
    * @param {string} imageSrc
    * @returns {Sprite}
    */
-  addStage(stageName, imageData = null, imageSrc) {
+  addStage(stageName, imageSrc) {
     const defaultSize = new Size(this.width, this.height);
-    let stage = SpriteFactory.getSprite(this, defaultSize, stageName,
-        imageData, imageSrc);
+    let stage = SpriteFactory.getSprite(stageName, this, imageSrc, defaultSize);
 
     this._sprites[stageName] = stage;
     this._spritesOrder[0] = stage;
@@ -458,10 +453,10 @@ class Canvas {
 
   /**
    * @param {string} stageName
-   * @param {null|string} imageData
+   * @param {string} imageSrc
    */
-  addStageAndSelect(stageName, imageData = null) {
-    this.addStage(stageName, imageData);
+  addStageAndSelect(stageName, imageSrc) {
+    this.addStage(stageName, imageSrc);
     this.currentSpriteName = stageName;
   }
 
