@@ -316,7 +316,6 @@ class Canvas {
           + '</div>';
       document.getElementById("costumeGallery").innerHTML += a;
     }
-    this.setCurrentCostume(0);
     this.getCurrentSprite().setCurrentCostumeSrc(0);
   }
 
