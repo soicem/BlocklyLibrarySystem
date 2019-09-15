@@ -312,10 +312,11 @@ class Canvas {
           + '<img src="' + currentSprite.getCostume(i) + '" alt="">'
           + '<div class="desc">' + myCanvas.currentSpriteName + '_' + i
           + '</div>'
+          + '<img src="./src/resources/images/trash.png" class="trash" onclick="myCanvas.deleteCostumeAndSelect('+ i +')">'
           + '</div>';
       document.getElementById("costumeGallery").innerHTML += a;
     }
-    this.setCurrentCostume(0);
+    this.getCurrentSprite().setCurrentCostumeSrc(0);
   }
 
   /**
@@ -337,10 +338,20 @@ class Canvas {
    * @param {string} imageSrc
    */
   addCostumeAndSelect(imageSrc) {
-    //console.log(spriteName);
-    //this.setCurrentCostumeNum(this.currentCostumeNum + 1);
     this.getCurrentSprite().setCostume(imageSrc);
     this.setCurrentCostume(this.currentCostumeNum + 1);
+  }
+
+  /**
+   * @param {number} num
+   */
+  deleteCostumeAndSelect(num){
+    if(num == 0){
+      alert("스프라이트의 대표 이미지는 지울 수 없습니다");
+      return;
+    }
+    this.getCurrentSprite().deleteCostume(num);
+    this.loadCurrentSpriteCostumes();
   }
 
   /**

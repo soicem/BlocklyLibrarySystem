@@ -182,8 +182,6 @@ function drawCommand() {
         default:
           break;
       }
-
-      console.log("toCommand: " + newCommand);
       return newCommand;
     }
   };
@@ -687,7 +685,6 @@ function addHistory(cmd) {
 }
 
 function clearCanvas() {
-  console.log("clearCanvas()");
   cvs.clearRect(0, 0, canvas.width, canvas.height);
   bufCtx.clearRect(0, 0, canvas.width, canvas.height);
 }
@@ -779,8 +776,6 @@ function redo() {
 }
 
 function initPage() {
-  console.log("initPage()");
-
   clearCanvas();
   initHistory();
 }
