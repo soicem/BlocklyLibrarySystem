@@ -235,16 +235,19 @@ canvas {
 }
 
 div.costumeImg {
-    margin: 4px;
-    border: 1px solid #ccc;
-    /*float: left;*/
-    width: 90px;
-    display: block;
+  margin: 4px;
+  border: 1px solid #ccc;
+  /*float: left;*/
+  width: 90px;
+  display: block;
+  position: relative;
 }
+
 div.costumeImg img {
   width: 90px;
   height: 90px;
 }
+
 #CanvasAndPainter_container {
   float: right;
   overflow: auto;
@@ -333,10 +336,11 @@ div.spriteImg img.trash {
 }
 
 div.costumeImg img.trash {
-  top : 3%;
-  right : 12%;
-  width: 25px;
-  height: 25px;
+  position : absolute;
+  top : 0;
+  right : 0;
+  width: 20px;
+  height: 20px;
 }
 
 div.stage {
