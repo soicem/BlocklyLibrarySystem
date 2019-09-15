@@ -128,7 +128,7 @@ class Library {
    * @private
    */
   _generateJsObject() {
-    const jsObjectTemplate = new JsObjectTemplate(this.info.name);
+    const jsObjectTemplate = new JsObjectTemplate(this.info.author, this.info.name);
 
     for (let functionKey in this.functions) {
       if (this.functions.hasOwnProperty(functionKey)) {
@@ -248,7 +248,7 @@ class Library {
       this.functions[functionName] = {};
     }
     this.functions[functionName].xml = xml;
-    const interfaceXml = LibraryUtils.convertImplementToInterfaceString(this.info.name, xml);
+    const interfaceXml = LibraryUtils.convertImplementToInterfaceString(this.info.author, this.info.name, xml);
     this.functions[functionName].interfaceXml = Blockly.Xml.domToText(interfaceXml);
 
     this.info.updateModifiedDatetime();
