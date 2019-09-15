@@ -333,7 +333,6 @@ div.spriteImg img.trash {
 }
 
 div.costumeImg img.trash {
-  position : absolute;
   top : 3%;
   right : 12%;
   width: 25px;

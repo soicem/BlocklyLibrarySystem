@@ -317,6 +317,7 @@ class Canvas {
       document.getElementById("costumeGallery").innerHTML += a;
     }
     this.setCurrentCostume(0);
+    this.getCurrentSprite().setCurrentCostumeSrc(0);
   }
 
   /**
@@ -351,10 +352,7 @@ class Canvas {
       return;
     }
     this.getCurrentSprite().deleteCostume(num);
-    a = document.getElementById(myCanvas.currentSpriteName + "_" + num);
-    alert(a);
-    a.innerHTML = "";
-    this.getCurrentSprite().setCurrentCostume(0);
+    this.loadCurrentSpriteCostumes();
   }
 
   /**

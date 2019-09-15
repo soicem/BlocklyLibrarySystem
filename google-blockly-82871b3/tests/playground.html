@@ -755,22 +755,22 @@
 
     function tabInit() {
       showTab('blocklyDiv', 'main_tab');
-      hideTab('library', 'library_tab');
+      //hideTab('library', 'library_tab');
       hideTab('sprite', 'sprite_tab');
     }
 
     function changeTab(tab) {
       if (tab.id === "main_tab") {
         showTab('blocklyDiv', 'main_tab');
-        hideTab('library', 'library_tab');
+        //hideTab('library', 'library_tab');
         hideTab('sprite', 'sprite_tab');
       } else if (tab.id === "library_tab") {
-        showTab('library', 'library_tab');
+        //showTab('library', 'library_tab');
         hideTab('blocklyDiv', 'main_tab');
         hideTab('sprite', 'sprite_tab')
       } else if (tab.id === "sprite_tab") {
         showTab('sprite', 'sprite_tab');
-        hideTab('library', 'library_tab');
+        //hideTab('library', 'library_tab');
         hideTab('blocklyDiv', 'main_tab');
       }
     }
@@ -829,10 +829,6 @@
       </li>
       <li class="topMenu_left">
         <span class="verticalMidPointBase"></span>
-        <span id="library_tab" class="verticallyMiddle horizontalGap" onclick="changeTab(this)">Library</span>
-      </li>
-      <li class="topMenu_left">
-        <span class="verticalMidPointBase"></span>
         <span id="sprite_tab" class="verticallyMiddle horizontalGap" onclick="changeTab(this)">Sprite</span>
       </li>
     </ul>
@@ -854,23 +850,23 @@
   <!---- Main Tab ----->
   <div id="blocklyDiv"></div>
   <!--- Library Tab --->
-  <div id="library">
-    <div id="librarySpace"></div>
-    <p>
-      <select id="libLang" name="lang" onchange="toCodeLib()">
-        <option value="default">Select</option>
-        <option value="JavaScript">JavaScript</option>
-        <option value="Python">Python</option>
-        <option value="PHP">PHP</option>
-        <option value="Lua">Lua</option>
-        <option value="Dart">Dart</option>
-      </select>
-      <br>
-      <textarea id="importExport_" style="width: 90%; height: 70%;"
-                onchange="taChange();" onkeyup="taChange()">
-    </textarea>
-    </p>
-  </div>
+<!--  <div id="library">-->
+<!--    <div id="librarySpace"></div>-->
+<!--    <p>-->
+<!--      <select id="libLang" name="lang" onchange="toCodeLib()">-->
+<!--        <option value="default">Select</option>-->
+<!--        <option value="JavaScript">JavaScript</option>-->
+<!--        <option value="Python">Python</option>-->
+<!--        <option value="PHP">PHP</option>-->
+<!--        <option value="Lua">Lua</option>-->
+<!--        <option value="Dart">Dart</option>-->
+<!--      </select>-->
+<!--      <br>-->
+<!--      <textarea id="importExport_" style="width: 90%; height: 70%;"-->
+<!--                onchange="taChange();" onkeyup="taChange()">-->
+<!--    </textarea>-->
+<!--    </p>-->
+<!--  </div>-->
   <!--- Sprite Tab ---->
   <div id="sprite">
     <script>
@@ -911,20 +907,20 @@
           }
         }
 
-        var costumeNum = myCanvas.currentCostumeNum + 1;
+        var costumeNum = myCanvas.getCurrentSprite().getCostumeLength();
         var spriteName = getNoDuplicationName(name); // Sprite name 중복 제거
         var a = '<div class="costumeImg\" id="' + myCanvas.currentSpriteName + '_' + costumeNum + '" onclick="myCanvas.setCurrentCostume('
                 + costumeNum + ')">'
                 + '<img src="' + path + name + '" alt="">'
                 + '<div class="desc">' + myCanvas.currentSpriteName + '_' + costumeNum + '</div>'
-                + '<img src="./src/resources/images/trash.png" class="trash" onclick="myCanvas.deleteCostumeAndSelect('+ i +')">'
+                + '<img src="./src/resources/images/trash.png" class="trash" onclick="myCanvas.deleteCostumeAndSelect('+ costumeNum +')">'
                 + '</div>';
         document.getElementById("costumeGallery").innerHTML += a;
+        initPage();
         reader.addEventListener('load', function () {
           myCanvas.addCostumeAndSelect(name);
         });
-        initPage();
-        loadImage(path + name);
+        //loadImage(path + name);
         if (imageFile) {
           reader.readAsArrayBuffer(imageFile);
         }
