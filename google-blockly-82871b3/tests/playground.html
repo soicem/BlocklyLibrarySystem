@@ -582,26 +582,14 @@
       // var libCode = myCanvas.libCode;
       var libCode = libraryManager.getLibraryJsCode();
       if(libCode){
-        // libCode = libCode.replace("null", "")
-        // libCode = libCode.replace("null", "")
-        // libCode = libCode.replace("nullnull", "")
-
-        // latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode]  ;
         let codeWithLib = libCode + myCanvas.getSpriteByName(keyOfLatestCode).jsCode;
         myCanvas.getSpriteByName(keyOfLatestCode).jsCode = codeWithLib;
       }
-      // latestCodes[keyOfLatestCode] = latestCodes[keyOfLatestCode].replace("nullnull", "");
       let codeWithoutNull = myCanvas.getSpriteByName(keyOfLatestCode).jsCode.replace("nullnull", "");
       myCanvas.getSpriteByName(keyOfLatestCode).jsCode = codeWithoutNull;
 
       console.log(myCanvas.getSpriteByName(keyOfLatestCode).jsCode);
 
-      // step execution 용 코드
-      if(!myInterpreters[myCanvas.currentSpriteName])
-        //console.log("soicem");
-      for(var i = 1; i < myCanvas.spritesOrder.length; i++){
-        //console.log(myCanvas.spritesOrder[i].getImageFilename());
-      }
     }
 
     // event block을 참조하여 Interpreter에 들어가는 target code생성
@@ -628,12 +616,10 @@
         // Clear the program output.
         resetStepUi(true);
           // latestcodes에는 event Code를 제외한 메인 코드가 초기화되어있음
-        // latestCodes[keyOfCode] = latestCodes[keyOfCode].replace("nullnull", "");
         let codeWithoutNull = myCanvas.getSpriteByName(keyOfCode).jsCode.replace("nullnull", "");
         myCanvas.getSpriteByName(keyOfCode).jsCode = codeWithoutNull;
         var targetCode = "";
         targetCode = createTargetCode(keyOfCode, isClone);
-        //console.log("stepCode", keyOfCode, targetCode);
         myInterpreters[keyOfCode] = new Interpreter(targetCode, initApi);
         return;
       }
@@ -659,7 +645,6 @@
         // Keep executing until a highlight statement is reached,
         // or the code completes or errors.
       } while (hasMoreCode && !highlightPause);
-
     }
 
     // Load the interpreter now, and upon future changes.
