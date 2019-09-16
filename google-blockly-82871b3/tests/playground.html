@@ -273,7 +273,7 @@
             let sname = myCanvas.spritesOrder[i].name
             for(var keyOfCode in myCanvas.getSpriteByName(sname)._whenClicked){
               _goStep(sname, keyOfCode);
-              //console.log(keyOfCode); // checked output
+              console.log(keyOfCode, myCanvas.getSpriteByName(sname)._whenClicked[keyOfCode]); // checked output
             }
           }
 
@@ -284,6 +284,7 @@
       if(myCanvas.isHalting){
         return 0;
       }
+      console.log(keyOfEventCode);
       delayWrapper(keyOfSprite, keyOfEventCode, isClone)
               .then(
                       function (result) {
