@@ -216,11 +216,11 @@
       taChange();
     }
 
-    function delayWrapper(keyOfSprite, isClone=false) {
+    function delayWrapper(keyOfSprite, keyOfEventCode, isClone=false) {
       return new Promise(function (resolve, reject) {
         setTimeout(function (){
           myCanvas.specificSpriteName = keyOfSprite;
-          var isFalse = stepCode(keyOfSprite, isClone);
+          var isFalse = stepCode(keyOfSprite, keyOfEventCode, isClone);
           resolve(isFalse);
 
         }, 2);
@@ -268,8 +268,15 @@
             re_start();
 
       for(var i = 1; i < myCanvas.spritesOrder.length; i++){
-          if(myCanvas.spritesOrder[i] !== null && !myCanvas.spritesOrder[i].isClone[0])
-              _goStep(myCanvas.spritesOrder[i].name) // myCanvas.spritesOrder[i] === Sprite in order
+          if(myCanvas.spritesOrder[i] !== null && !myCanvas.spritesOrder[i].isClone[0]){
+            //_goStep(myCanvas.spritesOrder[i].name) // myCanvas.spritesOrder[i] === Sprite in order
+            let sname = myCanvas.spritesOrder[i].name
+            for(var keyOfCode in myCanvas.getSpriteByName(sname)._whenClicked){
+              _goStep(sname, keyOfCode);
+              //console.log(keyOfCode); // checked output
+            }
+          }
+
       }
     }
 
@@ -612,7 +619,7 @@
     }
 
     function stepCode(keyOfSprite, keyOfEventCode, isClone=false) {
-      var keyOfCode = keyOfEvent;
+      var keyOfCode = keyOfEventCode;
       if (!myInterpreters[keyOfCode]) {
         // First statement of this code.
         // Clear the program output.
@@ -620,7 +627,8 @@
           // latestcodes에는 event Code를 제외한 메인 코드가 초기화되어있음
         //let codeWithoutNull = myCanvas.getSpriteByName(keyOfCode).jsCode.replace("nullnull", "");
         //myCanvas.getSpriteByName(keyOfCode).jsCode = codeWithoutNull;
-        var targetCode = "";
+        console.log(keyOfSprite);
+        var targetCode = myCanvas.getSpriteByName(keyOfSprite)._whenClicked[keyOfCode];
         //targetCode = createTargetCode(keyOfCode, isClone);
         myInterpreters[keyOfCode] = new Interpreter(targetCode, initApi);
         return;
