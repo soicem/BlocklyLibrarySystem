@@ -273,11 +273,11 @@
       }
     }
 
-    function _goStep(keyOfSprite, isClone=false){
+    function _goStep(keyOfSprite, keyOfEventCode, isClone=false){
       if(myCanvas.isHalting){
         return 0;
       }
-      delayWrapper(keyOfSprite, isClone)
+      delayWrapper(keyOfSprite, keyOfEventCode, isClone)
               .then(
                       function (result) {
                         if(myCanvas.getSpriteByName(keyOfSprite).isHalting)
@@ -285,7 +285,7 @@
                         if(!myCanvas.getSpriteByName(keyOfSprite).isContinue)
                           return 0;
                         if(result !== false)
-                          _goStep(keyOfSprite, isClone);
+                          _goStep(keyOfSprite, keyOfEventCode, isClone);
                       }
               );
     }
@@ -464,7 +464,7 @@
                 var cloneName = createClone();
                 // latestCodes[cloneName] = "";
                 // myCanvas.getSpriteByName(cloneName).jsCode = "";
-                _goStep(cloneName, true);
+                _goStep(cloneName, "", true);
             }));
         interpreter.setProperty(scope, 'glideToMousePosition',
             interpreter.createNativeFunction(function(second) {
@@ -546,16 +546,18 @@
     // var latestCodes = {};
 
     /* event block 코드를 최신 코드에서 가져와 현재 Sprite 객체에 배치한다. */
-    function eventCodeHandling(code){
+    function eventCodeHandling(code, name){
       console.log(code);
         var tmp = code.split("\n\n"); // event parser;
         var ret = ""
         // 각 이벤트 클리어
-        myCanvas.getCurrentSprite()._whenClicked = [];
-        myCanvas.getCurrentSprite()._whenCloning = [];
+        myCanvas.getCurrentSprite()._whenClicked = {};
+        myCanvas.getCurrentSprite()._whenCloning = {};
         for(var a in tmp){
             if(tmp[a].search("flagClicked") != -1){
-                myCanvas.getCurrentSprite()._whenClicked.push(tmp[a]);
+                var len = Object.keys(myCanvas.getCurrentSprite()._whenClicked).length;
+                myCanvas.getCurrentSprite()._whenClicked[name + "WhenClicked" + len] = tmp[a];
+                console.log(name + "WhenClicked"+len, myCanvas.getCurrentSprite()._whenClicked[name + "WhenClicked" + len]);
             } else if(tmp[a].search("cloning") != -1) {
                 myCanvas.getCurrentSprite()._whenCloning.push(tmp[a]);
             }else {
@@ -576,7 +578,7 @@
 
       // eventCode 현재 Sprite 객체에 배치, 이벤트 코드를 제외한 최신 코드 초기화
       // latestCodes[keyOfLatestCode] = eventCodeHandling(latestCodes[keyOfLatestCode]);
-      let eventCode = eventCodeHandling(myCanvas.getSpriteByName(keyOfLatestCode).jsCode);
+      let eventCode = eventCodeHandling(myCanvas.getSpriteByName(keyOfLatestCode).jsCode, keyOfLatestCode);
       myCanvas.getSpriteByName(keyOfLatestCode).jsCode = eventCode;
 
       // var libCode = myCanvas.libCode;
@@ -609,17 +611,17 @@
         return ret;
     }
 
-    function stepCode(keyOfSprite, isClone=false) {
-      var keyOfCode = keyOfSprite;
+    function stepCode(keyOfSprite, keyOfEventCode, isClone=false) {
+      var keyOfCode = keyOfEvent;
       if (!myInterpreters[keyOfCode]) {
         // First statement of this code.
         // Clear the program output.
         resetStepUi(true);
           // latestcodes에는 event Code를 제외한 메인 코드가 초기화되어있음
-        let codeWithoutNull = myCanvas.getSpriteByName(keyOfCode).jsCode.replace("nullnull", "");
-        myCanvas.getSpriteByName(keyOfCode).jsCode = codeWithoutNull;
+        //let codeWithoutNull = myCanvas.getSpriteByName(keyOfCode).jsCode.replace("nullnull", "");
+        //myCanvas.getSpriteByName(keyOfCode).jsCode = codeWithoutNull;
         var targetCode = "";
-        targetCode = createTargetCode(keyOfCode, isClone);
+        //targetCode = createTargetCode(keyOfCode, isClone);
         myInterpreters[keyOfCode] = new Interpreter(targetCode, initApi);
         return;
       }
