@@ -806,7 +806,7 @@
       animationUpdater.addCallFunction({caller: myCanvas, method: myCanvas.render});
       animationUpdater.start();
     }
-  </script>
+</script>
 
   <script src="src/js/import/blk.js"></script>
   <script src="src/js/import/library.js"></script>
@@ -1281,6 +1281,26 @@
               addImportStatementLibrary(importStatement);
             }
           }
+
+          function exportLibrary() {
+            const userName = prompt("사용자명: ");
+            if (userName.trim() === "") {
+              alert("사용자명이 공백일 수 없습니다.");
+              return;
+            }
+            const libraryName = prompt("라이브러리명: ");
+            if (libraryName.trim() === "") {
+              alert("라이브러리명이 공백일 수 없습니다.");
+              return;
+            }
+            const version = prompt("버전: ", "1.0");
+            if (version.trim() === "") {
+              alert("버전이 공백일 수 없습니다.");
+              return;
+            }
+            console.log(version);
+            libraryManager.createLibraryFile(blockWorkspace, libraryName, userName, version)
+          }
         </script>
       </div>
     </div>
@@ -1373,7 +1393,7 @@
           </li2>
         </ul>
         <ul>
-          <li2><a id="blk" onclick="libraryManager.createLibraryFile(blockWorkspace, 'MyLibrary', 'CSK')">Export Library</a></li2>
+          <li2><a id="blk" onclick="exportLibrary();">Export Library</a></li2>
           <li2>
             <a>
               <div class="fileBox">

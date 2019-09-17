@@ -148,10 +148,10 @@ class LibraryManager {
     this._updateExistingLibrary(onlineLibrary);
   }
 
-  createLibraryFile(workspace, libraryName, author) {
+  createLibraryFile(workspace, libraryName, author, version = "1.0") {
     let library = new LibraryBuilder(libraryName, author)
         .setUrl(libraryName + ".blk")
-        .setVersion("1.0")
+        .setVersion(version)
         .addImports(this.libraryInfos)
         .addFunctions(LibraryUtils.getImplementationBlocksInfo(workspace,libraryName))
         .build();
