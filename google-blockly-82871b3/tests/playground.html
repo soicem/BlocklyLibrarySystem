@@ -1271,7 +1271,7 @@
             let importHeaders = blockWorkspace.getBlocksByType("import_header");
 
             function addImportStatementLibrary(importStatement) {
-              const url = importStatement.getFieldValue("URL");
+              const url = importStatement.librarySrc_;
               console.log(url);
               libraryManager.addLibraryFromUrl(url);
 
@@ -1622,6 +1622,9 @@
           <block type="import_header"></block>
           <block type="import_statement">
             <mutation lib="MyLibrary" src="MyLibrary.blk" readOnly="true"></mutation>
+          </block>
+          <block type="import_statement">
+            <mutation lib="Penguin" src="Penguin.blk" readOnly="true"></mutation>
           </block>
           <block type="import_statement">
             <mutation lib="MyLibrary" src="https://raw.githubusercontent.com/peurocs4/FlippersLibrary/master/MyLibrary.blk"></mutation>
