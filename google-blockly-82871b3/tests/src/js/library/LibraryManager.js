@@ -1,9 +1,12 @@
 class LibraryManager {
   /**
+   * @param {ToolboxManager} toolboxManager
+   * @param {Blockly.Workspace} workspace
    */
-  constructor(toolboxManager) {
+  constructor(toolboxManager, workspace) {
     this._libraries = {};
-    this._toolboxManager = toolboxManager;
+    this.toolboxManager = toolboxManager;
+    this.workspace = workspace;
   }
 
   ////////// Getter & Setter //////////
@@ -23,6 +26,8 @@ class LibraryManager {
     this._libraries = value;
   }
 
+  /**
+   */
   get libraryInfos() {
     let libraryInfos = {};
     for (let libraryKey in this.libraries) {
@@ -47,6 +52,20 @@ class LibraryManager {
     this._toolboxManager = toolboxManager;
   }
 
+  /**
+   * @returns {Blockly.Workspace}
+   */
+  get workspace() {
+    return this._workspace;
+  }
+
+  /**
+   * @param {Blockly.Workspace} workspace
+   */
+  set workspace(workspace) {
+    this._workspace = workspace;
+  }
+
 // --- More ---
 
   ////////// Class Methods //////////
@@ -65,9 +84,9 @@ class LibraryManager {
       const newerVersion = library.info.version;
 
       if (confirm(`Do you wish to override "v${currentVersion}" of "${libraryFullName}" with "v${newerVersion}"?`)) {
-        this.toolboxManager.removeCategory(libraryFullName);
         this.libraries[libraryFullName] = library;
-        this.toolboxManager.appendLibrary(library);
+        this.toolboxManager.updateLibrary(library);
+        this.workspace.updateLibraryBlocks(library, this.toolboxManager);
       }
     }
   }
@@ -148,10 +167,10 @@ class LibraryManager {
     this._updateExistingLibrary(onlineLibrary);
   }
 
-  createLibraryFile(workspace, libraryName, author) {
+  createLibraryFile(workspace, libraryName, author, version = "1.0") {
     let library = new LibraryBuilder(libraryName, author)
         .setUrl(libraryName + ".blk")
-        .setVersion("1.0")
+        .setVersion(version)
         .addImports(this.libraryInfos)
         .addFunctions(LibraryUtils.getImplementationBlocksInfo(workspace,libraryName))
         .build();
