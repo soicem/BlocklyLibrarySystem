@@ -1277,6 +1277,27 @@
               addImportStatementLibrary(importStatement);
             }
           }
+
+          function sendAjax(url, data){
+            var data = {'main' : data};
+            data = JSON.stringify(data)
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', url);
+            xhr.setRequestHeader('Content-Type', "application/json");
+            xhr.send(data);
+            xhr.addEventListener('load', function(){
+              var result = JSON.parse(xhr.responseText);
+              if(result.result!=="ok") return;
+              console.log("nice world");
+            })
+          }
+
+          function shareBLK(){
+            libraryManager.createLibraryFile(blockWorkspace, 'MyLibrary', 'CSK');
+            let libBLK = libraryManager.getBlkJson(blockWorkspace, 'MyLibrary', 'CSK');
+            console.log(libBLK);
+            sendAjax('http://127.0.0.1:3000/ajax_send_email', libBLK);
+          }
         </script>
       </div>
     </div>
@@ -1369,7 +1390,7 @@
           </li2>
         </ul>
         <ul>
-          <li2><a id="blk" onclick="libraryManager.createLibraryFile(blockWorkspace, 'MyLibrary', 'CSK')">Export Library</a></li2>
+          <li2><a id="blk" onclick="shareBLK()">Export Library</a></li2>
           <li2>
             <a>
               <div class="fileBox">

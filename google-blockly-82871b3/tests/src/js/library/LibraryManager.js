@@ -148,6 +148,16 @@ class LibraryManager {
     this._updateExistingLibrary(onlineLibrary);
   }
 
+  getBlkJson(workspace, libraryName, author){
+    let blkJson = new LibraryBuilder(libraryName, author)
+        .setUrl(libraryName + ".blk")
+        .setVersion("1.0")
+        .addImports(this.libraryInfos)
+        .addFunctions(LibraryUtils.getImplementationBlocksInfo(workspace,libraryName))
+        .build();
+    return blkJson.toJson();
+  }
+
   createLibraryFile(workspace, libraryName, author) {
     let library = new LibraryBuilder(libraryName, author)
         .setUrl(libraryName + ".blk")
@@ -155,7 +165,6 @@ class LibraryManager {
         .addImports(this.libraryInfos)
         .addFunctions(LibraryUtils.getImplementationBlocksInfo(workspace,libraryName))
         .build();
-
     saveAs(new Blob([library.toString()]), libraryName + ".blk");
   }
 

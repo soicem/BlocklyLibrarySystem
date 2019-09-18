@@ -1,3 +1,9 @@
+'use strict';
+
+const Git = require('nodegit');
+const cnst = require('./constant');
+const common = require('./common');
+
 var express = require('express')
 var app = express()
 var bodyParser = require('body-parser')
@@ -35,41 +41,69 @@ app.post('/email_post', function(req, res){
 });
 
 app.post('/ajax_send_email', function(req, res){ 
-    var langType = req.body.langType
     var cmdCommand; 
-    if(langType == 0){
-        langType = ".py"
-        cmdCommand = "python main.py"
-    }
-    var numberOfLibs = req.body.libraries.numberOfLibs
-    var libraryInfo = req.body.libraries.libraryInfo
-    for(var i = 0; i < numberOfLibs; i++){
-        //console.log(libraryInfo[i])
-        var nameOfFunc;
-        var funcBody;
-        if(numberOfLibs != i){
-            nameOfFunc = libraryInfo[i].name + langType
-            funcBody = libraryInfo[i].body
-        }
-        
-        
-        fs.writeFile(nameOfFunc, funcBody, function(err) {
-            if(err) {
-                return console.log(err);
-            } 
-            console.log(nameOfFunc + " was saved!");
-        });  
-    }
-    fs.writeFile("main" + langType, req.body.main, function(err) {
-        if(err) {
-            return console.log(err);
-        } 
-        console.log("main" + langType + " was saved!");
+    console.log(req.body.main);
+    let repo;
+    let index;
+    let oid;
+    //console.log(cnst.add_commit_filename);
+    Git.Repository.open(cnst.test_git_path)
+    .then((repoResult) => (repo = repoResult))
+    .then(() => {
+        return fs.writeFileSync(
+            cnst.test_file_path + "main.blk",
+            JSON.stringify(req.body.main)
+        );
+    })
+    .then(() => repo.refreshIndex())
+    .then((indexResult) => (index = indexResult))
+    .then(() => index.addByPath(cnst.add_commit_filename))
+    .then(() => index.write())
+    .then(() => index.writeTree())
+    .then((oidResult) => {
+        oid = oidResult;
+        return Git.Reference.nameToId(repo, 'HEAD');
+    })
+    .then((head) => repo.getCommit(head))
+    .then((parent) => {
+        let commit_msg = 'BLK commit!';
+
+        return repo.createCommit(
+            'HEAD',
+            common.get_commiter_sign(cnst),
+            common.get_commiter_sign(cnst),
+            commit_msg,
+            oid,
+            [parent]
+        );
+    })
+    .done((commitId) => {
+        console.log('New Commit: ', commitId);
     });
-    
-    console.log(cmdCommand)
-    nodeCmd.get("python main.py", (err, data, stderr) => {
-        var responseData = {'result' : 'ok', 'output' : data};  
-        res.json(responseData)
-    });
+
+    let repoR;
+
+    Git.Repository.open(cnst.cur_git_path)
+        .then((repoResult) => (repoR = repoResult))
+        .then(() => Git.Remote.lookup(repoR, 'origin'))
+        .then((remote) => {
+            return remote.push(
+                ['refs/heads/master:refs/heads/master'],
+                {
+                    callbacks: {
+                        credentials: (url, userName) => {
+                            return Git.Cred.userpassPlaintextNew(cnst.account, cnst.password);
+                        },
+                        certificateCheck: () => {
+                            return 1;
+                        }
+                    }
+                }
+            );
+        })
+        .then(() => {
+            console.log('push done');
+            //repoR.free();
+        })
+        .catch((e) => console.log(e));
 });
