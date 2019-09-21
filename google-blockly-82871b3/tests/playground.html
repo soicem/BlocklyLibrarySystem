@@ -263,7 +263,7 @@
 
             for(var keyOfCode in myCanvas.getSpriteByName(sname)._whenClicked){
               _goStep(sname, keyOfCode);
-              console.log(keyOfCode, myCanvas.getSpriteByName(sname)._whenClicked[keyOfCode]); // checked output
+              //console.log(keyOfCode, myCanvas.getSpriteByName(sname)._whenClicked[keyOfCode]); // checked output
             }
           }
       }
@@ -273,7 +273,7 @@
       if(myCanvas.isHalting){
         return 0;
       }
-      //console.log(keyOfEventCode);
+      console.log(keyOfEventCode);
       delayWrapper(keyOfSprite, keyOfEventCode, isClone)
               .then(
                       function (result) {
@@ -400,6 +400,7 @@
       interpreter.setProperty(scope, 'moveSteps',
               interpreter.createNativeFunction(function(text) {
                 text = text ? text.toString() : '';
+                console.log(myCanvas.specificSpriteName);
                 myCanvas.getSpecificSprite().moveSteps(parseInt(text));
                 console.log("moveSteps");
 
@@ -564,7 +565,6 @@
 
     /* event block 코드를 최신 코드에서 가져와 현재 Sprite 객체에 배치한다. */
     function eventCodeHandling(code, name){
-      console.log(code);
       var tmp = code.split("\n\n"); // event parser;
       var ret = ""
       // 각 이벤트 클리어
@@ -583,11 +583,11 @@
       for(var a in tmp){
             if(tmp[a].search("flagClicked") != -1){
                 var len = Object.keys(myCanvas.getCurrentSprite()._whenClicked).length;
-                myCanvas.getCurrentSprite()._whenClicked[name + "WhenClicked" + len] = libCode + '\n\n' + tmp[a];
+                myCanvas.getCurrentSprite()._whenClicked[name + "WhenClicked" + len] = libCode + "\n\n"  + tmp[a];
                 console.log(name + "WhenClicked"+len, myCanvas.getCurrentSprite()._whenClicked[name + "WhenClicked" + len]);
             } else if(tmp[a].search("cloning") != -1) {
                 var len = Object.keys(myCanvas.getCurrentSprite()._whenCloning).length;
-                myCanvas.getCurrentSprite()._whenCloning[name + "WhenCloning" + len] = libCode + '\n\n' + tmp[a];
+                myCanvas.getCurrentSprite()._whenCloning[name + "WhenCloning" + len] = libCode  + "\n\n" + tmp[a];
                 console.log(name + "WhenCloning"+len, myCanvas.getCurrentSprite()._whenCloning[name + "WhenCloning" + len]); // checked
             }else {
                 ret += tmp[a] + "\n\n"
@@ -648,7 +648,6 @@
           // latestcodes에는 event Code를 제외한 메인 코드가 초기화되어있음
         //let codeWithoutNull = myCanvas.getSpriteByName(keyOfCode).jsCode.replace("nullnull", "");
         //myCanvas.getSpriteByName(keyOfCode).jsCode = codeWithoutNull;
-        console.log(keyOfSprite);
         // flag event와 clone event만 고려
         var targetCode = "";
         targetCode = myCanvas.getSpriteByName(keyOfSprite)._whenClicked[keyOfCode];
@@ -661,6 +660,7 @@
 
       do {
         try {
+          console.log("continue");
           var hasMoreCode = myInterpreters[keyOfCode].step();
         } finally {
           if (!hasMoreCode) {
