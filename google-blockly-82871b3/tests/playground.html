@@ -216,18 +216,6 @@
       taChange();
     }
 
-    function delayWrapper(keyOfSprite, keyOfEventCode, isClone=false) {
-      return new Promise(function (resolve, reject) {
-        setTimeout(function (){
-          myCanvas.specificSpriteName = keyOfSprite;
-          myCanvas.specificEventCode = keyOfEventCode;
-          var isFalse = stepCode(keyOfSprite, keyOfEventCode, isClone);
-          resolve(isFalse);
-
-        }, 2);
-      });
-    }
-
     function re_start(){
         myCanvas.restart();
     }
@@ -272,6 +260,7 @@
           if(myCanvas.spritesOrder[i] !== null && !myCanvas.spritesOrder[i].isClone[0]){
             //_goStep(myCanvas.spritesOrder[i].name) // myCanvas.spritesOrder[i] === Sprite in order
             let sname = myCanvas.spritesOrder[i].name
+
             for(var keyOfCode in myCanvas.getSpriteByName(sname)._whenClicked){
               _goStep(sname, keyOfCode);
               console.log(keyOfCode, myCanvas.getSpriteByName(sname)._whenClicked[keyOfCode]); // checked output
@@ -284,7 +273,7 @@
       if(myCanvas.isHalting){
         return 0;
       }
-      console.log(keyOfEventCode);
+      //console.log(keyOfEventCode);
       delayWrapper(keyOfSprite, keyOfEventCode, isClone)
               .then(
                       function (result) {
@@ -298,17 +287,27 @@
               );
     }
 
+    function delayWrapper(keyOfSprite, keyOfEventCode, isClone=false) {
+      return new Promise(function (resolve, reject) {
+        setTimeout(function (){
+          myCanvas.specificSpriteName = keyOfSprite;
+          myCanvas.specificEventCode = keyOfEventCode;
+          var isFalse = stepCode(keyOfSprite, keyOfEventCode, isClone);
+          resolve(isFalse);
+
+        }, 2);
+      });
+    }
+
     function ObjSuspend() {
         myCanvas.allPause();
     }
 
     // initApi 'createClone' statement wrapper
     function createClone(){
-      console.log("create sprite ___ clone\n\n\n\n\n\n\n\n")
       var spriteObject = myCanvas.getSpecificSprite();
       var parentName = myCanvas.specificSpriteName;
       var cloneName = getNoDuplicationName(parentName, "_clone");
-      console.log(cloneName, "---- cloneName");
       spriteObject.cloneChilds = cloneName; // clone 이름을 parent sprite에 저장
       var imageSrc = spriteObject.getImageSource();
       var position = spriteObject.position; // x, y 좌표
@@ -402,7 +401,7 @@
               interpreter.createNativeFunction(function(text) {
                 text = text ? text.toString() : '';
                 myCanvas.getSpecificSprite().moveSteps(parseInt(text));
-                console.log("soicem");
+                console.log("moveSteps");
 
               }));
 
@@ -473,11 +472,11 @@
                 //myCanvas.getSpecificSprite();
                 var cloneName = createClone();
                 var parentName = myCanvas.specificSpriteName;
-                let eventCodeName = myCanvas.specificEventCode;
-                myCanvas.getSpriteByName(cloneName)._whenClicked = myCanvas.getSpriteByName(parentName)._whenCloning;
-                for(var keyOfCode in myCanvas.getSpriteByName(cloneName)._whenClicked){
-                  console.log(cloneName, keyOfCode, myCanvas.getSpriteByName(cloneName)._whenClicked);
-                  _goStep(cloneName, keyOfCode, true);
+                var cloneCodes = myCanvas.getSpriteByName(parentName)._whenCloning
+                for(var keyOfCode in cloneCodes){
+                  // clone name is unique, then just combine both keyOfCode and cloneName
+                  myCanvas.getSpriteByName(cloneName)._whenClicked[keyOfCode + cloneName] = cloneCodes[keyOfCode];
+                  _goStep(cloneName, keyOfCode + cloneName, true);
                 }
             }));
         interpreter.setProperty(scope, 'glideToMousePosition',
@@ -513,13 +512,14 @@
       interpreter.setProperty(scope, 'wait',
             interpreter.createNativeFunction(function(second) {
               var nameOfSprite = myCanvas.specificSpriteName;
+              var nameOfKey = myCanvas.specificEventCode;
               myCanvas.getSpriteByName(nameOfSprite).isContinue = false;
               myCanvas.getSpriteByName(nameOfSprite).wait(second).then(value=>{
                 console.log(myCanvas.specificSpriteName)
                 myCanvas.getSpriteByName(nameOfSprite).isContinue = true;
                 if(!myCanvas.getSpriteByName(nameOfSprite).isHalting){
-                  let eventCodeName = myCanvas.specificEventCode;
-                  _goStep(nameOfSprite, eventCodeName);
+                  console.log(nameOfSprite, nameOfKey);
+                  _goStep(nameOfSprite, nameOfKey);
                 }
 
               });
@@ -573,12 +573,12 @@
 
       // whenClicked에 라이브러리 코드 추가
       var libCode = libraryManager.getLibraryJsCode();
-      if(libCode){
+      /*if(libCode){
         let codeWithLib = libCode + myCanvas.getSpriteByName(keyOfLatestCode).jsCode;
         myCanvas.getSpriteByName(keyOfLatestCode).jsCode = codeWithLib;
       } else {
         libCode = "";
-      }
+      }*/
 
       for(var a in tmp){
             if(tmp[a].search("flagClicked") != -1){
@@ -652,7 +652,6 @@
         // flag event와 clone event만 고려
         var targetCode = "";
         targetCode = myCanvas.getSpriteByName(keyOfSprite)._whenClicked[keyOfCode];
-        console.log(targetCode, keyOfCode);
         console.log(keyOfSprite, keyOfCode, targetCode);
 
         myInterpreters[keyOfCode] = new Interpreter(targetCode, initApi);
