@@ -19,13 +19,12 @@ Blockly.Workspace.prototype.getLibraryBlocks = function(namespaceName, libraryNa
 Blockly.Workspace.prototype.updateLibraryBlocks = function (library, toolboxManager) {
   const libraryFullName = `${library.info.author}.${library.info.name}`;
   let blocks = this.getLibraryBlocks(library.info.author, library.info.name);
-
-  for (let i = 0; i < blocks.length; i++) {
-    const oldBlock = blocks[i];
+  blocks.forEach((oldBlock) => {
     const newBlockXml = toolboxManager.getLibraryBlock(libraryFullName, oldBlock.funcName_);
-    if (!newBlockXml) continue;
+    if (!newBlockXml) return;
     const newBlock = Blockly.Xml.domToBlock(newBlockXml, this);
+    if (!newBlock) return;
 
     oldBlock.swapBlockWith(newBlock);
-  }
+  });
 };

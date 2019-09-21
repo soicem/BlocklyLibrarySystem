@@ -41,9 +41,9 @@ Blockly.defineBlocksWithJsonArray([
   }
 ]);
 
-Blockly.Blocks['import_statement'] = {
-  libraryName_: '',
-  librarySrc_: '',
+Blockly.Blocks["import_statement"] = {
+  libraryName_: "",
+  librarySrc_: "",
   readOnly_: false,
 
   init: function() {
@@ -63,7 +63,7 @@ Blockly.Blocks['import_statement'] = {
     let container = document.createElement("mutation");
     container.setAttribute("lib", this.libraryName_);
     container.setAttribute("src", this.librarySrc_);
-    container.setAttribute("readOnly", this.readOnly_);
+    container.setAttribute("readonly", this.readOnly_);
 
     return container;
   },
@@ -71,14 +71,14 @@ Blockly.Blocks['import_statement'] = {
   domToMutation: function(xmlElement) {
     this.libraryName_ = xmlElement.getAttribute("lib");
     this.librarySrc_ = xmlElement.getAttribute("src");
-    this.readOnly_ = xmlElement.getAttribute("readOnly");
+    this.readOnly_ = xmlElement.getAttribute("readonly") || false;
 
     this.updateShape_();
   },
 
   resetShape_: function() {
-    this.removeInput("LINE1");
-    this.removeInput("LINE2");
+    this.removeInput("LINE1", true);
+    this.removeInput("LINE2", true);
   },
 
   updateShape_: function() {
@@ -86,7 +86,7 @@ Blockly.Blocks['import_statement'] = {
 
     this.appendDummyInput("LINE1")
     .appendField(this.libraryName_);
-    if (this.readOnly_ !== "true") {
+    if (!this.readOnly_) {
       this.appendDummyInput("LINE2")
       .appendField("from")
       .appendField(new Blockly.FieldTextInput(this.librarySrc_), "URL");
@@ -94,7 +94,7 @@ Blockly.Blocks['import_statement'] = {
   }
 };
 
-Blockly.Blocks['inline_configure'] = {
+Blockly.Blocks["inline_configure"] = {
   init: function() {
     this.appendDummyInput()
         .appendField("inline")
@@ -104,10 +104,10 @@ Blockly.Blocks['inline_configure'] = {
   }
 };
 
-Blockly.Blocks['import_return'] = {
-  namespaceName_: '',
-  libraryName_: '',
-  funcName_: '',
+Blockly.Blocks["import_return"] = {
+  namespaceName_: "",
+  libraryName_: "",
+  funcName_: "",
   argsCount_: 0,
   argsName_: [],
   implementXml_: null,
@@ -123,7 +123,7 @@ Blockly.Blocks['import_return'] = {
 
     this.argsCount_ = 0;
     this.argsName_ = [];
-    this.funcName_ = '';
+    this.funcName_ = "";
 
     this.resetShape_();
   },
@@ -218,10 +218,10 @@ Blockly.Blocks['import_return'] = {
   }
 };
 
-Blockly.Blocks['import_noReturn'] = {
-  namespaceName_: '',
-  libraryName_: '',
-  funcName_: '',
+Blockly.Blocks["import_noReturn"] = {
+  namespaceName_: "",
+  libraryName_: "",
+  funcName_: "",
   argsCount_: 0,
   argsName_: [],
   implementXml_: null,
@@ -238,7 +238,7 @@ Blockly.Blocks['import_noReturn'] = {
 
     this.argsCount_ = 0;
     this.argsName_ = [];
-    this.funcName_ = '';
+    this.funcName_ = "";
 
     this.resetShape_();
   },
