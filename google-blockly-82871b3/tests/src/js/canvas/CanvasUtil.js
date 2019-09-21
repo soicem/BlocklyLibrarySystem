@@ -103,17 +103,19 @@ class CanvasUtil {
    */
   static isSpriteTouchingSprite(canvas, sprite1, sprite2) {
     let isTouching = false;
-    let points1 = sprite1.getPixelsOfAnyColor(true);
-    let points2 = sprite2.getPixelsOfAnyColor(true);
+    const pixelData1 = sprite1.pixelData;
+    const pixelData2 = sprite2.pixelData;
+    const position1 = sprite1.position;
+    const position2 = sprite2.position;
 
     let i = 0, j = 0;
-    while (i < points1.length && j < points2.length && !isTouching) {
-      const point1 = points1[i];
-      const point2 = points2[j];
+    while (i < pixelData1.length && j < pixelData2.length && !isTouching) {
+      const point1 = {x: pixelData1[i].x + position1.x, y: pixelData1[i].y + position1.y};
+      const point2 = {x: pixelData2[j].x + position2.x, y: pixelData2[j].y + position2.y};
 
-      if (point1.lessThan(point2)) {
+      if (this.lessThan(point1, point2)) {
         i++;
-      } else if (point1.greaterThan(point2)) {
+      } else if (this.greaterThan(point1, point2)) {
         j++;
       } else {
         isTouching = true;
@@ -123,4 +125,11 @@ class CanvasUtil {
     return isTouching;
   }
 
+  static lessThan(point1, point2) {
+    return (point1.y === point2.y && point1.x < point2.x) || point1.y < point2.y;
+  }
+
+  static greaterThan(point1, point2) {
+    return (point1.y === point2.y && point1.x > point2.x) || point1.y > point2.y;
+  }
 }
