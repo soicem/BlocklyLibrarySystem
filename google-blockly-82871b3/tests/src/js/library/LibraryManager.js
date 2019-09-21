@@ -121,6 +121,30 @@ class LibraryManager {
   }
 
   /**
+   * Parse GitHub http to retrieve BLK (using nodejs)
+   * @param {string} url
+   * @param {boolean} async False if wait for load event to finish executing
+   */
+  addLibraryFromGitHub(url, async = true) {
+    function loadEvent() {
+      const result = JSON.parse(xhr.responseText);
+      if (result.status !== "ok") return;
+      libraryManager.addLibrary(Library.createFromJson(result.output));
+    }
+
+    const data = JSON.stringify({'url': url});
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://127.0.0.1:3000/getBlkFromGitUrl', async);
+    xhr.setRequestHeader('Content-Type', "application/json");
+    xhr.send(data);
+    xhr.addEventListener("load", () => loadEvent());
+
+    if (!async && xhr.status === 200) {
+      loadEvent();
+    }
+  }
+
+  /**
    * @param {Library|LibraryInfo} target
    * @returns {boolean}
    */

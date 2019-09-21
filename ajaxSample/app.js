@@ -1,3 +1,5 @@
+const request = require("request");
+const cheerio = require('cheerio');
 var express = require('express')
 var app = express()
 var bodyParser = require('body-parser')
@@ -34,9 +36,9 @@ app.post('/email_post', function(req, res){
     res.render('email.ejs', {'code' : req.body.code})
 });
 
-app.post('/ajax_send_email', function(req, res){ 
+app.post('/ajax_send_email', function(req, res){
     var langType = req.body.langType
-    var cmdCommand; 
+    var cmdCommand;
     if(langType == 0){
         langType = ".py"
         cmdCommand = "python main.py"
@@ -51,25 +53,37 @@ app.post('/ajax_send_email', function(req, res){
             nameOfFunc = libraryInfo[i].name + langType
             funcBody = libraryInfo[i].body
         }
-        
-        
+
+
         fs.writeFile(nameOfFunc, funcBody, function(err) {
             if(err) {
                 return console.log(err);
-            } 
+            }
             console.log(nameOfFunc + " was saved!");
-        });  
+        });
     }
     fs.writeFile("main" + langType, req.body.main, function(err) {
         if(err) {
             return console.log(err);
-        } 
+        }
         console.log("main" + langType + " was saved!");
     });
-    
+
     console.log(cmdCommand)
     nodeCmd.get("python main.py", (err, data, stderr) => {
-        var responseData = {'result' : 'ok', 'output' : data};  
+        var responseData = {'result' : 'ok', 'output' : data};
         res.json(responseData)
+    });
+});
+
+app.post("/getBlkFromGitUrl", function (req, res) {
+    request(req.body.url, function (err, resp, body) {
+        console.time("getBlkFromGitUrl");
+        const $ = cheerio.load(body);
+        const blkText = $("#LC1").text(); //id=LC1 is the text-box containing the content
+        const blk = JSON.parse(blkText);
+        const responseData = {'result' : 'ok', 'output' : blk};
+        res.json(responseData);
+        console.timeEnd("getBlkFromGitUrl");
     });
 });
