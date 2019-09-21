@@ -16,6 +16,7 @@ class Canvas {
   /**
    */
   initialize() {
+    this._specificEventCodeName;
     this._isHalting = false;
     this._sprites = {};
     this._spritesOrder = [null]; // Index 0 is reserved for a stage
@@ -160,6 +161,20 @@ class Canvas {
    */
   set currentCostumeNum(costumeNum) {
     this._currentCostumeNum = costumeNum;
+  }
+
+  /**
+   * @returns {string}
+   */
+  get specificEventCode() {
+    return this._specificEventCodeName;
+  }
+
+  /**
+   * @param {string} spriteName
+   */
+  set specificEventCode(spriteEventCodeName) {
+    this._specificEventCodeName = spriteEventCodeName;
   }
 
   /**

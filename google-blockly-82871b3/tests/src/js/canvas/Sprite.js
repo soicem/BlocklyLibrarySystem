@@ -29,8 +29,8 @@ class Sprite {
 
     /* Event 별 코드 저장을 위함 (ex : whenFlagClicked)*/
     /* 특정 이벤트를 여러번 작성 가능*/
-    this._whenClicked = [];
-    this._whenCloning = [];
+    this._whenClicked = {};
+    this._whenCloning = {};
   }
 
   ////////// Getter & Setter //////////
