@@ -801,10 +801,10 @@
     }
 
     function myStart() {
-      toolboxManager = ToolboxManager.createWithDom(blockWorkspace, document.getElementById("toolbox-categories"));
-      libraryManager = new LibraryManager(toolboxManager, blockWorkspace);
-      animationUpdater = new AnimationUpdater();
       myCanvas = new Canvas(document.getElementById("canvas"), new Size(480, 400), blockWorkspace);
+      toolboxManager = ToolboxManager.createWithDom(blockWorkspace, document.getElementById("toolbox-categories"));
+      libraryManager = new LibraryManager(toolboxManager, blockWorkspace, myCanvas);
+      animationUpdater = new AnimationUpdater();
 
       myCanvas.addSpriteAndSelect("penguin", "penguin.png");
       TrashToImg("penguin");
@@ -1193,10 +1193,12 @@
         <div id="canvases">
           <canvas id="canvas"></canvas>
         </div>
+        <script src="src/js/prototype/String.js"></script>
+        <script src="src/js/prototype/Block.js"></script>
+        <script src="src/js/prototype/Workspace.js"></script>
+        <script src="src/js/prototype/Xml.js"></script>
         <script src="src/js/utils/GalleryUtil.js"></script>
-        <script src="src/js/utils/String.js"></script>
-        <script src="src/js/utils/Block.js"></script>
-        <script src="src/js/utils/Workspace.js"></script>
+        <script src="src/js/utils/ArrayUtil.js"></script>
         <script src="src/js/encryption/Encryption.js"></script>
         <script src="src/js/animation/AnimationUpdater.js"></script>
         <script src="src/js/canvas/CanvasHandler.js"></script>
@@ -1218,7 +1220,6 @@
         <script src="src/js/math/Radian.js"></script>
         <script src="src/js/exception/MyException.js"></script>
         <script src="src/js/exception/SpriteException.js"></script>
-        <script src="src/js/parser/GitHtmlParser.js"></script>
 
         <script>
           /**

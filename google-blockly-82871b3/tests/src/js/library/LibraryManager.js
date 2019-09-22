@@ -2,11 +2,13 @@ class LibraryManager {
   /**
    * @param {ToolboxManager} toolboxManager
    * @param {Blockly.Workspace} workspace
+   * @param {Canvas} canvas
    */
-  constructor(toolboxManager, workspace) {
+  constructor(toolboxManager, workspace, canvas) {
     this._libraries = {};
     this.toolboxManager = toolboxManager;
     this.workspace = workspace;
+    this.canvas = canvas;
   }
 
   ////////// Getter & Setter //////////
@@ -66,6 +68,20 @@ class LibraryManager {
     this._workspace = workspace;
   }
 
+  /**
+   * @returns {Canvas}
+   */
+  get canvas() {
+    return this._canvas;
+  }
+
+  /**
+   * @param {Canvas} value
+   */
+  set canvas(value) {
+    this._canvas = value;
+  }
+
 // --- More ---
 
   ////////// Class Methods //////////
@@ -84,9 +100,12 @@ class LibraryManager {
       const newerVersion = library.info.version;
 
       if (confirm(`Do you wish to override "v${currentVersion}" of "${libraryFullName}" with "v${newerVersion}"?`)) {
+        const oldFunctions = Object.keys(this.libraries[libraryFullName].functions);
+
         this.libraries[libraryFullName] = library;
         this.toolboxManager.updateLibrary(library);
         this.workspace.updateLibraryBlocks(library, this.toolboxManager);
+        this.canvas.updateLibraryBlocks(library, oldFunctions);
       }
     }
   }

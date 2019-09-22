@@ -59,7 +59,7 @@ class ToolboxManager {
   }
 
   /**
-   * @returns {Element.children}
+   * @returns {HTMLCollection}
    */
   get categories() {
     return this.toolboxDom.children;
@@ -89,7 +89,7 @@ class ToolboxManager {
 
   /**
    * @param {number} index
-   * @returns {HTMLElement}
+   * @returns {Element}
    */
   getCategoryByIndex(index) {
     return this.categories[index];
@@ -160,8 +160,8 @@ class ToolboxManager {
 
   /**
    * @param {string} categoryName
-   * @param {HTMLElement} blockDom
-   * @return {null|HTMLElement} Null if no category name found
+   * @param {Element} blockDom
+   * @return {null|Element} Null if no category name found
    */
   appendBlockDom(categoryName, blockDom) {
     const category = this.getCategory(categoryName);
