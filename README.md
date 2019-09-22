@@ -6,5 +6,6 @@
 
 ## 가이드 
 #시나리오: github 로그인 정보 입력 - Export 라이브러리 - 원격 저장소에 저장
+
 [Library file sharing using git](https://www.youtube.com/watch?v=Eh-RbXjaSYY&feature=youtu.be) 
 ```
