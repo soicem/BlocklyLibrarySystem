@@ -75,7 +75,9 @@
 
   <script>
     'use strict';
-
+    /**
+     * @type {Blockly.Workspace}
+     */
     var blockWorkspace = null;
     var toolbox = null;
 
@@ -1624,12 +1626,12 @@
           <block type="import_statement">
             <mutation lib="NS.MyLibrary" src="MyLibrary.blk" readonly="true"></mutation>
           </block>
-          <!--<block type="import_statement">
+          <block type="import_statement">
             <mutation lib="CSK.Penguin" src="Penguin.blk" readonly="true"></mutation>
           </block>
           <block type="import_statement">
             <mutation lib="CSK.MyLibrary" src="https://raw.githubusercontent.com/peurocs4/FlippersLibrary/master/MyLibrary.blk"></mutation>
-          </block>-->
+          </block>
           <!--<block type="import_noReturn" id="123">
             <mutation func="Statement Function" args="2">
               <arg name="argA"/>
