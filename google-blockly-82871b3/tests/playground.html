@@ -579,7 +579,7 @@
       } else {
         libCode = "";
       }*/
-
+      var funcs = [];
       for(var a in tmp){
             if(tmp[a].search("flagClicked") != -1){
                 var len = Object.keys(myCanvas.getCurrentSprite()._whenClicked).length;
@@ -589,10 +589,18 @@
                 var len = Object.keys(myCanvas.getCurrentSprite()._whenCloning).length;
                 myCanvas.getCurrentSprite()._whenCloning[name + "WhenCloning" + len] = libCode  + "\n\n" + tmp[a];
                 console.log(name + "WhenCloning"+len, myCanvas.getCurrentSprite()._whenCloning[name + "WhenCloning" + len]); // checked
-            }else {
+            } else if(tmp[a].search("function")){
+                funcs.push(tmp[a]);
+            } else {
                 ret += tmp[a] + "\n\n"
             }
         }
+        for(var key in myCanvas.getCurrentSprite()._whenClicked){
+          for(var keyOfFunc in funcs){
+            myCanvas.getCurrentSprite()._whenClicked[key] = funcs[keyOfFunc] + "\n\n" + myCanvas.getCurrentSprite()._whenClicked[key];
+          }
+        }
+        console.log(myCanvas.getCurrentSprite()._whenClicked);
         return ret;
     }
 
