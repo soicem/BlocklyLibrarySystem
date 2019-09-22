@@ -29,65 +29,109 @@ goog.provide('Blockly.Blocks.operators');
 goog.require('Blockly.Blocks');
 goog.require('Blockly');
 
+const operators = [
+  ["+", "ADD"],
+  ["-", "SUBTRACT"],
+  ["*", "MULTIPLY"],
+  ["/", "DIVIDE"],
+  ["mod", "MODULUS"]
+];
 
-Blockly.Blocks['sprite_operator'] = {
-  init: function() {
-    this.appendValueInput("VALUE1")
-    .setCheck(null);
-    this.appendValueInput("VALUE2")
-    .setCheck(null)
-    .appendField(new Blockly.FieldDropdown([["+","ADD"], ["-","SUBTRACT"], ["*","MULTIPLY"], ["/","DIVIDE"], ["mod","MODULUS"]]), "OPTION");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(120);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
+const conditionalOptions = [
+  [">", "GRT"],
+  [">=", "GTE"],
+  ["=", "EQU"],
+  ["!=", "NEQ"],
+  ["<=", "LTE"],
+  ["<", "LST"],
+  ["%{BKY_SPRITE_AND}", "AND"],
+  ["%{BKY_SPRITE_OR}", "OR"]
+];
 
-Blockly.Blocks['sprite_getRandom'] = {
-  init: function() {
-    this.appendValueInput("MIN")
-    .setCheck(null)
-    .appendField("pick random from");
-    this.appendValueInput("MAX")
-    .setCheck(null)
-    .appendField("to");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(120);
-    this.setTooltip("");
-    this.setHelpUrl("");
+Blockly.defineBlocksWithJsonArray([
+  {
+    "type": "sprite_operator",
+    "message0": "%1 %2 %3",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "VALUE1"
+      },
+      {
+        "type": "field_dropdown",
+        "name": "OPTION",
+        "options": operators
+      },
+      {
+        "type": "input_value",
+        "name": "VALUE2"
+      }
+    ],
+    "inputsInline": true,
+    "output": null,
+    "colour": 120,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_getRandom",
+    "message0": "%{BKY_SPRITE_GETRANDOM_MSG}",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "MIN"
+      },
+      {
+        "type": "input_value",
+        "name": "MAX"
+      }
+    ],
+    "inputsInline": true,
+    "output": null,
+    "colour": 120,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_conditionalOperator",
+    "message0": "%1 %2 %3",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "VALUE1"
+      },
+      {
+        "type": "field_dropdown",
+        "name": "OPTION",
+        "options": conditionalOptions
+      },
+      {
+        "type": "input_value",
+        "name": "VALUE2"
+      }
+    ],
+    "inputsInline": true,
+    "output": null,
+    "colour": 120,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_notOperator",
+    "message0": "%{BKY_SPRITE_NOTOPERATOR_MSG}",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "VALUE"
+      }
+    ],
+    "inputsInline": true,
+    "output": null,
+    "colour": 120,
+    "tooltip": "",
+    "helpUrl": ""
   }
-};
-
-Blockly.Blocks['sprite_conditionalOperator'] = {
-  init: function() {
-    this.appendValueInput("VALUE1")
-    .setCheck(null);
-    this.appendValueInput("VALUE2")
-    .setCheck(null)
-    .appendField(new Blockly.FieldDropdown([[">","GRT"], [">=","GRE"], ["=","EQU"], ["<=","LSE"], ["<","LSS"], ["and","AND"], ["or","OR"]]), "OPTION");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(120);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_notOperator'] = {
-  init: function() {
-    this.appendValueInput("VALUE")
-    .setCheck(null)
-    .appendField("not");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(120);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
+]);
 
 Blockly.Blocks['sprite_join'] = {
   init: function() {

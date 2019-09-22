@@ -31,6 +31,30 @@ goog.require('Blockly');
 
 Blockly.defineBlocksWithJsonArray([
   {
+    "type": "sprite_iff",
+    "message0": "%{BKY_CONTROLS_IF_MSG_IF} %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "IF0",
+        "check": "Boolean"
+      }
+    ],
+    "message1": "%{BKY_CONTROLS_IF_MSG_THEN} %1",
+    "args1": [
+      {
+        "type": "input_statement",
+        "name": "DO0"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 40,
+    "helpUrl": "",
+    "mutator": "controls_if_mutator",
+    "extensions": ["controls_if_tooltip"]
+  },
+  {
     "type": "sprite_wait",
     "message0": "%{BKY_SPRITE_WAIT_MSG}",
     "args0": [

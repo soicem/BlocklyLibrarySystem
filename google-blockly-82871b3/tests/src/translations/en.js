@@ -1,4 +1,6 @@
 // Constants
+Blockly.Msg.SPRITE_AND = "and";
+Blockly.Msg.SPRITE_OR = "or";
 Blockly.Msg.SPRITE_RANDOM = "random";
 Blockly.Msg.SPRITE_MOUSE = "mouse";
 Blockly.Msg.SPRITE_EDGE = "edge";
@@ -66,6 +68,8 @@ Blockly.Msg.SPRITE_TOUCHING_MSG = "touching %1";
 
 // Sprite's events blocks
 Blockly.Msg.SPRITE_FLAGCLICKED_MSG = "when %1 clicked";
+Blockly.Msg.SPRITE_TOUCHINGCOLOR_MSG = "touching color %1";
+Blockly.Msg.SPRITE_COLORTOUCHINGCOLOR_MSG = "%1 touching color %2";
 Blockly.Msg.SPRITE_KEYPRESSED_MSG = "when %1 key pressed";
 
 // Sprite's control blocks
@@ -73,6 +77,10 @@ Blockly.Msg.SPRITE_WAIT_MSG = "wait %1 seconds";
 Blockly.Msg.SPRITE_FOREVER_MSG = "forever %1";
 Blockly.Msg.SPRITE_CLONESTARTED_MSG = "when I start as a clone";
 Blockly.Msg.SPRITE_CREATECLONE_MSG = "create clone of %1";
+
+// Sprite's operators blocks
+Blockly.Msg.SPRITE_GETRANDOM_MSG = "pick random from %1 to %2";
+Blockly.Msg.SPRITE_NOTOPERATOR_MSG = "not %1";
 
 // Import
 Blockly.Msg.IMPORT_HEADER_MSG = "Import libraries";

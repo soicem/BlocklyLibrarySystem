@@ -55,6 +55,41 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 190,
     "tooltip": "",
     "helpUrl": ""
+  },
+  {
+    "type": "sprite_touchingColor",
+    "message0": "%{BKY_SPRITE_TOUCHINGCOLOR_MSG}",
+    "args0": [
+      {
+        "type": "field_colour",
+        "name": "COLOR",
+        "colour": "#ff0000"
+      }
+    ],
+    "output": "Boolean",
+    "colour": 190,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "sprite_colorTouchingColor",
+    "message0": "%{BKY_SPRITE_COLORTOUCHINGCOLOR_MSG}",
+    "args0": [
+      {
+        "type": "field_colour",
+        "name": "COLOR1",
+        "colour": "#0000ff"
+      },
+      {
+        "type": "field_colour",
+        "name": "COLOR2",
+        "colour": "#ff0000"
+      }
+    ],
+    "output": "Boolean",
+    "colour": 190,
+    "tooltip": "",
+    "helpUrl": ""
   }
 ]);
 
@@ -80,33 +115,6 @@ Blockly.Extensions.register('spriteListUpdateExtension', function () {
       }
     }
 );
-
-Blockly.Blocks['sprite_touchingColor'] = {
-  init: function () {
-    this.appendDummyInput()
-    .appendField("touching color")
-    .appendField(new Blockly.FieldColour("#0000ff"), "COLOR");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(190);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
-
-Blockly.Blocks['sprite_colorTouchingColor'] = {
-  init: function () {
-    this.appendDummyInput()
-    .appendField(new Blockly.FieldColour("#0000ff"), "COLOR1")
-    .appendField("is touching")
-    .appendField(new Blockly.FieldColour("#ff0000"), "COLOR2");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(190);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
 
 Blockly.Blocks['sprite_distanceTo'] = {
   init: function () {

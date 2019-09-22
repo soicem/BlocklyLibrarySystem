@@ -1475,6 +1475,487 @@
       Variables category uses untyped variable blocks.
       See https://developers.google.com/blockly/guides/create-custom-blocks/variables#untyped_variable_blocks for more information. -->
       <xml id="toolbox-categories" style="display: none">
+        <category name="라이브러리" colour="#e3ac00">
+          <!--          <block type="import_return"></block>-->
+          <!--          <block type="import_noReturn"></block>-->
+          <block type="import_header"></block>
+          <block type="import_statement">
+            <mutation lib="NS.MyLibrary" src="MyLibrary.blk" readonly="true"></mutation>
+          </block>
+          <!--<block type="import_statement">
+            <mutation lib="CSK.Penguin" src="Penguin.blk" readonly="true"></mutation>
+          </block>
+          <block type="import_statement">
+            <mutation lib="CSK.MyLibrary" src="https://raw.githubusercontent.com/peurocs4/FlippersLibrary/master/MyLibrary.blk"></mutation>
+          </block>-->
+          <!--<block type="import_noReturn" id="123">
+            <mutation func="Statement Function" args="2">
+              <arg name="argA"/>
+              <arg name="argB"/>
+            </mutation>
+          </block>-->
+        </category>
+        <category name="모션" colour="225">
+          <block type="sprite_moveSteps">
+            <value name="STEPS">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_turnAngle">
+            <value name="DEGREE">
+              <shadow type="math_number">
+                <field name="NUM">15</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_goTo"></block>
+          <block type="sprite_goToPoint">
+            <value name="X">
+              <shadow type="math_number">
+                <field name="NUM">0</field>
+              </shadow>
+            </value>
+            <value name="Y">
+              <shadow type="math_number">
+                <field name="NUM">0</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_glideTo">
+            <value name="SEC">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_glideToPoint">
+            <value name="SEC">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            <value name="X">
+              <shadow type="math_number">
+                <field name="NUM">0</field>
+              </shadow>
+            </value>
+            <value name="Y">
+              <shadow type="math_number">
+                <field name="NUM">0</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_pointTo">
+            <value name="DIR">
+              <shadow type="math_number">
+                <field name="NUM">90</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_pointToward"></block>
+          <block type="sprite_changeXY">
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_setXY">
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">0</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_edgeBounce"></block>
+          <block type="sprite_rotationStyle"></block>
+          <block type="sprite_getXY"></block>
+          <block type="sprite_getDir"></block>
+        </category>
+        <category name="모양새" colour="255">
+          <block type="sprite_say">
+            <value name="CONTENT">
+              <shadow type="text">
+                <field name="TEXT">Hello World!</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_sayTill">
+            <value name="CONTENT">
+              <shadow type="text">
+                <field name="TEXT">Hello World!</field>
+              </shadow>
+            </value>
+            <value name="SEC">
+              <shadow type="math_number">
+                <field name="NUM">2</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_think">
+            <value name="CONTENT">
+              <shadow type="text">
+                <field name="TEXT">Hmm...</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_thinkTill">
+            <value name="CONTENT">
+              <shadow type="text">
+                <field name="TEXT">Hmm...</field>
+              </shadow>
+            </value>
+            <value name="SEC">
+              <shadow type="math_number">
+                <field name="NUM">2</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_nextCostume"></block>
+          <block type="sprite_switchCostume"></block>
+          <block type="sprite_nextBackdrop"></block>
+          <block type="sprite_switchBackdrop"></block>
+          <block type="sprite_changeSize">
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_setSize">
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">100</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_changeEffect">
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">25</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_setEffect">
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">0</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_clearEffect"></block>
+          <block type="sprite_show"></block>
+          <block type="sprite_hide"></block>
+          <block type="sprite_setLayer"></block>
+          <block type="sprite_changeLayer">
+            <value name="COUNT">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_getCostume"></block>
+          <block type="sprite_getBackdrop"></block>
+          <block type="sprite_getSize"></block>
+        </category>
+        <category name="소리" colour="305">
+          <block type="sprite_playSound"></block>
+          <block type="sprite_startSound"></block>
+          <block type="sprite_stopSound"></block>
+          <block type="sprite_changeSoundEffect">
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_setSoundEffect">
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">100</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_clearSoundEffect"></block>
+          <block type="sprite_changeVolume">
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">-10</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_setVolume">
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">100</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_getVolume"></block>
+        </category>
+        <category name="이벤트" colour="60">
+          <block type="sprite_flagClicked"></block>
+          <block type="sprite_keyPressed">
+            <field name="KEY">SPACE</field>
+          </block>
+          <block type="sprite_spriteClicked"></block>
+          <block type="sprite_backdropSwitched"></block>
+          <block type="sprite_loudnessCondition">
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_timerCondition">
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_messageReceived"></block>
+          <block type="sprite_messageBroadcast"></block>
+          <block type="sprite_messageBroadcastWait"></block>
+        </category>
+        <category name="컨드롤" colour="40">
+          <block type="sprite_wait">
+            <value name="SEC">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_repeat">
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">3</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_forever"></block>
+          <block type="sprite_iff"></block>
+          <block type="sprite_iff">
+            <mutation else="1"></mutation>
+          </block>
+          <block type="sprite_waitTill"></block>
+          <block type="sprite_repeatTill"></block>
+          <block type="sprite_stop"></block>
+          <block type="sprite_cloneStarted"></block>
+          <block type="sprite_createClone"></block>
+          <block type="sprite_deleteClone"></block>
+        </category>
+        <category name="센싱" colour="190">
+          <block type="sprite_touching"></block>
+          <block type="sprite_touchingColor"></block>
+          <block type="sprite_colorTouchingColor"></block>
+          <block type="sprite_askWait">
+            <value name="MESSAGE">
+              <shadow type="text">
+                <field name="TEXT">What's your name?</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_answer"></block>
+          <block type="sprite_keyPress">
+            <field name="KEY">space</field>
+          </block>
+          <block type="sprite_mouseDown"></block>
+          <block type="sprite_getMouseXY">
+            <field name="XY">x</field>
+          </block>
+          <block type="sprite_getMouseXY">
+            <field name="XY">y</field>
+          </block>
+          <block type="sprite_setDragMode"></block>
+          <block type="sprite_getLoudness"></block>
+          <block type="sprite_getTimer"></block>
+          <block type="sprite_resetTimer"></block>
+          <block type="sprite_getStage"></block>
+          <block type="sprite_getDate">
+            <field name="OPTION">year</field>
+          </block>
+          <block type="sprite_getSince">
+            <field name="OPTION">days</field>
+          </block>
+          <block type="sprite_getUsername"></block>
+        </category>
+        <category name="연산" colour="120">
+          <block type="sprite_operator">
+            <field name="OPTION">ADD</field>
+            <value name="VALUE1">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            <value name="VALUE2">
+              <shadow type="math_number">
+                <field name="NUM">2</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_operator">
+            <field name="OPTION">SUBTRACT</field>
+            <value name="VALUE1">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            <value name="VALUE2">
+              <shadow type="math_number">
+                <field name="NUM">2</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_operator">
+            <field name="OPTION">MULTIPLY</field>
+            <value name="VALUE1">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            <value name="VALUE2">
+              <shadow type="math_number">
+                <field name="NUM">2</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_operator">
+            <field name="OPTION">DIVIDE</field>
+            <value name="VALUE1">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            <value name="VALUE2">
+              <shadow type="math_number">
+                <field name="NUM">2</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_operator">
+            <field name="OPTION">MODULUS</field>
+            <value name="VALUE1">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            <value name="VALUE2">
+              <shadow type="math_number">
+                <field name="NUM">2</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_getRandom">
+            <value name="MIN">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            <value name="MAX">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_conditionalOperator">
+            <field name="OPTION">GRT</field>
+            <value name="VALUE2">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_conditionalOperator">
+            <field name="OPTION">EQU</field>
+            <value name="VALUE2">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_conditionalOperator">
+            <field name="OPTION">LST</field>
+            <value name="VALUE2">
+              <shadow type="math_number">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_conditionalOperator">
+            <field name="OPTION">AND</field>
+          </block>
+          <block type="sprite_conditionalOperator">
+            <field name="OPTION">OR</field>
+          </block>
+          <block type="sprite_notOperator"></block>
+          <block type="sprite_join">
+            <value name="VALUE1">
+              <shadow type="text">
+                <field name="TEXT">pen</field>
+              </shadow>
+            </value>
+            <value name="VALUE2">
+              <shadow type="text">
+                <field name="TEXT">pineapple</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_letterAt">
+            <value name="INDEX">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            <value name="VALUE">
+              <shadow type="text">
+                <field name="TEXT">pen-pineapple</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_length">
+            <value name="VALUE">
+              <shadow type="text">
+                <field name="TEXT">pen-pineapple</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_contains">
+            <value name="VALUE">
+              <shadow type="text">
+                <field name="TEXT">pen-pineapple</field>
+              </shadow>
+            </value>
+            <value name="LOOKUP">
+              <shadow type="text">
+                <field name="TEXT">apple</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_unaryOperator">
+            <field name="OPTION">round</field>
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">33.33</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="sprite_unaryOperator">
+            <field name="OPTION">abs</field>
+            <value name="VALUE">
+              <shadow type="math_number">
+                <field name="NUM">-10</field>
+              </shadow>
+            </value>
+          </block>
+        </category>
+        <sep></sep>
+
+
+
+
         <category name="Logic" style="logic_category">
           <block type="controls_if"></block>
           <block type="logic_compare"></block>
@@ -1614,27 +2095,6 @@
               </shadow>
             </value>
           </block>
-        </category>
-
-        <category name="Import" colour="#e3ac00">
-<!--          <block type="import_return"></block>-->
-<!--          <block type="import_noReturn"></block>-->
-          <block type="import_header"></block>
-          <block type="import_statement">
-            <mutation lib="NS.MyLibrary" src="MyLibrary.blk" readonly="true"></mutation>
-          </block>
-          <!--<block type="import_statement">
-            <mutation lib="CSK.Penguin" src="Penguin.blk" readonly="true"></mutation>
-          </block>
-          <block type="import_statement">
-            <mutation lib="CSK.MyLibrary" src="https://raw.githubusercontent.com/peurocs4/FlippersLibrary/master/MyLibrary.blk"></mutation>
-          </block>-->
-          <!--<block type="import_noReturn" id="123">
-            <mutation func="Statement Function" args="2">
-              <arg name="argA"/>
-              <arg name="argB"/>
-            </mutation>
-          </block>-->
         </category>
 
         <category name="Sprite" colour="#0000ff" expanded="true">

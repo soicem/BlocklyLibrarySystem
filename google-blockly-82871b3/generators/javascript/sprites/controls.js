@@ -29,40 +29,42 @@ goog.provide('Blockly.JavaScript.controls');
 goog.require('Blockly.JavaScript');
 
 
-Blockly.JavaScript['sprite_cloneStarted'] = function (block) {
-    let value_content = Blockly.JavaScript.valueToCode(block, 'CONTENT',
+Blockly.JavaScript["sprite_cloneStarted"] = function (block) {
+    let value_content = Blockly.JavaScript.valueToCode(block, "CONTENT",
         Blockly.JavaScript.ORDER_ATOMIC);
 
     return "cloning;\n";
 };
 
-Blockly.JavaScript['sprite_createClone'] = function (block) {
-    let value_content = Blockly.JavaScript.valueToCode(block, 'CONTENT',
+Blockly.JavaScript["sprite_createClone"] = function (block) {
+    let value_content = Blockly.JavaScript.valueToCode(block, "CONTENT",
         Blockly.JavaScript.ORDER_ATOMIC);
 
     return "createClone();\n";
 };
 
-Blockly.JavaScript['sprite_forever'] = function(block) {
-    let statements_statement = Blockly.JavaScript.statementToCode(block, 'STATEMENT');
+Blockly.JavaScript["sprite_forever"] = function(block) {
+    let statements_statement = Blockly.JavaScript.statementToCode(block, "STATEMENT");
     return "while(1) {" + statements_statement + "};\n";
 };
 
-Blockly.JavaScript['sprite_wait'] = function(block) {
-    let value_x = Blockly.JavaScript.valueToCode(block, 'SEC',
+Blockly.JavaScript["sprite_iff"] = Blockly.JavaScript["controls_if"];
+
+Blockly.JavaScript["sprite_wait"] = function(block) {
+    let value_x = Blockly.JavaScript.valueToCode(block, "SEC",
         Blockly.JavaScript.ORDER_ATOMIC);
 
     return "wait(" + value_x + ");\n";
 };
 
 // [["all","ALL"], ["this script","THIS"], ["other scripts in sprite","OTHER"]]), "OPTION"
-Blockly.JavaScript['sprite_stop'] = function(block) {
+Blockly.JavaScript["sprite_stop"] = function(block) {
     const OPTIONS = {
         ALL: "allStop",
         THIS: "this script",
         OTHER: "other scripts in sprite"
     };
-    let dropdown_where = block.getFieldValue('OPTION');
+    let dropdown_where = block.getFieldValue("OPTION");
     let funcName = OPTIONS[dropdown_where];
 
     return funcName + "();\n";

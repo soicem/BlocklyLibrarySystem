@@ -1,4 +1,6 @@
 // Constants
+Blockly.Msg.SPRITE_AND = "그리고";
+Blockly.Msg.SPRITE_OR = "아니면";
 Blockly.Msg.SPRITE_RANDOM = "무작위";
 Blockly.Msg.SPRITE_MOUSE = "마우스";
 Blockly.Msg.SPRITE_EDGE = "테두리";
@@ -63,7 +65,9 @@ Blockly.Msg.SPRITE_GETBACKDROP_MSG = "%1번째 백드롭";
 
 // Sprite's sensing blocks
 Blockly.Msg.SPRITE_TOUCHING_MSG = "%1에 접촉할 경우";
-Blockly.Msg.SPRITE_KEYPRESSED_MSG = "%1 키 클릭시";
+Blockly.Msg.SPRITE_TOUCHINGCOLOR_MSG = "%1색 접촉시";
+Blockly.Msg.SPRITE_COLORTOUCHINGCOLOR_MSG = "%1색이 %2색에 접촉시";
+Blockly.Msg.SPRITE_KEYPRESSED_MSG = "%1키 클릭시";
 
 // Sprite's events blocks
 Blockly.Msg.SPRITE_FLAGCLICKED_MSG = "%1 클릭 시";
@@ -73,6 +77,10 @@ Blockly.Msg.SPRITE_WAIT_MSG = "%1초 기다리기";
 Blockly.Msg.SPRITE_FOREVER_MSG = "%1 무한반복하기";
 Blockly.Msg.SPRITE_CLONESTARTED_MSG = "클론 생성 시";
 Blockly.Msg.SPRITE_CREATECLONE_MSG = "%1의 클론 생성하기";
+
+// Sprite's operators blocks
+Blockly.Msg.SPRITE_GETRANDOM_MSG = "%1에서 %2 사이의 난수";
+Blockly.Msg.SPRITE_NOTOPERATOR_MSG = "%1이 아니면";
 
 // Import
 Blockly.Msg.IMPORT_HEADER_MSG = "라이브러리 사용하기";
