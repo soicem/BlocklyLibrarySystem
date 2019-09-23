@@ -40,8 +40,8 @@ app.post('/email_post', function(req, res){
     res.render('email.ejs', {'code' : req.body.code})
 });
 
-app.post('/ajax_send_email', function(req, res){ 
-    var cmdCommand; 
+app.post('/ajax_send_email', function(req, res){
+    var cmdCommand;
     console.log(req.body.main);
     let repo;
     let index;
@@ -106,4 +106,16 @@ app.post('/ajax_send_email', function(req, res){
             //repoR.free();
         })
         .catch((e) => console.log(e));
+});
+
+app.post("/getBlkFromGitUrl", function (req, res) {
+    request(req.body.url, function (err, resp, body) {
+        console.time("getBlkFromGitUrl");
+        const $ = cheerio.load(body);
+        const blkText = $("#LC1").text(); //id=LC1 is the text-box containing the content
+        const blk = JSON.parse(blkText);
+        const responseData = {'result': 'ok', 'output': blk};
+        res.json(responseData);
+        console.timeEnd("getBlkFromGitUrl");
+    })
 });
