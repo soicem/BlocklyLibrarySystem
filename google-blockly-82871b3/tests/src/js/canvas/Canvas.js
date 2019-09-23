@@ -324,7 +324,7 @@ class Canvas {
    */
   setCurrentCostume(num) {
     this.currentCostumeNum = num;
-    this.getCurrentSprite().setCurrentCostumeSrc(num);
+    this.getCurrentSprite().setCurrentCostumeSrc(0);
     const l = document.getElementsByClassName('costumeImg');
     for (let i = 0; i < l.length; i++) {
       l[i].style.border = 'solid 1px #ccc';
