@@ -1302,8 +1302,12 @@
 
             function addImportStatementLibrary(importStatement) {
               const url = importStatement.librarySrc_;
-              console.log(url);
-              libraryManager.addLibraryFromUrl(url);
+              console.log(url)
+              if (url.match(/github\.com/)) {
+                libraryManager.addLibraryFromGitHub(url);
+              } else {
+                libraryManager.addLibraryFromUrl(url);
+              }
 
               if (importStatement.childBlocks_[0]) {
                 addImportStatementLibrary(importStatement.childBlocks_[0]);

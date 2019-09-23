@@ -128,7 +128,7 @@ class LibraryManager {
   addLibraryFromGitHub(url, async = true) {
     function loadEvent() {
       const result = JSON.parse(xhr.responseText);
-      if (result.status !== "ok") return;
+      if (result.result !== "ok") return;
       libraryManager.addLibrary(Library.createFromJson(result.output));
     }
 
@@ -201,7 +201,7 @@ class LibraryManager {
     return blkJson.toJson();
   }
 
-  createLibraryFile(workspace, libraryName, author) {
+  createLibraryFile(workspace, libraryName, author, version = "1.0") {
     let library = new LibraryBuilder(libraryName, author)
         .setUrl(libraryName + ".blk")
         .setVersion(version)
