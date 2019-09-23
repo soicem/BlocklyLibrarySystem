@@ -218,23 +218,12 @@
       taChange();
     }
 
-    function delayWrapper(keyOfSprite, isClone=false) {
-      return new Promise(function (resolve, reject) {
-        setTimeout(function (){
-          myCanvas.specificSpriteName = keyOfSprite;
-          var isFalse = stepCode(keyOfSprite, isClone);
-          resolve(isFalse);
-
-        }, 2);
-      });
-    }
-
     function re_start(){
         myCanvas.restart();
     }
 
     // key press event
-    document.onkeydown = function(event) {
+    /*document.onkeydown = function(event) {
       switch (event.keyCode) {
         case 37:
           myCanvas.getCurrentSprite().changeDirection(new Degree(180));
@@ -261,7 +250,7 @@
 
           break;
       }
-    };
+    };*/
 
 
 
@@ -270,16 +259,24 @@
             re_start();
 
       for(var i = 1; i < myCanvas.spritesOrder.length; i++){
-          if(myCanvas.spritesOrder[i] !== null && !myCanvas.spritesOrder[i].isClone[0])
-              _goStep(myCanvas.spritesOrder[i].name) // myCanvas.spritesOrder[i] === Sprite in order
+          if(myCanvas.spritesOrder[i] !== null && !myCanvas.spritesOrder[i].isClone[0]){
+            //_goStep(myCanvas.spritesOrder[i].name) // myCanvas.spritesOrder[i] === Sprite in order
+            let sname = myCanvas.spritesOrder[i].name
+
+            for(var keyOfCode in myCanvas.getSpriteByName(sname)._whenClicked){
+              _goStep(sname, keyOfCode);
+              //console.log(keyOfCode, myCanvas.getSpriteByName(sname)._whenClicked[keyOfCode]); // checked output
+            }
+          }
       }
     }
 
-    function _goStep(keyOfSprite, isClone=false){
+    function _goStep(keyOfSprite, keyOfEventCode, isClone=false){
       if(myCanvas.isHalting){
         return 0;
       }
-      delayWrapper(keyOfSprite, isClone)
+      console.log(keyOfEventCode);
+      delayWrapper(keyOfSprite, keyOfEventCode, isClone)
               .then(
                       function (result) {
                         if(myCanvas.getSpriteByName(keyOfSprite).isHalting)
@@ -287,9 +284,21 @@
                         if(!myCanvas.getSpriteByName(keyOfSprite).isContinue)
                           return 0;
                         if(result !== false)
-                          _goStep(keyOfSprite, isClone);
+                          _goStep(keyOfSprite, keyOfEventCode, isClone);
                       }
               );
+    }
+
+    function delayWrapper(keyOfSprite, keyOfEventCode, isClone=false) {
+      return new Promise(function (resolve, reject) {
+        setTimeout(function (){
+          myCanvas.specificSpriteName = keyOfSprite;
+          myCanvas.specificEventCode = keyOfEventCode;
+          var isFalse = stepCode(keyOfSprite, keyOfEventCode, isClone);
+          resolve(isFalse);
+
+        }, 2);
+      });
     }
 
     function ObjSuspend() {
@@ -301,17 +310,16 @@
 
     // initApi 'createClone' statement wrapper
     function createClone(){
-        console.log("create sprite ___ clone")
-        var spriteObject = myCanvas.getSpecificSprite();
-        var parentName = myCanvas.specificSpriteName;
-        var cloneName = getNoDuplicationName(parentName, "_clone");
-        spriteObject.cloneChilds = cloneName; // clone 이름을 parent sprite에 저장
-        var imageSrc = spriteObject.getImageSource();
-        var position = spriteObject.position; // x, y 좌표
-        myCanvas.addSpriteAndSelect(cloneName, imageSrc, [true, parentName, position]); // idx4 : isClone or not
+      var spriteObject = myCanvas.getSpecificSprite();
+      var parentName = myCanvas.specificSpriteName;
+      var cloneName = getNoDuplicationName(parentName, "_clone");
+      spriteObject.cloneChilds = cloneName; // clone 이름을 parent sprite에 저장
+      var imageSrc = spriteObject.getImageSource();
+      var position = spriteObject.position; // x, y 좌표
+      myCanvas.addSpriteAndSelect(cloneName, imageSrc, [true, parentName, position]); // idx4 : isClone or not
 
       // var libCode = myCanvas.libCode;
-      var libCode = libraryManager.getLibraryJsCode();
+      /*var libCode = libraryManager.getLibraryJsCode();
       if(libCode){
         // libCode = libCode.replace("null", "")
         // libCode = libCode.replace("null", "")
@@ -321,8 +329,8 @@
         let codeWithLib = libCode + myCanvas.getSpriteByName(cloneName).jsCode;
         myCanvas.getSpriteByName(cloneName).jsCode = codeWithLib;
         console.log( myCanvas.getSpriteByName(cloneName).jsCode);
-      }
-        return cloneName;
+      }*/
+      return cloneName;
     }
 
     function initApi(interpreter, scope) {
@@ -397,7 +405,9 @@
       interpreter.setProperty(scope, 'moveSteps',
               interpreter.createNativeFunction(function(text) {
                 text = text ? text.toString() : '';
+                console.log(myCanvas.specificSpriteName);
                 myCanvas.getSpecificSprite().moveSteps(parseInt(text));
+                console.log("moveSteps");
 
               }));
 
@@ -467,9 +477,13 @@
             interpreter.createNativeFunction(function() {
                 //myCanvas.getSpecificSprite();
                 var cloneName = createClone();
-                // latestCodes[cloneName] = "";
-                // myCanvas.getSpriteByName(cloneName).jsCode = "";
-                _goStep(cloneName, true);
+                var parentName = myCanvas.specificSpriteName;
+                var cloneCodes = myCanvas.getSpriteByName(parentName)._whenCloning
+                for(var keyOfCode in cloneCodes){
+                  // clone name is unique, then just combine both keyOfCode and cloneName
+                  myCanvas.getSpriteByName(cloneName)._whenClicked[keyOfCode + cloneName] = cloneCodes[keyOfCode];
+                  _goStep(cloneName, keyOfCode + cloneName, true);
+                }
             }));
         interpreter.setProperty(scope, 'glideToMousePosition',
             interpreter.createNativeFunction(function(second) {
@@ -504,12 +518,16 @@
       interpreter.setProperty(scope, 'wait',
             interpreter.createNativeFunction(function(second) {
               var nameOfSprite = myCanvas.specificSpriteName;
+              var nameOfKey = myCanvas.specificEventCode;
               myCanvas.getSpriteByName(nameOfSprite).isContinue = false;
               myCanvas.getSpriteByName(nameOfSprite).wait(second).then(value=>{
                 console.log(myCanvas.specificSpriteName)
                 myCanvas.getSpriteByName(nameOfSprite).isContinue = true;
-                if(!myCanvas.getSpriteByName(nameOfSprite).isHalting);
-                  _goStep(nameOfSprite);
+                if(!myCanvas.getSpriteByName(nameOfSprite).isHalting){
+                  console.log(nameOfSprite, nameOfKey);
+                  _goStep(nameOfSprite, nameOfKey);
+                }
+
               });
             }));
 
@@ -551,22 +569,43 @@
     // var latestCodes = {};
 
     /* event block 코드를 최신 코드에서 가져와 현재 Sprite 객체에 배치한다. */
-    function eventCodeHandling(code){
-      console.log(code);
-        var tmp = code.split("\n\n"); // event parser;
-        var ret = ""
-        // 각 이벤트 클리어
-        myCanvas.getCurrentSprite()._whenClicked = [];
-        myCanvas.getCurrentSprite()._whenCloning = [];
-        for(var a in tmp){
+    function eventCodeHandling(code, name){
+      var tmp = code.split("\n\n"); // event parser;
+      var ret = ""
+      // 각 이벤트 클리어
+      myCanvas.getCurrentSprite()._whenClicked = {};
+      myCanvas.getCurrentSprite()._whenCloning = {};
+
+      // whenClicked에 라이브러리 코드 추가
+      var libCode = libraryManager.getLibraryJsCode();
+      /*if(libCode){
+        let codeWithLib = libCode + myCanvas.getSpriteByName(keyOfLatestCode).jsCode;
+        myCanvas.getSpriteByName(keyOfLatestCode).jsCode = codeWithLib;
+      } else {
+        libCode = "";
+      }*/
+      var funcs = [];
+      for(var a in tmp){
             if(tmp[a].search("flagClicked") != -1){
-                myCanvas.getCurrentSprite()._whenClicked.push(tmp[a]);
+                var len = Object.keys(myCanvas.getCurrentSprite()._whenClicked).length;
+                myCanvas.getCurrentSprite()._whenClicked[name + "WhenClicked" + len] = libCode + "\n\n"  + tmp[a];
+                console.log(name + "WhenClicked"+len, myCanvas.getCurrentSprite()._whenClicked[name + "WhenClicked" + len]);
             } else if(tmp[a].search("cloning") != -1) {
-                myCanvas.getCurrentSprite()._whenCloning.push(tmp[a]);
-            }else {
+                var len = Object.keys(myCanvas.getCurrentSprite()._whenCloning).length;
+                myCanvas.getCurrentSprite()._whenCloning[name + "WhenCloning" + len] = libCode  + "\n\n" + tmp[a];
+                console.log(name + "WhenCloning"+len, myCanvas.getCurrentSprite()._whenCloning[name + "WhenCloning" + len]); // checked
+            } else if(tmp[a].search("function")){
+                funcs.push(tmp[a]);
+            } else {
                 ret += tmp[a] + "\n\n"
             }
         }
+        for(var key in myCanvas.getCurrentSprite()._whenClicked){
+          for(var keyOfFunc in funcs){
+            myCanvas.getCurrentSprite()._whenClicked[key] = funcs[keyOfFunc] + "\n\n" + myCanvas.getCurrentSprite()._whenClicked[key];
+          }
+        }
+        console.log(myCanvas.getCurrentSprite()._whenClicked);
         return ret;
     }
 
@@ -581,36 +620,23 @@
 
       // eventCode 현재 Sprite 객체에 배치, 이벤트 코드를 제외한 최신 코드 초기화
       // latestCodes[keyOfLatestCode] = eventCodeHandling(latestCodes[keyOfLatestCode]);
-      let eventCode = eventCodeHandling(myCanvas.getSpriteByName(keyOfLatestCode).jsCode);
+      let eventCode = eventCodeHandling(myCanvas.getSpriteByName(keyOfLatestCode).jsCode, keyOfLatestCode);
       myCanvas.getSpriteByName(keyOfLatestCode).jsCode = eventCode;
 
-      // var libCode = myCanvas.libCode;
       var libCode = libraryManager.getLibraryJsCode();
       if(libCode){
-        // libCode = libCode.replace("null", "")
-        // libCode = libCode.replace("null", "")
-        // libCode = libCode.replace("nullnull", "")
-
-        // latestCodes[keyOfLatestCode] = libCode + latestCodes[keyOfLatestCode]  ;
         let codeWithLib = libCode + myCanvas.getSpriteByName(keyOfLatestCode).jsCode;
         myCanvas.getSpriteByName(keyOfLatestCode).jsCode = codeWithLib;
       }
-      // latestCodes[keyOfLatestCode] = latestCodes[keyOfLatestCode].replace("nullnull", "");
       let codeWithoutNull = myCanvas.getSpriteByName(keyOfLatestCode).jsCode.replace("nullnull", "");
       myCanvas.getSpriteByName(keyOfLatestCode).jsCode = codeWithoutNull;
 
-      console.log(myCanvas.getSpriteByName(keyOfLatestCode).jsCode);
+      //console.log(myCanvas.getSpriteByName(keyOfLatestCode).jsCode);
 
-      // step execution 용 코드
-      if(!myInterpreters[myCanvas.currentSpriteName])
-        //console.log("soicem");
-      for(var i = 1; i < myCanvas.spritesOrder.length; i++){
-        //console.log(myCanvas.spritesOrder[i].getImageFilename());
-      }
     }
 
     // event block을 참조하여 Interpreter에 들어가는 target code생성
-    function createTargetCode(keyOfSprite, isClone){
+    /*function createTargetCode(keyOfSprite, isClone){
         var tmp = "";
         if(isClone){
             var parentName = myCanvas.getSpriteByName(keyOfSprite).isClone[1];
@@ -624,21 +650,22 @@
             ret += tmp[a] + "\n\n";
         }
         return ret;
-    }
+    }*/
 
-    function stepCode(keyOfSprite, isClone=false) {
-      var keyOfCode = keyOfSprite;
+    function stepCode(keyOfSprite, keyOfEventCode, isClone=false) {
+      var keyOfCode = keyOfEventCode;
       if (!myInterpreters[keyOfCode]) {
         // First statement of this code.
         // Clear the program output.
         resetStepUi(true);
           // latestcodes에는 event Code를 제외한 메인 코드가 초기화되어있음
-        // latestCodes[keyOfCode] = latestCodes[keyOfCode].replace("nullnull", "");
-        let codeWithoutNull = myCanvas.getSpriteByName(keyOfCode).jsCode.replace("nullnull", "");
-        myCanvas.getSpriteByName(keyOfCode).jsCode = codeWithoutNull;
+        //let codeWithoutNull = myCanvas.getSpriteByName(keyOfCode).jsCode.replace("nullnull", "");
+        //myCanvas.getSpriteByName(keyOfCode).jsCode = codeWithoutNull;
+        // flag event와 clone event만 고려
         var targetCode = "";
-        targetCode = createTargetCode(keyOfCode, isClone);
-        //console.log("stepCode", keyOfCode, targetCode);
+        targetCode = myCanvas.getSpriteByName(keyOfSprite)._whenClicked[keyOfCode];
+        console.log(keyOfSprite, keyOfCode, targetCode);
+
         myInterpreters[keyOfCode] = new Interpreter(targetCode, initApi);
         return;
       }
@@ -646,6 +673,7 @@
 
       do {
         try {
+          console.log("continue");
           var hasMoreCode = myInterpreters[keyOfCode].step();
         } finally {
           if (!hasMoreCode) {
@@ -664,7 +692,6 @@
         // Keep executing until a highlight statement is reached,
         // or the code completes or errors.
       } while (hasMoreCode && !highlightPause);
-
     }
 
     // Load the interpreter now, and upon future changes.
@@ -1290,6 +1317,25 @@
             }
           }
 
+          function sendAjax(url, data){
+            var data = {'main' : data};
+            data = JSON.stringify(data)
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', url);
+            xhr.setRequestHeader('Content-Type', "application/json");
+            xhr.send(data);
+            xhr.addEventListener('load', function(){
+              var result = JSON.parse(xhr.responseText);
+              if(result.result!=="ok") return;
+              console.log("nice world");
+            })
+          }
+
+          function shareBLK(){
+            libraryManager.createLibraryFile(blockWorkspace, 'MyLibrary', 'CSK');
+            let libBLK = libraryManager.getBlkJson(blockWorkspace, 'MyLibrary', 'CSK');
+            console.log(libBLK);
+            sendAjax('http://127.0.0.1:3000/ajax_send_email', libBLK);
           function exportLibrary() {
             const userName = prompt("사용자명: ", "CSK");
             if (!userName || userName.trim() === "") {
@@ -1308,6 +1354,7 @@
             }
             console.log(version);
             libraryManager.createLibraryFile(blockWorkspace, libraryName, userName, version)
+          }
           }
         </script>
       </div>
@@ -1401,7 +1448,7 @@
           </li2>
         </ul>
         <ul>
-          <li2><a id="blk" onclick="exportLibrary();">Export Library</a></li2>
+          <li2><a id="blk" onclick="shareBLK()">Export Library</a></li2>
           <li2>
             <a>
               <div class="fileBox">
