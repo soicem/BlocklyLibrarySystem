@@ -1,9 +1,12 @@
 class LibraryManager {
   /**
+   * @param {ToolboxManager} toolboxManager
+   * @param {Blockly.Workspace} workspace
    */
-  constructor(toolboxManager) {
+  constructor(toolboxManager, workspace) {
     this._libraries = {};
-    this._toolboxManager = toolboxManager;
+    this.toolboxManager = toolboxManager;
+    this.workspace = workspace;
   }
 
   ////////// Getter & Setter //////////
@@ -23,6 +26,8 @@ class LibraryManager {
     this._libraries = value;
   }
 
+  /**
+   */
   get libraryInfos() {
     let libraryInfos = {};
     for (let libraryKey in this.libraries) {
@@ -47,6 +52,20 @@ class LibraryManager {
     this._toolboxManager = toolboxManager;
   }
 
+  /**
+   * @returns {Blockly.Workspace}
+   */
+  get workspace() {
+    return this._workspace;
+  }
+
+  /**
+   * @param {Blockly.Workspace} workspace
+   */
+  set workspace(workspace) {
+    this._workspace = workspace;
+  }
+
 // --- More ---
 
   ////////// Class Methods //////////
@@ -65,9 +84,9 @@ class LibraryManager {
       const newerVersion = library.info.version;
 
       if (confirm(`Do you wish to override "v${currentVersion}" of "${libraryFullName}" with "v${newerVersion}"?`)) {
-        this.toolboxManager.removeCategory(libraryFullName);
         this.libraries[libraryFullName] = library;
-        this.toolboxManager.appendLibrary(library);
+        this.toolboxManager.updateLibrary(library);
+        this.workspace.updateLibraryBlocks(library, this.toolboxManager);
       }
     }
   }
@@ -98,6 +117,30 @@ class LibraryManager {
       this.addLibrary(library);
     } else {
       console.log("library did not created successfully!");
+    }
+  }
+
+  /**
+   * Parse GitHub http to retrieve BLK (using nodejs)
+   * @param {string} url
+   * @param {boolean} async False if wait for load event to finish executing
+   */
+  addLibraryFromGitHub(url, async = true) {
+    function loadEvent() {
+      const result = JSON.parse(xhr.responseText);
+      if (result.status !== "ok") return;
+      libraryManager.addLibrary(Library.createFromJson(result.output));
+    }
+
+    const data = JSON.stringify({'url': url});
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://127.0.0.1:3000/getBlkFromGitUrl', async);
+    xhr.setRequestHeader('Content-Type', "application/json");
+    xhr.send(data);
+    xhr.addEventListener("load", () => loadEvent());
+
+    if (!async && xhr.status === 200) {
+      loadEvent();
     }
   }
 
@@ -161,7 +204,7 @@ class LibraryManager {
   createLibraryFile(workspace, libraryName, author) {
     let library = new LibraryBuilder(libraryName, author)
         .setUrl(libraryName + ".blk")
-        .setVersion("1.0")
+        .setVersion(version)
         .addImports(this.libraryInfos)
         .addFunctions(LibraryUtils.getImplementationBlocksInfo(workspace,libraryName))
         .build();

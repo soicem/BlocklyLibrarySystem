@@ -96,6 +96,15 @@ class ToolboxManager {
   }
 
   /**
+   * @param {string} libraryName
+   * @param {string} functionName
+   */
+  getLibraryBlock(libraryName, functionName) {
+    const categoryList = this.getCategory(libraryName);
+    return categoryList.querySelector(`block>mutation[func="${functionName}"]`).parentElement;
+  }
+
+  /**
    * @param {number} index
    * @param {string} categoryName
    * @param {string} style
@@ -187,5 +196,15 @@ class ToolboxManager {
     }
 
     // no need for auto-update (done inside appendCategory & appendBlockDom)
+  }
+
+  /**
+   * @param {Library} library
+   */
+  updateLibrary(library) {
+    const libraryFullName = `${library.info.author}.${library.info.name}`;
+
+    this.removeCategory(libraryFullName);
+    this.appendLibrary(library);
   }
 }
