@@ -14,6 +14,8 @@ class Sprite {
     this._isContinue = true;
     this._isHalting = false;
     this._imageSrc = [];
+    this._pixelDataUpdated = false;
+    this._pixelData = [];
     this.name = name; // 이름
     this.canvas = canvas;
     this.image = new Image();
@@ -89,6 +91,38 @@ class Sprite {
    */
   set isHalting(value) {
     this._isHalting = value;
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  get pixelDataUpdated() {
+    return this._pixelDataUpdated;
+  }
+
+  /**
+   * @param {boolean} pixelDataUpdated
+   */
+  set pixelDataUpdated(pixelDataUpdated) {
+    this._pixelDataUpdated = pixelDataUpdated;
+  }
+
+  /**
+   * @returns {{x:number,y:number}[]}
+   */
+  get pixelData() {
+    if (!this.pixelDataUpdated) {
+      this._pixelData = this.getPixelsOfRgb(null);
+      this.pixelDataUpdated = true;
+    }
+    return this._pixelData;
+  }
+
+  /**
+   * @param {{x:number,y:number}[]} pixelData
+   */
+  set pixelData(pixelData) {
+    this._pixelData = pixelData;
   }
 
   /**
@@ -393,10 +427,9 @@ class Sprite {
 
   /**
    * @param {{r:number,g:number,b:number}|null} rgb When null is given, there's no color filter
-   * @param {boolean} withGap
-   * @returns {Point[]}
+   * @returns {{x:number,y:number}[]}
    */
-  getPixelsOfRgb(rgb, withGap = false) {
+  getPixelsOfRgb(rgb) {
     let foundPixels = [];
 
     const canvas = document.createElement('canvas');
@@ -421,24 +454,11 @@ class Sprite {
 
         if ((rgb === null && a !== 0) ||
             (r === rgb.r && g === rgb.g && b === rgb.b)) {
-          if (withGap) {
-            foundPixels.push(new Point(x + this.x, y + this.y));
-          } else {
-            foundPixels.push(new Point(x, y));
-          }
+          foundPixels.push({x: x, y: y});
         }
       }
     }
-
     return foundPixels;
-  }
-
-  /**
-   * @param {boolean} withGap
-   * @returns {Point[]}
-   */
-  getPixelsOfAnyColor(withGap = false) {
-    return this.getPixelsOfRgb(null, withGap);
   }
 
   ////////// Class Methods //////////
