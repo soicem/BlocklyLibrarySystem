@@ -684,4 +684,13 @@ class Sprite {
   switchCostume(spriteNum){
     this._image.src = this.getCostume(spriteNum);
   }
+
+  /**
+   * @param {Library} library
+   * @param {string[]} oldFunctions
+   */
+  updateLibraryBlocks(library, oldFunctions) {
+    const dom = Blockly.Xml.textToDom(this.xml);
+    this.xml = Blockly.Xml.domToPrettyText(Xml.updateLibraryBlocks(dom, library, oldFunctions));
+  }
 }

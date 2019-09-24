@@ -117,6 +117,7 @@ Blockly.Blocks["import_return"] = {
   argsCount_: 0,
   argsName_: [],
   implementXml_: null,
+  outdated_: false,
 
   init: function() {
     this.appendDummyInput("FUNC")
@@ -126,10 +127,6 @@ Blockly.Blocks["import_return"] = {
     this.setTooltip("");
     this.setHelpUrl("");
     this.setMutator(new Blockly.Mutator([null]));
-
-    this.argsCount_ = 0;
-    this.argsName_ = [];
-    this.funcName_ = "";
 
     this.resetShape_();
   },
@@ -142,6 +139,9 @@ Blockly.Blocks["import_return"] = {
     container.setAttribute("func", this.funcName_);
     if (this.argsCount_ > 0) {
       container.setAttribute("args", this.argsCount_);
+    }
+    if (this.outdated_) {
+      container.setAttribute("outdated", this.outdated_);
     }
 
     for (let i = 0; i < this.argsCount_; i++) {
@@ -164,6 +164,7 @@ Blockly.Blocks["import_return"] = {
     this.libraryName_ = xmlElement.getAttribute("lib");
     this.funcName_ = xmlElement.getAttribute("func");
     this.argsCount_ = parseInt(xmlElement.getAttribute("args"), 10) || 0;
+    this.outdated_ = xmlElement.getAttribute("outdated") === "true" || false;
 
     this.argsName_ = [];
     for (let i = 0; i < this.argsCount_; i++) {
@@ -206,6 +207,13 @@ Blockly.Blocks["import_return"] = {
       let input = this.appendValueInput("ARG" + i);
       let field = input.appendField(this.argsName_[i]);
       field.setAlign(Blockly.ALIGN_RIGHT);
+    }
+
+    if (this.outdated_) {
+      this.contextMenu = false;
+      this.setDisabled(true);
+    } else {
+      this.contextMenu = true;
     }
   },
 

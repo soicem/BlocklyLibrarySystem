@@ -598,5 +598,15 @@ class Canvas {
   moveSpriteToTop(sprite) {
     this.changeSpriteOrder(sprite, this.spritesOrder.length - 1)
   }
+
+  /**
+   * @param {Library} library
+   * @param {string[]} oldFunctions
+   */
+  updateLibraryBlocks(library, oldFunctions) {
+    this._spritesOrder.forEach((sprite) => {
+      if (sprite) sprite.updateLibraryBlocks(library, oldFunctions);
+    });
+  }
 }
 
