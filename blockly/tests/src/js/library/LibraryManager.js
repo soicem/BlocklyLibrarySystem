@@ -191,26 +191,50 @@ class LibraryManager {
     this._updateExistingLibrary(onlineLibrary);
   }
 
-  getBlkJson(workspace, libraryName, author){
-    let blkJson = new LibraryBuilder(libraryName, author)
-        .setUrl(libraryName + ".blk")
-        .setVersion("1.0")
-        .addImports(this.libraryInfos)
-        .addFunctions(LibraryUtils.getImplementationBlocksInfo(workspace,libraryName))
-        .build();
-    return blkJson.toJson();
+  /**
+   * @param {Blockly.Workspace} workspace
+   * @param {string} libraryName
+   * @param {string} author
+   * @param {string} version
+   * @returns {Library}
+   */
+  createLibrary(workspace, libraryName, author, version = "1.0"){
+    const library = new LibraryBuilder(libraryName, author)
+    .setUrl(libraryName + ".blk")
+    .setVersion(version)
+    .addImports(this.libraryInfos)
+    .addFunctions(LibraryUtils.getImplementationBlocksInfo(workspace, libraryName))
+    .build();
+    return library;
   }
 
+  /**
+   * @param {Blockly.Workspace} workspace
+   * @param {string} libraryName
+   * @param {string} author
+   * @param {string} version
+   * @return {Library}
+   */
   createLibraryFile(workspace, libraryName, author, version = "1.0") {
-    let library = new LibraryBuilder(libraryName, author)
-        .setUrl(libraryName + ".blk")
-        .setVersion(version)
-        .addImports(this.libraryInfos)
-        .addFunctions(LibraryUtils.getImplementationBlocksInfo(workspace,libraryName))
-        .build();
-    saveAs(new Blob([library.toString()]), libraryName + ".blk");
+    const library = this.createLibrary(workspace, libraryName, author, version);
+    library.saveAsFile();
+    return library;
   }
 
+  /**
+   * @param {Blockly.Workspace} workspace
+   * @param {string} libraryName
+   * @param {string} author
+   * @param {string} version
+   * @returns {{info: *, imports: Object<string, *>, functions: Object<string, {xml: string, interfaceXml: string, js: string}>, jsObject: string, hashCode: string}}
+   */
+  getLibraryJson(workspace, libraryName, author, version = "1.0"){
+    return this.createLibrary(workspace, libraryName, author, version).toJson();
+  }
+
+  /**
+   * @returns {string}
+   */
   getLibraryJsCode() {
     let jsCode = "";
 
