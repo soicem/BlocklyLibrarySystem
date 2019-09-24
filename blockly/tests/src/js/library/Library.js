@@ -328,4 +328,10 @@ class Library {
   isNewerVersionThan(other) {
     return this.info.isNewerVersionThan(other.info);
   }
+
+  /**
+   */
+  saveAsFile() {
+    saveAs(new Blob([this.toString()]), this.info.name + ".blk");
+  }
 }

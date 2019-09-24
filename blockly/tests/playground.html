@@ -252,7 +252,13 @@
       }
     };*/
 
-
+    function toggleButton() {
+      let startButton = document.getElementById("startButton");
+      let stopButton = document.getElementById("stopButton");
+      console.log(startButton.hidden,stopButton.hidden)
+      startButton.hidden = stopButton.hidden;
+      stopButton.hidden = !stopButton.hidden;
+    }
 
     function goStep(){
         if(myCanvas.isHalting)
@@ -864,14 +870,14 @@
       </li>
     </ul>
   </div>
-  <div class="topMenu_right">
+  <div id="stopButton" class="topMenu_right" hidden>
     <span class="verticalMidPointBase"></span>
-    <img class="verticallyMiddle cursorPointer" onclick="ObjSuspend()" src="src/resources/images/Stop-Button.PNG" style="padding: 10px; height: 60%; vertical-align: middle">
+    <img class="verticallyMiddle cursorPointer" onclick="toggleButton(); ObjSuspend();" src="src/resources/images/Stop-Button.PNG" style="padding: 10px; height: 60%; vertical-align: middle">
   </div>
 
-  <div id="topMenuControl" class="topMenu_right">
+  <div id="startButton" class="topMenu_right">
     <span class="verticalMidPointBase"></span>
-    <img class="verticallyMiddle cursorPointer" onclick="goStep()" src="src/resources/images/Play-Button.png" style="padding: 10px; height: 60%; vertical-align: middle">
+    <img class="verticallyMiddle cursorPointer" onclick="toggleButton(); goStep();" src="src/resources/images/Play-Button.png" style="padding: 10px; height: 60%; vertical-align: middle">
   </div>
 
 </div>
@@ -1335,30 +1341,31 @@
             })
           }
 
-          function shareBLK(){
-            libraryManager.createLibraryFile(blockWorkspace, 'MyLibrary', 'CSK');
-            let libBLK = libraryManager.getBlkJson(blockWorkspace, 'MyLibrary', 'CSK');
-            console.log(libBLK);
-            sendAjax('http://127.0.0.1:3000/ajax_send_email', libBLK);
           function exportLibrary() {
-            const userName = prompt("사용자명: ", "CSK");
+            let userName = prompt("사용자명: ", "CSK");
             if (!userName || userName.trim() === "") {
               alert("사용자명이 공백일 수 없습니다.");
               return;
             }
-            const libraryName = prompt("라이브러리명: ", "MyLibrary");
+            let libraryName = prompt("라이브러리명: ", "MyLibrary");
             if (!libraryName || libraryName.trim() === "") {
               alert("라이브러리명이 공백일 수 없습니다.");
               return;
             }
-            const version = prompt("버전: ", "1.0");
+            let version = prompt("버전: ", "1.0");
             if (!version || version.trim() === "") {
               alert("버전이 공백일 수 없습니다.");
               return;
             }
-            console.log(version);
-            libraryManager.createLibraryFile(blockWorkspace, libraryName, userName, version)
+
+            const library = libraryManager.createLibraryFile(blockWorkspace, libraryName, userName, version);
+            shareBLK(library);
           }
+
+          function shareBLK(library) {
+            const libBLK = library.toJson();
+            console.log(libBLK);
+            sendAjax('http://127.0.0.1:3000/ajax_send_email', libBLK);
           }
         </script>
       </div>
@@ -1452,7 +1459,7 @@
           </li2>
         </ul>
         <ul>
-          <li2><a id="blk" onclick="shareBLK()">Export Library</a></li2>
+          <li2><a id="blk" onclick="exportLibrary()">Export Library</a></li2>
           <li2>
             <a>
               <div class="fileBox">
@@ -1465,7 +1472,7 @@
           </li2>
         </ul>
         <ul>
-          <li2><a id="toJavaScript" onclick="goStep()">To JavaScript</a></li2>
+          <li2><a id="toJavaScript" onclick="toggleButton(); goStep();">To JavaScript</a></li2>
           <li2><a id="toCode" onclick="toCodeMain()">To Python</a></li2>
         </ul>
 
