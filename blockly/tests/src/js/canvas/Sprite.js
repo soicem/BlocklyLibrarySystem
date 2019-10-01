@@ -481,10 +481,12 @@ class Sprite {
    * Prints log about this object
    */
   printProperties() {
-    console.log("x : ", this.position.x);
-    console.log("y : ", this.position.y);
-    console.log("height : ", this.size.height);
-    console.log("width : ", this.size.width);
+    console.log(
+        "x : " + this.position.x + "\n" +
+        "y : " + this.position.y + "\n" +
+        "height : " + this.size.height + "\n" +
+        "width : " + this.size.width
+    );
   }
 
   /**
@@ -690,7 +692,8 @@ class Sprite {
    * @param {string[]} oldFunctions
    */
   updateLibraryBlocks(library, oldFunctions) {
-    const dom = Blockly.Xml.textToDom(this.xml);
-    this.xml = Blockly.Xml.domToPrettyText(Xml.updateLibraryBlocks(dom, library, oldFunctions));
+    const xml = Blockly.Xml.textToDom(this.xml);
+    XmlUtil.updateLibraryBlocks(xml, library, oldFunctions);
+    this.xml = Blockly.Xml.domToPrettyText(xml);
   }
 }

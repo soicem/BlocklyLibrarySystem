@@ -145,9 +145,12 @@ Blockly.Blocks["import_return"] = {
     }
 
     for (let i = 0; i < this.argsCount_; i++) {
-      let argsContainer = document.createElement("arg");
-      argsContainer.setAttribute("name", this.argsName_[i]);
-      container.appendChild(argsContainer);
+      let argContainer = document.createElement("arg");
+      argContainer.setAttribute("name", this.argsName_[i]);
+      if (this.getInput(`ARG${i}`).connection.targetBlock()) {
+        argContainer.innerText = `ARG${i}`;
+      }
+      container.appendChild(argContainer);
     }
 
     if (this.implementXml_) {
@@ -168,8 +171,8 @@ Blockly.Blocks["import_return"] = {
 
     this.argsName_ = [];
     for (let i = 0; i < this.argsCount_; i++) {
-      this.argsName_[i] = (xmlElement.getElementsByTagName(
-          "arg")[i].getAttribute("name"));
+      let arg = xmlElement.getElementsByTagName("arg")[i];
+      this.argsName_[i] = arg.getAttribute("name");
     }
 
     this.implementXml_ = xmlElement.querySelector("implement > xml") || null;
@@ -204,7 +207,7 @@ Blockly.Blocks["import_return"] = {
     }
 
     for (let i = 0; i < this.argsCount_; i++) {
-      let input = this.appendValueInput("ARG" + i);
+      let input = this.appendValueInput(`ARG${i}`);
       let field = input.appendField(this.argsName_[i]);
       field.setAlign(Blockly.ALIGN_RIGHT);
     }

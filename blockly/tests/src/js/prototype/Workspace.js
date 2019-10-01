@@ -28,3 +28,13 @@ Blockly.Workspace.prototype.updateLibraryBlocks = function (library, toolboxMana
     oldBlock.swapBlockWith(newBlock);
   });
 };
+
+Blockly.Workspace.prototype.refresh = function () {
+  this.clear();
+  const xmlString = myCanvas.getCurrentSprite().xml;
+
+  if (xmlString !== "") {
+    const xml = Blockly.Xml.textToDom(xmlString);
+    Blockly.Xml.domToWorkspace(xml, this);
+  }
+};
