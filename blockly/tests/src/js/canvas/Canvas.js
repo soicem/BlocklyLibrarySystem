@@ -281,10 +281,7 @@ class Canvas {
   setCurrentSprite(nameOfSprite) {
     if (this.currentSpriteName !== nameOfSprite) {
       if (this.getCurrentSprite()) {
-        const xml = Blockly.Xml.workspaceToDom(this.workspace);
-        const prettyXMLText = Blockly.Xml.domToPrettyText(xml);
-
-        this.getCurrentSprite().xml = prettyXMLText;
+        this.updateCurrentSpriteXml();
         this.workspace.clear();
       }
       if (this.getSpriteByName(nameOfSprite).xml !== "") {
@@ -604,9 +601,19 @@ class Canvas {
    * @param {string[]} oldFunctions
    */
   updateLibraryBlocks(library, oldFunctions) {
+    this.updateCurrentSpriteXml();
+
     this._spritesOrder.forEach((sprite) => {
       if (sprite) sprite.updateLibraryBlocks(library, oldFunctions);
     });
+  }
+
+  /**
+   */
+  updateCurrentSpriteXml() {
+    const sprite = this.getCurrentSprite();
+    const xml = Blockly.Xml.workspaceToDom(this.workspace);
+    sprite.xml = Blockly.Xml.domToText(xml);
   }
 }
 

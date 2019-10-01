@@ -104,8 +104,8 @@ class LibraryManager {
 
         this.libraries[libraryFullName] = library;
         this.toolboxManager.updateLibrary(library);
-        this.workspace.updateLibraryBlocks(library, this.toolboxManager);
         this.canvas.updateLibraryBlocks(library, oldFunctions);
+        this.workspace.refresh();
       }
     }
   }
