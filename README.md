@@ -1,4 +1,4 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3d3892a9ba4e46078d75f1454c5467f7)](https://www.codacy.com/app/peurocs4/BlocklyLibrarySystem?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=soicem/BlocklyLibrarySystem&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/59072231c7fd4a2684defb31c96dd0c9)](https://www.codacy.com/manual/peurocs4/BlocklyLibrarySystem?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=soicem/BlocklyLibrarySystem&amp;utm_campaign=Badge_Grade)
 
 # BlocklyLibrarySystem
 
