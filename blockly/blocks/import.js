@@ -112,11 +112,11 @@ Blockly.Blocks["inline_configure"] = {
 
 Blockly.Blocks["import_return"] = {
   namespaceName_: "",
-  libraryName_: "",
-  funcName_: "",
+  library_: {name: "", key: ""},
+  func_: {name: "", key: ""},
   argsCount_: 0,
   argsName_: [],
-  implementXml_: null,
+  implementXml_: "",
   outdated_: false,
 
   init: function() {
@@ -132,52 +132,105 @@ Blockly.Blocks["import_return"] = {
   },
 
   mutationToDom: function() {
-    let container = document.createElement("mutation");
-
-    container.setAttribute("ns", this.namespaceName_);
-    container.setAttribute("lib", this.libraryName_);
-    container.setAttribute("func", this.funcName_);
-    if (this.argsCount_ > 0) {
-      container.setAttribute("args", this.argsCount_);
-    }
+    const container = document.createElement("mutation");
     if (this.outdated_) {
       container.setAttribute("outdated", this.outdated_);
     }
-
-    for (let i = 0; i < this.argsCount_; i++) {
-      let argContainer = document.createElement("arg");
-      argContainer.setAttribute("name", this.argsName_[i]);
-      if (this.getInput(`ARG${i}`).connection.targetBlock()) {
-        argContainer.innerText = `ARG${i}`;
-      }
-      container.appendChild(argContainer);
-    }
-
+    container.appendChild(this.mutationToDomNamespace_());
+    container.appendChild(this.mutationToDomLibrary_());
+    container.appendChild(this.mutationToDomFunction_());
     if (this.implementXml_) {
-      let implementContainer = document.createElement("implement");
-      implementContainer.appendChild(this.implementXml_.cloneNode(true));
-      container.appendChild(implementContainer);
+      container.appendChild(this.mutationToDomImplement_());
     }
+    return container;
+  },
 
+  mutationToDomNamespace_: function () {
+    const container = document.createElement("namespace");
+    container.setAttribute("name", this.namespaceName_);
+    return container;
+  },
+
+  mutationToDomLibrary_: function () {
+    const container = document.createElement("library");
+    container.setAttribute("name", this.library_.name);
+    container.setAttribute("key", this.library_.key);
+    return container;
+  },
+
+  mutationToDomFunction_: function () {
+    const container = document.createElement("function");
+    container.setAttribute("name", this.func_.name);
+    container.setAttribute("key", this.func_.key);
+    if (this.argsCount_ > 0) {
+      container.setAttribute("args", this.argsCount_);
+    }
+    for (let i = 0; i < this.argsCount_; i++) {
+      container.appendChild(this.mutationToDomArg_(this.argsName_[i], `ARG${i}`));
+    }
+    return container;
+  },
+
+  mutationToDomArg_: function (name, inputName) {
+    let container = document.createElement("arg");
+    container.setAttribute("name", name);
+    if (this.getInput(inputName).connection.targetBlock()) {
+      container.innerText = inputName;
+    }
+    return container;
+  },
+
+  mutationToDomImplement_: function () {
+    let container = document.createElement("implement");
+    container.appendChild(this.implementXml_.cloneNode(true));
     return container;
   },
 
   domToMutation: function(xmlElement) {
-    this.namespaceName_ = xmlElement.getAttribute("ns");
-    this.libraryName_ = xmlElement.getAttribute("lib");
-    this.funcName_ = xmlElement.getAttribute("func");
-    this.argsCount_ = parseInt(xmlElement.getAttribute("args"), 10) || 0;
-    this.outdated_ = xmlElement.getAttribute("outdated") === "true" || false;
+    this.domToMutationOutdated_(xmlElement);
+    this.domToMutationNamespace_(xmlElement);
+    this.domToMutationLibrary_(xmlElement);
+    this.domToMutationFunction_(xmlElement);
+    this.domToMutationImplement_(xmlElement);
 
+    this.updateShape_();
+  },
+
+  domToMutationOutdated_: function (xmlElement) {
+    this.outdated_ = xmlElement.getAttribute("outdated") === "true" || false;
+  },
+
+  domToMutationNamespace_: function (xmlElement) {
+    const namespace = xmlElement.getElementsByTagName("namespace")[0];
+    this.namespaceName_ = namespace.getAttribute("name");
+  },
+
+  domToMutationLibrary_: function (xmlElement) {
+    const library = xmlElement.getElementsByTagName("library")[0];
+    this.library_ = {name: "", key: ""};
+    this.library_.name = library.getAttribute("name");
+    this.library_.key = library.getAttribute("key");
+  },
+
+  domToMutationFunction_: function (xmlElement) {
+    const func = xmlElement.getElementsByTagName("function")[0];
+    this.func_ = {name: "", key: ""};
+    this.func_.name = func.getAttribute("name");
+    this.func_.key = func.getAttribute("key");
+    this.argsCount_ = parseInt(func.getAttribute("args"), 10) || 0;
+    this.domToMutationArgs_(func);
+  },
+
+  domToMutationArgs_: function (xmlElement) {
     this.argsName_ = [];
     for (let i = 0; i < this.argsCount_; i++) {
       let arg = xmlElement.getElementsByTagName("arg")[i];
       this.argsName_[i] = arg.getAttribute("name");
     }
+  },
 
+  domToMutationImplement_: function (xmlElement) {
     this.implementXml_ = xmlElement.querySelector("implement > xml") || null;
-
-    this.updateShape_();
   },
 
   decompose: function(workspace) {
@@ -200,7 +253,7 @@ Blockly.Blocks["import_return"] = {
   updateShape_: function() {
     this.resetShape_();
 
-    this.getField("FUNC_FIELD").setText(`${this.namespaceName_}.${this.libraryName_}.${this.funcName_}`);
+    this.getField("FUNC_FIELD").setText(`${this.namespaceName_}.${this.library_.name}.${this.func_.name}`);
 
     if (this.argsCount_ > 0) {
       this.getInput("FUNC").appendField("with", "WITH_FIELD");
@@ -261,8 +314,19 @@ Blockly.Blocks["import_noReturn"] = {
   },
 
   mutationToDom: Blockly.Blocks["import_return"].mutationToDom,
+  mutationToDomNamespace_: Blockly.Blocks["import_return"].mutationToDomNamespace_,
+  mutationToDomLibrary_: Blockly.Blocks["import_return"].mutationToDomLibrary_,
+  mutationToDomFunction_: Blockly.Blocks["import_return"].mutationToDomFunction_,
+  mutationToDomArg_: Blockly.Blocks["import_return"].mutationToDomArg_,
+  mutationToDomImplement_: Blockly.Blocks["import_return"].mutationToDomImplement_,
 
   domToMutation: Blockly.Blocks["import_return"].domToMutation,
+  domToMutationOutdated_: Blockly.Blocks["import_return"].domToMutationOutdated_,
+  domToMutationNamespace_: Blockly.Blocks["import_return"].domToMutationNamespace_,
+  domToMutationLibrary_: Blockly.Blocks["import_return"].domToMutationLibrary_,
+  domToMutationFunction_: Blockly.Blocks["import_return"].domToMutationFunction_,
+  domToMutationArgs_: Blockly.Blocks["import_return"].domToMutationArgs_,
+  domToMutationImplement_: Blockly.Blocks["import_return"].domToMutationImplement_,
 
   decompose: function(workspace) {
     if (this.implementXml_) {

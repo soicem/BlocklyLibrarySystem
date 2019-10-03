@@ -91,58 +91,76 @@ class LibraryBuilder {
   }
 
   /**
-   * @param {string} functionName
+   * @param {{name:string,key,string}} func
    * @param {string} xml
    * @returns {LibraryBuilder}
    */
-  addFunctionXml(functionName, xml) {
-    if (!this._functions.hasOwnProperty(functionName)) {
-      this._functions[functionName] = {};
+  addFunctionXml(func, xml) {
+    if (!this._functions.hasOwnProperty(func.name)) {
+      this._functions[func.name] = {};
     }
-    this._functions[functionName].xml = xml;
-    this._functions[functionName].interfaceXml = LibraryUtils.convertImplementToInterfaceString(this._author, this._name, xml);
+    this._functions[func.name].xml = xml;
+
+    const library = {name: this._name, key: NameUtil.safeFunctionName(this._name)};
+    this._functions[func.name].interfaceXml = LibraryUtils.convertImplementToInterfaceString(this._author, library, func, xml);
 
     return this;
   }
 
   /**
-   * @param {string} functionName
+   * @param {{name:string,key,string}} func
    * @param {string} js
    * @returns {LibraryBuilder}
    */
-  addFunctionJs(functionName, js) {
-    if (!this._functions.hasOwnProperty(functionName)) {
-      this._functions[functionName] = {};
+  addFunctionJs(func, js) {
+    if (!this._functions.hasOwnProperty(func.name)) {
+      this._functions[func.name] = {};
     }
-    this._functions[functionName].js = js;
+    this._functions[func.name].js = js;
 
     return this;
   }
 
   /**
-   * @param {string} functionName
+   * @param {{name:string,key,string}} func
+   * @returns {LibraryBuilder}
+   */
+  addFunctionKey(func) {
+    if (!this._functions.hasOwnProperty(func.name)) {
+      this._functions[func.name] = {};
+    }
+    this._functions[func.name].key = func.key;
+
+    return this;
+  }
+
+  /**
+   * @param {{name:string,key,string}} func
    * @param {string} xml
    * @param {string} js
    * @returns {LibraryBuilder}
    */
-  addFunction(functionName, xml, js) {
-    this.addFunctionXml(functionName, xml);
-    this.addFunctionJs(functionName, js);
+  addFunction(func, xml, js) {
+    this.addFunctionKey(func);
+    this.addFunctionXml(func, xml);
+    this.addFunctionJs(func, js);
 
     return this;
   }
 
   /**
-   * @param {Object<string, {xml:string, interfaceXml:string, js:string}>} functionInfos
+   * @param {Object<string,{key:string,xml:string,interfaceXml:string,js:string}>} functionInfos
    */
   addFunctions(functionInfos) {
     for (let functionInfoKey in functionInfos) {
       if (!functionInfos.hasOwnProperty(functionInfoKey)) continue;
 
+      const key = functionInfos[functionInfoKey].key;
       const xml = functionInfos[functionInfoKey].xml;
       const js = functionInfos[functionInfoKey].js;
 
-      this.addFunction(functionInfoKey, xml, js);
+      let func = {name: functionInfoKey, key: key};
+      this.addFunction(func, xml, js);
     }
 
     return this;

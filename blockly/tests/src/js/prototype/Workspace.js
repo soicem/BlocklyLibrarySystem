@@ -6,7 +6,7 @@ Blockly.Workspace.prototype.getLibraryBlocks = function(namespaceName, libraryNa
   let blocks = this.getBlocksByType("import_return");
   blocks = blocks.concat(this.getBlocksByType("import_noReturn"));
   blocks = blocks.filter(block => {
-    return block.namespaceName_ === namespaceName && block.libraryName_ === libraryName;
+    return block.namespaceName_ === namespaceName && block.library_.name === libraryName;
   });
 
   return blocks;
@@ -20,7 +20,7 @@ Blockly.Workspace.prototype.updateLibraryBlocks = function (library, toolboxMana
   const libraryFullName = `${library.info.author}.${library.info.name}`;
   let blocks = this.getLibraryBlocks(library.info.author, library.info.name);
   blocks.forEach((oldBlock) => {
-    const newBlockXml = toolboxManager.getLibraryBlock(libraryFullName, oldBlock.funcName_);
+    const newBlockXml = toolboxManager.getLibraryBlock(libraryFullName, oldBlock.func_.name);
     if (!newBlockXml) return;
     const newBlock = Blockly.Xml.domToBlock(newBlockXml, this);
     if (!newBlock) return;
