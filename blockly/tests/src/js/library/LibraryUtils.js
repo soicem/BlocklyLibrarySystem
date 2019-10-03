@@ -47,38 +47,49 @@ class LibraryUtils {
   }
 
   /**
-   * @param {HTMLElement} functionBlockXml
+   * @param {HTMLElement} implementXml
    * @param {string} namespaceName
-   * @param {string} libraryName
-   * @param {string} interfaceBlockName
+   * @param {{name:string,key,string}} library
+   * @param {{name:string,key,string}} func
+   * @param {string} interfaceBlockType
    * @returns {HTMLElement}
    */
-  static convertToInterfaceXml(functionBlockXml, namespaceName, libraryName, interfaceBlockName) {
-    const functionName = functionBlockXml.querySelector("field[name=NAME]").innerText;
-    const argsXml = functionBlockXml.querySelectorAll("mutation arg");
+  static convertToInterfaceXml(implementXml, namespaceName, library, func, interfaceBlockType) {
+    const interfaceXml = document.createElement("block");
+    interfaceXml.setAttribute("type", interfaceBlockType);
 
-    let interfaceXml = document.createElement("block");
-    interfaceXml.setAttribute("type", interfaceBlockName);
+    const mutationXml = document.createElement("mutation");
 
-    let mutationXml = document.createElement("mutation");
-    mutationXml.setAttribute("ns", namespaceName);
-    mutationXml.setAttribute("lib", libraryName);
-    mutationXml.setAttribute("func", functionName);
-    mutationXml.setAttribute("args", argsXml.length);
+    const namespaceXml = document.createElement("namespace");
+    namespaceXml.setAttribute("name", namespaceName);
+    mutationXml.appendChild(namespaceXml);
 
-    for (let j = 0; j < argsXml.length; j++) {
-      const argXml = argsXml[j];
-      const argName = argXml.getAttribute("name");
+    const libraryXml = document.createElement("library");
+    libraryXml.setAttribute("name", library.name);
+    libraryXml.setAttribute("key", library.key);
+    mutationXml.appendChild(libraryXml);
 
-      let aXml = document.createElement("arg");
-      aXml.setAttribute("name", argName);
-      mutationXml.appendChild(aXml);
+    const functionXml = document.createElement("function");
+    functionXml.setAttribute("name", func.name);
+    functionXml.setAttribute("key", func.key);
+    const argsXml = implementXml.querySelectorAll("mutation arg");
+    if (argsXml.length > 0) {
+      functionXml.setAttribute("key", argsXml.length);
     }
+    for (let j = 0; j < argsXml.length; j++) {
+      let argXml = document.createElement("arg");
+      argXml.setAttribute("name", name);
+      functionXml.appendChild(argsXml);
+    }
+    mutationXml.appendChild(functionXml);
 
-    let implement = this.domWrapper("implement", this.domWrapper("xml", functionBlockXml));
+    const implement = this.domWrapper(
+        "implement", this.domWrapper("xml", implementXml));
 
     mutationXml.appendChild(implement);
+
     interfaceXml.appendChild(mutationXml);
+    console.log(interfaceXml)
     return interfaceXml;
   }
 
@@ -89,32 +100,35 @@ class LibraryUtils {
   }
 
   /**
-   * @param {HTMLElement} procedureBlockXml
+   * @param {HTMLElement} procedureXml
    * @param {string} namespaceName
-   * @param {string} libraryName
+   * @param {{name:string,key,string}} library
+   * @param {{name:string,key,string}} func
    * @returns {HTMLElement}
    */
-  static convertProcedureToInterfaceXml(procedureBlockXml, namespaceName, libraryName) {
-    return LibraryUtils.convertToInterfaceXml(procedureBlockXml, namespaceName, libraryName, "import_noReturn");
+  static convertProcedureToInterfaceXml(procedureXml, namespaceName, library, func) {
+    return LibraryUtils.convertToInterfaceXml(procedureXml, namespaceName, library, func, "import_noReturn");
   }
 
   /**
-   * @param {HTMLElement} functionBlockXml
+   * @param {HTMLElement} functionXml
    * @param {string} namespaceName
-   * @param {string} libraryName
+   * @param {{name:string,key,string}} library
+   * @param {{name:string,key,string}} func
    * @returns {HTMLElement}
    */
-  static convertFunctionToInterfaceXml(functionBlockXml, namespaceName, libraryName) {
-    return LibraryUtils.convertToInterfaceXml(functionBlockXml, namespaceName, libraryName, "import_return");
+  static convertFunctionToInterfaceXml(functionXml, namespaceName, library, func) {
+    return LibraryUtils.convertToInterfaceXml(functionXml, namespaceName, library, func, "import_return");
   }
 
   /**
-   * @param {string} namespaceName
-   * @param {string} libraryName
    * @param {HTMLElement|string} implementation
+   * @param {string} namespaceName
+   * @param {{name:string,key,string}} library
+   * @param {{name:string,key,string}} func
    * @returns {HTMLElement}
    */
-  static convertImplementToInterface(namespaceName, libraryName, implementation) {
+  static convertImplementToInterface(implementation, namespaceName, library, func) {
     const implementXml = (typeof(implementation) === "string") ?
         (Blockly.Xml.textToDom(implementation)) : (implementation);
 
@@ -123,33 +137,37 @@ class LibraryUtils {
     const returnFunctionsXml = implementXml.querySelectorAll("block[type=procedures_defreturn]");
     for (let i = 0; i < returnFunctionsXml.length; i++) {
       const functionXml = returnFunctionsXml[i];
-      const interfaceXml = LibraryUtils.convertFunctionToInterfaceXml(functionXml, namespaceName, libraryName);
+      const interfaceXml = LibraryUtils.convertFunctionToInterfaceXml(functionXml, namespaceName, library, func);
       xml.appendChild(interfaceXml);
     }
 
     const noReturnFunctionsXml = implementXml.querySelectorAll("block[type=procedures_defnoreturn]");
     for (let i = 0; i < noReturnFunctionsXml.length; i++) {
       const functionXml = noReturnFunctionsXml[i];
-      const interfaceXml = LibraryUtils.convertProcedureToInterfaceXml(functionXml, namespaceName, libraryName);
+      const interfaceXml = LibraryUtils.convertProcedureToInterfaceXml(functionXml, namespaceName, library, func);
       xml.appendChild(interfaceXml);
     }
+
+
 
     return xml;
   }
 
   /**
    * @param {string} namespaceName
-   * @param {string} libraryName
+   * @param {{name:string,key,string}} library
+   * @param {{name:string,key,string}} func
    * @param {string} implementation
    * @returns {string}
    */
-  static convertImplementToInterfaceString(namespaceName, libraryName, implementation) {
-    return Blockly.Xml.domToText(this.convertImplementToInterface(namespaceName, libraryName, implementation));
+  static convertImplementToInterfaceString(namespaceName, library, func, implementation) {
+    return Blockly.Xml.domToText(this.convertImplementToInterface(implementation, namespaceName, library, func));
   }
 
   /**
    * @param {Blockly.Workspace} workspace
    * @param {string} libraryName
+   * @return {Object<string,{key:string,xml:string,js:string}>}
    */
   static getImplementationBlocksInfo(workspace, libraryName) {
     let dict = {};
@@ -158,10 +176,14 @@ class LibraryUtils {
     functionBlocks = functionBlocks.concat(workspace.getBlocksByType("procedures_defreturn", false));
 
     for (let i = 0; i < functionBlocks.length; i++) {
+      Blockly.JavaScript.init(workspace);
+
       const functionBlock = functionBlocks[i];
       const functionName = functionBlock.getFieldValue("NAME");
 
       dict[functionName] = {};
+      dict[functionName].key = Blockly.JavaScript.variableDB_.getName(
+          functionBlock.getFieldValue("NAME"), Blockly.Procedures.NAME_TYPE);
       dict[functionName].xml = this.getBlockXml(functionBlock);
       dict[functionName].js = this.getBlockJs(workspace, functionBlock);
     }

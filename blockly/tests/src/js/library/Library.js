@@ -1,7 +1,7 @@
 class Library {
   /**
    * Creates Library class based from the json
-   * @param {{info:*,imports:{},functions:Object.<string,{xml:string,js:string}>,jsObject:string,hashCode:string}} json JSON string to build from
+   * @param {{info:*,imports:{},functions:Object.<string,Object>,jsObject:string,hashCode:string}} json JSON string to build from
    * @returns {Library}
    */
   static createFromJson(json) {
@@ -29,7 +29,7 @@ class Library {
   }
 
   /**
-   * @param {{info:*,imports:{},functions:Object.<string,{xml:string,js:string}>,jsObject:string,hashCode:string}} json JSON string to build from
+   * @param {{info:*,imports:{},functions:Object<string,Object>,jsObject:string,hashCode:string}} json JSON string to build from
    * @param {Library} library
    * @private
    */
@@ -42,7 +42,7 @@ class Library {
   }
 
   /***
-   * @param {{info:*,imports:{},functions:Object.<string,{xml:string,js:string}>,jsObject:string,hashCode:string}} json JSON string to build from
+   * @param {{info:*,imports:{},functions:Object<string,Object>,jsObject:string,hashCode:string}} json JSON string to build from
    * @param {Library} library
    * @private
    */
@@ -50,6 +50,7 @@ class Library {
     for (let functionKey in json.functions) {
       if (json.functions.hasOwnProperty(functionKey)) {
         library._functions[functionKey] = {};
+        library._functions[functionKey].key = json.functions[functionKey].key;
         library._functions[functionKey].xml = json.functions[functionKey].xml;
         library._functions[functionKey].interfaceXml = json.functions[functionKey].interfaceXml;
         library._functions[functionKey].js = json.functions[functionKey].js;
@@ -85,7 +86,7 @@ class Library {
   }
 
   /**
-   * @returns {Object.<string, {xml: string, interfaceXml: string, js: string}>}
+   * @returns {Object.<string,{key:string,xml:string,interfaceXml:string,js:string}>}
    */
   get functions() {
     return this._functions;
@@ -128,12 +129,13 @@ class Library {
    * @private
    */
   _generateJsObject() {
-    const jsObjectTemplate = new JsObjectTemplate(this.info.author, this.info.name);
+    const jsObjectTemplate = new JsObjectTemplate(
+        this.info.author, NameUtil.safeFunctionName(this.info.name));
 
     for (let functionKey in this.functions) {
       if (this.functions.hasOwnProperty(functionKey)) {
-        jsObjectTemplate.addFunctionDefinition(functionKey,
-            this.functions[functionKey].js);
+        jsObjectTemplate.addFunctionDefinition(
+            this.functions[functionKey].key, this.functions[functionKey].js);
       }
     }
 
@@ -159,6 +161,7 @@ class Library {
       if (!this.functions.hasOwnProperty(functionsKey)) continue;
 
       tmp.push(`${functionsKey.hashCode()}`);
+      tmp.push(`${this.functions[functionsKey].key.hashCode()}`);
       tmp.push(`${this.functions[functionsKey].xml.hashCode()}`);
       tmp.push(`${this.functions[functionsKey].interfaceXml.hashCode()}`);
       tmp.push(`${this.functions[functionsKey].js.hashCode()}`);
@@ -239,6 +242,20 @@ class Library {
   }
 
   /**
+   * @param {string} functionName Name of the function
+   * @param {string} key JS code of the function
+   */
+  addFunctionKey(functionName, key) {
+    if (!this.functions.hasOwnProperty(functionName)) {
+      this.functions[functionName] = {};
+    }
+    this.functions[functionName].key = key;
+
+    this.info.updateModifiedDatetime();
+    this.isHashCodeUpToDate = false;
+  }
+
+  /**
    * Adds library function's XML
    * @param {string} functionName Name of the function
    * @param {string} xml XML code of the function
@@ -299,10 +316,12 @@ class Library {
   /**
    * Adds library function's XML and JS
    * @param {string} functionName Name of the function
+   * @param {string} key
    * @param {string} xml XML code of the function
    * @param {string} js JS code of the function
    */
-  addFunction(functionName, xml, js) {
+  addFunction(functionName, key, xml, js) {
+    this.addFunctionKey(functionName, key);
     this.addFunctionXml(functionName, xml);
     this.addFunctionJs(functionName, js);
 

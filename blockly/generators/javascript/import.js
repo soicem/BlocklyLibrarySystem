@@ -45,7 +45,9 @@ Blockly.JavaScript['import_noReturn'] = function (block) {
 };
 
 function getFunctionCall(block) {
-  let funcName = block.getFieldValue("FUNC_FIELD").replace(" ", "_");
+  const namespaceName = block.namespaceName_;
+  const libraryName = block.library_.key;
+  const funcName = block.func_.key;
   let args = [];
 
   for (let i = 0; i < block.argsCount_; i++) {
@@ -54,5 +56,6 @@ function getFunctionCall(block) {
         Blockly.JavaScript.ORDER_ATOMIC) || noConnectionValue;
   }
 
-  return funcName + "(" + args.join(", ") + ")";
+  const libraryCall = `${namespaceName}.${libraryName}.${funcName}`;
+  return libraryCall + "(" + args.join(", ") + ")";
 }
