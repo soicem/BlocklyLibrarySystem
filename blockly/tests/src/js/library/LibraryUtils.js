@@ -62,26 +62,27 @@ class LibraryUtils {
 
     const namespaceXml = document.createElement("namespace");
     namespaceXml.setAttribute("name", namespaceName);
-    mutationXml.appendChild(namespaceXml);
 
     const libraryXml = document.createElement("library");
     libraryXml.setAttribute("name", library.name);
     libraryXml.setAttribute("key", library.key);
-    mutationXml.appendChild(libraryXml);
 
     const functionXml = document.createElement("function");
     functionXml.setAttribute("name", func.name);
     functionXml.setAttribute("key", func.key);
     const argsXml = implementXml.querySelectorAll("mutation arg");
     if (argsXml.length > 0) {
-      functionXml.setAttribute("key", argsXml.length);
+      functionXml.setAttribute("args", argsXml.length);
     }
-    for (let j = 0; j < argsXml.length; j++) {
+    for (let i = 0; i < argsXml.length; i++) {
       let argXml = document.createElement("arg");
-      argXml.setAttribute("name", name);
-      functionXml.appendChild(argsXml);
+      argXml.setAttribute("name", argsXml[i].getAttribute("name"));
+      functionXml.appendChild(argXml);
     }
-    mutationXml.appendChild(functionXml);
+
+    libraryXml.appendChild(functionXml);
+    namespaceXml.appendChild(libraryXml);
+    mutationXml.appendChild(namespaceXml);
 
     const implement = this.domWrapper(
         "implement", this.domWrapper("xml", implementXml));
