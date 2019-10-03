@@ -125,11 +125,9 @@ class LibraryManager {
   }
 
   /**
-   * @param {string} url
-   * @returns {Promise<void>}
+   * @param {JSON} libraryJson
    */
-  async addLibraryFromUrl(url) {
-    const libraryJson = await LibraryUtils.getLibraryJsonFromUrl(url);
+  addLibraryFromJson(libraryJson) {
     const library = Library.createFromJson(libraryJson);
 
     if (library) {
@@ -137,6 +135,27 @@ class LibraryManager {
     } else {
       console.log("library did not created successfully!");
     }
+  }
+
+  /**
+   * @param {File} file
+   */
+  addLibraryFromFile(file) {
+    let reader = new FileReader();
+    reader.readAsText(file);
+
+    reader.addEventListener("load", () => {
+      this.addLibraryFromJson(JSON.parse(reader.result));
+    });
+  }
+
+  /**
+   * @param {string} url
+   * @returns {Promise<void>}
+   */
+  async addLibraryFromUrl(url) {
+    const libraryJson = await LibraryUtils.getLibraryJsonFromUrl(url);
+    this.addLibraryFromJson(libraryJson);
   }
 
   /**
