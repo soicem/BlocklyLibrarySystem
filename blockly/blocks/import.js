@@ -137,8 +137,6 @@ Blockly.Blocks["import_return"] = {
       container.setAttribute("outdated", this.outdated_);
     }
     container.appendChild(this.mutationToDomNamespace_());
-    container.appendChild(this.mutationToDomLibrary_());
-    container.appendChild(this.mutationToDomFunction_());
     if (this.implementXml_) {
       container.appendChild(this.mutationToDomImplement_());
     }
@@ -148,6 +146,7 @@ Blockly.Blocks["import_return"] = {
   mutationToDomNamespace_: function () {
     const container = document.createElement("namespace");
     container.setAttribute("name", this.namespaceName_);
+    container.appendChild(this.mutationToDomLibrary_());
     return container;
   },
 
@@ -155,6 +154,7 @@ Blockly.Blocks["import_return"] = {
     const container = document.createElement("library");
     container.setAttribute("name", this.library_.name);
     container.setAttribute("key", this.library_.key);
+    container.appendChild(this.mutationToDomFunction_());
     return container;
   },
 
@@ -189,8 +189,6 @@ Blockly.Blocks["import_return"] = {
   domToMutation: function(xmlElement) {
     this.domToMutationOutdated_(xmlElement);
     this.domToMutationNamespace_(xmlElement);
-    this.domToMutationLibrary_(xmlElement);
-    this.domToMutationFunction_(xmlElement);
     this.domToMutationImplement_(xmlElement);
 
     this.updateShape_();
@@ -203,6 +201,7 @@ Blockly.Blocks["import_return"] = {
   domToMutationNamespace_: function (xmlElement) {
     const namespace = xmlElement.getElementsByTagName("namespace")[0];
     this.namespaceName_ = namespace.getAttribute("name");
+    this.domToMutationLibrary_(namespace);
   },
 
   domToMutationLibrary_: function (xmlElement) {
@@ -210,6 +209,7 @@ Blockly.Blocks["import_return"] = {
     this.library_ = {name: "", key: ""};
     this.library_.name = library.getAttribute("name");
     this.library_.key = library.getAttribute("key");
+    this.domToMutationFunction_(library);
   },
 
   domToMutationFunction_: function (xmlElement) {

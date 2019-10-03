@@ -7,6 +7,14 @@ class ArgsInfoSet {
     this.argInfos = new Set();
   }
 
+  get argInfos() {
+    return this._argInfos;
+  }
+
+  set argInfos(value) {
+    this._argInfos = value;
+  }
+
   /**
    * @returns {number}
    */

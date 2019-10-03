@@ -11,11 +11,16 @@ class BlockInfoDict {
     const blockInfoDict = new BlockInfoDict();
 
     oldFunctions.forEach(functionName => {
-      const queryString = `block>mutation[ns="${namespaceName}"][lib="${libraryName}"][func="${functionName}"]`;
-      xml.querySelectorAll(queryString).forEach(selection => {
-        const blockInfo = BlockInfo.parseFromXml(selection.parentElement);
-        blockInfoDict.add(functionName, blockInfo);
-      });
+      const queryString = `block>mutation>namespace[name="${namespaceName}"]>library[name="${libraryName}"]>function[name="${functionName}"]`;
+
+      for (const [i, functionXml] of xml.querySelectorAll(queryString).entries()) {
+        const libraryXml = functionXml.parentElement;
+        const namespaceXml = libraryXml.parentElement;
+        const mutationXml = namespaceXml.parentElement;
+        const blockXml = mutationXml.parentElement;
+        const blockInfo = BlockInfo.parseFromXml(blockXml);
+        blockInfoDict.add(functionName + i, blockInfo);
+      }
     });
 
     return blockInfoDict;
@@ -77,7 +82,7 @@ class BlockInfoDict {
       if (!this.blockInfos.hasOwnProperty(blockInfosKey)) continue;
 
       const blockInfo = this.blockInfos[blockInfosKey];
-      blockInfo.updateFromLibraryBlockInfo(libraryBlockInfoDict.blockInfos[blockInfo.functionName]);
+      blockInfo.updateFromLibraryBlockInfo(libraryBlockInfoDict.blockInfos[blockInfo.funcName]);
     }
   }
 }

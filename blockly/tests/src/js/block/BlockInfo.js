@@ -11,11 +11,11 @@ class BlockInfo {
     blockInfo.xml = blockXml;
     blockInfo.type = blockInfo.xml.getAttribute("type");
     blockInfo.mutationXml = blockInfo.xml.querySelector("mutation");
-    blockInfo.functionName = blockInfo.mutationXml.getAttribute("func");
-    blockInfo.implementXml = blockInfo.mutationXml.querySelector("implement");
-    blockInfo.mutationXml.querySelectorAll(":scope>arg").forEach(argElement => {
-      blockInfo.argsInfoSet.add(ArgInfo.parseFromXml(argElement));
+    blockInfo.funcXml = blockInfo.mutationXml.querySelector("namespace>library>function");
+    blockInfo.funcXml.querySelectorAll(":scope>arg").forEach(argXml => {
+      blockInfo.argsInfoSet.add(ArgInfo.parseFromXml(argXml));
     });
+    blockInfo.implementXml = blockInfo.mutationXml.querySelector("implement");
 
     return blockInfo;
   }
@@ -72,18 +72,25 @@ class BlockInfo {
   }
 
   /**
-   * @returns {string}
+   * @returns {HTMLElement}
    */
-  get functionName() {
+  get funcXml() {
     return this._functionName;
   }
 
   /**
    * @private
-   * @param {string} value
+   * @param {HTMLElement} value
    */
-  set functionName(value) {
+  set funcXml(value) {
     this._functionName = value;
+  }
+
+  /**
+   * @returns {string}
+   */
+  get funcName() {
+    return this.funcXml.getAttribute("name");
   }
 
   /**
@@ -140,9 +147,9 @@ class BlockInfo {
     this.removeArgsXml(arg => !arg.hasConnection);
 
     const excludedArgs = this.argsInfoSet.excludedFrom(argsInfoSet);
-    excludedArgs.addToXml(this.mutationXml);
+    excludedArgs.addToXml(this.funcXml);
 
-    this.mutationXml.setAttribute("args", argsInfoSet.size());
+    this.funcXml.setAttribute("args", argsInfoSet.size());
   }
 
   /**
@@ -157,7 +164,7 @@ class BlockInfo {
       argsInfoSet = this.argsInfoSet.getArgsFiltered(filterCallback);
     }
 
-    argsInfoSet.removeFromXml(this.mutationXml);
+    argsInfoSet.removeFromXml(this.funcXml);
   }
 
   /**
