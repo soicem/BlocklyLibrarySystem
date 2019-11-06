@@ -123,5 +123,6 @@ GitHub를 사용하기 위해서는 nodeGit 서버가 실행 중이어야 한다
 ## 사용 환경
 
 번호 | 환경
+---- | ----
 1 | nodejs 10.15.3
 2 | chrome, firefox(portable 사용 x)
