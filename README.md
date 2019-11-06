@@ -3,6 +3,7 @@
 # BlocklyLibrarySystem
 
 ## 개요
+* __nodeGit 서버__:_[졸업과제 발표자료](https://docs.google.com/presentation/d/1osMj74DqMVEPJHYAaqfmuCM5RGpKV85lDcNUDL8EEAE/edit?usp=sharing)
 
 ## 가이드 
 
