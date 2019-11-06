@@ -6,7 +6,7 @@
 블록코딩 도구를 만들고 코딩 효율을 높일 수 있는 라이브러리 기능을 구현한 웹 어플리케이션
 * __졸업과제 발표자료__:_[졸업과제 발표자료](https://docs.google.com/presentation/d/1osMj74DqMVEPJHYAaqfmuCM5RGpKV85lDcNUDL8EEAE/edit?usp=sharing)
 
-## 가이드 
+## 설치 가이드 
 
 ### 파일 위치
 
