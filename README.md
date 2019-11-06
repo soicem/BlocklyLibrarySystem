@@ -122,15 +122,6 @@ GitHub를 사용하기 위해서는 nodeGit 서버가 실행 중이어야 한다
 
 ## 사용 환경
 
-번호 | 이름
----- | ---- 
----- | 모듈
-1 | sklearn decisionTree
-2 | graphviz
-3 | pandas
-4 | numpy
----- | ----
----- | 환경
-1 | Python 3.5
-2 | anaconda
-3 | windows 10
+번호 | 환경
+1 | nodejs 10.15.3
+2 | chrome, firefox(portable 사용 x)
