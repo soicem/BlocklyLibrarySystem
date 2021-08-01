@@ -5,6 +5,7 @@
 ## 개요
 오픈소스 프로젝트 Blockly에 기반하여 제작한 블록 코딩 도구에 코딩 효율을 높일 수 있는 라이브러리 기능을 구현한 웹 어플리케이션
 * __졸업과제 발표자료__:_[졸업과제 발표자료](https://docs.google.com/presentation/d/1osMj74DqMVEPJHYAaqfmuCM5RGpKV85lDcNUDL8EEAE/edit?usp=sharing)
+* __시연영상__:_[시연영상](https://www.youtube.com/watch?v=0W_YGPTkTyE)
 
 ## 설치 가이드 
 
