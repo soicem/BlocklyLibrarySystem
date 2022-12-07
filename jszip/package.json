@@ -39,7 +39,7 @@
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-cli": "~1.1.0",
-    "grunt-saucelabs": "8.6.2",
+    "grunt-saucelabs": "8.6.3",
     "grunt-contrib-connect": "1.0.0",
     "jshint": "~2.9.1",
     "browserify": "~13.0.0",
